@@ -1,0 +1,36 @@
+.comment-div {
+  padding-left: 20px;
+}
+
+.row-margin-bottom {
+  margin-bottom: 10px;
+}
+
+.user-name {
+  display: inline-block;
+  font-size: small;
+  font-weight: 300;
+}
+
+.message {
+  display: inline-block;
+}
+
+.message-itself {
+   word-wrap: break-word;
+}
+
+.replay-icon {
+  font-size: 20px;
+  color: rgba(94, 97, 95, 0.51);
+  cursor: pointer;
+}
+.replay-icon:hover {
+  color: #91a59b;
+}
+
+.user-date-separator {
+  display: inline-block;
+  padding-right: 10px;
+  padding-left: 10px;
+}
