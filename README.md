@@ -63,23 +63,21 @@ To get a full development version of the app just execute the following commands
 
      *Install*:
 
-        $ sudo add-apt-repository ppa:webupd8team/java
-        $ sudo apt-get update
-        $ sudo apt-get install oracle-java8-installer
+        $ sudo apt-get install -y default-jdk
 
-  - **Angular-cli** ( which requires  Node.js > 4.x.x  and  npm > 3.x.x )
+  - **AngularCLI** ( which requires  Node.js > 4.x.x  and  npm > 3.x.x )
 
     *Check versions*:
 
         $ node -v
         $ npm -v
-        $ ng --version
+        $ ng -v
 
      *Install*:
 
         $ sudo apt-get install nodejs
         $ sudo apt-get install npm
-        $ npm install -g angular-cli
+        $ npm install -g @angular/cli
 
   - **Maven**
 
@@ -113,18 +111,17 @@ To get a full development version of the app just execute the following commands
 
   Then we can build and run the project:
 
-        $ git clone https://github.com/pabloFuente/full-teaching.git
-        $ cd ./full-teaching/angular-cli-project/
+        $ git clone https://github.com/elastest/full-teaching-experiment.git
+        $ cd full-teaching-experiment/src/main/angular
         $ npm install
-        $ cd ../
-        $ ./BuildFrontJarAndRun.sh
+        $ cd ../../../
+        $ ./BuildFrontWarAndRun.sh
 
 This clones the project in your working directory, installs dependencies with `npm install` and executes the `BuildFrontJarAndRun.sh` script.
 
-The script `BuildFrontJarAndRun.sh` builds the FrontEnd with angular-cli, copies all generated files to the Backend `static` folder, builds and generates the jar with maven and runs the jar file.
+This script `BuildFrontJarAndRun.sh` builds the FrontEnd with angular-cli, copies all generated files to the Backend `static` folder, builds and generates the WAR with Maven and runs the WAR file.
 
-Go to `http://localhost:5000/` and there you have it! Every time you modify the Front or Back, you can just execute `BuildFrontJarAndRun.sh` and all the changes will be applied.
-
+Go to `http://localhost:5000/` and there you have it!
 
 ### :heavy_exclamation_mark: **IMPORTANT**:
 
