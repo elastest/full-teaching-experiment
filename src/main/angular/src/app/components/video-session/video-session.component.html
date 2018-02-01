@@ -19,8 +19,8 @@
       <h2 id="session-title">{{this.sessionName}}</h2>
     </div>
     <div *ngIf="this.streams.length > 0">
-      <stream [stream]="this.streams[this.streamIndex]" [small]="false"></stream>
-      <stream *ngIf="studentAccessGranted" [stream]="this.streams[this.streamIndexSmall]" [small]="true"></stream>
+      <stream [stream]="bigStream" [small]="false" [muted]="(this.authenticationService.isTeacher() && !studentAccessGranted) || (!this.authenticationService.isTeacher() && myStudentAccessGranted)"></stream>
+      <stream *ngIf="studentAccessGranted" [stream]="smallStream" [small]="true" [muted]="this.authenticationService.isTeacher()"></stream>
     </div>
     <div class="session-bottom-div valign-wrapper" (mouseenter)="this.controlsShown = true"  (mouseleave)="this.controlsShown = false">
       <div id="div-video-control" [class.div-video-control-shown]="this.playPauseIcon==='play_arrow'" [class.fade-in-controls]="this.controlsShown" [class.fade-out-controls]="!this.controlsShown">

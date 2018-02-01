@@ -2833,13 +2833,18 @@ var StreamComponent = /** @class */ (function () {
         }
     };
     StreamComponent.prototype.ngDoCheck = function () {
-        if (this.videoElement && this.stream && (this.videoElement.srcObject !== this.stream.getMediaStream())) {
+        if (this.videoElement && this.stream &&
+            ((this.videoElement.srcObject == null) ||
+                (!(this.stream.getMediaStream() == null) && (this.videoElement.srcObject.id !== this.stream.getMediaStream().id)))) {
             this.videoElement.srcObject = this.stream.getMediaStream();
             console.warn("Stream updated");
         }
     };
     StreamComponent.prototype.getName = function () {
         return ((JSON.parse(this.stream.connection.data))['name']);
+    };
+    StreamComponent.prototype.getVideoNameFromStream = function () {
+        return (this.stream != null) ? 'VIDEO-' + this.getName() : 'VIDEO';
     };
     __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["ViewChild"])('videoElement'),
@@ -2861,7 +2866,7 @@ var StreamComponent = /** @class */ (function () {
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
             selector: 'stream',
             styles: [__webpack_require__("../../../../../src/app/components/video-session/stream.component.css")],
-            template: "\n        <div class='participant' [class.participant-small]=\"this.small\">\n          <div *ngIf=\"this.stream\" class=\"name-div\"><p class=\"name-p\">{{this.getName()}}</p></div>\n          <video #videoElement autoplay=\"true\" [muted]=\"this.muted\"></video>\n        </div>"
+            template: "\n        <div class='participant' [class.participant-small]=\"this.small\">\n          <div *ngIf=\"this.stream\" class=\"name-div\"><p class=\"name-p\">{{this.getName()}}</p></div>\n          <video #videoElement autoplay=\"true\" [muted]=\"this.muted\" [attr.title]=\"getVideoNameFromStream()\" ></video>\n        </div>"
         }),
         __metadata("design:paramtypes", [])
     ], StreamComponent);
@@ -2894,7 +2899,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/components/video-session/video-session.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div id=\"video-session-div\">\n\n  <a id=\"side-menu-button\" materialize=\"sideNav\" data-activates=\"slide-out\" [materializeParams]=\"[{draggable: false}]\"><i id=\"fixed-icon\" class=\"material-icons video-icon\" (onclick)=\"document.getElementsByTagName('body')[0].style.overflowY = 'hidden'\">menu</i></a>\n  <div id=\"div-header-buttons\" class=\"row no-margin\">\n    <div class=\"col s12 m12 l12 no-padding-right\"><a class=\"btn-floating btn-large waves-effect waves-light red floating-button\" (click)=\"toggleFullScreen()\"><i class=\"material-icons\">{{fullscreenIcon}}</i></a></div>\n    <div class=\"col s12 m12 l12 no-padding-right\"><a *ngIf=\"this.authenticationService.isStudent() && !this.myStudentAccessGranted\" class=\"btn-floating btn-large waves-effect waves-light red floating-button\" (click)=\"askForIntervention()\"><i class=\"material-icons\">{{interventionIcon}}</i></a></div>\n    <div class=\"row no-margin\" *ngIf=\"this.authenticationService.isTeacher()\">\n      <div *ngFor=\"let userObject of this.usersIntervention; let i = index\" class=\"col s12 m12 l12 no-padding-right\">\n        <a *ngIf=\"!studentAccessGranted || userObject.accessGranted\"  materialize=\"tooltip\" data-position=\"left\" data-delay=\"65\" [attr.data-tooltip]=\"userObject.user\" class=\"btn-floating btn-large waves-effect floating-button white usr-btn\" (click)=\"grantIntervention(!studentAccessGranted, userObject, i)\" [style.border-color]=\"userObject.color\">\n          <i *ngIf=\"this.studentAccessGranted\" class=\"material-icons\" [style.color]=\"userObject.color\">cancel</i>\n          <img *ngIf=\"!this.studentAccessGranted\" class=\"circle responsive-img\" [src]=\"userObject.picture\">\n        </a>\n      </div>\n    </div>\n  </div>\n\n  <div *ngIf=\"OVSession\">\n    <div class=\"session-title-div\">\n      <h2 id=\"session-title\">{{this.sessionName}}</h2>\n    </div>\n    <div *ngIf=\"this.streams.length > 0\">\n      <stream [stream]=\"this.streams[this.streamIndex]\" [small]=\"false\"></stream>\n      <stream *ngIf=\"studentAccessGranted\" [stream]=\"this.streams[this.streamIndexSmall]\" [small]=\"true\"></stream>\n    </div>\n    <div class=\"session-bottom-div valign-wrapper\" (mouseenter)=\"this.controlsShown = true\"  (mouseleave)=\"this.controlsShown = false\">\n      <div id=\"div-video-control\" [class.div-video-control-shown]=\"this.playPauseIcon==='play_arrow'\" [class.fade-in-controls]=\"this.controlsShown\" [class.fade-out-controls]=\"!this.controlsShown\">\n        <div class=\"box-video-control\">\n          <a class=\"btn-floating waves-effect video-control\" (click)=\"togglePlayPause()\">\n            <i class=\"material-icons video-control-icon\">{{this.playPauseIcon}}</i>\n          </a>\n          <a class=\"btn-floating waves-effect video-control\" (click)=\"toggleMute()\">\n            <i class=\"material-icons video-control-icon\">{{this.volumeMuteIcon}}</i>\n          </a>\n          <input id=\"slider-volume\" name=\"slider-volume\" type=\"range\" min=\"0\" max=\"1\" step=\"0.01\" [(ngModel)]=\"this.volumeLevel\" (ngModelChange)=\"changeVolume($event)\"/>\n        </div>\n      </div>\n    </div>\n  </div>\n\n  <ul id=\"slide-out\" class=\"side-nav\">\n    <i (click)=\"this.exitFromSession()\" id=\"exit-icon\" class=\"right material-icons video-icon\" [title]=\"'Exit'\">exit_to_app</i>\n    <i (click)=\"changeShowChat()\" id=\"show-chat-icon\" class=\"left material-icons video-icon\">{{this.showChatIcon}}</i>\n    <div class=\"chat_wrapper\">\n\n      <div *ngIf=\"showChat\" id=\"message-box-cont\">\n        <div class=\"message_box\" id=\"message_box\">\n          <div *ngFor=\"let chatline of this.chatLines\">\n            <app-chat-line [chatLine]=\"chatline\"></app-chat-line>\n          </div>\n        </div>\n        <div class=\"panel\">\n          <form (ngSubmit)=\"sendMessage()\">\n            <input [(ngModel)]=\"myMessage\" type=\"text\" name=\"message\" id=\"message\" placeholder=\"Message\" maxlength=\"400\" autocomplete=\"off\"/>\n            <input *ngIf=\"this.myMessage\" type=\"submit\" id=\"send-btn\" class=\"btn waves-effect button-small\" value=\"Send\">\n            <a *ngIf=\"!this.myMessage\" id=\"fake-send-btn\" class=\"btn waves-effect button-small disabled\">Send</a>\n          </form>\n        </div>\n      </div>\n\n      <div *ngIf=\"!showChat\">\n        <div class=\"num-attenders-div\">\n          <span class=\"num-connected\">{{this.usersConnected.length}}</span>\n           of\n           <span class=\"num-total\">{{this.course.attenders.length}}</span>\n            attenders connected\n        </div>\n        <div *ngFor=\"let userObject of this.usersConnected\" class=\"attender-name\" [style.color]=\"userObject.userColor\">\n          {{userObject.userName}}\n        </div>\n      </div>\n\n    </div>\n  </ul>\n\n</div>\n"
+module.exports = "<div id=\"video-session-div\">\n\n  <a id=\"side-menu-button\" materialize=\"sideNav\" data-activates=\"slide-out\" [materializeParams]=\"[{draggable: false}]\"><i id=\"fixed-icon\" class=\"material-icons video-icon\" (onclick)=\"document.getElementsByTagName('body')[0].style.overflowY = 'hidden'\">menu</i></a>\n  <div id=\"div-header-buttons\" class=\"row no-margin\">\n    <div class=\"col s12 m12 l12 no-padding-right\"><a class=\"btn-floating btn-large waves-effect waves-light red floating-button\" (click)=\"toggleFullScreen()\"><i class=\"material-icons\">{{fullscreenIcon}}</i></a></div>\n    <div class=\"col s12 m12 l12 no-padding-right\"><a *ngIf=\"this.authenticationService.isStudent() && !this.myStudentAccessGranted\" class=\"btn-floating btn-large waves-effect waves-light red floating-button\" (click)=\"askForIntervention()\"><i class=\"material-icons\">{{interventionIcon}}</i></a></div>\n    <div class=\"row no-margin\" *ngIf=\"this.authenticationService.isTeacher()\">\n      <div *ngFor=\"let userObject of this.usersIntervention; let i = index\" class=\"col s12 m12 l12 no-padding-right\">\n        <a *ngIf=\"!studentAccessGranted || userObject.accessGranted\"  materialize=\"tooltip\" data-position=\"left\" data-delay=\"65\" [attr.data-tooltip]=\"userObject.user\" class=\"btn-floating btn-large waves-effect floating-button white usr-btn\" (click)=\"grantIntervention(!studentAccessGranted, userObject, i)\" [style.border-color]=\"userObject.color\">\n          <i *ngIf=\"this.studentAccessGranted\" class=\"material-icons\" [style.color]=\"userObject.color\">cancel</i>\n          <img *ngIf=\"!this.studentAccessGranted\" class=\"circle responsive-img\" [src]=\"userObject.picture\">\n        </a>\n      </div>\n    </div>\n  </div>\n\n  <div *ngIf=\"OVSession\">\n    <div class=\"session-title-div\">\n      <h2 id=\"session-title\">{{this.sessionName}}</h2>\n    </div>\n    <div *ngIf=\"this.streams.length > 0\">\n      <stream [stream]=\"bigStream\" [small]=\"false\" [muted]=\"(this.authenticationService.isTeacher() && !studentAccessGranted) || (!this.authenticationService.isTeacher() && myStudentAccessGranted)\"></stream>\n      <stream *ngIf=\"studentAccessGranted\" [stream]=\"smallStream\" [small]=\"true\" [muted]=\"this.authenticationService.isTeacher()\"></stream>\n    </div>\n    <div class=\"session-bottom-div valign-wrapper\" (mouseenter)=\"this.controlsShown = true\"  (mouseleave)=\"this.controlsShown = false\">\n      <div id=\"div-video-control\" [class.div-video-control-shown]=\"this.playPauseIcon==='play_arrow'\" [class.fade-in-controls]=\"this.controlsShown\" [class.fade-out-controls]=\"!this.controlsShown\">\n        <div class=\"box-video-control\">\n          <a class=\"btn-floating waves-effect video-control\" (click)=\"togglePlayPause()\">\n            <i class=\"material-icons video-control-icon\">{{this.playPauseIcon}}</i>\n          </a>\n          <a class=\"btn-floating waves-effect video-control\" (click)=\"toggleMute()\">\n            <i class=\"material-icons video-control-icon\">{{this.volumeMuteIcon}}</i>\n          </a>\n          <input id=\"slider-volume\" name=\"slider-volume\" type=\"range\" min=\"0\" max=\"1\" step=\"0.01\" [(ngModel)]=\"this.volumeLevel\" (ngModelChange)=\"changeVolume($event)\"/>\n        </div>\n      </div>\n    </div>\n  </div>\n\n  <ul id=\"slide-out\" class=\"side-nav\">\n    <i (click)=\"this.exitFromSession()\" id=\"exit-icon\" class=\"right material-icons video-icon\" [title]=\"'Exit'\">exit_to_app</i>\n    <i (click)=\"changeShowChat()\" id=\"show-chat-icon\" class=\"left material-icons video-icon\">{{this.showChatIcon}}</i>\n    <div class=\"chat_wrapper\">\n\n      <div *ngIf=\"showChat\" id=\"message-box-cont\">\n        <div class=\"message_box\" id=\"message_box\">\n          <div *ngFor=\"let chatline of this.chatLines\">\n            <app-chat-line [chatLine]=\"chatline\"></app-chat-line>\n          </div>\n        </div>\n        <div class=\"panel\">\n          <form (ngSubmit)=\"sendMessage()\">\n            <input [(ngModel)]=\"myMessage\" type=\"text\" name=\"message\" id=\"message\" placeholder=\"Message\" maxlength=\"400\" autocomplete=\"off\"/>\n            <input *ngIf=\"this.myMessage\" type=\"submit\" id=\"send-btn\" class=\"btn waves-effect button-small\" value=\"Send\">\n            <a *ngIf=\"!this.myMessage\" id=\"fake-send-btn\" class=\"btn waves-effect button-small disabled\">Send</a>\n          </form>\n        </div>\n      </div>\n\n      <div *ngIf=\"!showChat\">\n        <div class=\"num-attenders-div\">\n          <span class=\"num-connected\">{{this.usersConnected.length}}</span>\n           of\n           <span class=\"num-total\">{{this.course.attenders.length}}</span>\n            attenders connected\n        </div>\n        <div *ngFor=\"let userObject of this.usersConnected\" class=\"attender-name\" [style.color]=\"userObject.userColor\">\n          {{userObject.userName}}\n        </div>\n      </div>\n\n    </div>\n  </ul>\n\n</div>\n"
 
 /***/ }),
 
@@ -2954,8 +2959,6 @@ var VideoSessionComponent = /** @class */ (function () {
         this.volumeMuteIcon = "volume_up";
         // Session
         this.streams = [];
-        this.streamIndex = 0;
-        this.streamIndexSmall = 0;
         this.user = this.authenticationService.getCurrentUser();
         this.mySession = this.videoSessionService.session;
         this.course = this.videoSessionService.course;
@@ -3054,18 +3057,15 @@ var VideoSessionComponent = /** @class */ (function () {
                         if (_this.user.nickName == jsonObject.user) {
                             console.log("ACCESS GRANTED FOR USER: " + jsonObject.user);
                             if (jsonObject.accessGranted) {
-                                // Publish camera
-                                _this.OVPublisher.publishVideo(true);
-                                _this.OVPublisher.publishAudio(true);
-                                _this.streamIndex = _this.getStreamIndexByName(jsonObject.user);
-                                _this.streamIndexSmall = _this.getStreamIndexByName(_this.teacherName);
+                                // Publish
+                                _this.publish();
                                 _this.studentAccessGranted = true;
                                 _this.myStudentAccessGranted = true;
                             }
                             else {
-                                _this.OVPublisher.publishVideo(false);
-                                _this.OVPublisher.publishAudio(false);
-                                _this.streamIndex = _this.getStreamIndexByName(_this.teacherName);
+                                // Unpublish
+                                _this.unpublish();
+                                _this.bigStream = _this.teacherStream;
                                 _this.studentAccessGranted = false;
                                 _this.myStudentAccessGranted = false;
                                 // Invert intervention request
@@ -3076,13 +3076,11 @@ var VideoSessionComponent = /** @class */ (function () {
                         }
                         else {
                             if (jsonObject.accessGranted) {
-                                _this.streamIndex = _this.getStreamIndexByName(jsonObject.user);
-                                _this.streamIndexSmall = _this.getStreamIndexByName(_this.teacherName);
                                 _this.studentAccessGranted = true;
                             }
                             else {
-                                _this.streamIndex = _this.getStreamIndexByName(_this.teacherName);
                                 _this.studentAccessGranted = false;
+                                _this.bigStream = _this.teacherStream;
                             }
                         }
                     }
@@ -3090,12 +3088,11 @@ var VideoSessionComponent = /** @class */ (function () {
                 else if (_this.authenticationService.isTeacher()) {
                     // For the teacher
                     if (jsonObject.accessGranted) {
-                        _this.streamIndex = _this.getStreamIndexByName(jsonObject.user);
-                        _this.streamIndexSmall = _this.getStreamIndexByName(_this.teacherName);
+                        _this.studentAccessGranted = true;
                     }
                     else {
-                        _this.streamIndex = _this.getStreamIndexByName(_this.teacherName);
                         _this.studentAccessGranted = false;
+                        _this.bigStream = _this.teacherStream;
                     }
                 }
             }
@@ -3147,6 +3144,8 @@ var VideoSessionComponent = /** @class */ (function () {
         this.showChatIcon = (this.showChat ? 'supervisor_account' : 'chat');
     };
     VideoSessionComponent.prototype.askForIntervention = function () {
+        // Request camera
+        this.initPublisher();
         // Prepare json data
         var msg = {
             petitionIntervention: !this.interventionRequired
@@ -3283,9 +3282,6 @@ var VideoSessionComponent = /** @class */ (function () {
     VideoSessionComponent.prototype.addVideoTag = function (stream) {
         console.log("Stream added");
         this.streams.push(stream);
-        if (this.getJsonFromString(stream.connection.data)['name'] === this.teacherName) {
-            this.streamIndex = this.getStreamIndexByName(this.teacherName);
-        }
     };
     VideoSessionComponent.prototype.removeVideoTag = function (stream) {
         console.log("Stream removed");
@@ -3293,19 +3289,18 @@ var VideoSessionComponent = /** @class */ (function () {
         console.log(this.streams.length);
         var ind = this.streams.indexOf(stream);
         this.streams.splice(ind, 1);
-        if (this.getJsonFromString(stream.connection.data)['name'] === this.teacherName) {
+        if (this.getJsonFromString(stream.connection.data).isTeacher) {
             // Removing all streams if the teacher leaves the room
             this.streams = [];
-            this.streamIndex = 0;
             this.studentAccessGranted = false;
             this.myStudentAccessGranted = false;
             this.interventionRequired = false;
         }
         else {
-            if (this.streamIndex === ind) {
+            if (this.bigStream.connection.connectionId === stream.connection.connectionId) {
                 // Back to teacher's stream if an active user leaves the room
-                this.streamIndex = this.getStreamIndexByName(this.teacherName);
                 this.studentAccessGranted = false;
+                this.bigStream = this.teacherStream;
             }
         }
         console.log(this.streams.length);
@@ -3319,6 +3314,15 @@ var VideoSessionComponent = /** @class */ (function () {
             console.warn(event.stream);
             _this.addVideoTag(event.stream);
             _this.OVSession.subscribe(event.stream, 'nothing');
+            var stream = event.stream;
+            if (JSON.parse(stream.connection.data).isTeacher) {
+                _this.teacherStream = stream;
+                _this.bigStream = stream;
+            }
+            else {
+                _this.bigStream = stream;
+                _this.smallStream = _this.teacherStream;
+            }
         });
         this.OVSession.on('streamDestroyed', function (event) {
             console.warn("STREAM DESTROYED");
@@ -3340,27 +3344,9 @@ var VideoSessionComponent = /** @class */ (function () {
             }
             else {
                 if (_this.authenticationService.isTeacher()) {
-                    _this.OVPublisher = _this.OV.initPublisher('nothing');
+                    _this.initPublisher();
+                    _this.publish();
                 }
-                else {
-                    _this.OVPublisher = _this.OV.initPublisher('nothing', { audioActive: false, videoActive: false });
-                }
-                _this.OVPublisher.on('accessAllowed', function (event) {
-                    console.warn("ACCESS ALLOWED");
-                });
-                _this.OVPublisher.on('accessDenied', function (event) {
-                    console.warn("ACCESS DENIED");
-                });
-                _this.OVPublisher.on('streamCreated', function (event) {
-                    console.warn("STREAM CREATED BY PUBLISHER");
-                    console.warn(event.stream);
-                    _this.addVideoTag(event.stream);
-                });
-                _this.OVPublisher.on('videoElementCreated', function (event) {
-                    console.warn("VIDEO ELEMENT CREATED BY PUBLISHER");
-                    console.warn(event.element);
-                });
-                _this.OVSession.publish(_this.OVPublisher);
             }
         });
     };
@@ -3388,6 +3374,39 @@ var VideoSessionComponent = /** @class */ (function () {
         }, function (error) {
             console.warn("Error removing user!");
         });
+    };
+    VideoSessionComponent.prototype.initPublisher = function () {
+        this.OVPublisher = this.OV.initPublisher('nothing');
+    };
+    VideoSessionComponent.prototype.publish = function () {
+        var _this = this;
+        this.OVPublisher.on('accessAllowed', function (event) {
+            console.warn("ACCESS ALLOWED");
+        });
+        this.OVPublisher.on('accessDenied', function (event) {
+            console.warn("ACCESS DENIED");
+        });
+        this.OVPublisher.on('streamCreated', function (event) {
+            console.warn("STREAM CREATED BY PUBLISHER");
+            console.warn(event.stream);
+            _this.addVideoTag(event.stream);
+            var stream = event.stream;
+            if (JSON.parse(stream.connection.data).isTeacher) {
+                _this.teacherStream = stream;
+            }
+            else {
+                _this.smallStream = _this.teacherStream;
+            }
+            _this.bigStream = stream;
+        });
+        this.OVPublisher.on('videoElementCreated', function (event) {
+            console.warn("VIDEO ELEMENT CREATED BY PUBLISHER");
+            console.warn(event.element);
+        });
+        this.OVSession.publish(this.OVPublisher);
+    };
+    VideoSessionComponent.prototype.unpublish = function () {
+        this.OVSession.unpublish(this.OVPublisher);
     };
     __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["HostListener"])('window:beforeunload'),

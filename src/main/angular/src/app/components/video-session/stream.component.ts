@@ -8,7 +8,7 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
   template: `
         <div class='participant' [class.participant-small]="this.small">
           <div *ngIf="this.stream" class="name-div"><p class="name-p">{{this.getName()}}</p></div>
-          <video #videoElement autoplay="true" [muted]="this.muted"></video>
+          <video #videoElement autoplay="true" [muted]="this.muted" [attr.title]="getVideoNameFromStream()" ></video>
         </div>`
 })
 export class StreamComponent {
@@ -39,7 +39,10 @@ export class StreamComponent {
   }
 
   ngDoCheck() { // Detect any change in 'stream' property (specifically in its 'srcObject' property)
-    if (this.videoElement && this.stream && (this.videoElement.srcObject !== this.stream.getMediaStream())) {
+    if (this.videoElement && this.stream &&
+        ((this.videoElement.srcObject == null) ||
+        (!(this.stream.getMediaStream() == null) && (this.videoElement.srcObject.id !== this.stream.getMediaStream().id)))
+    ) {
       this.videoElement.srcObject = this.stream.getMediaStream();
       console.warn("Stream updated");
     }
@@ -47,6 +50,10 @@ export class StreamComponent {
 
   getName() {
     return ((JSON.parse(this.stream.connection.data))['name']);
+  }
+
+  getVideoNameFromStream(): string {
+    return (this.stream != null) ? 'VIDEO-' + this.getName() : 'VIDEO';
   }
 
 }

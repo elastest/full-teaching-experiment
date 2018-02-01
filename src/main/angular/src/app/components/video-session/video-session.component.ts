@@ -63,8 +63,10 @@ export class VideoSessionComponent implements OnInit {
 
   // Session
   streams: Stream[] = [];
-  streamIndex: number = 0;
-  streamIndexSmall: number = 0;
+
+  teacherStream: Stream;
+  bigStream: Stream;
+  smallStream: Stream;
 
   constructor(private authenticationService: AuthenticationService,
     private videoSessionService: VideoSessionService,
@@ -180,20 +182,17 @@ export class VideoSessionComponent implements OnInit {
             if (this.user.nickName == jsonObject.user) {
               console.log("ACCESS GRANTED FOR USER: " + jsonObject.user);
               if (jsonObject.accessGranted) {
-                // Publish camera
-                this.OVPublisher.publishVideo(true);
-                this.OVPublisher.publishAudio(true);
+                // Publish
+                this.publish();
 
-                this.streamIndex = this.getStreamIndexByName(jsonObject.user);
-                this.streamIndexSmall = this.getStreamIndexByName(this.teacherName);
                 this.studentAccessGranted = true;
                 this.myStudentAccessGranted = true;
               }
               else {
-                this.OVPublisher.publishVideo(false);
-                this.OVPublisher.publishAudio(false);
+                // Unpublish
+                this.unpublish();
+                this.bigStream = this.teacherStream;
 
-                this.streamIndex = this.getStreamIndexByName(this.teacherName);
                 this.studentAccessGranted = false;
                 this.myStudentAccessGranted = false;
                 // Invert intervention request
@@ -205,12 +204,10 @@ export class VideoSessionComponent implements OnInit {
             // For the rest of students
             else {
               if (jsonObject.accessGranted) {
-                this.streamIndex = this.getStreamIndexByName(jsonObject.user);
-                this.streamIndexSmall = this.getStreamIndexByName(this.teacherName);
                 this.studentAccessGranted = true;
               } else {
-                this.streamIndex = this.getStreamIndexByName(this.teacherName);
                 this.studentAccessGranted = false;
+                this.bigStream = this.teacherStream;
               }
             }
           }
@@ -218,11 +215,10 @@ export class VideoSessionComponent implements OnInit {
         else if (this.authenticationService.isTeacher()) {
           // For the teacher
           if (jsonObject.accessGranted) {
-            this.streamIndex = this.getStreamIndexByName(jsonObject.user);
-            this.streamIndexSmall = this.getStreamIndexByName(this.teacherName);
+            this.studentAccessGranted = true;
           } else {
-            this.streamIndex = this.getStreamIndexByName(this.teacherName);
             this.studentAccessGranted = false;
+            this.bigStream = this.teacherStream;
           }
         }
       }
@@ -283,6 +279,9 @@ export class VideoSessionComponent implements OnInit {
   }
 
   askForIntervention() {
+    // Request camera
+    this.initPublisher();
+
     // Prepare json data
     let msg = {
       petitionIntervention: !this.interventionRequired
@@ -330,7 +329,6 @@ export class VideoSessionComponent implements OnInit {
     let user = (this.course.attenders.filter(function (u) { return u.nickName == userName; }))[0];
     return user.picture;
   }
-
 
   /* Video controls */
 
@@ -426,9 +424,6 @@ export class VideoSessionComponent implements OnInit {
   private addVideoTag(stream: Stream) {
     console.log("Stream added");
     this.streams.push(stream);
-    if (this.getJsonFromString(stream.connection.data)['name'] === this.teacherName) {
-      this.streamIndex = this.getStreamIndexByName(this.teacherName);
-    }
   }
 
   private removeVideoTag(stream: Stream) {
@@ -438,18 +433,17 @@ export class VideoSessionComponent implements OnInit {
 
     let ind = this.streams.indexOf(stream);
     this.streams.splice(ind, 1);
-    if (this.getJsonFromString(stream.connection.data)['name'] === this.teacherName) {
+    if (this.getJsonFromString(stream.connection.data).isTeacher) {
       // Removing all streams if the teacher leaves the room
       this.streams = [];
-      this.streamIndex = 0;
       this.studentAccessGranted = false;
       this.myStudentAccessGranted = false;
       this.interventionRequired = false;
     } else {
-      if (this.streamIndex === ind) {
+      if (this.bigStream.connection.connectionId === stream.connection.connectionId) {
         // Back to teacher's stream if an active user leaves the room
-        this.streamIndex = this.getStreamIndexByName(this.teacherName);
         this.studentAccessGranted = false;
+        this.bigStream = this.teacherStream;
       }
     }
 
@@ -465,6 +459,15 @@ export class VideoSessionComponent implements OnInit {
       console.warn(event.stream);
       this.addVideoTag(event.stream);
       this.OVSession.subscribe(event.stream, 'nothing');
+
+      let stream: Stream = event.stream;
+      if (JSON.parse(stream.connection.data).isTeacher) {
+        this.teacherStream = stream;
+        this.bigStream = stream;
+      } else {
+        this.bigStream = stream;
+        this.smallStream = this.teacherStream;
+      }
     });
 
     this.OVSession.on('streamDestroyed', (event) => {
@@ -488,26 +491,9 @@ export class VideoSessionComponent implements OnInit {
         console.log("Connect error"); return console.log(error);
       } else {
           if (this.authenticationService.isTeacher()) {
-            this.OVPublisher = this.OV.initPublisher('nothing');
-          } else {
-            this.OVPublisher = this.OV.initPublisher('nothing', {audioActive:false, videoActive:false});
+            this.initPublisher();
+            this.publish();
           }
-          this.OVPublisher.on('accessAllowed', (event) => {
-            console.warn("ACCESS ALLOWED");
-          });
-          this.OVPublisher.on('accessDenied', (event) => {
-            console.warn("ACCESS DENIED");
-          });
-          this.OVPublisher.on('streamCreated', (event) => {
-            console.warn("STREAM CREATED BY PUBLISHER");
-            console.warn(event.stream);
-            this.addVideoTag(event.stream);
-          });
-          this.OVPublisher.on('videoElementCreated', (event) => {
-            console.warn("VIDEO ELEMENT CREATED BY PUBLISHER");
-            console.warn(event.element);
-          });
-          this.OVSession.publish(this.OVPublisher);
         }
       });
   }
@@ -542,5 +528,40 @@ export class VideoSessionComponent implements OnInit {
           console.warn("Error removing user!");
         }
       );
+  }
+
+  initPublisher() {
+    this.OVPublisher = this.OV.initPublisher('nothing');
+  }
+
+  publish() {
+    this.OVPublisher.on('accessAllowed', (event) => {
+      console.warn("ACCESS ALLOWED");
+    });
+    this.OVPublisher.on('accessDenied', (event) => {
+      console.warn("ACCESS DENIED");
+    });
+    this.OVPublisher.on('streamCreated', (event) => {
+      console.warn("STREAM CREATED BY PUBLISHER");
+      console.warn(event.stream);
+      this.addVideoTag(event.stream);
+
+      let stream: Stream = event.stream;
+      if (JSON.parse(stream.connection.data).isTeacher) {
+        this.teacherStream = stream;
+      } else {
+        this.smallStream = this.teacherStream;
+      }
+      this.bigStream = stream;
+    });
+    this.OVPublisher.on('videoElementCreated', (event) => {
+      console.warn("VIDEO ELEMENT CREATED BY PUBLISHER");
+      console.warn(event.element);
+    });
+    this.OVSession.publish(this.OVPublisher);
+  }
+
+  unpublish() {
+    this.OVSession.unpublish(this.OVPublisher);
   }
 }
