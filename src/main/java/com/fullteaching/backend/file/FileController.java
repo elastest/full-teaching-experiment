@@ -81,8 +81,8 @@ public class FileController {
     private String bucketAWS;
     //ONLY ON PRODUCTION
     
-	private static final Path FILES_FOLDER = Paths.get(System.getProperty("user.dir"), "files");
-	private static final Path PICTURES_FOLDER = Paths.get(System.getProperty("user.dir"), "pictures");
+	public static final Path FILES_FOLDER = Paths.get(System.getProperty("user.dir"), "/assets/files");
+	public static final Path PICTURES_FOLDER = Paths.get(System.getProperty("user.dir"), "/assets/pictures");
 
 	@RequestMapping(value = "/upload/course/{courseId}/file-group/{fileGroupId}", method = RequestMethod.POST)
 	public ResponseEntity<Object> handleFileUpload(
@@ -432,7 +432,7 @@ public class FileController {
 		    Files.delete(path);
 		    System.out.println("LOCAL DELETION: File " + fileName + " deleted successfully");
 		} catch (NoSuchFileException x) {
-		    System.err.format("%s: no such" + " file or directory%n", Paths.get(folder.toString(), fileName));
+		    System.err.format("%s: no such file or directory%n", Paths.get(folder.toString(), fileName));
 		} catch (DirectoryNotEmptyException x) {
 		    System.err.format("%s not empty%n", Paths.get(folder.toString(), fileName));
 		} catch (IOException x) {

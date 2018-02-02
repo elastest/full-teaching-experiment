@@ -28,6 +28,7 @@ import com.fullteaching.backend.course.CourseRepository;
 import com.fullteaching.backend.coursedetails.CourseDetails;
 import com.fullteaching.backend.coursedetails.CourseDetailsRepository;
 import com.fullteaching.backend.file.File;
+import com.fullteaching.backend.file.FileController;
 import com.fullteaching.backend.file.FileRepository;
 import com.fullteaching.backend.security.AuthorizationService;
 
@@ -59,10 +60,7 @@ public class FileGroupController {
 	
     @Value("${aws_namecard_bucket}")
     private String bucketAWS;
-    //ONLY ON PRODUCTION
-	
-	private static final Path FILES_FOLDER = Paths.get(System.getProperty("user.dir"), "files");
-	
+    //ONLY ON PRODUCTION	
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.POST)
 	public ResponseEntity<Object> newFileGroup(@RequestBody FileGroup fileGroup, @PathVariable(value="id") String courseDetailsId) {
@@ -417,12 +415,12 @@ public class FileGroupController {
 	private void deleteStoredFile(String fileName){
 		//Deleting stored file...
 		try {
-			Path path = Paths.get(FILES_FOLDER.toString(), fileName);
+			Path path = Paths.get(FileController.FILES_FOLDER.toString(), fileName);
 		    Files.delete(path);
 		} catch (NoSuchFileException x) {
-		    System.err.format("%s: no such" + " file or directory%n", Paths.get(FILES_FOLDER.toString(), fileName));
+		    System.err.format("%s: no such" + " file or directory%n", Paths.get(FileController.FILES_FOLDER.toString(), fileName));
 		} catch (DirectoryNotEmptyException x) {
-		    System.err.format("%s not empty%n", Paths.get(FILES_FOLDER.toString(), fileName));
+		    System.err.format("%s not empty%n", Paths.get(FileController.FILES_FOLDER.toString(), fileName));
 		} catch (IOException x) {
 		    // File permission problems are caught here.
 		    System.err.println(x);

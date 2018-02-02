@@ -33,9 +33,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 		configureUrlAuthorization(http);
 
-		// Disable CSRF protection (it is difficult to implement with ng2)
-		http.csrf().disable();
-
 		// Use Http Basic Authentication
 		http.httpBasic();
 
@@ -45,6 +42,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	}
 
 	private void configureUrlAuthorization(HttpSecurity http) throws Exception {
+		
+		http.csrf().disable().authorizeRequests().antMatchers("/assets/pictures/*").permitAll();
 
 		// APP: This rules have to be changed by app developer
 
