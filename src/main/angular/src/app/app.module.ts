@@ -11,6 +11,8 @@ import { FileDropDirective }   from 'ng2-file-upload';
 
 import { MaterialModule } from '@angular/material';
 
+import { InterventionAskedPipe }  from './pipes/intervention-asked.pipe';
+
 import { AppComponent }           from './app.component';
 import { NavbarComponent }        from './components/navbar/navbar.component';
 import { FooterComponent }        from './components/footer/footer.component';
@@ -80,6 +82,7 @@ import { ReCaptchaModule }        from 'angular2-recaptcha';
     FileUploaderComponent,
     StreamComponent,
     ChatLineComponent,
+    InterventionAskedPipe
   ],
   providers: [
     AuthenticationService,

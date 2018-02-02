@@ -5,10 +5,10 @@
     <div class="col s12 m12 l12 no-padding-right"><a class="btn-floating btn-large waves-effect waves-light red floating-button" (click)="toggleFullScreen()"><i class="material-icons">{{fullscreenIcon}}</i></a></div>
     <div class="col s12 m12 l12 no-padding-right"><a *ngIf="this.authenticationService.isStudent() && !this.myStudentAccessGranted" class="btn-floating btn-large waves-effect waves-light red floating-button" (click)="askForIntervention()"><i class="material-icons">{{interventionIcon}}</i></a></div>
     <div class="row no-margin" *ngIf="this.authenticationService.isTeacher()">
-      <div *ngFor="let userObject of this.usersIntervention; let i = index" class="col s12 m12 l12 no-padding-right">
-        <a *ngIf="!studentAccessGranted || userObject.accessGranted"  materialize="tooltip" data-position="left" data-delay="65" [attr.data-tooltip]="userObject.user" class="btn-floating btn-large waves-effect floating-button white usr-btn" (click)="grantIntervention(!studentAccessGranted, userObject, i)" [style.border-color]="userObject.color">
-          <i *ngIf="this.studentAccessGranted" class="material-icons" [style.color]="userObject.color">cancel</i>
-          <img *ngIf="!this.studentAccessGranted" class="circle responsive-img" [src]="userObject.picture">
+      <div *ngFor="let userData of this.userData | interventionAskedFilter ; let i = index" class="col s12 m12 l12 no-padding-right">
+        <a *ngIf="!studentAccessGranted || userData.accessGranted"  materialize="tooltip" data-position="left" data-delay="65" [attr.data-tooltip]="userData.name" class="btn-floating btn-large waves-effect floating-button white usr-btn" (click)="grantIntervention(!studentAccessGranted, userData)" [style.border-color]="userData.color">
+          <i *ngIf="this.studentAccessGranted" class="material-icons" [style.color]="userData.color">cancel</i>
+          <img *ngIf="!this.studentAccessGranted" class="circle responsive-img" [src]="userData.picture">
         </a>
       </div>
     </div>
@@ -18,9 +18,9 @@
     <div class="session-title-div">
       <h2 id="session-title">{{this.sessionName}}</h2>
     </div>
-    <div *ngIf="this.streams.length > 0">
-      <stream [stream]="bigStream" [small]="false" [muted]="(this.authenticationService.isTeacher() && !studentAccessGranted) || (!this.authenticationService.isTeacher() && myStudentAccessGranted)"></stream>
-      <stream *ngIf="studentAccessGranted" [stream]="smallStream" [small]="true" [muted]="this.authenticationService.isTeacher()"></stream>
+    <div>
+      <stream *ngIf="bigStream" [stream]="bigStream" [small]="false" [muted]="(this.authenticationService.isTeacher() && !studentAccessGranted) || (!this.authenticationService.isTeacher() && myStudentAccessGranted)"></stream>
+      <stream *ngIf="smallStream && studentAccessGranted" [stream]="smallStream" [small]="true" [muted]="this.authenticationService.isTeacher()"></stream>
     </div>
     <div class="session-bottom-div valign-wrapper" (mouseenter)="this.controlsShown = true"  (mouseleave)="this.controlsShown = false">
       <div id="div-video-control" [class.div-video-control-shown]="this.playPauseIcon==='play_arrow'" [class.fade-in-controls]="this.controlsShown" [class.fade-out-controls]="!this.controlsShown">
@@ -49,7 +49,7 @@
           </div>
         </div>
         <div class="panel">
-          <form (ngSubmit)="sendMessage()">
+          <form (ngSubmit)="sendChatMessage()">
             <input [(ngModel)]="myMessage" type="text" name="message" id="message" placeholder="Message" maxlength="400" autocomplete="off"/>
             <input *ngIf="this.myMessage" type="submit" id="send-btn" class="btn waves-effect button-small" value="Send">
             <a *ngIf="!this.myMessage" id="fake-send-btn" class="btn waves-effect button-small disabled">Send</a>
@@ -59,13 +59,13 @@
 
       <div *ngIf="!showChat">
         <div class="num-attenders-div">
-          <span class="num-connected">{{this.usersConnected.length}}</span>
+          <span class="num-connected">{{this.userData.length}}</span>
            of
            <span class="num-total">{{this.course.attenders.length}}</span>
             attenders connected
         </div>
-        <div *ngFor="let userObject of this.usersConnected" class="attender-name" [style.color]="userObject.userColor">
-          {{userObject.userName}}
+        <div *ngFor="let user of this.userData" class="attender-name" [style.color]="user.color">
+          {{user.name}}
         </div>
       </div>
 

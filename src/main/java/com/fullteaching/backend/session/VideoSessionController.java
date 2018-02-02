@@ -33,6 +33,9 @@ public class VideoSessionController {
 	
 	private Map<Long, io.openvidu.java.client.Session> lessonIdSession = new ConcurrentHashMap<>();
 	private Map<String, Map<Long, String>> sessionIdUserIdToken = new ConcurrentHashMap<>();
+	private Map<String, Integer> sessionIdindexColor = new ConcurrentHashMap<>();
+	
+	private String[] colors = {"#2C3539", "#7D0552", "#2B1B17", "#25383C", "#CD7F32", "#151B54", "#625D5D", "#DAB51B", "#3CB4C7", "#461B7E", "#C12267", "#438D80", "#657383", "#E56717", "#667C26", "#E42217", "#FFA62F", "#254117", "#321640", "#321640", "#173180", "#8C001A", "#4863A0" };
 	
 	private OpenVidu openVidu;
 	String SECRET;
@@ -66,8 +69,9 @@ public class VideoSessionController {
 			String token;
 			JSONObject responseJson = new JSONObject();
 			
-			if (this.lessonIdSession.get(id_i) == null) { // First user connecting to the session. Only the teacher can
-				ResponseEntity<Object> teacherAuthorized = this.checkAuthorization(session, session.getCourse().getTeacher());
+			ResponseEntity<Object> teacherAuthorized = this.checkAuthorization(session, session.getCourse().getTeacher());
+			
+			if (this.lessonIdSession.get(id_i) == null) { // First user connecting to the session (only the teacher can)
 				if (teacherAuthorized != null) { // If the user is not the teacher of the course
 					return teacherAuthorized;
 				} else {
@@ -75,7 +79,7 @@ public class VideoSessionController {
 
 					sessionId = s.getSessionId();
 					token = s.generateToken(new TokenOptions.Builder()
-							.data("{\"name\": \"" + this.user.getLoggedUser().getNickName() + "\", \"isTeacher\": true}")
+							.data("{\"name\": \"" + this.user.getLoggedUser().getNickName() + "\", \"isTeacher\": true, \"color\": \"" + colors[0] + "\"}")
 							.build());
 					
 					responseJson.put(0, sessionId);
@@ -84,6 +88,7 @@ public class VideoSessionController {
 					this.lessonIdSession.put(id_i, s);
 					this.sessionIdUserIdToken.put(s.getSessionId(), new ConcurrentHashMap<>());
 					this.sessionIdUserIdToken.get(s.getSessionId()).put(this.user.getLoggedUser().getId(), token);
+					this.sessionIdindexColor.put(s.getSessionId(), 1);
 					
 					return new ResponseEntity<>(responseJson, HttpStatus.OK);
 				}
@@ -95,13 +100,16 @@ public class VideoSessionController {
 					io.openvidu.java.client.Session s = this.lessonIdSession.get(id_i);
 					sessionId = s.getSessionId();
 					token = s.generateToken(new TokenOptions.Builder()
-							.data("{\"name\": \"" + this.user.getLoggedUser().getNickName() + "\", \"isTeacher\": false}")
+							.data("{\"name\": \"" + this.user.getLoggedUser().getNickName() + "\", \"isTeacher\": " 
+									+ ((teacherAuthorized == null) ? "true" : "false") + ", \"color\": \"" 
+									+ colors[this.sessionIdindexColor.get(s.getSessionId())] + "\"}")
 							.build());
 					
 					responseJson.put(0, sessionId);
 					responseJson.put(1, token);
 					
 					this.sessionIdUserIdToken.get(s.getSessionId()).put(this.user.getLoggedUser().getId(), token);
+					this.sessionIdindexColor.put(s.getSessionId(), this.sessionIdindexColor.get(s.getSessionId()) + 1);
 					
 					return new ResponseEntity<>(responseJson, HttpStatus.OK);
 				}
@@ -136,6 +144,7 @@ public class VideoSessionController {
 						// Last user left the session
 						System.out.println("Session empty and removed");
 						this.lessonIdSession.remove(lessonId);
+						this.sessionIdindexColor.remove(sessionId);
 					}
 					return new ResponseEntity<>(HttpStatus.OK);
 				} else {

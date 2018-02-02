@@ -4,10 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
-import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
-import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 
-import com.fullteaching.backend.chat.ChatHandler;
 import com.fullteaching.backend.security.AuthorizationService;
 
 //ONLY ON PRODUCTION
@@ -24,26 +21,16 @@ import com.amazonaws.services.s3.AmazonS3Client;
 
 @SpringBootApplication
 @EnableWebSocket
-public class Application implements WebSocketConfigurer 
+public class Application 
 {
     public static void main( String[] args )
     {
     	SpringApplication.run(Application.class, args);
     }
-    
-	@Bean
-	public ChatHandler chatHandler() {
-		return new ChatHandler();
-	}
 	
 	@Bean
 	public AuthorizationService authorizationService() {
 		return new AuthorizationService();
-	}
-
-	@Override
-	public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-		registry.addHandler(chatHandler(), "/chat").setAllowedOrigins("*");		
 	}
     
     //ONLY ON PRODUCTION

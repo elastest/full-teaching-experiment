@@ -98,49 +98,51 @@ var AppComponent = /** @class */ (function () {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_ng2_file_upload__ = __webpack_require__("../../../../ng2-file-upload/index.js");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_ng2_file_upload___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_6_ng2_file_upload__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__angular_material__ = __webpack_require__("../../../material/index.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__app_component__ = __webpack_require__("../../../../../src/app/app.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__components_navbar_navbar_component__ = __webpack_require__("../../../../../src/app/components/navbar/navbar.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__components_footer_footer_component__ = __webpack_require__("../../../../../src/app/components/footer/footer.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__components_login_modal_login_modal_component__ = __webpack_require__("../../../../../src/app/components/login-modal/login-modal.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__components_presentation_presentation_component__ = __webpack_require__("../../../../../src/app/components/presentation/presentation.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__components_dashboard_dashboard_component__ = __webpack_require__("../../../../../src/app/components/dashboard/dashboard.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__components_course_details_course_details_component__ = __webpack_require__("../../../../../src/app/components/course-details/course-details.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__components_settings_settings_component__ = __webpack_require__("../../../../../src/app/components/settings/settings.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__components_error_message_error_message_component__ = __webpack_require__("../../../../../src/app/components/error-message/error-message.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__components_comment_comment_component__ = __webpack_require__("../../../../../src/app/components/comment/comment.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__components_file_group_file_group_component__ = __webpack_require__("../../../../../src/app/components/file-group/file-group.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__components_video_session_video_session_component__ = __webpack_require__("../../../../../src/app/components/video-session/video-session.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_20__components_file_uploader_file_uploader_component__ = __webpack_require__("../../../../../src/app/components/file-uploader/file-uploader.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_21__components_video_session_stream_component__ = __webpack_require__("../../../../../src/app/components/video-session/stream.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_22__components_chat_line_chat_line_component__ = __webpack_require__("../../../../../src/app/components/chat-line/chat-line.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_23__services_authentication_service__ = __webpack_require__("../../../../../src/app/services/authentication.service.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_24__services_course_service__ = __webpack_require__("../../../../../src/app/services/course.service.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_25__services_session_service__ = __webpack_require__("../../../../../src/app/services/session.service.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_26__services_forum_service__ = __webpack_require__("../../../../../src/app/services/forum.service.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_27__services_file_service__ = __webpack_require__("../../../../../src/app/services/file.service.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_28__services_course_details_modal_data_service__ = __webpack_require__("../../../../../src/app/services/course-details-modal-data.service.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_29__services_login_modal_service__ = __webpack_require__("../../../../../src/app/services/login-modal.service.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_30__services_uploader_modal_service__ = __webpack_require__("../../../../../src/app/services/uploader-modal.service.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_31__services_user_service__ = __webpack_require__("../../../../../src/app/services/user.service.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_32__services_animation_service__ = __webpack_require__("../../../../../src/app/services/animation.service.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_33__services_video_session_service__ = __webpack_require__("../../../../../src/app/services/video-session.service.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_34__auth_guard__ = __webpack_require__("../../../../../src/app/auth.guard.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_35_angular_calendar__ = __webpack_require__("../../../../angular-calendar/dist/esm/src/index.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_36__components_calendar_calendar_component__ = __webpack_require__("../../../../../src/app/components/calendar/calendar.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_37_time_ago_pipe__ = __webpack_require__("../../../../time-ago-pipe/time-ago-pipe.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_37_time_ago_pipe___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_37_time_ago_pipe__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_38_ng2_dragula_ng2_dragula__ = __webpack_require__("../../../../ng2-dragula/ng2-dragula.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_38_ng2_dragula_ng2_dragula___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_38_ng2_dragula_ng2_dragula__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_39_primeng_components_editor_editor__ = __webpack_require__("../../../../primeng/components/editor/editor.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_39_primeng_components_editor_editor___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_39_primeng_components_editor_editor__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_40_angular2_recaptcha__ = __webpack_require__("../../../../angular2-recaptcha/angular2-recaptcha.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_40_angular2_recaptcha___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_40_angular2_recaptcha__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__pipes_intervention_asked_pipe__ = __webpack_require__("../../../../../src/app/pipes/intervention-asked.pipe.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__app_component__ = __webpack_require__("../../../../../src/app/app.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__components_navbar_navbar_component__ = __webpack_require__("../../../../../src/app/components/navbar/navbar.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__components_footer_footer_component__ = __webpack_require__("../../../../../src/app/components/footer/footer.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__components_login_modal_login_modal_component__ = __webpack_require__("../../../../../src/app/components/login-modal/login-modal.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__components_presentation_presentation_component__ = __webpack_require__("../../../../../src/app/components/presentation/presentation.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__components_dashboard_dashboard_component__ = __webpack_require__("../../../../../src/app/components/dashboard/dashboard.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__components_course_details_course_details_component__ = __webpack_require__("../../../../../src/app/components/course-details/course-details.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__components_settings_settings_component__ = __webpack_require__("../../../../../src/app/components/settings/settings.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__components_error_message_error_message_component__ = __webpack_require__("../../../../../src/app/components/error-message/error-message.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__components_comment_comment_component__ = __webpack_require__("../../../../../src/app/components/comment/comment.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__components_file_group_file_group_component__ = __webpack_require__("../../../../../src/app/components/file-group/file-group.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_20__components_video_session_video_session_component__ = __webpack_require__("../../../../../src/app/components/video-session/video-session.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_21__components_file_uploader_file_uploader_component__ = __webpack_require__("../../../../../src/app/components/file-uploader/file-uploader.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_22__components_video_session_stream_component__ = __webpack_require__("../../../../../src/app/components/video-session/stream.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_23__components_chat_line_chat_line_component__ = __webpack_require__("../../../../../src/app/components/chat-line/chat-line.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_24__services_authentication_service__ = __webpack_require__("../../../../../src/app/services/authentication.service.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_25__services_course_service__ = __webpack_require__("../../../../../src/app/services/course.service.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_26__services_session_service__ = __webpack_require__("../../../../../src/app/services/session.service.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_27__services_forum_service__ = __webpack_require__("../../../../../src/app/services/forum.service.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_28__services_file_service__ = __webpack_require__("../../../../../src/app/services/file.service.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_29__services_course_details_modal_data_service__ = __webpack_require__("../../../../../src/app/services/course-details-modal-data.service.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_30__services_login_modal_service__ = __webpack_require__("../../../../../src/app/services/login-modal.service.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_31__services_uploader_modal_service__ = __webpack_require__("../../../../../src/app/services/uploader-modal.service.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_32__services_user_service__ = __webpack_require__("../../../../../src/app/services/user.service.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_33__services_animation_service__ = __webpack_require__("../../../../../src/app/services/animation.service.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_34__services_video_session_service__ = __webpack_require__("../../../../../src/app/services/video-session.service.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_35__auth_guard__ = __webpack_require__("../../../../../src/app/auth.guard.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_36_angular_calendar__ = __webpack_require__("../../../../angular-calendar/dist/esm/src/index.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_37__components_calendar_calendar_component__ = __webpack_require__("../../../../../src/app/components/calendar/calendar.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_38_time_ago_pipe__ = __webpack_require__("../../../../time-ago-pipe/time-ago-pipe.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_38_time_ago_pipe___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_38_time_ago_pipe__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_39_ng2_dragula_ng2_dragula__ = __webpack_require__("../../../../ng2-dragula/ng2-dragula.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_39_ng2_dragula_ng2_dragula___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_39_ng2_dragula_ng2_dragula__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_40_primeng_components_editor_editor__ = __webpack_require__("../../../../primeng/components/editor/editor.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_40_primeng_components_editor_editor___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_40_primeng_components_editor_editor__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_41_angular2_recaptcha__ = __webpack_require__("../../../../angular2-recaptcha/angular2-recaptcha.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_41_angular2_recaptcha___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_41_angular2_recaptcha__);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+
 
 
 
@@ -195,47 +197,48 @@ var AppModule = /** @class */ (function () {
                 __WEBPACK_IMPORTED_MODULE_5_angular2_materialize__["MaterializeModule"],
                 __WEBPACK_IMPORTED_MODULE_7__angular_material__["a" /* MaterialModule */].forRoot(),
                 __WEBPACK_IMPORTED_MODULE_4__app_routing__["a" /* routing */],
-                __WEBPACK_IMPORTED_MODULE_35_angular_calendar__["CalendarModule"].forRoot(),
-                __WEBPACK_IMPORTED_MODULE_38_ng2_dragula_ng2_dragula__["DragulaModule"],
-                __WEBPACK_IMPORTED_MODULE_39_primeng_components_editor_editor__["EditorModule"],
-                __WEBPACK_IMPORTED_MODULE_40_angular2_recaptcha__["ReCaptchaModule"],
+                __WEBPACK_IMPORTED_MODULE_36_angular_calendar__["CalendarModule"].forRoot(),
+                __WEBPACK_IMPORTED_MODULE_39_ng2_dragula_ng2_dragula__["DragulaModule"],
+                __WEBPACK_IMPORTED_MODULE_40_primeng_components_editor_editor__["EditorModule"],
+                __WEBPACK_IMPORTED_MODULE_41_angular2_recaptcha__["ReCaptchaModule"],
             ],
             declarations: [
-                __WEBPACK_IMPORTED_MODULE_8__app_component__["a" /* AppComponent */],
-                __WEBPACK_IMPORTED_MODULE_12__components_presentation_presentation_component__["a" /* PresentationComponent */],
-                __WEBPACK_IMPORTED_MODULE_13__components_dashboard_dashboard_component__["a" /* DashboardComponent */],
-                __WEBPACK_IMPORTED_MODULE_14__components_course_details_course_details_component__["a" /* CourseDetailsComponent */],
-                __WEBPACK_IMPORTED_MODULE_9__components_navbar_navbar_component__["a" /* NavbarComponent */],
-                __WEBPACK_IMPORTED_MODULE_10__components_footer_footer_component__["a" /* FooterComponent */],
-                __WEBPACK_IMPORTED_MODULE_11__components_login_modal_login_modal_component__["a" /* LoginModalComponent */],
-                __WEBPACK_IMPORTED_MODULE_15__components_settings_settings_component__["a" /* SettingsComponent */],
-                __WEBPACK_IMPORTED_MODULE_16__components_error_message_error_message_component__["a" /* ErrorMessageComponent */],
-                __WEBPACK_IMPORTED_MODULE_17__components_comment_comment_component__["a" /* CommentComponent */],
-                __WEBPACK_IMPORTED_MODULE_18__components_file_group_file_group_component__["a" /* FileGroupComponent */],
-                __WEBPACK_IMPORTED_MODULE_36__components_calendar_calendar_component__["a" /* CalendarComponent */],
-                __WEBPACK_IMPORTED_MODULE_37_time_ago_pipe__["TimeAgoPipe"],
+                __WEBPACK_IMPORTED_MODULE_9__app_component__["a" /* AppComponent */],
+                __WEBPACK_IMPORTED_MODULE_13__components_presentation_presentation_component__["a" /* PresentationComponent */],
+                __WEBPACK_IMPORTED_MODULE_14__components_dashboard_dashboard_component__["a" /* DashboardComponent */],
+                __WEBPACK_IMPORTED_MODULE_15__components_course_details_course_details_component__["a" /* CourseDetailsComponent */],
+                __WEBPACK_IMPORTED_MODULE_10__components_navbar_navbar_component__["a" /* NavbarComponent */],
+                __WEBPACK_IMPORTED_MODULE_11__components_footer_footer_component__["a" /* FooterComponent */],
+                __WEBPACK_IMPORTED_MODULE_12__components_login_modal_login_modal_component__["a" /* LoginModalComponent */],
+                __WEBPACK_IMPORTED_MODULE_16__components_settings_settings_component__["a" /* SettingsComponent */],
+                __WEBPACK_IMPORTED_MODULE_17__components_error_message_error_message_component__["a" /* ErrorMessageComponent */],
+                __WEBPACK_IMPORTED_MODULE_18__components_comment_comment_component__["a" /* CommentComponent */],
+                __WEBPACK_IMPORTED_MODULE_19__components_file_group_file_group_component__["a" /* FileGroupComponent */],
+                __WEBPACK_IMPORTED_MODULE_37__components_calendar_calendar_component__["a" /* CalendarComponent */],
+                __WEBPACK_IMPORTED_MODULE_38_time_ago_pipe__["TimeAgoPipe"],
                 __WEBPACK_IMPORTED_MODULE_6_ng2_file_upload__["FileSelectDirective"],
                 __WEBPACK_IMPORTED_MODULE_6_ng2_file_upload__["FileDropDirective"],
-                __WEBPACK_IMPORTED_MODULE_19__components_video_session_video_session_component__["a" /* VideoSessionComponent */],
-                __WEBPACK_IMPORTED_MODULE_20__components_file_uploader_file_uploader_component__["a" /* FileUploaderComponent */],
-                __WEBPACK_IMPORTED_MODULE_21__components_video_session_stream_component__["a" /* StreamComponent */],
-                __WEBPACK_IMPORTED_MODULE_22__components_chat_line_chat_line_component__["a" /* ChatLineComponent */],
+                __WEBPACK_IMPORTED_MODULE_20__components_video_session_video_session_component__["a" /* VideoSessionComponent */],
+                __WEBPACK_IMPORTED_MODULE_21__components_file_uploader_file_uploader_component__["a" /* FileUploaderComponent */],
+                __WEBPACK_IMPORTED_MODULE_22__components_video_session_stream_component__["a" /* StreamComponent */],
+                __WEBPACK_IMPORTED_MODULE_23__components_chat_line_chat_line_component__["a" /* ChatLineComponent */],
+                __WEBPACK_IMPORTED_MODULE_8__pipes_intervention_asked_pipe__["a" /* InterventionAskedPipe */]
             ],
             providers: [
-                __WEBPACK_IMPORTED_MODULE_23__services_authentication_service__["a" /* AuthenticationService */],
-                __WEBPACK_IMPORTED_MODULE_24__services_course_service__["a" /* CourseService */],
-                __WEBPACK_IMPORTED_MODULE_25__services_session_service__["a" /* SessionService */],
-                __WEBPACK_IMPORTED_MODULE_26__services_forum_service__["a" /* ForumService */],
-                __WEBPACK_IMPORTED_MODULE_27__services_file_service__["a" /* FileService */],
-                __WEBPACK_IMPORTED_MODULE_28__services_course_details_modal_data_service__["a" /* CourseDetailsModalDataService */],
-                __WEBPACK_IMPORTED_MODULE_29__services_login_modal_service__["a" /* LoginModalService */],
-                __WEBPACK_IMPORTED_MODULE_30__services_uploader_modal_service__["a" /* UploaderModalService */],
-                __WEBPACK_IMPORTED_MODULE_31__services_user_service__["a" /* UserService */],
-                __WEBPACK_IMPORTED_MODULE_32__services_animation_service__["a" /* AnimationService */],
-                __WEBPACK_IMPORTED_MODULE_33__services_video_session_service__["a" /* VideoSessionService */],
-                __WEBPACK_IMPORTED_MODULE_34__auth_guard__["a" /* AuthGuard */],
+                __WEBPACK_IMPORTED_MODULE_24__services_authentication_service__["a" /* AuthenticationService */],
+                __WEBPACK_IMPORTED_MODULE_25__services_course_service__["a" /* CourseService */],
+                __WEBPACK_IMPORTED_MODULE_26__services_session_service__["a" /* SessionService */],
+                __WEBPACK_IMPORTED_MODULE_27__services_forum_service__["a" /* ForumService */],
+                __WEBPACK_IMPORTED_MODULE_28__services_file_service__["a" /* FileService */],
+                __WEBPACK_IMPORTED_MODULE_29__services_course_details_modal_data_service__["a" /* CourseDetailsModalDataService */],
+                __WEBPACK_IMPORTED_MODULE_30__services_login_modal_service__["a" /* LoginModalService */],
+                __WEBPACK_IMPORTED_MODULE_31__services_uploader_modal_service__["a" /* UploaderModalService */],
+                __WEBPACK_IMPORTED_MODULE_32__services_user_service__["a" /* UserService */],
+                __WEBPACK_IMPORTED_MODULE_33__services_animation_service__["a" /* AnimationService */],
+                __WEBPACK_IMPORTED_MODULE_34__services_video_session_service__["a" /* VideoSessionService */],
+                __WEBPACK_IMPORTED_MODULE_35__auth_guard__["a" /* AuthGuard */],
             ],
-            bootstrap: [__WEBPACK_IMPORTED_MODULE_8__app_component__["a" /* AppComponent */]]
+            bootstrap: [__WEBPACK_IMPORTED_MODULE_9__app_component__["a" /* AppComponent */]]
         })
     ], AppModule);
     return AppModule;
@@ -2899,7 +2902,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/components/video-session/video-session.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div id=\"video-session-div\">\n\n  <a id=\"side-menu-button\" materialize=\"sideNav\" data-activates=\"slide-out\" [materializeParams]=\"[{draggable: false}]\"><i id=\"fixed-icon\" class=\"material-icons video-icon\" (onclick)=\"document.getElementsByTagName('body')[0].style.overflowY = 'hidden'\">menu</i></a>\n  <div id=\"div-header-buttons\" class=\"row no-margin\">\n    <div class=\"col s12 m12 l12 no-padding-right\"><a class=\"btn-floating btn-large waves-effect waves-light red floating-button\" (click)=\"toggleFullScreen()\"><i class=\"material-icons\">{{fullscreenIcon}}</i></a></div>\n    <div class=\"col s12 m12 l12 no-padding-right\"><a *ngIf=\"this.authenticationService.isStudent() && !this.myStudentAccessGranted\" class=\"btn-floating btn-large waves-effect waves-light red floating-button\" (click)=\"askForIntervention()\"><i class=\"material-icons\">{{interventionIcon}}</i></a></div>\n    <div class=\"row no-margin\" *ngIf=\"this.authenticationService.isTeacher()\">\n      <div *ngFor=\"let userObject of this.usersIntervention; let i = index\" class=\"col s12 m12 l12 no-padding-right\">\n        <a *ngIf=\"!studentAccessGranted || userObject.accessGranted\"  materialize=\"tooltip\" data-position=\"left\" data-delay=\"65\" [attr.data-tooltip]=\"userObject.user\" class=\"btn-floating btn-large waves-effect floating-button white usr-btn\" (click)=\"grantIntervention(!studentAccessGranted, userObject, i)\" [style.border-color]=\"userObject.color\">\n          <i *ngIf=\"this.studentAccessGranted\" class=\"material-icons\" [style.color]=\"userObject.color\">cancel</i>\n          <img *ngIf=\"!this.studentAccessGranted\" class=\"circle responsive-img\" [src]=\"userObject.picture\">\n        </a>\n      </div>\n    </div>\n  </div>\n\n  <div *ngIf=\"OVSession\">\n    <div class=\"session-title-div\">\n      <h2 id=\"session-title\">{{this.sessionName}}</h2>\n    </div>\n    <div *ngIf=\"this.streams.length > 0\">\n      <stream [stream]=\"bigStream\" [small]=\"false\" [muted]=\"(this.authenticationService.isTeacher() && !studentAccessGranted) || (!this.authenticationService.isTeacher() && myStudentAccessGranted)\"></stream>\n      <stream *ngIf=\"studentAccessGranted\" [stream]=\"smallStream\" [small]=\"true\" [muted]=\"this.authenticationService.isTeacher()\"></stream>\n    </div>\n    <div class=\"session-bottom-div valign-wrapper\" (mouseenter)=\"this.controlsShown = true\"  (mouseleave)=\"this.controlsShown = false\">\n      <div id=\"div-video-control\" [class.div-video-control-shown]=\"this.playPauseIcon==='play_arrow'\" [class.fade-in-controls]=\"this.controlsShown\" [class.fade-out-controls]=\"!this.controlsShown\">\n        <div class=\"box-video-control\">\n          <a class=\"btn-floating waves-effect video-control\" (click)=\"togglePlayPause()\">\n            <i class=\"material-icons video-control-icon\">{{this.playPauseIcon}}</i>\n          </a>\n          <a class=\"btn-floating waves-effect video-control\" (click)=\"toggleMute()\">\n            <i class=\"material-icons video-control-icon\">{{this.volumeMuteIcon}}</i>\n          </a>\n          <input id=\"slider-volume\" name=\"slider-volume\" type=\"range\" min=\"0\" max=\"1\" step=\"0.01\" [(ngModel)]=\"this.volumeLevel\" (ngModelChange)=\"changeVolume($event)\"/>\n        </div>\n      </div>\n    </div>\n  </div>\n\n  <ul id=\"slide-out\" class=\"side-nav\">\n    <i (click)=\"this.exitFromSession()\" id=\"exit-icon\" class=\"right material-icons video-icon\" [title]=\"'Exit'\">exit_to_app</i>\n    <i (click)=\"changeShowChat()\" id=\"show-chat-icon\" class=\"left material-icons video-icon\">{{this.showChatIcon}}</i>\n    <div class=\"chat_wrapper\">\n\n      <div *ngIf=\"showChat\" id=\"message-box-cont\">\n        <div class=\"message_box\" id=\"message_box\">\n          <div *ngFor=\"let chatline of this.chatLines\">\n            <app-chat-line [chatLine]=\"chatline\"></app-chat-line>\n          </div>\n        </div>\n        <div class=\"panel\">\n          <form (ngSubmit)=\"sendMessage()\">\n            <input [(ngModel)]=\"myMessage\" type=\"text\" name=\"message\" id=\"message\" placeholder=\"Message\" maxlength=\"400\" autocomplete=\"off\"/>\n            <input *ngIf=\"this.myMessage\" type=\"submit\" id=\"send-btn\" class=\"btn waves-effect button-small\" value=\"Send\">\n            <a *ngIf=\"!this.myMessage\" id=\"fake-send-btn\" class=\"btn waves-effect button-small disabled\">Send</a>\n          </form>\n        </div>\n      </div>\n\n      <div *ngIf=\"!showChat\">\n        <div class=\"num-attenders-div\">\n          <span class=\"num-connected\">{{this.usersConnected.length}}</span>\n           of\n           <span class=\"num-total\">{{this.course.attenders.length}}</span>\n            attenders connected\n        </div>\n        <div *ngFor=\"let userObject of this.usersConnected\" class=\"attender-name\" [style.color]=\"userObject.userColor\">\n          {{userObject.userName}}\n        </div>\n      </div>\n\n    </div>\n  </ul>\n\n</div>\n"
+module.exports = "<div id=\"video-session-div\">\n\n  <a id=\"side-menu-button\" materialize=\"sideNav\" data-activates=\"slide-out\" [materializeParams]=\"[{draggable: false}]\"><i id=\"fixed-icon\" class=\"material-icons video-icon\" (onclick)=\"document.getElementsByTagName('body')[0].style.overflowY = 'hidden'\">menu</i></a>\n  <div id=\"div-header-buttons\" class=\"row no-margin\">\n    <div class=\"col s12 m12 l12 no-padding-right\"><a class=\"btn-floating btn-large waves-effect waves-light red floating-button\" (click)=\"toggleFullScreen()\"><i class=\"material-icons\">{{fullscreenIcon}}</i></a></div>\n    <div class=\"col s12 m12 l12 no-padding-right\"><a *ngIf=\"this.authenticationService.isStudent() && !this.myStudentAccessGranted\" class=\"btn-floating btn-large waves-effect waves-light red floating-button\" (click)=\"askForIntervention()\"><i class=\"material-icons\">{{interventionIcon}}</i></a></div>\n    <div class=\"row no-margin\" *ngIf=\"this.authenticationService.isTeacher()\">\n      <div *ngFor=\"let userData of this.userData | interventionAskedFilter ; let i = index\" class=\"col s12 m12 l12 no-padding-right\">\n        <a *ngIf=\"!studentAccessGranted || userData.accessGranted\"  materialize=\"tooltip\" data-position=\"left\" data-delay=\"65\" [attr.data-tooltip]=\"userData.name\" class=\"btn-floating btn-large waves-effect floating-button white usr-btn\" (click)=\"grantIntervention(!studentAccessGranted, userData)\" [style.border-color]=\"userData.color\">\n          <i *ngIf=\"this.studentAccessGranted\" class=\"material-icons\" [style.color]=\"userData.color\">cancel</i>\n          <img *ngIf=\"!this.studentAccessGranted\" class=\"circle responsive-img\" [src]=\"userData.picture\">\n        </a>\n      </div>\n    </div>\n  </div>\n\n  <div *ngIf=\"OVSession\">\n    <div class=\"session-title-div\">\n      <h2 id=\"session-title\">{{this.sessionName}}</h2>\n    </div>\n    <div>\n      <stream *ngIf=\"bigStream\" [stream]=\"bigStream\" [small]=\"false\" [muted]=\"(this.authenticationService.isTeacher() && !studentAccessGranted) || (!this.authenticationService.isTeacher() && myStudentAccessGranted)\"></stream>\n      <stream *ngIf=\"smallStream && studentAccessGranted\" [stream]=\"smallStream\" [small]=\"true\" [muted]=\"this.authenticationService.isTeacher()\"></stream>\n    </div>\n    <div class=\"session-bottom-div valign-wrapper\" (mouseenter)=\"this.controlsShown = true\"  (mouseleave)=\"this.controlsShown = false\">\n      <div id=\"div-video-control\" [class.div-video-control-shown]=\"this.playPauseIcon==='play_arrow'\" [class.fade-in-controls]=\"this.controlsShown\" [class.fade-out-controls]=\"!this.controlsShown\">\n        <div class=\"box-video-control\">\n          <a class=\"btn-floating waves-effect video-control\" (click)=\"togglePlayPause()\">\n            <i class=\"material-icons video-control-icon\">{{this.playPauseIcon}}</i>\n          </a>\n          <a class=\"btn-floating waves-effect video-control\" (click)=\"toggleMute()\">\n            <i class=\"material-icons video-control-icon\">{{this.volumeMuteIcon}}</i>\n          </a>\n          <input id=\"slider-volume\" name=\"slider-volume\" type=\"range\" min=\"0\" max=\"1\" step=\"0.01\" [(ngModel)]=\"this.volumeLevel\" (ngModelChange)=\"changeVolume($event)\"/>\n        </div>\n      </div>\n    </div>\n  </div>\n\n  <ul id=\"slide-out\" class=\"side-nav\">\n    <i (click)=\"this.exitFromSession()\" id=\"exit-icon\" class=\"right material-icons video-icon\" [title]=\"'Exit'\">exit_to_app</i>\n    <i (click)=\"changeShowChat()\" id=\"show-chat-icon\" class=\"left material-icons video-icon\">{{this.showChatIcon}}</i>\n    <div class=\"chat_wrapper\">\n\n      <div *ngIf=\"showChat\" id=\"message-box-cont\">\n        <div class=\"message_box\" id=\"message_box\">\n          <div *ngFor=\"let chatline of this.chatLines\">\n            <app-chat-line [chatLine]=\"chatline\"></app-chat-line>\n          </div>\n        </div>\n        <div class=\"panel\">\n          <form (ngSubmit)=\"sendChatMessage()\">\n            <input [(ngModel)]=\"myMessage\" type=\"text\" name=\"message\" id=\"message\" placeholder=\"Message\" maxlength=\"400\" autocomplete=\"off\"/>\n            <input *ngIf=\"this.myMessage\" type=\"submit\" id=\"send-btn\" class=\"btn waves-effect button-small\" value=\"Send\">\n            <a *ngIf=\"!this.myMessage\" id=\"fake-send-btn\" class=\"btn waves-effect button-small disabled\">Send</a>\n          </form>\n        </div>\n      </div>\n\n      <div *ngIf=\"!showChat\">\n        <div class=\"num-attenders-div\">\n          <span class=\"num-connected\">{{this.userData.length}}</span>\n           of\n           <span class=\"num-total\">{{this.course.attenders.length}}</span>\n            attenders connected\n        </div>\n        <div *ngFor=\"let user of this.userData\" class=\"attender-name\" [style.color]=\"user.color\">\n          {{user.name}}\n        </div>\n      </div>\n\n    </div>\n  </ul>\n\n</div>\n"
 
 /***/ }),
 
@@ -2913,11 +2916,11 @@ module.exports = "<div id=\"video-session-div\">\n\n  <a id=\"side-menu-button\"
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__angular_common__ = __webpack_require__("../../../common/index.js");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_openvidu_browser__ = __webpack_require__("../../../../openvidu-browser/lib/OpenVidu/index.js");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_openvidu_browser___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_openvidu_browser__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__environments_environment__ = __webpack_require__("../../../../../src/environments/environment.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__classes_chatline__ = __webpack_require__("../../../../../src/app/classes/chatline.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__services_authentication_service__ = __webpack_require__("../../../../../src/app/services/authentication.service.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__services_video_session_service__ = __webpack_require__("../../../../../src/app/services/video-session.service.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__services_animation_service__ = __webpack_require__("../../../../../src/app/services/animation.service.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__classes_chatline__ = __webpack_require__("../../../../../src/app/classes/chatline.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__services_authentication_service__ = __webpack_require__("../../../../../src/app/services/authentication.service.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__services_video_session_service__ = __webpack_require__("../../../../../src/app/services/video-session.service.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__services_animation_service__ = __webpack_require__("../../../../../src/app/services/animation.service.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__pipes_intervention_asked_pipe__ = __webpack_require__("../../../../../src/app/pipes/intervention-asked.pipe.ts");
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -2944,8 +2947,6 @@ var VideoSessionComponent = /** @class */ (function () {
         this.animationService = animationService;
         this.route = route;
         this.location = location;
-        this.usersConnected = [];
-        this.usersIntervention = [];
         this.showChat = true;
         this.chatLines = [];
         this.interventionRequired = false;
@@ -2957,12 +2958,11 @@ var VideoSessionComponent = /** @class */ (function () {
         this.fullscreenIcon = "fullscreen";
         this.playPauseIcon = "pause";
         this.volumeMuteIcon = "volume_up";
-        // Session
-        this.streams = [];
+        this.OVConnections = [];
+        this.userData = [];
         this.user = this.authenticationService.getCurrentUser();
         this.mySession = this.videoSessionService.session;
         this.course = this.videoSessionService.course;
-        this.teacherName = this.course.teacher.nickName;
         // Getting the session id from the url
         this.route.params.forEach(function (params) {
             var id = +params['id'];
@@ -2979,140 +2979,7 @@ var VideoSessionComponent = /** @class */ (function () {
         document.getElementsByTagName('body')[0].style.overflowY = 'hidden';
     };
     VideoSessionComponent.prototype.ngOnInit = function () {
-        var _this = this;
         this.getParamsAndJoin();
-        var wsUri = __WEBPACK_IMPORTED_MODULE_4__environments_environment__["a" /* environment */].CHAT_URL;
-        //this.websocket = new WebSocket(wsUri);
-        this.websocket = new WebSocket("wss://" + window.location.hostname + ":" + window.location.port + "/chat");
-        this.websocket.onopen = function (event) {
-            // New welcome chat line
-            _this.chatLines.push(new __WEBPACK_IMPORTED_MODULE_5__classes_chatline__["a" /* Chatline */]('system-msg', null, null, "Connected!", null)); // Notify user
-            // Prepare json data
-            var msg = {
-                chat: 'Chat-Session-' + _this.mySessionId,
-                user: _this.user.nickName,
-                teacher: _this.teacherName
-            };
-            // Convert and send data to server
-            _this.websocket.send(JSON.stringify(msg));
-        };
-        this.websocket.onmessage = function (ev) {
-            var msg = JSON.parse(ev.data); // PHP sends Json data
-            var type = msg.type; // Message type
-            var umsg = msg.message; // Message text
-            var uname = msg.name; // User name
-            var ucolor = msg.color; // Color
-            if (type == 'system') {
-                // New system chat line
-                _this.chatLines.push(new __WEBPACK_IMPORTED_MODULE_5__classes_chatline__["a" /* Chatline */]('system-msg', null, null, umsg, null));
-                _this.animationService.animateToBottom('#message_box', 500);
-            }
-            else if (type == 'system-users') {
-                // Users connected message received
-                var jsonObject = JSON.parse(umsg);
-                console.log("USERS CONNECTED:");
-                console.log(jsonObject);
-                _this.usersConnected = [];
-                if (jsonObject.hasOwnProperty('UserNameList')) {
-                    var objectY = void 0;
-                    for (var j = 0; j < jsonObject.UserNameList.length; j++) {
-                        objectY = jsonObject.UserNameList[j];
-                        // Add the URL picture of the user
-                        objectY["picture"] = _this.getPhotoByName(objectY.userName);
-                        console.log(objectY);
-                        _this.usersConnected.push(objectY);
-                    }
-                }
-            }
-            else if ((type == 'system-intervention') && (_this.authenticationService.isTeacher())) {
-                // User's petition for intervention received
-                var jsonObject = JSON.parse(umsg);
-                console.log("USER PETITION:");
-                console.log(jsonObject);
-                if (jsonObject.hasOwnProperty('petition')) {
-                    if (jsonObject.petition) {
-                        // Add new user's petition
-                        jsonObject["accessGranted"] = false;
-                        jsonObject["picture"] = _this.getPhotoByName(jsonObject.user);
-                        _this.usersIntervention.push(jsonObject);
-                    }
-                    else {
-                        // Remove user's petition
-                        var index = _this.usersIntervention.map(function (u) { return u.user; }).indexOf(jsonObject.user);
-                        if (index !== -1) {
-                            _this.usersIntervention.splice(index, 1);
-                        }
-                    }
-                }
-                //FIXME: There is repeated code down here cause this is the foundation for the future updates and bug fixes
-            }
-            else if (type == 'system-grant-intervention') {
-                // Teacher's intervention granted received by student
-                var jsonObject = JSON.parse(umsg);
-                console.log("TEACHER INTERVENTION GRANTED:");
-                console.log(jsonObject);
-                if (_this.authenticationService.isStudent()) {
-                    if (jsonObject.hasOwnProperty('accessGranted')) {
-                        // For the granted student
-                        if (_this.user.nickName == jsonObject.user) {
-                            console.log("ACCESS GRANTED FOR USER: " + jsonObject.user);
-                            if (jsonObject.accessGranted) {
-                                // Publish
-                                _this.publish();
-                                _this.studentAccessGranted = true;
-                                _this.myStudentAccessGranted = true;
-                            }
-                            else {
-                                // Unpublish
-                                _this.unpublish();
-                                _this.bigStream = _this.teacherStream;
-                                _this.studentAccessGranted = false;
-                                _this.myStudentAccessGranted = false;
-                                // Invert intervention request
-                                _this.interventionRequired = !_this.interventionRequired;
-                                // Change intervention icon
-                                _this.interventionIcon = (_this.interventionRequired ? 'cancel' : 'record_voice_over');
-                            }
-                        }
-                        else {
-                            if (jsonObject.accessGranted) {
-                                _this.studentAccessGranted = true;
-                            }
-                            else {
-                                _this.studentAccessGranted = false;
-                                _this.bigStream = _this.teacherStream;
-                            }
-                        }
-                    }
-                }
-                else if (_this.authenticationService.isTeacher()) {
-                    // For the teacher
-                    if (jsonObject.accessGranted) {
-                        _this.studentAccessGranted = true;
-                    }
-                    else {
-                        _this.studentAccessGranted = false;
-                        _this.bigStream = _this.teacherStream;
-                    }
-                }
-            }
-            else {
-                var classUserMsg = (uname === _this.user.nickName ? "own-msg" : "stranger-msg");
-                // New user chat line
-                _this.chatLines.push(new __WEBPACK_IMPORTED_MODULE_5__classes_chatline__["a" /* Chatline */](classUserMsg, uname, _this.getPhotoByName(uname), umsg, ucolor));
-                _this.animationService.animateToBottom('#message_box', 500);
-            }
-        };
-        this.websocket.onerror = function (ev) {
-            // New system error chat line
-            _this.chatLines.push(new __WEBPACK_IMPORTED_MODULE_5__classes_chatline__["a" /* Chatline */]('system-err', null, null, 'Error Occurred - ' + ev.type, null));
-            _this.animationService.animateToBottom('#message_box', 500);
-        };
-        this.websocket.onclose = function (ev) {
-            // New system close chat line
-            _this.chatLines.push(new __WEBPACK_IMPORTED_MODULE_5__classes_chatline__["a" /* Chatline */]('system-msg', null, null, 'Connection Closed', null));
-            _this.animationService.animateToBottom('#message_box', 500);
-        };
         // Deletes the draggable element for the side menu (external to the menu itself in the DOM), avoiding memory leak
         $("div.drag-target").remove();
         this.volumeLevel = 1;
@@ -3124,14 +2991,12 @@ var VideoSessionComponent = /** @class */ (function () {
         $("#sidenav-overlay").remove();
         document.getElementsByTagName('body')[0].style.overflowY = 'initial';
     };
-    VideoSessionComponent.prototype.sendMessage = function () {
-        // Prepare JSON data
-        var msg = {
-            message: this.myMessage,
-            user: this.user.nickName
-        };
-        // Convert and send data to server
-        this.websocket.send(JSON.stringify(msg));
+    VideoSessionComponent.prototype.sendChatMessage = function () {
+        this.OVSession.signal({
+            type: 'chat',
+            to: [],
+            data: this.myMessage
+        });
         this.myMessage = "";
     };
     VideoSessionComponent.prototype.exitFromSession = function () {
@@ -3144,45 +3009,42 @@ var VideoSessionComponent = /** @class */ (function () {
         this.showChatIcon = (this.showChat ? 'supervisor_account' : 'chat');
     };
     VideoSessionComponent.prototype.askForIntervention = function () {
+        var _this = this;
         // Request camera
         this.initPublisher();
-        // Prepare json data
-        var msg = {
-            petitionIntervention: !this.interventionRequired
-        };
-        // Convert and send petition to server
-        this.websocket.send(JSON.stringify(msg));
-        // Invert intervention request
-        this.interventionRequired = !this.interventionRequired;
-        // Change intervention icon
-        this.interventionIcon = (this.interventionRequired ? 'cancel' : 'record_voice_over');
+        this.OVPublisher.on('accessAllowed', function (event) {
+            console.warn("ACCESS ALLOWED");
+            var msg = {
+                interventionRequired: !_this.interventionRequired
+            };
+            _this.OVSession.signal({
+                type: 'askIntervention',
+                to: [_this.teacherConnection],
+                data: JSON.stringify(msg)
+            });
+            // Invert intervention request
+            _this.interventionRequired = !_this.interventionRequired;
+            // Change intervention icon
+            _this.interventionIcon = (_this.interventionRequired ? 'cancel' : 'record_voice_over');
+        });
+        this.OVPublisher.on('accessDenied', function (event) {
+            console.error("ACCESS DENIED");
+        });
     };
-    VideoSessionComponent.prototype.grantIntervention = function (grant, userObject, i) {
-        // Prepare json data
-        var msg = {
-            accessGranted: grant,
-            user: userObject.user
-        };
-        // Convert and send petition to server
-        this.websocket.send(JSON.stringify(msg));
-        // Change control variable and user granted icon
-        this.usersIntervention[i].accessGranted = grant;
-        this.studentAccessGranted = grant;
-        if (!this.studentAccessGranted) {
-            // User connection terminated by teacher
-            this.usersIntervention.splice(i, 1);
-        }
-    };
-    VideoSessionComponent.prototype.getJsonFromString = function (str) {
-        return JSON.parse(str);
-    };
-    VideoSessionComponent.prototype.getStreamIndexByName = function (name) {
-        for (var i = 0; i < this.streams.length; i++) {
-            if (this.getJsonFromString(this.streams[i].connection.data)['name'] === name) {
-                return i;
+    VideoSessionComponent.prototype.grantIntervention = function (grant, userData) {
+        this.OVSession.signal({
+            type: 'grantIntervention',
+            to: this.OVConnections.filter(function (connection) { return JSON.parse(connection.data).name === userData.name; }),
+            data: grant.toString()
+        });
+        // Set 'accessGranted' property of proper userData to 'grant' value
+        this.userData.map(function (u) {
+            if (u.name === userData.name) {
+                u.accessGranted = grant;
+                u.interventionRequired = grant;
             }
-        }
-        return -1;
+        });
+        this.studentAccessGranted = grant;
     };
     VideoSessionComponent.prototype.getPhotoByName = function (userName) {
         var user = (this.course.attenders.filter(function (u) { return u.nickName == userName; }))[0];
@@ -3279,32 +3141,6 @@ var VideoSessionComponent = /** @class */ (function () {
         this.sessionName = this.mySession.title;
         this.participantName = this.user.nickName;
     };
-    VideoSessionComponent.prototype.addVideoTag = function (stream) {
-        console.log("Stream added");
-        this.streams.push(stream);
-    };
-    VideoSessionComponent.prototype.removeVideoTag = function (stream) {
-        console.log("Stream removed");
-        console.log(this.streams.indexOf(stream));
-        console.log(this.streams.length);
-        var ind = this.streams.indexOf(stream);
-        this.streams.splice(ind, 1);
-        if (this.getJsonFromString(stream.connection.data).isTeacher) {
-            // Removing all streams if the teacher leaves the room
-            this.streams = [];
-            this.studentAccessGranted = false;
-            this.myStudentAccessGranted = false;
-            this.interventionRequired = false;
-        }
-        else {
-            if (this.bigStream.connection.connectionId === stream.connection.connectionId) {
-                // Back to teacher's stream if an active user leaves the room
-                this.studentAccessGranted = false;
-                this.bigStream = this.teacherStream;
-            }
-        }
-        console.log(this.streams.length);
-    };
     VideoSessionComponent.prototype.joinSession = function () {
         var _this = this;
         this.OV = new __WEBPACK_IMPORTED_MODULE_3_openvidu_browser__["OpenVidu"]();
@@ -3312,31 +3148,133 @@ var VideoSessionComponent = /** @class */ (function () {
         this.OVSession.on('streamCreated', function (event) {
             console.warn("STREAM CREATED");
             console.warn(event.stream);
-            _this.addVideoTag(event.stream);
             _this.OVSession.subscribe(event.stream, 'nothing');
             var stream = event.stream;
             if (JSON.parse(stream.connection.data).isTeacher) {
+                // Teacher's stream
                 _this.teacherStream = stream;
-                _this.bigStream = stream;
+                if (_this.studentAccessGranted) {
+                    // There's a student publishing: setup the 2 videos
+                    _this.smallStream = stream;
+                }
+                else {
+                    // There's no student publishing: setup only big video for the teacher
+                    _this.bigStream = stream;
+                }
             }
             else {
+                // A student stream
                 _this.bigStream = stream;
                 _this.smallStream = _this.teacherStream;
+                _this.studentAccessGranted = true;
             }
         });
         this.OVSession.on('streamDestroyed', function (event) {
             console.warn("STREAM DESTROYED");
             console.warn(event.stream);
-            _this.removeVideoTag(event.stream);
+            var stream = event.stream;
+            if (JSON.parse(stream.connection.data).isTeacher) {
+                // Removing all streams if the teacher leaves the room
+                if (_this.myStudentAccessGranted) {
+                    _this.unpublish();
+                }
+                delete _this.bigStream;
+                delete _this.smallStream;
+                _this.studentAccessGranted = false;
+                _this.myStudentAccessGranted = false;
+                _this.interventionRequired = false;
+                _this.interventionIcon = 'record_voice_over';
+            }
+            else {
+                if (_this.bigStream.connection.connectionId === stream.connection.connectionId) {
+                    // Back to teacher's stream if an active user leaves the room
+                    _this.studentAccessGranted = false;
+                    _this.bigStream = _this.teacherStream;
+                }
+            }
         });
         this.OVSession.on('connectionCreated', function (event) {
             console.warn("CONNECTION CREATED");
             console.warn(event.connection);
+            if (event.connection === _this.OVSession.connection) {
+                _this.chatLines.push(new __WEBPACK_IMPORTED_MODULE_4__classes_chatline__["a" /* Chatline */]('system-msg', null, null, "Connected!", null));
+            }
+            else {
+                if (JSON.parse(event.connection.data).isTeacher) {
+                    _this.teacherConnection = event.connection;
+                }
+                _this.chatLines.push(new __WEBPACK_IMPORTED_MODULE_4__classes_chatline__["a" /* Chatline */]('system-msg', null, null, JSON.parse(event.connection.data).name + " has connected!", null));
+            }
+            _this.OVConnections.push(event.connection);
+            var uData = JSON.parse(event.connection.data);
+            uData.picture = _this.getPhotoByName(uData.name);
+            _this.userData.push(uData);
         });
         this.OVSession.on('connectionDestroyed', function (event) {
             console.warn("CONNECTION DESTROYED");
             console.warn(event.connection);
+            // Remove Connection
+            var i1 = _this.OVConnections.indexOf(event.connection);
+            if (i1 !== -1) {
+                _this.OVConnections.splice(i1, 1);
+                _this.chatLines.push(new __WEBPACK_IMPORTED_MODULE_4__classes_chatline__["a" /* Chatline */]('system-msg', null, null, JSON.parse(event.connection.data).name + " has disconnected!", null));
+            }
+            // Remove UserData
+            var i2 = _this.userData.map(function (data) { return data.name; }).indexOf(JSON.parse(event.connection.data).name);
+            if (i2 !== -1) {
+                _this.userData.splice(i2, 1);
+            }
         });
+        // Signals
+        this.OVSession.on('signal:chat', function (msg) {
+            var uData = _this.userData.filter(function (d) { return d.name === JSON.parse(msg.from.data).name; })[0];
+            var classUserMsg = (uData.name === JSON.parse(_this.OVSession.connection.data).name ? "own-msg" : "stranger-msg");
+            _this.chatLines.push(new __WEBPACK_IMPORTED_MODULE_4__classes_chatline__["a" /* Chatline */](classUserMsg, uData.name, uData.picture, msg.data, uData.color));
+            _this.animationService.animateToBottom('#message_box', 500);
+        });
+        if (this.authenticationService.isStudent()) {
+            this.OVSession.on('signal:grantIntervention', function (msg) {
+                if (msg.data === 'true') {
+                    // Publish
+                    _this.publish();
+                    _this.studentAccessGranted = true;
+                    _this.myStudentAccessGranted = true;
+                }
+                else {
+                    // Unpublish
+                    _this.unpublish();
+                    _this.bigStream = _this.teacherStream;
+                    _this.studentAccessGranted = false;
+                    _this.myStudentAccessGranted = false;
+                    // Invert intervention request
+                    _this.interventionRequired = !_this.interventionRequired;
+                    // Change intervention icon
+                    _this.interventionIcon = (_this.interventionRequired ? 'cancel' : 'record_voice_over');
+                }
+            });
+        }
+        if (this.authenticationService.isTeacher()) {
+            this.OVSession.on('signal:askIntervention', function (msg) {
+                var from = msg.from;
+                var petition = JSON.parse(msg.data).interventionRequired;
+                if (petition) {
+                    // Set proper userData  'interventionRequired' property to true
+                    _this.userData.map(function (uData) {
+                        if (uData.name === JSON.parse(from.data).name) {
+                            uData.interventionRequired = true;
+                        }
+                    });
+                }
+                else {
+                    // Set proper userData  'interventionRequired' property to false
+                    _this.userData.map(function (uData) {
+                        if (uData.name === JSON.parse(from.data).name) {
+                            uData.interventionRequired = false;
+                        }
+                    });
+                }
+            });
+        }
         this.OVSession.connect(this.OVToken, function (error) {
             if (error) {
                 console.log("Connect error");
@@ -3362,10 +3300,8 @@ var VideoSessionComponent = /** @class */ (function () {
         });
     };
     VideoSessionComponent.prototype.leaveSession = function () {
-        this.websocket.close(); // Close the Chat websocket
         if (this.OVSession)
             this.OVSession.disconnect(); // Disconnect from Session
-        this.streams = []; // Empty Stream array
         this.generateParticipantInfo();
     };
     VideoSessionComponent.prototype.removeUser = function () {
@@ -3380,16 +3316,9 @@ var VideoSessionComponent = /** @class */ (function () {
     };
     VideoSessionComponent.prototype.publish = function () {
         var _this = this;
-        this.OVPublisher.on('accessAllowed', function (event) {
-            console.warn("ACCESS ALLOWED");
-        });
-        this.OVPublisher.on('accessDenied', function (event) {
-            console.warn("ACCESS DENIED");
-        });
         this.OVPublisher.on('streamCreated', function (event) {
             console.warn("STREAM CREATED BY PUBLISHER");
             console.warn(event.stream);
-            _this.addVideoTag(event.stream);
             var stream = event.stream;
             if (JSON.parse(stream.connection.data).isTeacher) {
                 _this.teacherStream = stream;
@@ -3418,9 +3347,10 @@ var VideoSessionComponent = /** @class */ (function () {
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
             selector: 'app-video-session',
             template: __webpack_require__("../../../../../src/app/components/video-session/video-session.component.html"),
-            styles: [__webpack_require__("../../../../../src/app/components/video-session/video-session.component.css")]
+            styles: [__webpack_require__("../../../../../src/app/components/video-session/video-session.component.css")],
+            providers: [__WEBPACK_IMPORTED_MODULE_8__pipes_intervention_asked_pipe__["a" /* InterventionAskedPipe */]]
         }),
-        __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_6__services_authentication_service__["a" /* AuthenticationService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_6__services_authentication_service__["a" /* AuthenticationService */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_7__services_video_session_service__["a" /* VideoSessionService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_7__services_video_session_service__["a" /* VideoSessionService */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_8__services_animation_service__["a" /* AnimationService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_8__services_animation_service__["a" /* AnimationService */]) === "function" && _c || Object, typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["a" /* ActivatedRoute */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["a" /* ActivatedRoute */]) === "function" && _d || Object, typeof (_e = typeof __WEBPACK_IMPORTED_MODULE_2__angular_common__["Location"] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__angular_common__["Location"]) === "function" && _e || Object])
+        __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_5__services_authentication_service__["a" /* AuthenticationService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_5__services_authentication_service__["a" /* AuthenticationService */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_6__services_video_session_service__["a" /* VideoSessionService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_6__services_video_session_service__["a" /* VideoSessionService */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_7__services_animation_service__["a" /* AnimationService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_7__services_animation_service__["a" /* AnimationService */]) === "function" && _c || Object, typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["a" /* ActivatedRoute */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["a" /* ActivatedRoute */]) === "function" && _d || Object, typeof (_e = typeof __WEBPACK_IMPORTED_MODULE_2__angular_common__["Location"] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__angular_common__["Location"]) === "function" && _e || Object])
     ], VideoSessionComponent);
     return VideoSessionComponent;
     var _a, _b, _c, _d, _e;
@@ -3456,6 +3386,42 @@ var Constants = Object.freeze({
 
 
 //# sourceMappingURL=/home/pablo/Documents/Git/full-teaching-experiment/src/main/angular/src/index.js.map
+
+/***/ }),
+
+/***/ "../../../../../src/app/pipes/intervention-asked.pipe.ts":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return InterventionAskedPipe; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/index.js");
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+
+var InterventionAskedPipe = /** @class */ (function () {
+    function InterventionAskedPipe() {
+    }
+    InterventionAskedPipe.prototype.transform = function (items) {
+        if (!items) {
+            return items;
+        }
+        // Return only those users which have asked for intervention
+        return items.filter(function (item) { return item.interventionRequired; });
+    };
+    InterventionAskedPipe = __decorate([
+        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Pipe"])({
+            name: 'interventionAskedFilter',
+            pure: false
+        })
+    ], InterventionAskedPipe);
+    return InterventionAskedPipe;
+}());
+
+//# sourceMappingURL=/home/pablo/Documents/Git/full-teaching-experiment/src/main/angular/src/intervention-asked.pipe.js.map
 
 /***/ }),
 
