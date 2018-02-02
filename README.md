@@ -18,6 +18,8 @@ FullTeaching is an educational web application to make online classes easy for t
 
 - Teachers have an advanced system for attaching **files** to a course. They can customize groups of files, name them as they want and reorder them at any moment. The uploading process has been greatly simplified.
 
+- FullTeaching uses [OpenVidu](http://openvidu.io) technology to provide video-conference capabilities. Teachers can initialize a class and every student invited can connect and see the teacher in real time. FullTeaching also allows students to intervene during the class (the teacher must authorize it first).
+
 *Dashboard: all your courses and your calendar*
 <p align="center"><img src="https://github.com/pabloFuente/full-teaching/blob/master/ReadmeImages/dashboard.png?raw=true"/></p>
 
@@ -132,4 +134,4 @@ Go to `http://localhost:5000/` and there you have it!
 
   - You may have to change permissions in order to execute the scripts.
 
-*These instructions have been tested for Ubuntu 14.04*
+*These instructions have been tested for Ubuntu 14.04 and Ubuntu 16.04*
