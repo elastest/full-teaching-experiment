@@ -302,6 +302,9 @@ public class FileController {
 				}
 	
 				userRepository.save(u);
+				
+				// Update current logged user picture
+				this.user.getLoggedUser().setPicture(u.getPicture());
 			}
 			
 			return new ResponseEntity<>(u.getPicture(), HttpStatus.CREATED);

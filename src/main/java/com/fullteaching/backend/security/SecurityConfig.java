@@ -43,7 +43,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	private void configureUrlAuthorization(HttpSecurity http) throws Exception {
 		
-		http.csrf().disable().authorizeRequests().antMatchers("/assets/pictures/*").permitAll();
+		http.csrf().disable().authorizeRequests().antMatchers("/assets/pictures/*").authenticated();
 
 		// APP: This rules have to be changed by app developer
 
