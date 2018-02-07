@@ -16,7 +16,7 @@
 
             <div class="row row-mobile">
               <div class="input-field col s12">
-                <input [(ngModel)]="inputPostCourseName" name="inputPostCourseName" id="inputPostCourseName" type="text" class="validate" autocomplete="off" required>
+                <input [(ngModel)]="inputPostCourseName" name="inputPostCourseName" id="input-post-course-name" type="text" class="validate" autocomplete="off" required>
                 <label for="inputPostCourseName">Course name</label>
               </div>
             </div>
@@ -57,7 +57,7 @@
             <div class="row row-mobile">
               <label for="inputPutCourseName">Course name</label>
               <div class="input-field col s12">
-                <input [(ngModel)]="inputPutCourseName" name="inputPutCourseName" id="inputPutCourseName" type="text" class="validate" required>
+                <input [(ngModel)]="inputPutCourseName" name="inputPutCourseName" id="input-put-course-name" type="text" class="validate" required>
               </div>
             </div>
 
@@ -73,10 +73,10 @@
           </div>
           <div class="row no-margin-bottom right-align">
             <div class="valign-wrapper delete-div">
-              <a (click)="this.deleteCourse(); putDeleteCourseForm.reset();  this.allowCourseDeletion = false;" class="waves-effect btn-flat modal-footer-button float-to-left" [class.disabled]="!this.allowCourseDeletion">Delete</a>
+              <a id="delete-course-btn" (click)="this.deleteCourse(); putDeleteCourseForm.reset();  this.allowCourseDeletion = false;" class="waves-effect btn-flat modal-footer-button float-to-left" [class.disabled]="!this.allowCourseDeletion">Delete</a>
               <div class="float-to-left">
                 <input #deleteCheckbox type="checkbox" class="filled-in" id="delete-checkbox" name="delete-checkbox" (change)="this.allowCourseDeletion = deleteCheckbox.checked"/>
-                <label for="delete-checkbox">Allow deletion?</label>
+                <label for="delete-checkbox" id="label-delete-checkbox">Allow deletion?</label>
               </div>
             </div>
             <a (click)="putDeleteCourseForm.reset(); this.allowCourseDeletion = false;" class="modal-action modal-close waves-effect btn-flat modal-footer-button cancel-modal-btn">Cancel</a>
@@ -94,14 +94,14 @@
 
       <div class="col l6 m5 s12 dashboard-col">
         <div class="dashboard-title">MY COURSES
-          <a href="#course-modal" *ngIf="this.authenticationService.isLoggedIn() && this.authenticationService.isTeacher()" (click)="this.animationService.animateIfSmall()" [title]="'Add new course'">
+          <a href="#course-modal" id="add-new-course-btn" *ngIf="this.authenticationService.isLoggedIn() && this.authenticationService.isTeacher()" (click)="this.animationService.animateIfSmall()" [title]="'Add new course'">
             <i id="add-course-icon" class="material-icons add-element-icon">add_circle_outline</i>
           </a>
         </div>
-        <ul class="collection">
+        <ul id="course-list" class="collection">
           <li *ngIf="courses.length === 0 && this.authenticationService.isStudent()" class="li-warning"><app-error-message [errorTitle]="'You do not have any courses'" [errorContent]="'Your teacher must invite you'" [customClass]="'warning'" [closable]="false"></app-error-message></li>
           <li *ngIf="courses.length === 0 && this.authenticationService.isTeacher()" class="li-warning"><app-error-message [errorTitle]="'You do not have any courses'" [errorContent]="'You can add one by clicking on the icon above'" [customClass]="'warning'" [closable]="false"></app-error-message></li>
-          <li *ngFor="let course of courses; let i = index" class="collection-item">
+          <li *ngFor="let course of courses; let i = index" class="collection-item course-list-item">
             <div class="row session-list-item valign-wrapper">
 
               <div class="col l4 m3 s3 valign center-align">

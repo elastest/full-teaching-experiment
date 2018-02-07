@@ -111,7 +111,7 @@ describe('angular-cli-project App', function() {
       page.waitSeconds(1);
 
       // Find form elements
-      browser.driver.findElement(by.id('inputPostCourseName')).then(function(courseNameField) {
+      browser.driver.findElement(by.id('input-post-course-name')).then(function(courseNameField) {
         // Fill input fields
         courseNameField.sendKeys('New testing course').then(function() {
           // Ensure fields contain what has been entered
