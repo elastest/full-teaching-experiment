@@ -19,6 +19,7 @@ package com.fullteaching.backend.e2e;
 
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class BrowserUser {
@@ -39,6 +40,15 @@ public class BrowserUser {
 
 	public WebDriverWait getWaiter() {
 		return this.waiter;
+	}
+	
+	public void waitUntil(ExpectedCondition<?> condition, String errorMessage) {
+		try {
+			this.waiter.until(condition);
+		} catch(org.openqa.selenium.TimeoutException timeout) {
+			System.out.println("[ERROR] " + errorMessage);
+			throw new org.openqa.selenium.TimeoutException("\"" + errorMessage + "\" (checked with condition) > " + timeout.getMessage());
+		}
 	}
 
 	public String getClientData() {
