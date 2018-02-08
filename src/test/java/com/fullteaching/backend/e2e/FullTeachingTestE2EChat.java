@@ -54,8 +54,11 @@ import io.github.bonigarcia.wdm.FirefoxDriverManager;
 @RunWith(JUnitPlatform.class)
 public class FullTeachingTestE2EChat {
 	
-	static String TEACHER_BROWSER = "chrome";
-	static String STUDENT_BROWSER = "chrome";
+	public static final String CHROME = "chrome";
+	public static final String FIREFOX = "firefox";
+
+	private static String TEACHER_BROWSER;
+	private static String STUDENT_BROWSER;
 
 	static String APP_URL = "https://localhost:5000/";
 	static Exception ex = null;
@@ -84,17 +87,15 @@ public class FullTeachingTestE2EChat {
 			APP_URL = "https://" + System.getenv("ET_SUT_HOST") + ":5000/";
 		}
 		
-		String teacherBrowserProperty = System.getProperty("TEACHER_BROWSER");
-		String studentBrowserProperty = System.getProperty("STUDENT_BROWSER");
+		TEACHER_BROWSER = System.getProperty("teacherBrowser");
+		STUDENT_BROWSER = System.getProperty("studentBrowser");
 
-		if (teacherBrowserProperty != null) {
-			if (teacherBrowserProperty.equals("chrome") || teacherBrowserProperty.equals(("firefox")))
-				TEACHER_BROWSER = teacherBrowserProperty;
+		if ((TEACHER_BROWSER == null) || (!TEACHER_BROWSER.equals(FIREFOX))) {
+			TEACHER_BROWSER = CHROME;
 		}
 		
-		if (studentBrowserProperty != null) {
-			if (studentBrowserProperty.equals("chrome") || studentBrowserProperty.equals(("firefox")))
-				STUDENT_BROWSER = studentBrowserProperty;
+		if ((STUDENT_BROWSER == null) || (!STUDENT_BROWSER.equals(FIREFOX))) {
+			STUDENT_BROWSER = CHROME;
 		}
 
 		log.info("Using URL {} to connect to openvidu-testapp", APP_URL);
