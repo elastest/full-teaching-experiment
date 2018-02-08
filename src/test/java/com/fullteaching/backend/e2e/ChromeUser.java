@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.LocalFileDetector;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 public class ChromeUser extends BrowserUser {
@@ -47,7 +48,9 @@ public class ChromeUser extends BrowserUser {
 			this.driver = new ChromeDriver(capabilities);	
 		} else {
 			try {
-		        this.driver = new RemoteWebDriver(new URL(eusApiURL),  capabilities);				
+				RemoteWebDriver remote = new RemoteWebDriver(new URL(eusApiURL),  capabilities);
+				remote.setFileDetector(new LocalFileDetector());
+				this.driver = remote;
 			} catch (MalformedURLException e) {
 				throw new RuntimeException("Exception creaing eusApiURL",e);
 			}
