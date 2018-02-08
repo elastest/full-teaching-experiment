@@ -563,7 +563,7 @@ public class FullTeachingTestE2EREST {
 	private void loginTeacher() {
 		this.user = setupBrowser(BROWSER);
 		this.login(user, TEACHER_MAIL, TEACHER_PASS);
-		waitForAnimations();
+		user.waitUntil(ExpectedConditions.elementToBeClickable(By.id(("course-list"))), "Course list not present");
 	}
 
 	private void login(BrowserUser user, String userEmail, String userPass) {
