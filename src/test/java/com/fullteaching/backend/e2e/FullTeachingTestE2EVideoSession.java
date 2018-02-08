@@ -86,8 +86,8 @@ public class FullTeachingTestE2EVideoSession {
 			APP_URL = "https://" + System.getenv("ET_SUT_HOST") + ":5000/";
 		}
 
-		TEACHER_BROWSER = System.getProperty("teacherBrowser");
-		STUDENT_BROWSER = System.getProperty("studentBrowser");
+		TEACHER_BROWSER = System.getenv("TEACHER_BROWSER");
+		STUDENT_BROWSER = System.getenv("STUDENT_BROWSER");
 
 		if ((TEACHER_BROWSER == null) || (!TEACHER_BROWSER.equals(FIREFOX))) {
 			TEACHER_BROWSER = CHROME;
