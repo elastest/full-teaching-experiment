@@ -20,14 +20,12 @@ package com.fullteaching.backend.e2e;
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
 
-import java.io.File;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -423,13 +421,12 @@ public class FullTeachingTestE2EREST {
 
 		WebElement fileUploader = user.getDriver()
 				.findElement(By.xpath("//input[contains(@class, 'input-file-uploader')]"));
-		File resourcesDirectory = new File("src/test/resources");
-
+		
 		String fileName = "testFile.txt";
 
-		System.out.println(resourcesDirectory.getAbsolutePath() + "/" + fileName);
+		System.out.println(System.getProperty("user.dir") + "/src/test/resources/" + fileName);
 
-		fileUploader.sendKeys(resourcesDirectory.getAbsolutePath() + "/" + fileName);
+		fileUploader.sendKeys(System.getProperty("user.dir") + "/src/test/resources/" + fileName);
 
 		user.getDriver().findElement(By.id("upload-all-btn")).click();
 

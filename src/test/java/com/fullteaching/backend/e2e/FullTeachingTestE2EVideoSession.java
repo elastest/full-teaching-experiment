@@ -20,7 +20,6 @@ package com.fullteaching.backend.e2e;
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
 
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.AfterEach;
@@ -49,7 +48,7 @@ import io.github.bonigarcia.wdm.FirefoxDriverManager;
  * @author Pablo Fuente (pablo.fuente@urjc.es)
  */
 @Tag("e2e")
-@DisplayName("E2E tests for OpenVidu TestApp")
+@DisplayName("E2E tests for FullTeaching video session")
 @ExtendWith(SeleniumExtension.class)
 @RunWith(JUnitPlatform.class)
 public class FullTeachingTestE2EVideoSession {
@@ -183,40 +182,6 @@ public class FullTeachingTestE2EVideoSession {
 	    waitSeconds(1);
 	    
 	    checkVideoPlaying(student, student.getDriver().findElement(By.cssSelector(("div.participant video"))), "div.participant");
-	    
-	    // Test chat
-	    
-	    user.getDriver().findElement(By.cssSelector("#fixed-icon")).click();
-		student.getDriver().findElement(By.cssSelector("#fixed-icon")).click();
-		waitForAnimations();
-		
-		String teacherMessage = "TEACHER CHAT MESSAGE";
-		String studentMessage = "STUDENT CHAT MESSAGE";
-		
-		WebElement chatInputTeacher = user.getDriver().findElement(By.id("message"));
-		chatInputTeacher.sendKeys(teacherMessage);
-		user.getWaiter().until(ExpectedConditions.elementToBeClickable(By.id("send-btn")));
-		user.getDriver().findElement(By.id("send-btn")).click();
-		
-		waitSeconds(1);
-		
-		checkMessage(teacherMessage, teacherName, user);
-		checkMessage(teacherMessage, teacherName, student);
-		
-		WebElement chatInputStudent = student.getDriver().findElement(By.id("message"));
-		chatInputStudent.sendKeys(studentMessage);
-		student.getWaiter().until(ExpectedConditions.elementToBeClickable(By.id("send-btn")));
-		student.getDriver().findElement(By.id("send-btn")).click();
-		
-		waitSeconds(1);
-		
-		checkMessage(studentMessage, studentName, user);
-		checkMessage(studentMessage, studentName, student);
-		
-		user.getDriver().findElement(By.cssSelector("#fixed-icon")).click();
-		student.getDriver().findElement(By.cssSelector("#fixed-icon")).click();
-		
-		waitSeconds(2);
 	    
 	    // Student ask for intervention
 	    student.getWaiter().until(ExpectedConditions.elementToBeClickable(By.xpath("//div[@id='div-header-buttons']//i[text() = 'record_voice_over']")));
@@ -415,17 +380,6 @@ public class FullTeachingTestE2EVideoSession {
 		catch (Exception e){
 			return false;
 		}
-	}
-	
-	private void checkMessage(String message, String sender, BrowserUser user) {
-		List<WebElement> messages = user.getDriver().findElements(By.tagName("app-chat-line"));
-		WebElement lastMessage = messages.get(messages.size()-1);
-		
-		WebElement msgUser = lastMessage.findElement(By.cssSelector(".message-header .user-name"));
-		WebElement msgContent = lastMessage.findElement(By.cssSelector(".message-content .user-message"));
-		
-		user.getWaiter().until(ExpectedConditions.textToBePresentInElement(msgUser, sender));
-		user.getWaiter().until(ExpectedConditions.textToBePresentInElement(msgContent, message));
 	}
 
 	private void waitForAnimations() {
