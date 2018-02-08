@@ -53,6 +53,9 @@ import io.github.bonigarcia.wdm.FirefoxDriverManager;
 @ExtendWith(SeleniumExtension.class)
 @RunWith(JUnitPlatform.class)
 public class FullTeachingTestE2EChat {
+	
+	final String TEACHER_BROWSER = "chrome";
+	final String STUDENT_BROWSER = "chrome";
 
 	static String APP_URL = "https://localhost:5000/";
 	static Exception ex = null;
@@ -118,7 +121,7 @@ public class FullTeachingTestE2EChat {
 
 		// TEACHER
 
-		this.user = setupBrowser("chrome");
+		this.user = setupBrowser(TEACHER_BROWSER);
 
 		log.info("Test video session");
 
@@ -148,7 +151,7 @@ public class FullTeachingTestE2EChat {
 
 		// STUDENT
 
-		BrowserUser student = setupBrowser("chrome");
+		BrowserUser student = setupBrowser(STUDENT_BROWSER);
 		login(student, studentMail, studentPass);
 
 		waitSeconds(1);
