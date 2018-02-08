@@ -55,7 +55,7 @@ import io.github.bonigarcia.wdm.FirefoxDriverManager;
 @RunWith(JUnitPlatform.class)
 public class FullTeachingTestE2EREST {
 
-	final String BROWSER = "chrome";
+	static String BROWSER = "chrome";
 
 	final String TEST_COURSE = "TEST_COURSE";
 	final String TEST_COURSE_INFO = "TEST_COURSE_INFO";
@@ -87,6 +87,14 @@ public class FullTeachingTestE2EREST {
 
 		if (System.getenv("ET_SUT_HOST") != null) {
 			APP_URL = "https://" + System.getenv("ET_SUT_HOST") + ":5000/";
+		}
+		
+		String browserProperty = System.getProperty("BROWSER");
+		
+		if (browserProperty != null) {
+			if (browserProperty.equals("chrome") ||
+				browserProperty.equals(("firefox")))
+			BROWSER = browserProperty;
 		}
 
 		log.info("Using URL {} to connect to openvidu-testapp", APP_URL);

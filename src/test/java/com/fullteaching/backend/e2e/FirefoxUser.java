@@ -21,7 +21,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
-import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -32,21 +31,18 @@ public class FirefoxUser extends BrowserUser {
 	public FirefoxUser(String userName, int timeOfWaitInSeconds) {
 		super(userName, timeOfWaitInSeconds);
 		
-		DesiredCapabilities capabilities = DesiredCapabilities.firefox();
-		capabilities.setCapability("acceptInsecureCerts", true);
 		FirefoxProfile profile = new FirefoxProfile();
-
 		// This flag avoids granting the access to the camera
 		profile.setPreference("media.navigator.permission.disabled", true);
 		// This flag force to use fake user media (synthetic video of multiple color)
 		profile.setPreference("media.navigator.streams.fake", true);
-		
-		
 		profile.setPreference("dom.file.createInChild", true);
-
-		capabilities.setCapability(FirefoxDriver.PROFILE, profile);
 		
 		String eusApiURL = System.getenv("ET_EUS_API");
+		
+		DesiredCapabilities capabilities = DesiredCapabilities.firefox();
+		capabilities.setCapability("acceptInsecureCerts", true);
+		capabilities.setCapability(FirefoxDriver.PROFILE, profile);
 		
 		if(eusApiURL == null) {
 			this.driver = new FirefoxDriver(capabilities);
