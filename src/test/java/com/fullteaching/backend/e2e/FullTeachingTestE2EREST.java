@@ -92,7 +92,7 @@ public class FullTeachingTestE2EREST {
 			APP_URL = "https://" + System.getenv("ET_SUT_HOST") + ":5000/";
 		}
 		
-		BROWSER = System.getProperty("studentBrowser");
+		BROWSER = System.getProperty("browser");
 
 		if ((BROWSER == null) || (!BROWSER.equals(FIREFOX))) {
 			BROWSER = CHROME;
