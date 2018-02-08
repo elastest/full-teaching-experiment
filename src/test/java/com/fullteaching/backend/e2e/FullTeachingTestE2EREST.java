@@ -26,6 +26,7 @@ import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -53,6 +54,8 @@ import io.github.bonigarcia.wdm.FirefoxDriverManager;
 @ExtendWith(SeleniumExtension.class)
 @RunWith(JUnitPlatform.class)
 public class FullTeachingTestE2EREST {
+
+	final String BROWSER = "chrome";
 
 	final String TEST_COURSE = "TEST_COURSE";
 	final String TEST_COURSE_INFO = "TEST_COURSE_INFO";
@@ -206,9 +209,14 @@ public class FullTeachingTestE2EREST {
 		// Fill input fields
 		titleField.sendKeys(title);
 		commentField.sendKeys(comment);
-		dateField.sendKeys("03-01-2018");
-		timeField.sendKeys("03:10");
-		timeField.sendKeys("PM");
+
+		if (BROWSER.equals("chrome")) {
+			dateField.sendKeys("03-01-2018");
+			timeField.sendKeys("03:10PM");
+		} else if (BROWSER.equals("firefox")) {
+			dateField.sendKeys("2018-03-01");
+			timeField.sendKeys("15:10");
+		}
 
 		user.getDriver().findElement(By.id("post-modal-btn")).click();
 
@@ -240,9 +248,14 @@ public class FullTeachingTestE2EREST {
 		// Fill edited input fields
 		titleField.sendKeys(title + EDITED);
 		commentField.sendKeys(comment + EDITED);
-		dateField.sendKeys("04-02-2019");
-		timeField.sendKeys("05:10");
-		timeField.sendKeys("AM");
+
+		if (BROWSER.equals("chrome")) {
+			dateField.sendKeys("04-02-2019");
+			timeField.sendKeys("05:10AM");
+		} else if (BROWSER.equals("firefox")) {
+			dateField.sendKeys("2019-04-02");
+			timeField.sendKeys("05:10");
+		}
 
 		user.getDriver().findElement(By.id("put-modal-btn")).click();
 
@@ -419,13 +432,18 @@ public class FullTeachingTestE2EREST {
 
 		openDialog("app-file-group app-file-group .add-file-btn");
 
-		WebElement fileUploader = user.getDriver()
-				.findElement(By.xpath("//input[contains(@class, 'input-file-uploader')]"));
-		
+		WebElement fileUploader = user.getDriver().findElement(By.className("input-file-uploader"));
+
 		String fileName = "testFile.txt";
 
 		System.out.println(System.getProperty("user.dir") + "/src/test/resources/" + fileName);
-
+		
+		user.runJavascript("arguments[0].setAttribute('style', 'display:block')", fileUploader);
+		user.waitUntil(
+				ExpectedConditions.presenceOfElementLocated(By.xpath(
+						"//input[contains(@class, 'input-file-uploader') and contains(@style, 'display:block')]")),
+				"Waiting for the input file to be displayed");
+		
 		fileUploader.sendKeys(System.getProperty("user.dir") + "/src/test/resources/" + fileName);
 
 		user.getDriver().findElement(By.id("upload-all-btn")).click();
@@ -534,7 +552,7 @@ public class FullTeachingTestE2EREST {
 	/*** Auxiliary methods ***/
 
 	private void loginTeacher() {
-		this.user = setupBrowser("chrome");
+		this.user = setupBrowser(BROWSER);
 		this.login(user, TEACHER_MAIL, TEACHER_PASS);
 		waitForAnimations();
 	}
@@ -704,14 +722,25 @@ public class FullTeachingTestE2EREST {
 
 	private void waitForDialogClosed(String dialogId, String errorMessage) {
 		user.waitUntil(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[@id='" + dialogId
-				+ "' and contains(@class, 'my-modal-class') and contains(@style, 'opacity: 0') and contains(@style, 'display: none')]")), "Dialog not closed. Reason: " + errorMessage);
-		user.waitUntil(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".modal.my-modal-class.open")), "Dialog not closed. Reason: " + errorMessage);
-		user.waitUntil(ExpectedConditions.numberOfElementsToBe(By.cssSelector(".modal-overlay"), 0),"Dialog not closed. Reason: " + errorMessage);
+				+ "' and contains(@class, 'my-modal-class') and contains(@style, 'opacity: 0') and contains(@style, 'display: none')]")),
+				"Dialog not closed. Reason: " + errorMessage);
+		user.waitUntil(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".modal.my-modal-class.open")),
+				"Dialog not closed. Reason: " + errorMessage);
+		user.waitUntil(ExpectedConditions.numberOfElementsToBe(By.cssSelector(".modal-overlay"), 0),
+				"Dialog not closed. Reason: " + errorMessage);
 	}
 
 	private void waitForAnimations() {
 		try {
 			Thread.sleep(750);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void waitSeconds(int seconds) {
+		try {
+			Thread.sleep(1000 * seconds);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

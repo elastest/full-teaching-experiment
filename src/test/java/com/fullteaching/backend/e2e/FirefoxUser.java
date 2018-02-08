@@ -40,6 +40,9 @@ public class FirefoxUser extends BrowserUser {
 		profile.setPreference("media.navigator.permission.disabled", true);
 		// This flag force to use fake user media (synthetic video of multiple color)
 		profile.setPreference("media.navigator.streams.fake", true);
+		
+		
+		profile.setPreference("dom.file.createInChild", true);
 
 		capabilities.setCapability(FirefoxDriver.PROFILE, profile);
 		
