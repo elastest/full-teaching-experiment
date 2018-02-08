@@ -32,7 +32,7 @@ public class FirefoxUser extends BrowserUser {
 	public FirefoxUser(String userName, int timeOfWaitInSeconds) {
 		super(userName, timeOfWaitInSeconds);
 		
-		DesiredCapabilities capabilities = new DesiredCapabilities();
+		DesiredCapabilities capabilities = DesiredCapabilities.firefox();
 		capabilities.setCapability("acceptInsecureCerts", true);
 		FirefoxProfile profile = new FirefoxProfile();
 
@@ -52,10 +52,7 @@ public class FirefoxUser extends BrowserUser {
 			this.driver = new FirefoxDriver(capabilities);
 		} else {
 			try {
-				capabilities.setBrowserName("firefox");
-				
 		        this.driver = new RemoteWebDriver(new URL(eusApiURL),  capabilities);
-		        				
 			} catch (MalformedURLException e) {
 				throw new RuntimeException("Exception creaing eusApiURL",e);
 			}
