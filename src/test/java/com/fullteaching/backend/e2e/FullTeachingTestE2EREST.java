@@ -37,6 +37,8 @@ import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.remote.LocalFileDetector;
+import org.openqa.selenium.remote.RemoteWebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.slf4j.Logger;
 
@@ -452,6 +454,9 @@ public class FullTeachingTestE2EREST {
 				ExpectedConditions.presenceOfElementLocated(By.xpath(
 						"//input[contains(@class, 'input-file-uploader') and contains(@style, 'display:block')]")),
 				"Waiting for the input file to be displayed");
+		
+		((RemoteWebElement) fileUploader ).setFileDetector(new LocalFileDetector()); 
+		//fileUploader.sendKeys("c:\\temp\\test.txt");
 		
 		fileUploader.sendKeys(System.getProperty("user.dir") + "/src/test/resources/" + fileName);
 
