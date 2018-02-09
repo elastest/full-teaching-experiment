@@ -84,6 +84,11 @@ public class FullTeachingTestE2EChat {
 
 		if (System.getenv("ET_SUT_HOST") != null) {
 			APP_URL = "https://" + System.getenv("ET_SUT_HOST") + ":5000/";
+		} else {
+			APP_URL = System.getProperty("app.url");
+			if (APP_URL == null) {
+				APP_URL = "https://localhost:5000/";
+			}
 		}
 		
 		TEACHER_BROWSER = System.getenv("TEACHER_BROWSER");
@@ -95,11 +100,6 @@ public class FullTeachingTestE2EChat {
 		
 		if ((STUDENT_BROWSER == null) || (!STUDENT_BROWSER.equals(FIREFOX))) {
 			STUDENT_BROWSER = CHROME;
-		}
-		
-		APP_URL = System.getProperty("app.url");
-		if (APP_URL == null) {
-			APP_URL = "https://localhost:5000/";
 		}
 
 		log.info("Using URL {} to connect to openvidu-testapp", APP_URL);

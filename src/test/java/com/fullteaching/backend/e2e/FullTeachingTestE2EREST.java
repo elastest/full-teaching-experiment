@@ -89,6 +89,11 @@ public class FullTeachingTestE2EREST {
 
 		if (System.getenv("ET_SUT_HOST") != null) {
 			APP_URL = "https://" + System.getenv("ET_SUT_HOST") + ":5000/";
+		} else {
+			APP_URL = System.getProperty("app.url");
+			if (APP_URL == null) {
+				APP_URL = "https://localhost:5000/";
+			}
 		}
 		
 		BROWSER = System.getenv("BROWSER");
@@ -97,11 +102,6 @@ public class FullTeachingTestE2EREST {
 			BROWSER = CHROME;
 		}
 		
-		APP_URL = System.getProperty("app.url");
-		if (APP_URL == null) {
-			APP_URL = "https://localhost:5000/";
-		}
-
 		log.info("Using URL {} to connect to openvidu-testapp", APP_URL);
 	}
 
