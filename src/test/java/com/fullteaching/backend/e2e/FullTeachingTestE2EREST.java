@@ -57,8 +57,8 @@ public class FullTeachingTestE2EREST {
 
 	public static final String CHROME = "chrome";
 	public static final String FIREFOX = "firefox";
-	
 	private static String BROWSER;
+	private static String APP_URL;
 
 	final String TEST_COURSE = "TEST_COURSE";
 	final String TEST_COURSE_INFO = "TEST_COURSE_INFO";
@@ -70,7 +70,6 @@ public class FullTeachingTestE2EREST {
 
 	String COURSE_NAME = TEST_COURSE;
 
-	static String APP_URL = "https://localhost:5000/";
 	static Exception ex = null;
 
 	final static Logger log = getLogger(lookup().lookupClass());
@@ -96,6 +95,11 @@ public class FullTeachingTestE2EREST {
 
 		if ((BROWSER == null) || (!BROWSER.equals(FIREFOX))) {
 			BROWSER = CHROME;
+		}
+		
+		APP_URL = System.getProperty("app.url");
+		if (APP_URL == null) {
+			APP_URL = "https://localhost:5000/";
 		}
 
 		log.info("Using URL {} to connect to openvidu-testapp", APP_URL);
