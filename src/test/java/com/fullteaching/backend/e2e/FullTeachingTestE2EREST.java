@@ -95,13 +95,13 @@ public class FullTeachingTestE2EREST {
 				APP_URL = "https://localhost:5000/";
 			}
 		}
-		
+
 		BROWSER = System.getenv("BROWSER");
 
 		if ((BROWSER == null) || (!BROWSER.equals(FIREFOX))) {
 			BROWSER = CHROME;
 		}
-		
+
 		log.info("Using URL {} to connect to openvidu-testapp", APP_URL);
 	}
 
@@ -450,13 +450,13 @@ public class FullTeachingTestE2EREST {
 		String fileName = "testFile.txt";
 
 		System.out.println(System.getProperty("user.dir") + "/src/test/resources/" + fileName);
-		
+
 		user.runJavascript("arguments[0].setAttribute('style', 'display:block')", fileUploader);
 		user.waitUntil(
 				ExpectedConditions.presenceOfElementLocated(By.xpath(
 						"//input[contains(@class, 'input-file-uploader') and contains(@style, 'display:block')]")),
 				"Waiting for the input file to be displayed");
-		
+
 		fileUploader.sendKeys(System.getProperty("user.dir") + "/src/test/resources/" + fileName);
 
 		user.getDriver().findElement(By.id("upload-all-btn")).click();
@@ -466,6 +466,9 @@ public class FullTeachingTestE2EREST {
 				ExpectedConditions.presenceOfElementLocated(
 						By.xpath("//div[contains(@class, 'determinate') and contains(@style, 'width: 100')]")),
 				"Upload process not completed. Progress bar not filled");
+
+		user.waitUntil(ExpectedConditions.textToBe(By.xpath("//i[contains(@class, 'icon-status-upload')]"), "done"),
+				"Upload process failed");
 
 		// Close dialog
 		user.getDriver().findElement(By.id("close-upload-modal-btn")).click();
@@ -750,7 +753,7 @@ public class FullTeachingTestE2EREST {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private void waitSeconds(int seconds) {
 		try {
 			Thread.sleep(1000 * seconds);

@@ -35,10 +35,10 @@
             <tr *ngFor="let item of uploader.queue">
               <td class="table-td file-name-td mobile-file-td"><strong>{{ item?.file?.name }}</strong></td>
               <td class="table-td text-center mobile-file-td">
-                <span *ngIf="item.isSuccess"><i class="material-icons">done</i></span>
-                <span *ngIf="item.isUploading"><i class="material-icons">cloud_upload</i></span>
-                <span *ngIf="item.isCancel"><i class="material-icons">warning</i></span>
-                <span *ngIf="item.isError"><i class="material-icons">clear</i></span>
+                <span *ngIf="item.isSuccess"><i class="icon-status-upload material-icons">done</i></span>
+                <span *ngIf="item.isUploading"><i class="icon-status-upload material-icons">cloud_upload</i></span>
+                <span *ngIf="item.isCancel"><i class="icon-status-upload material-icons">warning</i></span>
+                <span *ngIf="item.isError"><i class="icon-status-upload material-icons">clear</i></span>
                 <span *ngIf="!item.isSuccess && !item.isUploading && !item.isCancel && !item.isError"><i class="material-icons">schedule</i></span>
               </td>
               <td nowrap class="table-td mobile-file-td">
