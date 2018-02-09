@@ -42,6 +42,7 @@ public class FirefoxUser extends BrowserUser {
 		String eusApiURL = System.getenv("ET_EUS_API");
 		
 		DesiredCapabilities capabilities = DesiredCapabilities.firefox();
+		capabilities.setVersion("57");
 		capabilities.setCapability("acceptInsecureCerts", true);
 		capabilities.setCapability(FirefoxDriver.PROFILE, profile);
 		
