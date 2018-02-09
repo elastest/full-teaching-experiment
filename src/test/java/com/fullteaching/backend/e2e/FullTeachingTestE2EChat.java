@@ -298,6 +298,8 @@ public class FullTeachingTestE2EChat {
 	}
 
 	private void checkOwnMessage(String message, String sender, BrowserUser user) {
+		user.getWaiter().until(ExpectedConditions.numberOfElementsToBeMoreThan(By.tagName("app-chat-line"), 0));
+		
 		List<WebElement> messages = user.getDriver().findElements(By.tagName("app-chat-line"));
 		WebElement lastMessage = messages.get(messages.size() - 1);
 
@@ -309,6 +311,8 @@ public class FullTeachingTestE2EChat {
 	}
 
 	private void checkStrangerMessage(String message, String sender, BrowserUser user) {
+		user.getWaiter().until(ExpectedConditions.numberOfElementsToBeMoreThan(By.tagName("app-chat-line"), 0));
+		
 		List<WebElement> messages = user.getDriver().findElements(By.tagName("app-chat-line"));
 		WebElement lastMessage = messages.get(messages.size() - 1);
 
@@ -320,6 +324,8 @@ public class FullTeachingTestE2EChat {
 	}
 
 	private void checkSystemMessage(String message, BrowserUser user) {
+		user.getWaiter().until(ExpectedConditions.numberOfElementsToBeMoreThan(By.tagName("app-chat-line"), 0));
+		
 		List<WebElement> messages = user.getDriver().findElements(By.tagName("app-chat-line"));
 		WebElement lastMessage = messages.get(messages.size() - 1);
 
