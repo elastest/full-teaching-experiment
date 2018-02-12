@@ -97,19 +97,20 @@ public class VideoSessionController {
 				if (userAuthorized != null) { // If the user is not an attender of the course
 					return userAuthorized;
 				} else {
-					io.openvidu.java.client.Session s = this.lessonIdSession.get(id_i);
+					io.openvidu.java.client.Session s = this.openVidu.createSession();
 					sessionId = s.getSessionId();
 					token = s.generateToken(new TokenOptions.Builder()
 							.data("{\"name\": \"" + this.user.getLoggedUser().getNickName() + "\", \"isTeacher\": " 
-									+ ((teacherAuthorized == null) ? "true" : "false") + ", \"color\": \"" 
-									+ colors[this.sessionIdindexColor.get(s.getSessionId())] + "\"}")
+									+ ((teacherAuthorized == null) ? "true" : "false") + ", \"color\": \"" + colors[0] + "\"}")
 							.build());
 					
 					responseJson.put(0, sessionId);
 					responseJson.put(1, token);
 					
+					this.lessonIdSession.put(id_i, s);
+					this.sessionIdUserIdToken.put(s.getSessionId(), new ConcurrentHashMap<>());
 					this.sessionIdUserIdToken.get(s.getSessionId()).put(this.user.getLoggedUser().getId(), token);
-					this.sessionIdindexColor.put(s.getSessionId(), this.sessionIdindexColor.get(s.getSessionId()) + 1);
+					this.sessionIdindexColor.put(s.getSessionId(), 1);
 					
 					return new ResponseEntity<>(responseJson, HttpStatus.OK);
 				}
