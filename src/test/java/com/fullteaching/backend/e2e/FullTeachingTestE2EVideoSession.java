@@ -115,7 +115,7 @@ public class FullTeachingTestE2EVideoSession extends FullTeachingTestE2E {
 	}
 
 	@Test
-	@DisplayName("Video Session Teacher and Student")
+	@DisplayName("Video-Session-Teacher-and-Student")
 	void oneToOneVideoAudioSessionChrome(TestInfo info) throws Exception {
 		
 		log.info("##### Start test: " + info.getDisplayName());
@@ -123,8 +123,6 @@ public class FullTeachingTestE2EVideoSession extends FullTeachingTestE2E {
 		// TEACHER
 
 		this.user = setupBrowser(TEACHER_BROWSER, info, "Teacher", 30);
-
-		log.info("Test video session");
 
 		this.login(user, teacherMail, teacherPass);
 

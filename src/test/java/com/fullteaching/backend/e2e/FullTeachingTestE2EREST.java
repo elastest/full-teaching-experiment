@@ -109,10 +109,8 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 	/*** Test methods ***/
 
 	@Test
-	@DisplayName("Course REST operations")
+	@DisplayName("Course-REST-operations")
 	void courseRestOperations() throws Exception {
-
-		log.info("Course REST operations");
 
 		// Edit course
 
@@ -137,10 +135,8 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 	}
 
 	@Test
-	@DisplayName("Course info REST operations")
+	@DisplayName("Course-info-REST-operations")
 	void courseInfonRestOperations() throws Exception {
-
-		log.info("Course Info REST operations");
 
 		// Empty course info
 		enterCourseAndNavigateTab(COURSE_NAME, "info-tab-icon");
@@ -159,10 +155,8 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 	}
 
 	@Test
-	@DisplayName("Session REST operations")
+	@DisplayName("Session-REST-operations")
 	void sessionRestOperations() throws Exception {
-
-		log.info("Session REST operations");
 
 		// Add new session
 
@@ -263,10 +257,8 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 	}
 
 	@Test
-	@DisplayName("Forum REST operations")
+	@DisplayName("Forum-REST-operations")
 	void forumRestOperations() throws Exception {
-
-		log.info("Forum REST operations");
 
 		// Add new entry to the forum
 
@@ -346,10 +338,8 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 	}
 
 	@Test
-	@DisplayName("Files REST operations")
+	@DisplayName("Files-REST-operations")
 	void filesRestOperations() throws Exception {
-
-		log.info("Files REST operations");
 
 		enterCourseAndNavigateTab(COURSE_NAME, "files-tab-icon");
 
@@ -460,10 +450,8 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 	}
 
 	@Test
-	@DisplayName("Attenders REST operations")
+	@DisplayName("Attenders-REST-operations")
 	void attendersRestOperations() throws Exception {
-
-		log.info("Attenders REST operations");
 
 		enterCourseAndNavigateTab(COURSE_NAME, "attenders-tab-icon");
 
