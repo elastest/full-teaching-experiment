@@ -114,7 +114,7 @@ public class FileGroupController {
 	
 	
 	@RequestMapping(value = "/edit/file-group/course/{courseId}", method = RequestMethod.PUT)
-	public ResponseEntity<Object> modifyFileGroup(@RequestBody FileGroup fileGroup, @PathVariable(value="courseId") String courseId) {
+	public ResponseEntity<Object> modifyFileGroup(@RequestBody FileGroup fileGroup, @PathVariable(value="courseID") String courseId) {
 		
 		ResponseEntity<Object> authorized = authorizationService.checkBackendLogged();
 		if (authorized != null){
