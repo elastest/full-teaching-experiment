@@ -27,6 +27,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
 import org.junit.platform.runner.JUnitPlatform;
@@ -51,13 +52,10 @@ import io.github.bonigarcia.wdm.FirefoxDriverManager;
 @DisplayName("E2E tests for FullTeaching video session")
 @ExtendWith(SeleniumExtension.class)
 @RunWith(JUnitPlatform.class)
-public class FullTeachingTestE2EVideoSession {
-
-	public static final String CHROME = "chrome";
-	public static final String FIREFOX = "firefox";
+public class FullTeachingTestE2EVideoSession extends FullTeachingTestE2E {
+	
 	private static String TEACHER_BROWSER;
 	private static String STUDENT_BROWSER;
-	private static String APP_URL;
 
 	static Exception ex = null;
 
@@ -71,6 +69,10 @@ public class FullTeachingTestE2EVideoSession {
 	final String studentName = "Student Imprudent";
 
 	BrowserUser user;
+	
+	public FullTeachingTestE2EVideoSession() {
+		super();
+	}
 
 	@BeforeAll()
 	static void setupAll() {
@@ -104,49 +106,23 @@ public class FullTeachingTestE2EVideoSession {
 		log.info("Using URL {} to connect to openvidu-testapp", APP_URL);
 	}
 
-	BrowserUser setupBrowser(String browser) {
-
-		BrowserUser u;
-
-		switch (browser) {
-		case "chrome":
-			u = new ChromeUser("TestUser", 20);
-			break;
-		case "firefox":
-			u = new FirefoxUser("TestUser", 20);
-			break;
-		default:
-			u = new ChromeUser("TestUser", 20);
-		}
-
-		u.getDriver().get(APP_URL);
-
-		final String GLOBAL_JS_FUNCTION = "var s = window.document.createElement('script');"
-				+ "s.innerText = 'window.MY_FUNC = function(containerQuerySelector) {"
-				+ "var elem = document.createElement(\"div\");" + "elem.id = \"video-playing-div\";"
-				+ "elem.innerText = \"VIDEO PLAYING\";" + "document.body.appendChild(elem);"
-				+ "console.error(\"ERRRRORRRR!!!!\")}';" + "window.document.head.appendChild(s);";
-
-		u.runJavascript(GLOBAL_JS_FUNCTION);
-
-		return u;
-	}
-
 	@AfterEach
-	void dispose() {
-
+	void dispose(TestInfo info) {
 		this.logout(user);
-
 		user.dispose();
+
+		log.info("##### Finish test: " + info.getDisplayName());
 	}
 
 	@Test
-	@DisplayName("Test video session")
-	void oneToOneVideoAudioSessionChrome() throws Exception {
+	@DisplayName("Video Session Teacher and Student")
+	void oneToOneVideoAudioSessionChrome(TestInfo info) throws Exception {
+		
+		log.info("##### Start test: " + info.getDisplayName());
 
 		// TEACHER
 
-		this.user = setupBrowser(TEACHER_BROWSER);
+		this.user = setupBrowser(TEACHER_BROWSER, info, "Teacher", 30);
 
 		log.info("Test video session");
 
@@ -179,7 +155,7 @@ public class FullTeachingTestE2EVideoSession {
 
 		// STUDENT
 
-		BrowserUser student = setupBrowser(STUDENT_BROWSER);
+		BrowserUser student = setupBrowser(STUDENT_BROWSER, info, "Student", 30);
 		login(student, studentMail, studentPass);
 
 		waitSeconds(1);

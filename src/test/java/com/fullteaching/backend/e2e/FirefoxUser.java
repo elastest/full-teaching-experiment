@@ -21,6 +21,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
+import org.junit.jupiter.api.TestInfo;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -29,7 +30,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 
 public class FirefoxUser extends BrowserUser {
 
-	public FirefoxUser(String userName, int timeOfWaitInSeconds) {
+	public FirefoxUser(String userName, int timeOfWaitInSeconds, String browserId, String userIdentifier) {
 		super(userName, timeOfWaitInSeconds);
 		
 		FirefoxProfile profile = new FirefoxProfile();
@@ -50,6 +51,7 @@ public class FirefoxUser extends BrowserUser {
 			this.driver = new FirefoxDriver(capabilities);
 		} else {
 			try {
+				capabilities.setCapability("browserId", browserId + "_" + userIdentifier);
 				RemoteWebDriver remote = new RemoteWebDriver(new URL(eusApiURL),  capabilities);
 				remote.setFileDetector(new LocalFileDetector());
 				this.driver = remote;

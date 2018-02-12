@@ -26,10 +26,10 @@ import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
 import org.junit.platform.runner.JUnitPlatform;
@@ -41,8 +41,6 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.slf4j.Logger;
 
 import io.github.bonigarcia.SeleniumExtension;
-import io.github.bonigarcia.wdm.ChromeDriverManager;
-import io.github.bonigarcia.wdm.FirefoxDriverManager;
 
 /**
  * E2E tests for FullTeaching REST operations.
@@ -53,12 +51,9 @@ import io.github.bonigarcia.wdm.FirefoxDriverManager;
 @DisplayName("E2E tests for FullTeaching REST operations")
 @ExtendWith(SeleniumExtension.class)
 @RunWith(JUnitPlatform.class)
-public class FullTeachingTestE2EREST {
-
-	public static final String CHROME = "chrome";
-	public static final String FIREFOX = "firefox";
+public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
+	
 	private static String BROWSER;
-	private static String APP_URL;
 
 	final String TEST_COURSE = "TEST_COURSE";
 	final String TEST_COURSE_INFO = "TEST_COURSE_INFO";
@@ -75,27 +70,15 @@ public class FullTeachingTestE2EREST {
 	final static Logger log = getLogger(lookup().lookupClass());
 
 	BrowserUser user;
+	
+	public FullTeachingTestE2EREST() {
+		super();
+	}
 
 	/*** ClassRule methods ***/
 
 	@BeforeAll()
 	static void setupAll() {
-
-		if (System.getenv("ET_EUS_API") == null) {
-			// Outside ElasTest
-			ChromeDriverManager.getInstance().setup();
-			FirefoxDriverManager.getInstance().setup();
-		}
-
-		if (System.getenv("ET_SUT_HOST") != null) {
-			APP_URL = "https://" + System.getenv("ET_SUT_HOST") + ":5000/";
-		} else {
-			APP_URL = System.getProperty("app.url");
-			if (APP_URL == null) {
-				APP_URL = "https://localhost:5000/";
-			}
-		}
-
 		BROWSER = System.getenv("BROWSER");
 
 		if ((BROWSER == null) || (!BROWSER.equals(FIREFOX))) {
@@ -105,46 +88,22 @@ public class FullTeachingTestE2EREST {
 		log.info("Using URL {} to connect to openvidu-testapp", APP_URL);
 	}
 
-	BrowserUser setupBrowser(String browser) {
-
-		BrowserUser u;
-
-		switch (browser) {
-		case "chrome":
-			u = new ChromeUser("TestUser", 30);
-			break;
-		case "firefox":
-			u = new FirefoxUser("TestUser", 30);
-			break;
-		default:
-			u = new ChromeUser("TestUser", 30);
-		}
-
-		u.getDriver().get(APP_URL);
-
-		final String GLOBAL_JS_FUNCTION = "var s = window.document.createElement('script');"
-				+ "s.innerText = 'window.MY_FUNC = function(containerQuerySelector) {"
-				+ "var elem = document.createElement(\"div\");" + "elem.id = \"video-playing-div\";"
-				+ "elem.innerText = \"VIDEO PLAYING\";" + "document.body.appendChild(elem);"
-				+ "console.error(\"ERRRRORRRR!!!!\")}';" + "window.document.head.appendChild(s);";
-
-		u.runJavascript(GLOBAL_JS_FUNCTION);
-
-		return u;
-	}
-
 	@BeforeEach
-	void setup() {
-		loginTeacher(); // Teacher login
+	void setup(TestInfo info) {
+		
+		log.info("##### Start test: " + info.getDisplayName());
+		
+		loginTeacher(info); // Teacher login
 		addCourse(COURSE_NAME); // Add test course
-
 	}
 
 	@AfterEach
-	void dispose() {
+	void dispose(TestInfo info) {
 		this.deleteCourseIfExist();
 		this.logout(user);
 		user.dispose();
+		
+		log.info("##### Finish test: " + info.getDisplayName());
 	}
 
 	/*** Test methods ***/
@@ -567,8 +526,8 @@ public class FullTeachingTestE2EREST {
 
 	/*** Auxiliary methods ***/
 
-	private void loginTeacher() {
-		this.user = setupBrowser(BROWSER);
+	private void loginTeacher(TestInfo info) {
+		this.user = setupBrowser(BROWSER, info, "Teacher", 15);
 		this.login(user, TEACHER_MAIL, TEACHER_PASS);
 		user.waitUntil(ExpectedConditions.elementToBeClickable(By.id(("course-list"))), "Course list not present");
 	}
@@ -749,14 +708,6 @@ public class FullTeachingTestE2EREST {
 	private void waitForAnimations() {
 		try {
 			Thread.sleep(750);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-	}
-
-	private void waitSeconds(int seconds) {
-		try {
-			Thread.sleep(1000 * seconds);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

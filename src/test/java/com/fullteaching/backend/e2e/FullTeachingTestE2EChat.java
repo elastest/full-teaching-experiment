@@ -28,6 +28,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
 import org.junit.platform.runner.JUnitPlatform;
@@ -52,14 +53,14 @@ import io.github.bonigarcia.wdm.FirefoxDriverManager;
 @DisplayName("E2E tests for FullTeaching chat")
 @ExtendWith(SeleniumExtension.class)
 @RunWith(JUnitPlatform.class)
-public class FullTeachingTestE2EChat {
-	
+public class FullTeachingTestE2EChat extends FullTeachingTestE2E {
+
 	public static final String CHROME = "chrome";
 	public static final String FIREFOX = "firefox";
 	private static String TEACHER_BROWSER;
 	private static String STUDENT_BROWSER;
 	private static String APP_URL;
-	
+
 	static Exception ex = null;
 
 	final static Logger log = getLogger(lookup().lookupClass());
@@ -90,14 +91,14 @@ public class FullTeachingTestE2EChat {
 				APP_URL = "https://localhost:5000/";
 			}
 		}
-		
+
 		TEACHER_BROWSER = System.getenv("TEACHER_BROWSER");
 		STUDENT_BROWSER = System.getenv("STUDENT_BROWSER");
 
 		if ((TEACHER_BROWSER == null) || (!TEACHER_BROWSER.equals(FIREFOX))) {
 			TEACHER_BROWSER = CHROME;
 		}
-		
+
 		if ((STUDENT_BROWSER == null) || (!STUDENT_BROWSER.equals(FIREFOX))) {
 			STUDENT_BROWSER = CHROME;
 		}
@@ -105,41 +106,23 @@ public class FullTeachingTestE2EChat {
 		log.info("Using URL {} to connect to openvidu-testapp", APP_URL);
 	}
 
-	BrowserUser setupBrowser(String browser) {
-
-		BrowserUser u;
-
-		switch (browser) {
-		case "chrome":
-			u = new ChromeUser("TestUser", 15);
-			break;
-		case "firefox":
-			u = new FirefoxUser("TestUser", 15);
-			break;
-		default:
-			u = new ChromeUser("TestUser", 15);
-		}
-
-		u.getDriver().get(APP_URL);
-
-		return u;
-	}
-
 	@AfterEach
-	void dispose() {
-
+	void dispose(TestInfo info) {
 		this.logout(user);
-
 		user.dispose();
+
+		log.info("##### Finish test: " + info.getDisplayName());
 	}
 
 	@Test
-	@DisplayName("Test chat in a video session")
-	void oneToOneVideoAudioSessionChrome() throws Exception {
+	@DisplayName("Chat in video Session Teacher and Student")
+	void oneToOneVideoAudioSessionChrome(TestInfo info) throws Exception {
+
+		log.info("##### Start test: " + info.getDisplayName());
 
 		// TEACHER
 
-		this.user = setupBrowser(TEACHER_BROWSER);
+		this.user = setupBrowser(TEACHER_BROWSER, info, "Teacher", 30);
 
 		log.info("Test video session");
 
@@ -169,7 +152,7 @@ public class FullTeachingTestE2EChat {
 
 		// STUDENT
 
-		BrowserUser student = setupBrowser(STUDENT_BROWSER);
+		BrowserUser student = setupBrowser(STUDENT_BROWSER, info, "Student", 30);
 		login(student, studentMail, studentPass);
 
 		waitSeconds(1);
@@ -189,7 +172,7 @@ public class FullTeachingTestE2EChat {
 		waitSeconds(1);
 
 		student.getDriver().findElement(By.cssSelector("#fixed-icon")).click();
-		
+
 		checkSystemMessage(studentName + " has connected", user);
 		checkSystemMessage(teacherName + " has connected", student);
 
@@ -225,7 +208,7 @@ public class FullTeachingTestE2EChat {
 		// Logout student
 		this.logout(student);
 		student.dispose();
-		
+
 		checkSystemMessage(studentName + " has disconnected", user);
 
 	}
@@ -299,7 +282,7 @@ public class FullTeachingTestE2EChat {
 
 	private void checkOwnMessage(String message, String sender, BrowserUser user) {
 		user.getWaiter().until(ExpectedConditions.numberOfElementsToBeMoreThan(By.tagName("app-chat-line"), 0));
-		
+
 		List<WebElement> messages = user.getDriver().findElements(By.tagName("app-chat-line"));
 		WebElement lastMessage = messages.get(messages.size() - 1);
 
@@ -312,7 +295,7 @@ public class FullTeachingTestE2EChat {
 
 	private void checkStrangerMessage(String message, String sender, BrowserUser user) {
 		user.getWaiter().until(ExpectedConditions.numberOfElementsToBeMoreThan(By.tagName("app-chat-line"), 0));
-		
+
 		List<WebElement> messages = user.getDriver().findElements(By.tagName("app-chat-line"));
 		WebElement lastMessage = messages.get(messages.size() - 1);
 
@@ -325,7 +308,7 @@ public class FullTeachingTestE2EChat {
 
 	private void checkSystemMessage(String message, BrowserUser user) {
 		user.getWaiter().until(ExpectedConditions.numberOfElementsToBeMoreThan(By.tagName("app-chat-line"), 0));
-		
+
 		List<WebElement> messages = user.getDriver().findElements(By.tagName("app-chat-line"));
 		WebElement lastMessage = messages.get(messages.size() - 1);
 

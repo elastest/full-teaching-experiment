@@ -20,6 +20,8 @@ package com.fullteaching.backend.e2e;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
+
+import org.junit.jupiter.api.TestInfo;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -28,7 +30,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 
 public class ChromeUser extends BrowserUser {
 
-	public ChromeUser(String userName, int timeOfWaitInSeconds) {
+	public ChromeUser(String userName, int timeOfWaitInSeconds, String browserId, String userIdentifier) {
 		super(userName, timeOfWaitInSeconds);
 
 		ChromeOptions options = new ChromeOptions();
@@ -48,6 +50,7 @@ public class ChromeUser extends BrowserUser {
 			this.driver = new ChromeDriver(capabilities);	
 		} else {
 			try {
+				capabilities.setCapability("browserId", browserId + "_" + userIdentifier);
 				RemoteWebDriver remote = new RemoteWebDriver(new URL(eusApiURL),  capabilities);
 				remote.setFileDetector(new LocalFileDetector());
 				this.driver = remote;
