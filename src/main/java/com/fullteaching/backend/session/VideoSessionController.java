@@ -4,9 +4,12 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.annotation.PostConstruct;
+
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,6 +34,12 @@ public class VideoSessionController {
 	@Autowired
 	private UserComponent user;
 	
+	@Value("${openvidu.url}")
+	private String openviduUrl;
+
+	@Value("${openvidu.secret}")
+	private String openviduSecret;
+	
 	private Map<Long, io.openvidu.java.client.Session> lessonIdSession = new ConcurrentHashMap<>();
 	private Map<String, Map<Long, String>> sessionIdUserIdToken = new ConcurrentHashMap<>();
 	private Map<String, Integer> sessionIdindexColor = new ConcurrentHashMap<>();
@@ -41,9 +50,12 @@ public class VideoSessionController {
 	String SECRET;
 	String URL;
 	
-	public VideoSessionController() {
-    	this.SECRET = System.getenv("openvidu.secret") != null ? System.getenv("openvidu.secret") : "MY_SECRET";
-    	this.URL = System.getenv("openvidu.url") != null ? System.getenv("openvidu.url") : "https://localhost:8443/";
+	public VideoSessionController() {}
+	
+	@PostConstruct
+	public void initIt() throws Exception {
+		this.SECRET = openviduSecret;
+    	this.URL = openviduUrl;
     	System.out.println(" ------------ OPENVIDU_URL ---------------- : " + this.URL);
 		this.openVidu = new OpenVidu(this.URL, this.SECRET);
 	}
