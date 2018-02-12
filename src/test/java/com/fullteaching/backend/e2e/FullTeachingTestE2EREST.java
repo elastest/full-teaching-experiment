@@ -52,7 +52,7 @@ import io.github.bonigarcia.SeleniumExtension;
 @ExtendWith(SeleniumExtension.class)
 @RunWith(JUnitPlatform.class)
 public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
-	
+
 	private static String BROWSER;
 
 	final String TEST_COURSE = "TEST_COURSE";
@@ -70,7 +70,7 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 	final static Logger log = getLogger(lookup().lookupClass());
 
 	BrowserUser user;
-	
+
 	public FullTeachingTestE2EREST() {
 		super();
 	}
@@ -90,9 +90,9 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 
 	@BeforeEach
 	void setup(TestInfo info) {
-		
+
 		log.info("##### Start test: " + info.getDisplayName());
-		
+
 		loginTeacher(info); // Teacher login
 		addCourse(COURSE_NAME); // Add test course
 	}
@@ -102,7 +102,7 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 		this.deleteCourseIfExist();
 		this.logout(user);
 		user.dispose();
-		
+
 		log.info("##### Finish test: " + info.getDisplayName());
 	}
 
@@ -665,6 +665,9 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 	}
 
 	private void openDialog(String cssSelector) {
+
+		log.info("Opening dialog by clicking CSS {}", cssSelector);
+
 		user.waitUntil(ExpectedConditions.elementToBeClickable(By.cssSelector(cssSelector)),
 				"Button for opening the dialog not clickable");
 		user.getDriver().findElement(By.cssSelector(cssSelector)).click();
@@ -675,6 +678,9 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 	}
 
 	private void openDialog(WebElement el) {
+
+		log.info("Opening dialog by web element {}", el);
+
 		user.waitUntil(ExpectedConditions.elementToBeClickable(el), "Button for opening the dialog not clickable");
 		el.click();
 		user.waitUntil(
@@ -684,6 +690,8 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 	}
 
 	private void waitForDialogClosed(String dialogId, String errorMessage) {
+		log.info("Closing dialog with id {}", dialogId);
+
 		user.waitUntil(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[@id='" + dialogId
 				+ "' and contains(@class, 'my-modal-class') and contains(@style, 'opacity: 0') and contains(@style, 'display: none')]")),
 				"Dialog not closed. Reason: " + errorMessage);
