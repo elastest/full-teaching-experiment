@@ -183,7 +183,7 @@
               <a id="delete-session-btn" (click)="this.deleteSession(); putDeleteForm.reset(); this.allowSessionDeletion = false;" class="waves-effect btn-flat modal-footer-button float-to-left" [class.disabled]="!this.allowSessionDeletion">Delete</a>
               <div class="float-to-left">
                 <input #deleteCheckbox type="checkbox" class="filled-in" id="delete-checkbox" name="delete-checkbox" (change)="this.allowSessionDeletion = deleteCheckbox.checked"/>
-                <label for="delete-checkbox" id="label-delete-checkbox">Allow deletion?</label>
+                <!--<label for="delete-checkbox" id="label-delete-checkbox">Allow deletion?</label>-->
               </div>
             </div>
             <a (click)="putDeleteForm.reset(); this.allowSessionDeletion = false; this.allowForumEdition = false; this.uploaderModalService.announceUploaderClosed(true);" class="modal-action modal-close waves-effect btn-flat modal-footer-button cancel-modal-btn">Cancel</a>
