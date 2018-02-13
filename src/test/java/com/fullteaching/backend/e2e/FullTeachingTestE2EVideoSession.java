@@ -17,11 +17,6 @@
 
 package com.fullteaching.backend.e2e;
 
-import static java.lang.invoke.MethodHandles.lookup;
-import static org.slf4j.LoggerFactory.getLogger;
-
-import java.util.concurrent.TimeUnit;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -33,11 +28,8 @@ import org.junit.runner.RunWith;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.Assert;
 import org.openqa.selenium.By;
-import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-import org.slf4j.Logger;
 
 import io.github.bonigarcia.SeleniumExtension;
 import io.github.bonigarcia.wdm.ChromeDriverManager;
@@ -58,8 +50,6 @@ public class FullTeachingTestE2EVideoSession extends FullTeachingTestE2E {
 	private static String STUDENT_BROWSER;
 
 	static Exception ex = null;
-
-	final static Logger log = getLogger(lookup().lookupClass());
 
 	final String teacherMail = "teacher@gmail.com";
 	final String teacherPass = "pass";
@@ -124,9 +114,11 @@ public class FullTeachingTestE2EVideoSession extends FullTeachingTestE2E {
 
 		this.user = setupBrowser(TEACHER_BROWSER, info, "Teacher", 30);
 
-		this.login(user, teacherMail, teacherPass);
+		this.slowLogin(user, teacherMail, teacherPass);
 
 		waitSeconds(1);
+		
+		log.info("{} entering first course", user.getClientData());
 
 		user.getWaiter().until(ExpectedConditions.presenceOfElementLocated(
 				By.cssSelector(("ul.collection li.collection-item:first-child div.course-title"))));
@@ -134,11 +126,15 @@ public class FullTeachingTestE2EVideoSession extends FullTeachingTestE2E {
 				.click();
 
 		waitSeconds(1);
+		
+		log.info("{} navigating to 'Sessions' tab", user.getClientData());
 
 		user.getWaiter().until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(("#md-tab-label-0-1"))));
 		user.getDriver().findElement(By.cssSelector("#md-tab-label-0-1")).click();
 
 		waitSeconds(1);
+		
+		log.info("{} getting into first session", user.getClientData());
 
 		user.getDriver().findElement(By.cssSelector("ul div:first-child li.session-data div.session-ready")).click();
 
@@ -154,19 +150,27 @@ public class FullTeachingTestE2EVideoSession extends FullTeachingTestE2E {
 		// STUDENT
 
 		BrowserUser student = setupBrowser(STUDENT_BROWSER, info, "Student", 30);
-		login(student, studentMail, studentPass);
+		slowLogin(student, studentMail, studentPass);
 
 		waitSeconds(1);
+		
+		log.info("{} entering first course", student.getClientData());
 
 		student.getWaiter().until(ExpectedConditions.presenceOfElementLocated(
 				By.cssSelector(("ul.collection li.collection-item:first-child div.course-title"))));
 		student.getDriver().findElement(By.cssSelector("ul.collection li.collection-item:first-child div.course-title"))
 				.click();
+		
+		waitSeconds(1);
+		
+		log.info("{} navigating to 'Courses' tab", student.getClientData());
 
 		student.getWaiter().until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(("#md-tab-label-0-1"))));
 		student.getDriver().findElement(By.cssSelector("#md-tab-label-0-1")).click();
 
 		waitSeconds(1);
+		
+		log.info("{} getting into first session", student.getClientData());
 
 		student.getDriver().findElement(By.cssSelector("ul div:first-child li.session-data div.session-ready")).click();
 
@@ -180,9 +184,12 @@ public class FullTeachingTestE2EVideoSession extends FullTeachingTestE2E {
 		checkVideoPlaying(student, student.getDriver().findElement(By.cssSelector(("div.participant video"))),
 				"div.participant");
 
-		// Student ask for intervention
+		// Student asks for intervention		
 		student.getWaiter().until(ExpectedConditions
 				.elementToBeClickable(By.xpath("//div[@id='div-header-buttons']//i[text() = 'record_voice_over']")));
+		
+		log.info("{} asking for intervention", student.getClientData());
+		
 		student.getDriver().findElement(By.xpath("//div[@id='div-header-buttons']//i[text() = 'record_voice_over']"))
 				.click();
 
@@ -190,27 +197,37 @@ public class FullTeachingTestE2EVideoSession extends FullTeachingTestE2E {
 
 		// Teacher accepts intervention
 		user.getWaiter().until(ExpectedConditions.elementToBeClickable(By.xpath("//a[contains(@class, 'usr-btn')]")));
+		
+		log.info("{} accepts student intervention", user.getClientData());
+		
 		user.getDriver().findElement(By.xpath("//a[contains(@class, 'usr-btn')]")).click();
 
-		// Check both videos
+		// Check both videos for both users
 		student.getWaiter()
 				.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(("div.participant-small video"))));
+		// Small video of student
 		checkVideoPlaying(student, student.getDriver().findElement(By.cssSelector(("div.participant-small video"))),
 				"div.participant-small");
-		checkVideoPlaying(student, student.getDriver().findElement(By.cssSelector(("div.participant-small video"))),
-				"div.participant-small");
+		// Main video of student
+		checkVideoPlaying(student, student.getDriver().findElement(By.cssSelector(("div.participant video"))),
+				"div.participant");
 
 		user.getWaiter()
 				.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(("div.participant-small video"))));
+		// Small video of teacher
 		checkVideoPlaying(user, user.getDriver().findElement(By.cssSelector(("div.participant-small video"))),
 				"div.participant-small");
-		checkVideoPlaying(user, user.getDriver().findElement(By.cssSelector(("div.participant-small video"))),
-				"div.participant-small");
+		// Main video of teacher
+		checkVideoPlaying(user, user.getDriver().findElement(By.cssSelector(("div.participant video"))),
+				"div.participant");
 
 		waitSeconds(5);
 
 		// Teacher stops student intervention
 		user.getWaiter().until(ExpectedConditions.elementToBeClickable(By.xpath("//a[contains(@class, 'usr-btn')]")));
+		
+		log.info("{} canceling student intervention", user.getClientData());
+		
 		user.getDriver().findElement(By.xpath("//a[contains(@class, 'usr-btn')]")).click();
 
 		// Wait until only one video
@@ -283,64 +300,10 @@ public class FullTeachingTestE2EVideoSession extends FullTeachingTestE2E {
 	 * OpenViduTestAppE2eTest.ex; } } }
 	 */
 
-	private void login(BrowserUser user, String userEmail, String userPass) {
-		user.getDriver().findElement(By.id("download-button")).click();
-
-		// Find form elements (login modal is already opened)
-		WebElement userNameField = user.getDriver().findElement(By.id("email"));
-		WebElement userPassField = user.getDriver().findElement(By.id("password"));
-
-		// Fill input fields
-		userNameField.sendKeys(userEmail);
-
-		waitSeconds(1);
-
-		userPassField.sendKeys(userPass);
-
-		waitSeconds(1);
-
-		// Ensure fields contain what has been entered
-		Assert.assertEquals(userNameField.getAttribute("value"), userEmail);
-		Assert.assertEquals(userPassField.getAttribute("value"), userPass);
-
-		user.getDriver().findElement(By.id("log-in-btn")).click();
-	}
-
-	private void logout(BrowserUser user) {
-		if (user.getDriver().findElements(By.cssSelector("#fixed-icon")).size() > 0) {
-			// Get out of video session page
-			if (!isClickable("#exit-icon", user)) { // Side menu not opened
-				user.getDriver().findElement(By.cssSelector("#fixed-icon")).click();
-				waitForAnimations();
-			}
-			user.getWaiter().until(ExpectedConditions.elementToBeClickable(By.cssSelector("#exit-icon")));
-			user.getDriver().findElement(By.cssSelector("#exit-icon")).click();
-		}
-		// if (user.getDriver().findElements(By.cssSelector("#arrow-drop-down")).size()
-		// > 0) {
-		try {
-			// Up bar menu
-			user.getWaiter().withTimeout(1000, TimeUnit.MILLISECONDS)
-					.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#arrow-drop-down")));
-			user.getDriver().findElement(By.cssSelector("#arrow-drop-down")).click();
-			waitForAnimations();
-			user.getWaiter().until(ExpectedConditions.elementToBeClickable(By.cssSelector("#logout-button")));
-			user.getDriver().findElement(By.cssSelector("#logout-button")).click();
-		} catch (TimeoutException e) {
-			// Shrunk menu
-			user.getWaiter().withTimeout(1000, TimeUnit.MILLISECONDS)
-					.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("a.button-collapse")));
-			user.getDriver().findElement(By.cssSelector("a.button-collapse")).click();
-			waitForAnimations();
-			user.getWaiter().until(
-					ExpectedConditions.elementToBeClickable(By.xpath("//ul[@id='nav-mobile']//a[text() = 'Logout']")));
-			user.getDriver().findElement(By.xpath("//ul[@id='nav-mobile']//a[text() = 'Logout']")).click();
-		}
-		waitSeconds(1);
-		user.getWaiter().until(ExpectedConditions.elementToBeClickable(By.id("download-button")));
-	}
-
+	
 	private boolean checkVideoPlaying(BrowserUser user, WebElement videoElement, String containerQuerySelector) {
+		
+		log.info("{} waiting for video in container '{}' to be playing", user.getClientData(), containerQuerySelector);
 
 		// Video element should be in 'readyState'='HAVE_ENOUGH_DATA'
 		user.getWaiter().until(ExpectedConditions.attributeToBe(videoElement, "readyState", "4"));
@@ -361,32 +324,6 @@ public class FullTeachingTestE2EVideoSession extends FullTeachingTestE2E {
 		user.runJavascript("document.body.removeChild(document.getElementById('video-playing-div'))");
 
 		return true;
-	}
-
-	private boolean isClickable(String selector, BrowserUser user) {
-		try {
-			WebDriverWait wait = new WebDriverWait(user.getDriver(), 1);
-			wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(selector)));
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
-	}
-
-	private void waitForAnimations() {
-		try {
-			Thread.sleep(750);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-	}
-
-	private void waitSeconds(int seconds) {
-		try {
-			Thread.sleep(1000 * seconds);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
 	}
 
 }
