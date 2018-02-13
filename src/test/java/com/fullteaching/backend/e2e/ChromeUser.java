@@ -37,7 +37,10 @@ public class ChromeUser extends BrowserUser {
 		
         HashMap<String, Object> chromeOptionsMap = new HashMap<String, Object>();
         chromeOptionsMap.put("download.default_directory", BrowserUser.DOWNLOAD_PATH);
-        chromeOptionsMap.put("profile.default_content_settings.popups", 0);  
+        chromeOptionsMap.put("profile.default_content_settings.popups", 0);
+        chromeOptionsMap.put("download.prompt_for_download", false);
+        chromeOptionsMap.put("download.directory_upgrade", true);
+        
         options.setExperimentalOption("prefs", chromeOptionsMap);
         
 		// This flag avoids to grant the user media
