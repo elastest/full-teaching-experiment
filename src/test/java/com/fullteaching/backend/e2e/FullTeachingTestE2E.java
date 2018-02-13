@@ -56,7 +56,7 @@ public class FullTeachingTestE2E {
 				+ "s.innerText = 'window.MY_FUNC = function(containerQuerySelector) {"
 				+ "var elem = document.createElement(\"div\");" + "elem.id = \"video-playing-div\";"
 				+ "elem.innerText = \"VIDEO PLAYING\";" + "document.body.appendChild(elem);"
-				+ "console.error(\"ERRRRORRRR!!!!\")}';" + "window.document.head.appendChild(s);";
+				+ "console.log(\"Video check function successfully added to DOM by Selenium\")}';" + "window.document.head.appendChild(s);";
 
 		u.runJavascript(GLOBAL_JS_FUNCTION);
 
