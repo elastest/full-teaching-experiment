@@ -36,9 +36,9 @@ public class ChromeUser extends BrowserUser {
 		ChromeOptions options = new ChromeOptions();
 		
         HashMap<String, Object> chromeOptionsMap = new HashMap<String, Object>();
-        chromeOptionsMap.put("download.default_directory", BrowserUser.DOWNLOAD_PATH);
         chromeOptionsMap.put("profile.default_content_settings.popups", 0);
-        chromeOptionsMap.put("download.prompt_for_download", false);
+        chromeOptionsMap.put("download.prompt_for_download", "false");
+        chromeOptionsMap.put("download.default_directory", BrowserUser.DOWNLOAD_PATH);
         chromeOptionsMap.put("download.directory_upgrade", true);
         
         options.setExperimentalOption("prefs", chromeOptionsMap);

@@ -34,7 +34,7 @@ public class BrowserUser {
 	protected int timeOfWaitInSeconds;
 	
 	final static Logger log = getLogger(lookup().lookupClass());
-	final static String DOWNLOAD_PATH = System.getProperty("user.dir") + "/downloads";
+	final static String DOWNLOAD_PATH = ".";
 
 	public BrowserUser(String clientData, int timeOfWaitInSeconds) {
 		this.clientData = clientData;
