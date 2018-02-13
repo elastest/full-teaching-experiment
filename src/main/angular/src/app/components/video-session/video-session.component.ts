@@ -118,7 +118,7 @@ export class VideoSessionComponent implements OnInit {
 
   sendChatMessage() {
     this.OVSession.signal({
-      type: 'chat',
+      type: '',
       to: [],
       data: this.myMessage
     });

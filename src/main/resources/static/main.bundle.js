@@ -2993,7 +2993,7 @@ var VideoSessionComponent = /** @class */ (function () {
     };
     VideoSessionComponent.prototype.sendChatMessage = function () {
         this.OVSession.signal({
-            type: 'chat',
+            type: '',
             to: [],
             data: this.myMessage
         });
