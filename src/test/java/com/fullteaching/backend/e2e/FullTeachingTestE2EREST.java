@@ -17,7 +17,6 @@
 
 package com.fullteaching.backend.e2e;
 
-import java.io.File;
 import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
@@ -35,7 +34,6 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import io.github.bonigarcia.SeleniumExtension;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * E2E tests for FullTeaching REST CRUD operations.
@@ -493,30 +491,6 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 				editedFileName), "Unexpected uploaded file name");
 
 		log.info("File successfully edited");
-		
-		// Test file download
-		log.info("Downloading file");
-
-		user.getDriver().findElement(By.cssSelector("div.chip.chip-file")).click();
-
-		waitSeconds(5);
-
-		File dir = new File(BrowserUser.DOWNLOAD_PATH);
-		File[] dirContents = dir.listFiles();
-
-		boolean fileDownloaded = false;
-
-		for (int i = 0; i < dirContents.length; i++) {
-			if (dirContents[i].getName().equals(editedFileName)) {
-				// File has been found, it can now be deleted:
-				dirContents[i].delete();
-				fileDownloaded = true;
-			}
-		}
-
-		assertEquals(fileDownloaded, true);
-
-		log.info("File successfully downloaded");
 
 		// Delete file group
 		log.info("Deleting file-group");

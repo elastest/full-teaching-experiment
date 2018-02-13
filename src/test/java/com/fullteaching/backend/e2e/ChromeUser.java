@@ -19,7 +19,6 @@ package com.fullteaching.backend.e2e;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -34,14 +33,6 @@ public class ChromeUser extends BrowserUser {
 		super(userName, timeOfWaitInSeconds);
 
 		ChromeOptions options = new ChromeOptions();
-		
-        HashMap<String, Object> chromeOptionsMap = new HashMap<String, Object>();
-        chromeOptionsMap.put("profile.default_content_settings.popups", 0);
-        chromeOptionsMap.put("download.prompt_for_download", "false");
-        chromeOptionsMap.put("download.default_directory", BrowserUser.DOWNLOAD_PATH);
-        chromeOptionsMap.put("download.directory_upgrade", true);
-        
-        options.setExperimentalOption("prefs", chromeOptionsMap);
         
 		// This flag avoids to grant the user media
 		options.addArguments("--use-fake-ui-for-media-stream");
