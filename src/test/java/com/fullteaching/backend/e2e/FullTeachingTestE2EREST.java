@@ -17,6 +17,7 @@
 
 package com.fullteaching.backend.e2e;
 
+import java.io.File;
 import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
@@ -34,6 +35,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import io.github.bonigarcia.SeleniumExtension;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * E2E tests for FullTeaching REST CRUD operations.
@@ -104,7 +106,7 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 	void courseRestOperations() throws Exception {
 
 		// Edit course
-		
+
 		log.info("Editing course");
 
 		COURSE_NAME = COURSE_NAME + EDITED;
@@ -135,9 +137,9 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 		enterCourseAndNavigateTab(COURSE_NAME, "info-tab-icon");
 		user.waitUntil(ExpectedConditions.presenceOfNestedElementLocatedBy(By.cssSelector(".md-tab-body.md-tab-active"),
 				By.cssSelector(".card-panel.warning")), "Course info wasn't empty");
-		
+
 		log.info("Editing course information");
-		
+
 		// Edit course info
 		user.getDriver().findElement(By.id("edit-course-info")).click();
 		user.getDriver().findElement(By.className("ql-editor")).sendKeys(TEST_COURSE_INFO);
@@ -146,7 +148,7 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 
 		user.waitUntil(ExpectedConditions.textToBe(By.cssSelector(".ql-editor p"), TEST_COURSE_INFO),
 				"Unexpected course info");
-		
+
 		log.info("Course information succesfully updated");
 
 	}
@@ -158,9 +160,9 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 		// Add new session
 
 		enterCourseAndNavigateTab(COURSE_NAME, "sessions-tab-icon");
-		
+
 		log.info("Adding new session");
-		
+
 		openDialog("#add-session-icon", user);
 
 		// Find form elements
@@ -197,12 +199,12 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 		user.waitUntil(
 				ExpectedConditions.textToBe(By.cssSelector("li.session-data .session-datetime"), "Mar 1, 2018 - 15:10"),
 				"Unexpected session date-time");
-		
+
 		log.info("New session successfully added");
 
 		// Edit session
 		log.info("Editing session");
-		
+
 		openDialog(".edit-session-icon", user);
 
 		// Find form elements
@@ -240,12 +242,12 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 		user.waitUntil(
 				ExpectedConditions.textToBe(By.cssSelector("li.session-data .session-datetime"), "Apr 2, 2019 - 05:10"),
 				"Unexpected session date-time");
-		
+
 		log.info("Session succesfully edited");
 
 		// Delete session
 		log.info("Deleting session");
-		
+
 		openDialog(".edit-session-icon", user);
 
 		user.waitUntil(ExpectedConditions.elementToBeClickable(By.id(("label-delete-checkbox"))),
@@ -259,7 +261,7 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 
 		user.waitUntil(ExpectedConditions.numberOfElementsToBe(By.cssSelector("li.session-data"), 0),
 				"Unexpected number of sessions");
-		
+
 		log.info("Session successfully deleted");
 
 	}
@@ -271,9 +273,9 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 		// Add new entry to the forum
 
 		enterCourseAndNavigateTab(COURSE_NAME, "forum-tab-icon");
-		
+
 		log.info("Adding new entry to the forum");
-		
+
 		openDialog("#add-entry-icon", user);
 
 		// Find form elements
@@ -301,11 +303,11 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 				"Unexpected entry author in the forum");
 		user.waitUntil(ExpectedConditions.textToBe(By.cssSelector("li.entry-title .forum-entry-date"), entryDate),
 				"Unexpected entry date in the forum");
-		
+
 		log.info("New entry successfully added to the forum");
-		
+
 		log.info("Entering the new entry");
-		
+
 		entryEl.click();
 
 		user.waitUntil(ExpectedConditions.textToBe(
@@ -316,7 +318,7 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 				TEACHER_NAME), "Unexpected entry author in the entry details view");
 
 		// Comment reply
-		
+
 		log.info("Adding new replay to the entry's only comment");
 
 		String reply = "TEST FORUM REPLY";
@@ -334,15 +336,15 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 		user.waitUntil(ExpectedConditions.textToBe(By.cssSelector(
 				".comment-block > app-comment:first-child > div.comment-div div.comment-div .forum-comment-author"),
 				TEACHER_NAME), "Unexpected reply author in the entry details view");
-		
+
 		log.info("Replay sucessfully added");
 
 		// Forum deactivation
 
 		user.getDriver().findElement(By.id("entries-sml-btn")).click();
-		
+
 		log.info("Deactivating forum");
-		
+
 		openDialog("#edit-forum-icon", user);
 
 		user.waitUntil(ExpectedConditions.elementToBeClickable(By.id(("label-forum-checkbox"))),
@@ -356,7 +358,7 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 
 		user.waitUntil(ExpectedConditions.elementToBeClickable(By.cssSelector("app-error-message .card-panel.warning")),
 				"Warning card (forum deactivated) missing");
-		
+
 		log.info("Forum successfully deactivated");
 
 	}
@@ -366,14 +368,14 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 	void filesRestOperations() throws Exception {
 
 		enterCourseAndNavigateTab(COURSE_NAME, "files-tab-icon");
-		
+
 		log.info("Checking that there are no files in the course");
 
 		user.waitUntil(ExpectedConditions.elementToBeClickable(By.cssSelector("app-error-message .card-panel.warning")),
 				"Warning card (course with no files) missing");
-		
+
 		log.info("Adding new file group");
-		
+
 		openDialog("#add-files-icon", user);
 
 		String fileGroup = "TEST FILE GROUP";
@@ -389,12 +391,12 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 		// Check fields of new file group
 		user.waitUntil(ExpectedConditions.textToBe(By.cssSelector(".file-group-title h5"), fileGroup),
 				"Unexpected file group name");
-		
+
 		log.info("File group successfully added");
 
 		// Edit file group
 		log.info("Editing file group");
-		
+
 		openDialog("#edit-filegroup-icon", user);
 
 		// Find form elements
@@ -410,12 +412,12 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 		user.waitUntil(
 				ExpectedConditions.textToBe(By.cssSelector("app-file-group .file-group-title h5"), fileGroup + EDITED),
 				"Unexpected file group name");
-		
+
 		log.info("File group successfully edited");
 
 		// Add file subgroup
 		log.info("Adding new file sub-group");
-		
+
 		String fileSubGroup = "TEST FILE SUBGROUP";
 		openDialog(".add-subgroup-btn", user);
 		titleField = user.getDriver().findElement(By.id("input-post-title"));
@@ -428,9 +430,9 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 		// Check fields of new file subgroup
 		user.waitUntil(ExpectedConditions.textToBe(By.cssSelector("app-file-group app-file-group .file-group-title h5"),
 				fileSubGroup), "Unexpected file sub-group name");
-		
+
 		log.info("File sub-group successfully added");
-		
+
 		log.info("Adding new file to sub-group");
 
 		openDialog("app-file-group app-file-group .add-file-btn", user);
@@ -439,7 +441,8 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 
 		String fileName = "testFile.txt";
 
-		log.info("Uploading file located on path '{}'", System.getProperty("user.dir") + "/src/test/resources/" + fileName);
+		log.info("Uploading file located on path '{}'",
+				System.getProperty("user.dir") + "/src/test/resources/" + fileName);
 
 		user.runJavascript("arguments[0].setAttribute('style', 'display:block')", fileUploader);
 		user.waitUntil(
@@ -459,7 +462,7 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 
 		user.waitUntil(ExpectedConditions.textToBe(By.xpath("//i[contains(@class, 'icon-status-upload')]"), "done"),
 				"Upload process failed");
-		
+
 		log.info("File upload successful");
 
 		// Close dialog
@@ -469,12 +472,12 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 		// Check new uploaded file
 		user.waitUntil(ExpectedConditions.textToBe(By.cssSelector("app-file-group app-file-group .chip .file-name-div"),
 				fileName), "Unexpected uploaded file name");
-		
+
 		log.info("File succesfully added");
 
 		// Edit file
 		log.info("Editing file");
-		
+
 		openDialog("app-file-group app-file-group .edit-file-name-icon", user);
 		titleField = user.getDriver().findElement(By.id("input-file-title"));
 		titleField.clear();
@@ -488,16 +491,39 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 		// Check edited file name
 		user.waitUntil(ExpectedConditions.textToBe(By.cssSelector("app-file-group app-file-group .chip .file-name-div"),
 				editedFileName), "Unexpected uploaded file name");
-		
+
 		log.info("File successfully edited");
+
+		log.info("Downloading file");
+
+		user.getDriver().findElement(By.cssSelector("div.chip.chip-file")).click();
+
+		waitSeconds(5);
+
+		File dir = new File(System.getProperty("user.home") + "/Downloads/");
+		File[] dirContents = dir.listFiles();
+
+		boolean fileDownloaded = false;
+
+		for (int i = 0; i < dirContents.length; i++) {
+			if (dirContents[i].getName().equals(editedFileName)) {
+				// File has been found, it can now be deleted:
+				dirContents[i].delete();
+				fileDownloaded = true;
+			}
+		}
+
+		assertEquals(fileDownloaded, true);
+
+		log.info("File successfully downloaded");
 
 		// Delete file group
 		log.info("Deleting file-group");
-		
+
 		user.getDriver().findElement(By.cssSelector("app-file-group .delete-filegroup-icon")).click();
 		user.waitUntil(ExpectedConditions.elementToBeClickable(By.cssSelector("app-error-message .card-panel.warning")),
 				"Warning card (course with no files) missing");
-		
+
 		log.info("File group successfully deleted");
 
 	}
@@ -507,7 +533,7 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 	void attendersRestOperations() throws Exception {
 
 		enterCourseAndNavigateTab(COURSE_NAME, "attenders-tab-icon");
-		
+
 		log.info("Checking that there is only one attender to the course");
 
 		user.waitUntil(ExpectedConditions.numberOfElementsToBe(By.className("attender-row-div"), 1),
@@ -518,7 +544,7 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 
 		// Add attender fail
 		log.info("Adding attender (should FAIL)");
-		
+
 		openDialog("#add-attenders-icon", user);
 
 		String attenderName = "studentFail@gmail.com";
@@ -536,7 +562,7 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 				"Unexpected number of attenders for the course");
 
 		user.getDriver().findElement(By.cssSelector("app-error-message .card-panel.fail .material-icons")).click();
-		
+
 		log.info("Attender addition successfully failed");
 
 		// Add attender success
@@ -559,7 +585,7 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 				"Unexpected number of attenders for the course");
 
 		user.getDriver().findElement(By.cssSelector("app-error-message .card-panel.correct .material-icons")).click();
-		
+
 		log.info("Attender addition successfully finished");
 
 		// Remove attender
@@ -571,7 +597,7 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 		user.getDriver().findElement(By.cssSelector(".del-attender-icon")).click();
 		user.waitUntil(ExpectedConditions.numberOfElementsToBe(By.className("attender-row-div"), 1),
 				"Unexpected number of attenders for the course");
-		
+
 		log.info("Attender successfully removed");
 
 	}
@@ -585,7 +611,7 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 
 	private void addCourse(String courseName) {
 		log.info("Adding test course");
-		
+
 		int numberOfCourses = user.getDriver().findElements(By.className("course-list-item")).size();
 
 		openDialog("#add-course-icon", user);
@@ -607,7 +633,7 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 
 	private void deleteCourse(String courseName) {
 		log.info("Deleting test course");
-		
+
 		List<WebElement> allCourses = user.getDriver().findElements(By.className("course-list-item"));
 		int numberOfCourses = allCourses.size();
 		WebElement course = null;
@@ -640,9 +666,9 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 	}
 
 	private void enterCourseAndNavigateTab(String courseName, String tabId) {
-		
+
 		log.info("Entering course {}", courseName);
-		
+
 		List<WebElement> allCourses = user.getDriver()
 				.findElements(By.cssSelector("#course-list .course-list-item div.course-title span"));
 		WebElement courseSpan = null;
@@ -656,9 +682,9 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 		courseSpan.click();
 
 		user.waitUntil(ExpectedConditions.textToBe(By.id("main-course-title"), courseName), "Unexpected course title");
-		
+
 		log.info("Navigating to tab by clicking icon with id '{}'", tabId);
-		
+
 		user.getDriver().findElement(By.id(tabId)).click();
 
 		waitForAnimations();
