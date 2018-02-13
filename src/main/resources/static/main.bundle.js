@@ -3034,7 +3034,7 @@ var VideoSessionComponent = /** @class */ (function () {
     VideoSessionComponent.prototype.grantIntervention = function (grant, userData) {
         this.OVSession.signal({
             type: 'grantIntervention',
-            to: this.OVConnections.filter(function (connection) { return JSON.parse(connection.data).name === userData.name; }),
+            to: this.OVConnections.filter(function (connection) { return JSON.parse(connection.connectionId).name === userData.name; }),
             data: grant.toString()
         });
         // Set 'accessGranted' property of proper userData to 'grant' value

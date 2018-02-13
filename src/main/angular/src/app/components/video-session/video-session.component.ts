@@ -168,7 +168,7 @@ export class VideoSessionComponent implements OnInit {
 
     this.OVSession.signal({
       type: 'grantIntervention',
-      to: this.OVConnections.filter(connection => JSON.parse(connection.data).name === userData.name),
+      to: this.OVConnections.filter(connection => JSON.parse(connection.connectionId).name === userData.name),
       data: grant.toString()
     });
 
