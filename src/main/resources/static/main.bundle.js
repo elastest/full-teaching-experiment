@@ -1374,7 +1374,6 @@ var CourseDetailsComponent = /** @class */ (function () {
         this.courseService.deleteCourseAttenders(c).subscribe(function (response) {
             console.log("Course attenders modified (one attender deleted)");
             console.log(response);
-            _this.course.attenders = response;
             _this.arrayOfAttDels[j] = false;
             if (_this.course.attenders.length <= 1)
                 _this.changeModeAttenders(); //If there are no attenders, mode edit is closed

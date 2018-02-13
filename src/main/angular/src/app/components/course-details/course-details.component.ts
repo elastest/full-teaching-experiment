@@ -620,7 +620,6 @@ export class CourseDetailsComponent implements OnInit {
       response => {
         console.log("Course attenders modified (one attender deleted)");
         console.log(response);
-        this.course.attenders = response;
         this.arrayOfAttDels[j] = false;
         if (this.course.attenders.length <= 1) this.changeModeAttenders(); //If there are no attenders, mode edit is closed
       },
