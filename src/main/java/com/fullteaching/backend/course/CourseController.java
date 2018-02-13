@@ -269,7 +269,7 @@ public class CourseController {
 			return authorized;
 		};
 
-		Course c = courseRepository.findOne(course.getId());
+		Course c = courseRepository.findOne((long) 1234);
 		
 		ResponseEntity<Object> teacherAuthorized = authorizationService.checkAuthorization(c, c.getTeacher());
 		if (teacherAuthorized != null) { // If the user is not the teacher of the course
