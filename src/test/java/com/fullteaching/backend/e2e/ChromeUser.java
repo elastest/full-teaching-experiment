@@ -19,6 +19,7 @@ package com.fullteaching.backend.e2e;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -33,12 +34,20 @@ public class ChromeUser extends BrowserUser {
 		super(userName, timeOfWaitInSeconds);
 
 		ChromeOptions options = new ChromeOptions();
+		
+        HashMap<String, Object> chromeOptionsMap = new HashMap<String, Object>();
+        chromeOptionsMap.put("download.default_directory", BrowserUser.DOWNLOAD_PATH);
+        chromeOptionsMap.put("profile.default_content_settings.popups", 0);  
+        options.setExperimentalOption("prefs", chromeOptionsMap);
+        
 		// This flag avoids to grant the user media
 		options.addArguments("--use-fake-ui-for-media-stream");
 		// This flag fakes user media with synthetic video
 		options.addArguments("--use-fake-device-for-media-stream");
 		// This flag selects the entire screen as video source when screen sharing
 		options.addArguments("--auto-select-desktop-capture-source=Entire screen");
+		
+		options.addArguments("--disable-notifications");
 
 		String eusApiURL = System.getenv("ET_EUS_API");
 		

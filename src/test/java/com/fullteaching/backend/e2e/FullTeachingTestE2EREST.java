@@ -493,14 +493,15 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 				editedFileName), "Unexpected uploaded file name");
 
 		log.info("File successfully edited");
-
+		
+		// Test file download
 		log.info("Downloading file");
 
 		user.getDriver().findElement(By.cssSelector("div.chip.chip-file")).click();
 
 		waitSeconds(5);
 
-		File dir = new File(System.getProperty("user.home") + "/Downloads/");
+		File dir = new File(BrowserUser.DOWNLOAD_PATH);
 		File[] dirContents = dir.listFiles();
 
 		boolean fileDownloaded = false;
