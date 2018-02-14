@@ -71,7 +71,7 @@ public class SessionController {
 		Session s = sessionRepository.findOne(session.getId());
 		
 		ResponseEntity<Object> teacherAuthorized = authorizationService.checkAuthorization(s, s.getCourse().getTeacher());
-		if (teacherAuthorized != null) { // If the user is not the teacher of the course
+		if (teacherAuthorized == null) { // If the user is not the teacher of the course
 			return teacherAuthorized;
 		} else {
 			s.setTitle(session.getTitle());
