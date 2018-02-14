@@ -101,14 +101,13 @@ public class FullTeachingTestE2EVideoSession extends FullTeachingTestE2E {
 		this.logout(user);
 		user.dispose();
 
-		log.info("##### Finish test: " + info.getDisplayName());
+		log.info("##### Finish test: " + info.getTestMethod().get().getName() + "()");
 	}
 
 	@Test
-	@DisplayName("Video-Session-Teacher-and-Student")
 	void oneToOneVideoAudioSessionChrome(TestInfo info) throws Exception {
 		
-		log.info("##### Start test: " + info.getDisplayName());
+		log.info("##### Start test: " + info.getTestMethod().get().getName() + "()");
 
 		// TEACHER
 
