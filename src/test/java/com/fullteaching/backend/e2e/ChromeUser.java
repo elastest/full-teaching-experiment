@@ -21,7 +21,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
-import org.junit.jupiter.api.TestInfo;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -34,12 +33,15 @@ public class ChromeUser extends BrowserUser {
 		super(userName, timeOfWaitInSeconds);
 
 		ChromeOptions options = new ChromeOptions();
+        
 		// This flag avoids to grant the user media
 		options.addArguments("--use-fake-ui-for-media-stream");
 		// This flag fakes user media with synthetic video
 		options.addArguments("--use-fake-device-for-media-stream");
 		// This flag selects the entire screen as video source when screen sharing
 		options.addArguments("--auto-select-desktop-capture-source=Entire screen");
+		
+		options.addArguments("--disable-notifications");
 
 		String eusApiURL = System.getenv("ET_EUS_API");
 		
