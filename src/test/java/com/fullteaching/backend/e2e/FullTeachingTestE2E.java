@@ -57,13 +57,13 @@ public class FullTeachingTestE2E {
 
 		switch (browser) {
 		case "chrome":
-			u = new ChromeUser(userIdentifier, secondsOfWait, testInfo.getDisplayName(), userIdentifier);
+			u = new ChromeUser(userIdentifier, secondsOfWait, testInfo.getTestMethod().get().getName(), userIdentifier);
 			break;
 		case "firefox":
-			u = new FirefoxUser(userIdentifier, secondsOfWait, testInfo.getDisplayName(), userIdentifier);
+			u = new FirefoxUser(userIdentifier, secondsOfWait, testInfo.getTestMethod().get().getName(), userIdentifier);
 			break;
 		default:
-			u = new ChromeUser(userIdentifier, secondsOfWait, testInfo.getDisplayName(), userIdentifier);
+			u = new ChromeUser(userIdentifier, secondsOfWait,  testInfo.getTestMethod().get().getName(), userIdentifier);
 		}
 		
 		log.info("Navigating to {}", APP_URL);

@@ -70,14 +70,14 @@ public class FileController {
 	@Autowired
 	private AuthorizationService authorizationService;
 	
-	@Value("${profile_stage}")
+	@Value("${profile.stage}")
     private String profileStage;
 	
 	//ONLY ON PRODUCTION
 	@Autowired
 	private AmazonS3 amazonS3;
 	
-    @Value("${aws_namecard_bucket}")
+    @Value("${aws.namecard.bucket}")
     private String bucketAWS;
     //ONLY ON PRODUCTION
     
