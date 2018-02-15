@@ -22,7 +22,7 @@ services:
 
   full-teaching:
     container_name: docker-compose-full-teaching
-    image: pablofuente/full-teaching
+    image: codeurjc/full-teaching
     links:
       - full-teaching-mysql:mysql
     ports:

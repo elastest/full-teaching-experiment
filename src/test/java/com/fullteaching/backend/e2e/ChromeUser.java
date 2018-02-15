@@ -20,6 +20,7 @@ package com.fullteaching.backend.e2e;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
+
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -28,16 +29,19 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 
 public class ChromeUser extends BrowserUser {
 
-	public ChromeUser(String userName, int timeOfWaitInSeconds) {
+	public ChromeUser(String userName, int timeOfWaitInSeconds, String browserId, String userIdentifier) {
 		super(userName, timeOfWaitInSeconds);
 
 		ChromeOptions options = new ChromeOptions();
+        
 		// This flag avoids to grant the user media
 		options.addArguments("--use-fake-ui-for-media-stream");
 		// This flag fakes user media with synthetic video
 		options.addArguments("--use-fake-device-for-media-stream");
 		// This flag selects the entire screen as video source when screen sharing
 		options.addArguments("--auto-select-desktop-capture-source=Entire screen");
+		
+		options.addArguments("--disable-notifications");
 
 		String eusApiURL = System.getenv("ET_EUS_API");
 		
@@ -48,6 +52,7 @@ public class ChromeUser extends BrowserUser {
 			this.driver = new ChromeDriver(capabilities);	
 		} else {
 			try {
+				capabilities.setCapability("browserId", browserId + "_" + userIdentifier);
 				RemoteWebDriver remote = new RemoteWebDriver(new URL(eusApiURL),  capabilities);
 				remote.setFileDetector(new LocalFileDetector());
 				this.driver = remote;
