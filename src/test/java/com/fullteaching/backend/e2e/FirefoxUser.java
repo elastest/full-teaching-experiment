@@ -21,7 +21,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
-import org.junit.jupiter.api.TestInfo;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -43,7 +42,6 @@ public class FirefoxUser extends BrowserUser {
 		String eusApiURL = System.getenv("ET_EUS_API");
 		
 		DesiredCapabilities capabilities = DesiredCapabilities.firefox();
-		capabilities.setVersion("57");
 		capabilities.setCapability("acceptInsecureCerts", true);
 		capabilities.setCapability(FirefoxDriver.PROFILE, profile);
 		
