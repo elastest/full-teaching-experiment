@@ -82,7 +82,7 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 	@BeforeEach
 	void setup(TestInfo info) {
 
-		log.info("##### Start test: " + info.getDisplayName());
+		log.info("##### Start test: " + info.getTestMethod().get().getName() + "()");
 
 		loginTeacher(info); // Teacher login
 		addCourse(COURSE_NAME); // Add test course
@@ -94,13 +94,12 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 		this.logout(user);
 		user.dispose();
 
-		log.info("##### Finish test: " + info.getDisplayName());
+		log.info("##### Finish test: " + info.getTestMethod().get().getName() + "()");
 	}
 
 	/*** Test methods ***/
 
 	@Test
-	@DisplayName("Course-REST-operations")
 	void courseRestOperations() throws Exception {
 
 		// Edit course
@@ -128,8 +127,7 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 	}
 
 	@Test
-	@DisplayName("Course-info-REST-operations")
-	void courseInfonRestOperations() throws Exception {
+	void courseInfoRestOperations() throws Exception {
 
 		// Empty course info
 		enterCourseAndNavigateTab(COURSE_NAME, "info-tab-icon");
@@ -152,7 +150,6 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 	}
 
 	@Test
-	@DisplayName("Session-REST-operations")
 	void sessionRestOperations() throws Exception {
 
 		// Add new session
@@ -265,7 +262,6 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 	}
 
 	@Test
-	@DisplayName("Forum-REST-operations")
 	void forumRestOperations() throws Exception {
 
 		// Add new entry to the forum
@@ -362,7 +358,6 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 	}
 
 	@Test
-	@DisplayName("Files-REST-operations")
 	void filesRestOperations() throws Exception {
 
 		enterCourseAndNavigateTab(COURSE_NAME, "files-tab-icon");
@@ -504,7 +499,6 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 	}
 
 	@Test
-	@DisplayName("Attenders-REST-operations")
 	void attendersRestOperations() throws Exception {
 
 		enterCourseAndNavigateTab(COURSE_NAME, "attenders-tab-icon");
