@@ -9,10 +9,6 @@ import com.fullteaching.backend.security.AuthorizationService;
 
 //ONLY ON PRODUCTION
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
-
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
@@ -34,20 +30,11 @@ public class Application
 	}
     
     //ONLY ON PRODUCTION
-    @Value("${aws_access_key_id}")
+    @Value("${aws.access.key.id}")
     private String awsId;
  	
-    @Value("${aws_secret_access_key}")
+    @Value("${aws.secret.access.key}")
     private String awsKey;
-    
-    @Bean
-    public static PropertyPlaceholderConfigurer propertyPlaceholderConfigurer() {
-	 	PropertyPlaceholderConfigurer ppc = new PropertyPlaceholderConfigurer();
-	 	ppc.setLocations(new Resource[] {
-	 		new ClassPathResource("/general.properties")
-	         });
-	 	return ppc;
-    }
     
     @Bean
     public AWSCredentials credential() {

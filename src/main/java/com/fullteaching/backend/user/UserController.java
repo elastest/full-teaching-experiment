@@ -40,7 +40,7 @@ public class UserController {
 	@Autowired
 	private AuthorizationService authorizationService;
 	
-    @Value("${recaptcha_private_key}")
+    @Value("${recaptcha.private.key}")
     private String recaptchaPrivateKey;
 	
 	//Between 8-20 characters long, at least one uppercase, one lowercase and one number
