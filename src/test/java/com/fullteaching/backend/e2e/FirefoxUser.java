@@ -29,7 +29,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 
 public class FirefoxUser extends BrowserUser {
 
-	public FirefoxUser(String userName, int timeOfWaitInSeconds) {
+	public FirefoxUser(String userName, int timeOfWaitInSeconds, String browserId, String userIdentifier) {
 		super(userName, timeOfWaitInSeconds);
 		
 		FirefoxProfile profile = new FirefoxProfile();
@@ -42,7 +42,6 @@ public class FirefoxUser extends BrowserUser {
 		String eusApiURL = System.getenv("ET_EUS_API");
 		
 		DesiredCapabilities capabilities = DesiredCapabilities.firefox();
-		capabilities.setVersion("57");
 		capabilities.setCapability("acceptInsecureCerts", true);
 		capabilities.setCapability(FirefoxDriver.PROFILE, profile);
 		
@@ -50,6 +49,7 @@ public class FirefoxUser extends BrowserUser {
 			this.driver = new FirefoxDriver(capabilities);
 		} else {
 			try {
+				capabilities.setCapability("browserId", browserId + "_" + userIdentifier);
 				RemoteWebDriver remote = new RemoteWebDriver(new URL(eusApiURL),  capabilities);
 				remote.setFileDetector(new LocalFileDetector());
 				this.driver = remote;

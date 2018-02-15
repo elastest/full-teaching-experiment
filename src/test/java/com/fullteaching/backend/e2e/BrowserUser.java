@@ -17,10 +17,14 @@
 
 package com.fullteaching.backend.e2e;
 
+import static java.lang.invoke.MethodHandles.lookup;
+import static org.slf4j.LoggerFactory.getLogger;
+
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.slf4j.Logger;
 
 public class BrowserUser {
 
@@ -28,6 +32,8 @@ public class BrowserUser {
 	protected WebDriverWait waiter;
 	protected String clientData;
 	protected int timeOfWaitInSeconds;
+	
+	final static Logger log = getLogger(lookup().lookupClass());
 
 	public BrowserUser(String clientData, int timeOfWaitInSeconds) {
 		this.clientData = clientData;
@@ -46,7 +52,7 @@ public class BrowserUser {
 		try {
 			this.waiter.until(condition);
 		} catch(org.openqa.selenium.TimeoutException timeout) {
-			System.out.println("[ERROR] " + errorMessage);
+			log.error(errorMessage);
 			throw new org.openqa.selenium.TimeoutException("\"" + errorMessage + "\" (checked with condition) > " + timeout.getMessage());
 		}
 	}
