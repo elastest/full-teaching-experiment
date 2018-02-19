@@ -133,4 +133,9 @@ public class Course {
 	    Course otherCourse = (Course)other;
 	    return (otherCourse.id == this.id);
 	}
+	
+	@Override
+	public String toString() {
+		return "Course[title: \"" + this.title + "\", teacher: \"" + this.teacher.getNickName() + "\", #attenders: " + this.attenders.size() + ", #sessions: " + this.sessions.size() + "]";
+	}
 }

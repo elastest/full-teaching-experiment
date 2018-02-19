@@ -1,6 +1,6 @@
 #!/bin/sh
 
-for i in $(seq 1 11); do
+for i in $(seq 1 12); do
 
 	echo
 	echo "###########"
@@ -20,7 +20,7 @@ for i in $(seq 1 11); do
 
 done
 
-for i in $(seq 1 11); do
+for i in $(seq 1 12); do
 
 	docker push codeurjc/full-teaching:bug$i
 
