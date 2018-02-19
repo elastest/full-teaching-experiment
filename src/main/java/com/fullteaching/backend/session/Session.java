@@ -98,4 +98,9 @@ public class Session {
 	    return (otherSession.id == this.id);
 	}
 	
+	@Override
+	public String toString() {
+		return "Session[title: \"" + this.title + "\", description: \"" + this.description + "\", date: \"" + this.date + "\"]";
+	}
+	
 }

@@ -79,5 +79,10 @@ public class Entry {
 	public void setUser(User user) {
 		this.user = user;
 	}
+	
+	@Override
+	public String toString() {
+		return "Entry[title: \"" + this.title + "\", author: \"" + user.getNickName() + "\", date: " + this.date + ", #comments: " + this.comments.size() + "]";
+	}
 
 }

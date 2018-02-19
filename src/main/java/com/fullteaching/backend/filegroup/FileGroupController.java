@@ -1,14 +1,10 @@
 package com.fullteaching.backend.filegroup;
 
-import java.io.IOException;
-import java.nio.file.DirectoryNotEmptyException;
-import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -19,16 +15,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.amazonaws.AmazonClientException;
-import com.amazonaws.AmazonServiceException;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.fullteaching.backend.course.Course;
 import com.fullteaching.backend.course.CourseRepository;
 import com.fullteaching.backend.coursedetails.CourseDetails;
 import com.fullteaching.backend.coursedetails.CourseDetailsRepository;
 import com.fullteaching.backend.file.File;
 import com.fullteaching.backend.file.FileController;
+import com.fullteaching.backend.file.FileOperationsService;
 import com.fullteaching.backend.file.FileRepository;
 import com.fullteaching.backend.security.AuthorizationService;
 
@@ -36,6 +29,8 @@ import com.fullteaching.backend.security.AuthorizationService;
 @RequestMapping("/api-files")
 public class FileGroupController {
 	
+	private static final Logger log = LoggerFactory.getLogger(FileGroupController.class);
+
 	@Autowired
 	private FileGroupRepository fileGroupRepository;
 	
@@ -51,19 +46,16 @@ public class FileGroupController {
 	@Autowired
 	private AuthorizationService authorizationService;
 	
+	@Autowired
+	private FileOperationsService fileOperationsService;
+	
 	@Value("${profile.stage}")
     private String profileStage;
 	
-	//ONLY ON PRODUCTION
-	@Autowired
-	private AmazonS3 amazonS3;
-	
-    @Value("${aws.namecard.bucket}")
-    private String bucketAWS;
-    //ONLY ON PRODUCTION	
-	
 	@RequestMapping(value = "/{id}", method = RequestMethod.POST)
 	public ResponseEntity<Object> newFileGroup(@RequestBody FileGroup fileGroup, @PathVariable(value="id") String courseDetailsId) {
+		
+		log.info("CRUD operation: Adding new file group");
 		
 		ResponseEntity<Object> authorized = authorizationService.checkBackendLogged();
 		if (authorized != null){
@@ -74,6 +66,7 @@ public class FileGroupController {
 		try {
 			id_i = Long.parseLong(courseDetailsId);
 		} catch(NumberFormatException e){
+			log.error("CourseDetails ID '{}' is not of type Long", courseDetailsId);
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 		
@@ -90,6 +83,9 @@ public class FileGroupController {
 				/*Saving the modified courseDetails: Cascade relationship between courseDetails
 				  and fileGroups will add the new fileGroup to FileGroupRepository*/
 				courseDetailsRepository.save(cd);
+				
+				log.info("New root file group succesfully added: {}", fileGroup.toString());
+				
 				/*Entire courseDetails is returned*/
 				return new ResponseEntity<>(cd, HttpStatus.CREATED);
 			}
@@ -103,6 +99,9 @@ public class FileGroupController {
 					 its FileGroup children will add the new fileGroup to FileGroupRepository*/
 					fileGroupRepository.save(fParent);
 					CourseDetails cd2 = courseDetailsRepository.findOne(id_i);
+					
+					log.info("New file sub-group succesfully added: {}", fileGroup.toString());
+					
 					/*Entire courseDetails is returned*/
 					return new ResponseEntity<>(cd2, HttpStatus.CREATED);
 				}else{
@@ -116,6 +115,8 @@ public class FileGroupController {
 	@RequestMapping(value = "/edit/file-group/course/{courseId}", method = RequestMethod.PUT)
 	public ResponseEntity<Object> modifyFileGroup(@RequestBody FileGroup fileGroup, @PathVariable(value="courseId") String courseId) {
 		
+		log.info("CRUD operation: Updating filegroup");
+		
 		ResponseEntity<Object> authorized = authorizationService.checkBackendLogged();
 		if (authorized != null){
 			return authorized;
@@ -125,6 +126,7 @@ public class FileGroupController {
 		try{
 			id_course = Long.parseLong(courseId);
 		}catch(NumberFormatException e){
+			log.error("Course ID '{}' is not of type Long", courseId);
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 		
@@ -138,13 +140,88 @@ public class FileGroupController {
 			FileGroup fg = fileGroupRepository.findOne(fileGroup.getId());
 			
 			if (fg != null){
+				
+				log.info("Updating filegroup. Previous value: {}", fg.toString());
+				
 				fg.setTitle(fileGroup.getTitle());
 				fileGroupRepository.save(fg);
+				
+				log.info("FileGroup succesfully updated. Modified value: {}", fg.toString());
 				
 				//Returning the root FileGroup of the added file
 				return new ResponseEntity<>(this.getRootFileGroup(fg), HttpStatus.OK);
 			} else {
-				return new ResponseEntity<>(HttpStatus.NOT_MODIFIED); 
+				log.error("FileGroup with id '{}' doesn't exist", fileGroup.getId());
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
+			}
+		}
+	}
+	
+	
+	@RequestMapping(value = "/delete/file-group/{fileGroupId}/course/{courseId}", method = RequestMethod.DELETE)
+	public ResponseEntity<Object> deleteFileGroup(
+			@PathVariable(value="fileGroupId") String fileGroupId,
+			@PathVariable(value="courseId") String courseId
+	) {
+		
+		log.info("CRUD operation: Deleting filegroup");
+		
+		ResponseEntity<Object> authorized = authorizationService.checkBackendLogged();
+		if (authorized != null){
+			return authorized;
+		};
+		
+		long id_fileGroup = -1;
+		long id_course = -1;
+		try {
+			id_fileGroup = Long.parseLong(fileGroupId);
+			id_course = Long.parseLong(courseId);
+		} catch(NumberFormatException e){
+			log.error("Course ID '{}' or FileGroup ID '{}' are not of type Long", courseId, fileGroupId);
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+		
+		
+		Course c = courseRepository.findOne(id_course);
+		
+		ResponseEntity<Object> teacherAuthorized = authorizationService.checkAuthorization(c, c.getTeacher());
+		if (teacherAuthorized != null) { // If the user is not the teacher of the course
+			return teacherAuthorized;
+		} else {
+		
+			FileGroup fg = fileGroupRepository.findOne(id_fileGroup);
+			
+			if (fg != null){
+				
+				log.info("Deleting filegroup: {}", fg.toString());
+				
+				if (this.isProductionStage()){
+					//Removing all the S3 stored files of the tree structure...
+					for (File f : fg.getFiles()){
+						fileOperationsService.deleteRemoteFile(f.getNameIdent(), "/files");
+					}
+					fileOperationsService.recursiveS3StoredFileDeletion(fg.getFileGroups());
+				}
+				else {
+					//Removing all the locally stored files of the tree structure...
+					for (File f : fg.getFiles()){
+						fileOperationsService.deleteLocalFile(f.getNameIdent(), FileController.FILES_FOLDER);
+					}
+					fileOperationsService.recursiveLocallyStoredFileDeletion(fg.getFileGroups());
+				}
+				
+				//It is necessary to remove the FileGroup from the CourseDetails that owns it
+				CourseDetails cd = c.getCourseDetails();
+				cd.getFiles().remove(fg);
+				courseDetailsRepository.save(cd);
+				fileGroupRepository.delete(fg);
+				
+				log.info("Filegroup successfully deleted");
+				
+				return new ResponseEntity<>(fg, HttpStatus.OK);
+			}
+			else{
+				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 			}
 		}
 	}
@@ -158,6 +235,8 @@ public class FileGroupController {
 			@PathVariable(value="targetId") String targetId,
 			@PathVariable(value="position") String position
 		) {
+		
+		log.info("CRUD operation: Editing file order in filegroup");
 		
 		ResponseEntity<Object> authorized = authorizationService.checkBackendLogged();
 		if (authorized != null){
@@ -176,6 +255,8 @@ public class FileGroupController {
 			id_target = Long.parseLong(targetId);
 			pos = Integer.parseInt(position);
 		}catch(NumberFormatException e){
+			log.error("Course ID '{}' or File ID '{}' or source ID '{}' or target ID '{}' are not of type Long; or position is not of type Integer",
+					courseId, fileId, sourceId, targetId, pos);
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 		
@@ -190,6 +271,8 @@ public class FileGroupController {
 			FileGroup targetFg = fileGroupRepository.findOne(id_target);
 			File fileMoved = fileRepository.findOne(id_file);
 			
+			log.info("Moving file {} from filegroup {} to filegroup {} into position {}", fileMoved, sourceFg, targetFg, pos);
+			
 			sourceFg.getFiles().remove(fileMoved);
 			targetFg.getFiles().add(pos, fileMoved);
 			
@@ -200,6 +283,8 @@ public class FileGroupController {
 			l.add(sourceFg);
 			l.add(targetFg);
 			fileGroupRepository.save(l);
+			
+			log.info("File order succesfully updated");
 			
 			//Returning the FileGroups of the course
 			return new ResponseEntity<>(c.getCourseDetails().getFiles(), HttpStatus.OK);
@@ -214,6 +299,8 @@ public class FileGroupController {
 			@PathVariable(value="courseId") String courseId) 
 	{
 		
+		log.info("CRUD operation: Updating file");
+		
 		ResponseEntity<Object> authorized = authorizationService.checkBackendLogged();
 		if (authorized != null){
 			return authorized;
@@ -225,6 +312,7 @@ public class FileGroupController {
 			id_fileGroup = Long.parseLong(fileGroupId);
 			id_course = Long.parseLong(courseId);
 		}catch(NumberFormatException e){
+			log.error("Course ID '{}' or FileGroup ID '{}' are not of type Long", courseId, fileGroupId);
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 		
@@ -240,76 +328,24 @@ public class FileGroupController {
 			if (fg != null){
 				for (int i = 0; i < fg.getFiles().size(); i++){
 					if (fg.getFiles().get(i).getId() == file.getId()){
+						
+						log.info("Updating file. Previous value: {}", fg.getFiles().get(i));
+						
 						fg.getFiles().get(i).setName(file.getName());
 						fileGroupRepository.save(fg);
+						
+						log.info("File succesfully updated. Modified value: {}", fg.getFiles().get(i));
+						
 						//Returning the root FileGroup of the added file
 						return new ResponseEntity<>(this.getRootFileGroup(fg), HttpStatus.OK);
 					}
 				}
+				
+				log.error("File not found");
 				return new ResponseEntity<>(HttpStatus.NOT_MODIFIED); 
 			} else {
+				log.error("FileGroup not found");
 				return new ResponseEntity<>(HttpStatus.NOT_MODIFIED); 
-			}
-		}
-	}
-	
-	
-	@RequestMapping(value = "/delete/file-group/{fileGroupId}/course/{courseId}", method = RequestMethod.DELETE)
-	public ResponseEntity<Object> deleteFileGroup(
-			@PathVariable(value="fileGroupId") String fileGroupId,
-			@PathVariable(value="courseId") String courseId
-	) {
-		
-		ResponseEntity<Object> authorized = authorizationService.checkBackendLogged();
-		if (authorized != null){
-			return authorized;
-		};
-		
-		long id_fileGroup = -1;
-		long id_course = -1;
-		try{
-			id_fileGroup = Long.parseLong(fileGroupId);
-			id_course = Long.parseLong(courseId);
-		}catch(NumberFormatException e){
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		}
-		
-		
-		Course c = courseRepository.findOne(id_course);
-		
-		ResponseEntity<Object> teacherAuthorized = authorizationService.checkAuthorization(c, c.getTeacher());
-		if (teacherAuthorized != null) { // If the user is not the teacher of the course
-			return teacherAuthorized;
-		} else {
-		
-			FileGroup fg = fileGroupRepository.findOne(id_fileGroup);
-			
-			if (fg != null){
-				
-				if (this.isProductionStage()){
-					//Removing all the S3 stored files of the tree structure...
-					for (File f : fg.getFiles()){
-						this.productionFileDeletion(f.getNameIdent(), "/files");
-					}
-					this.recursiveS3StoredFileDeletion(fg.getFileGroups());
-				}
-				else {
-					//Removing all the locally stored files of the tree structure...
-					for (File f : fg.getFiles()){
-						this.deleteStoredFile(f.getNameIdent());
-					}
-					this.recursiveLocallyStoredFileDeletion(fg.getFileGroups());
-				}
-				
-				//It is necessary to remove the FileGroup from the CourseDetails that owns it
-				CourseDetails cd = c.getCourseDetails();
-				cd.getFiles().remove(fg);
-				courseDetailsRepository.save(cd);
-				fileGroupRepository.delete(fg);
-				return new ResponseEntity<>(fg, HttpStatus.OK);
-			}
-			else{
-				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 			}
 		}
 	}
@@ -322,6 +358,8 @@ public class FileGroupController {
 			@PathVariable(value="courseId") String courseId
 	) {
 		
+		log.info("CRUD operation: Deleting file");
+		
 		ResponseEntity<Object> authorized = authorizationService.checkBackendLogged();
 		if (authorized != null){
 			return authorized;
@@ -330,14 +368,14 @@ public class FileGroupController {
 		long id_file = -1;
 		long id_fileGroup = -1;
 		long id_course = -1;
-		try{
+		try {
 			id_file = Long.parseLong(fileId);
 			id_fileGroup = Long.parseLong(fileGroupId);
 			id_course = Long.parseLong(courseId);
-		}catch(NumberFormatException e){
+		} catch(NumberFormatException e) {
+			log.error("Course ID '{}' or FileGroup ID '{}' or File ID '{}' are not of type Long", courseId, fileGroupId, fileId);
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
-		
 		
 		Course c = courseRepository.findOne(id_course);
 		
@@ -358,15 +396,17 @@ public class FileGroupController {
 			    }
 				if (file != null){
 					
+					log.info("Deleting file: {}", file.toString());
+					
 					if (this.isProductionStage()){
 						//ONLY ON PRODUCTION
 						//Deleting S3 stored file...
-						this.productionFileDeletion(file.getNameIdent(), "/files");
+						fileOperationsService.deleteRemoteFile(file.getNameIdent(), "/files");
 						//ONLY ON PRODUCTION
 					} else {
 						//ONLY ON DEVELOPMENT
 						//Deleting locally stored file...
-						this.deleteStoredFile(file.getNameIdent());
+						fileOperationsService.deleteLocalFile(file.getNameIdent(), FileController.FILES_FOLDER);
 						//ONLY ON DEVELOPMENT
 					}
 					
@@ -374,6 +414,9 @@ public class FileGroupController {
 					fg.updateFileIndexOrder();
 					
 					fileGroupRepository.save(fg);
+					
+					log.info("File successfully deleted");
+					
 					return new ResponseEntity<>(file, HttpStatus.OK);
 					
 				}else{
@@ -389,7 +432,6 @@ public class FileGroupController {
 		}
 	}
 	
-	
 	//Method to get the root FileGroup of a FileGroup tree structure, given a FileGroup
 	private FileGroup getRootFileGroup(FileGroup fg) {
 		while(fg.getFileGroupParent() != null){
@@ -397,68 +439,6 @@ public class FileGroupController {
 		}
 		return fg;
 	}
-	
-	
-	//Delets all the real locally stored files given a list of FileGroups
-	private void recursiveLocallyStoredFileDeletion(List<FileGroup> fileGroup){
-		if (fileGroup != null){
-			for (FileGroup fg : fileGroup){
-				for (File f: fg.getFiles()){
-					this.deleteStoredFile(f.getNameIdent());
-				}
-				this.recursiveLocallyStoredFileDeletion(fg.getFileGroups());
-			}
-		}
-		return;
-	}
-	
-	private void deleteStoredFile(String fileName){
-		//Deleting stored file...
-		try {
-			Path path = Paths.get(FileController.FILES_FOLDER.toString(), fileName);
-		    Files.delete(path);
-		} catch (NoSuchFileException x) {
-		    System.err.format("%s: no such" + " file or directory%n", Paths.get(FileController.FILES_FOLDER.toString(), fileName));
-		} catch (DirectoryNotEmptyException x) {
-		    System.err.format("%s not empty%n", Paths.get(FileController.FILES_FOLDER.toString(), fileName));
-		} catch (IOException x) {
-		    // File permission problems are caught here.
-		    System.err.println(x);
-		}
-	}
-	
-	//ONLY ON PRODUCTION
-	private void productionFileDeletion (String fileName, String s3Folder){
-		String bucketName = this.bucketAWS + s3Folder;
-        try {
-        	this.amazonS3.deleteObject(new DeleteObjectRequest(bucketName, fileName));
-        	System.out.println("S3 DELETION: File " + fileName + " deleted successfully");
-        } catch (AmazonServiceException ase) {
-            System.out.println("Caught an AmazonServiceException.");
-            System.out.println("Error Message:    " + ase.getMessage());
-            System.out.println("HTTP Status Code: " + ase.getStatusCode());
-            System.out.println("AWS Error Code:   " + ase.getErrorCode());
-            System.out.println("Error Type:       " + ase.getErrorType());
-            System.out.println("Request ID:       " + ase.getRequestId());
-        } catch (AmazonClientException ace) {
-            System.out.println("Caught an AmazonClientException.");
-            System.out.println("Error Message: " + ace.getMessage());
-        }
-	}
-	
-	//Delets all the real S3 stored files given a list of FileGroups
-	private void recursiveS3StoredFileDeletion(List<FileGroup> fileGroup){
-		if (fileGroup != null){
-			for (FileGroup fg : fileGroup){
-				for (File f: fg.getFiles()){
-					this.productionFileDeletion(f.getNameIdent(), "/files");
-				}
-				this.recursiveS3StoredFileDeletion(fg.getFileGroups());
-			}
-		}
-		return;
-	}
-	//ONLY ON PRODUCTION
 	
 	private boolean isProductionStage(){
 		return this.profileStage.equals("prod");

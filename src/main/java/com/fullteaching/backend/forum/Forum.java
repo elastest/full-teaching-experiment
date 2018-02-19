@@ -10,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
+import com.fullteaching.backend.comment.Comment;
 import com.fullteaching.backend.entry.Entry;
 
 @Entity
@@ -53,6 +54,15 @@ public class Forum {
 
 	public void setEntries(List<Entry> entries) {
 		this.entries = entries;
+	}
+	
+	@Override
+	public String toString() {
+		int numberOfComments = 0;
+		for (Entry entry: this.entries) {
+			numberOfComments += entry.getComments().size();
+		}
+		return "Forum[activated: \"" + this.activated + "\", #entries: \"" + this.entries.size() + "\", #comments: \"" + numberOfComments + "\"]";
 	}
 
 }
