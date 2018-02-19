@@ -104,5 +104,11 @@ public class Comment {
 	public void setCommentParent(Comment commentParent) {
 		this.commentParent = commentParent;
 	}
+	
+	@Override
+	public String toString() {
+		String parent = this.commentParent != null ? commentParent.message : "null";
+		return "Comment[message: \"" + this.message + "\", author: \"" + this.user.getNickName() + "\", parent: \"" + parent + "\", #replies: " + replies.size() + "date: \"" + this.date + "\"]";
+	}
 
 }
