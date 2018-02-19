@@ -35,7 +35,7 @@ services:
      - MYSQL_ENV_MYSQL_DATABASE=full_teaching
      - MYSQL_ENV_MYSQL_USER=ft-root
      - MYSQL_ENV_MYSQL_PASSWORD=pass
-     - server.port=${FT_PORT}
+     - server.port=5001
      - openvidu.url=https://full-teaching-openvidu-server-kms:8443
      - openvidu.secret=MY_SECRET
 
