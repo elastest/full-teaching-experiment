@@ -30,20 +30,14 @@ public class LoginController {
 	@RequestMapping("/api-logIn")
 	public ResponseEntity<User> logIn() {
 		
-		System.out.println("Logging in...");
+		log.info("Logging in ...");
 
 		if (!userComponent.isLoggedUser()) {
-			
-			System.out.println("Not user logged");
-			
 			log.info("Not user logged");
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		} else {
 			User loggedUser = userComponent.getLoggedUser();
-			
-			System.out.println("Logged as " + loggedUser.getName());
-			
-			log.info("Logged as " + loggedUser.getName());
+			log.info("Logged as {}", loggedUser.getName());
 			return new ResponseEntity<>(loggedUser, HttpStatus.OK);
 		}
 	}
@@ -51,14 +45,15 @@ public class LoginController {
 	@RequestMapping("/api-logOut")
 	public ResponseEntity<Boolean> logOut(HttpSession session) {
 		
-		System.out.println("Logging out...");
+		log.info("Logging out...");
 
 		if (!userComponent.isLoggedUser()) {
 			log.info("No user logged");
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		} else {
+			String name = userComponent.getLoggedUser().getName();
 			session.invalidate();
-			log.info("Logged out");
+			log.info("Logged out user {}", name);
 			return new ResponseEntity<>(true, HttpStatus.OK);
 		}
 	}

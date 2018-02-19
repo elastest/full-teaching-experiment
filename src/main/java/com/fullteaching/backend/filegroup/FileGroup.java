@@ -111,6 +111,12 @@ public class FileGroup {
 			f.setIndexOrder(i);
 			i++;
 		}
-	} 
+	}
+	
+	@Override
+	public String toString() {
+		String parent = this.fileGroupParent != null ? this.fileGroupParent.getTitle() : "null";
+		return "FileGroup[title: \"" + this.title + "\", parentFileGroup: \"" + parent + "\", #files: " + this.files.size() + ", #childrenFileGroups: " + this.fileGroups.size() + "]";
+	}
 	
 }

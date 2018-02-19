@@ -64,7 +64,7 @@ public class AutorizationServiceUnitaryTest extends AbstractUnitTest {
 		
 		ResponseEntity <Object> r = service.checkAuthorization(null, u);
 		int status1 = r.getStatusCodeValue();
-		int expected1 = HttpStatus.NOT_MODIFIED.value();
+		int expected1 = HttpStatus.NOT_FOUND.value();
 		
 		Assert.assertEquals("failure - expected HTTP status "+expected1, expected1, status1);
 		
@@ -98,7 +98,7 @@ public class AutorizationServiceUnitaryTest extends AbstractUnitTest {
 				
 		ResponseEntity <Object> r = service.checkAuthorizationUsers(null, u);
 		int status1 = r.getStatusCodeValue();
-		int expected1 = HttpStatus.BAD_REQUEST.value();
+		int expected1 = HttpStatus.NOT_FOUND.value();
 		
 		Assert.assertEquals("failure - expected HTTP status "+expected1, expected1, status1);
 		
