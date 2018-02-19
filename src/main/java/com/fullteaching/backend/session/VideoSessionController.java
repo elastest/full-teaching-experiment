@@ -63,7 +63,7 @@ public class VideoSessionController {
 	@PostConstruct
 	public void initIt() throws Exception {
 		this.SECRET = openviduSecret;
-    	this.URL = openviduUrl;
+    	this.URL = "https://localhost:8080";
     	System.out.println(" ------------ OPENVIDU_URL ---------------- : " + this.URL);
 		this.openVidu = new OpenVidu(this.URL, this.SECRET);
 	}
