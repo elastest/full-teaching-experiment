@@ -1,10 +1,13 @@
 package com.fullteaching.backend.course;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.commons.validator.routines.EmailValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +28,8 @@ import com.fullteaching.backend.user.User;
 @RequestMapping("/api-courses")
 public class CourseController {
 	
+	private static final Logger log = LoggerFactory.getLogger(CourseController.class);
+
 	@Autowired
 	private CourseRepository courseRepository;
 	
@@ -44,10 +49,11 @@ public class CourseController {
 		public Collection<String> emailsValidNotRegistered;
 	}
 	
-	
 	@JsonView(SimpleCourseList.class)
 	@RequestMapping(value = "/user/{id}", method = RequestMethod.GET)
-	public ResponseEntity<Object> getCourses(@PathVariable(value="id") String id){
+	public ResponseEntity<Object> getCourses(@PathVariable(value="id") String id) {
+		
+		log.info("CRUD operation: Getting all user courses");
 		
 		ResponseEntity<Object> authorized = authorizationService.checkBackendLogged();
 		if (authorized != null){
@@ -58,6 +64,7 @@ public class CourseController {
 		try{
 			id_i = Long.parseLong(id);
 		}catch(NumberFormatException e){
+			log.error("User ID '{}' is not of type Long", id);
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 		Set<Long> s = new HashSet<>();
@@ -65,13 +72,13 @@ public class CourseController {
 		Collection<User> users = userRepository.findAll(s);
 		Collection<Course> courses = new HashSet<>();
 		courses = courseRepository.findByAttenders(users);
-		return new ResponseEntity<>(courses ,HttpStatus.OK);
+		return new ResponseEntity<>(courses, HttpStatus.OK);
 	}
 	
-	
-	
 	@RequestMapping(value = "/course/{id}", method = RequestMethod.GET)
-	public ResponseEntity<Object> getCourse(@PathVariable(value="id") String id){
+	public ResponseEntity<Object> getCourse(@PathVariable(value="id") String id) {
+		
+		log.info("CRUD operation: Getting one course");
 		
 		ResponseEntity<Object> authorized = authorizationService.checkBackendLogged();
 		if (authorized != null){
@@ -82,16 +89,17 @@ public class CourseController {
 		try{
 			id_i = Long.parseLong(id);
 		}catch(NumberFormatException e){
+			log.error("Course ID '{}' is not of type Long", id);
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 		Course course = courseRepository.findOne(id_i);
 		return new ResponseEntity<>(course ,HttpStatus.OK);
 	}
 	
-	
-	
 	@RequestMapping(value = "/new", method = RequestMethod.POST)
 	public ResponseEntity<Object> newCourse(@RequestBody Course course) {
+		
+		log.info("CRUD operation: Adding new course");
 		
 		ResponseEntity<Object> authorized = authorizationService.checkBackendLogged();
 		if (authorized != null){
@@ -111,13 +119,16 @@ public class CourseController {
 		courseRepository.flush();
 		
 		course = courseRepository.findOne(course.getId());
+		
+		log.info("New course succesfully added: {}", course.toString());
+		
 		return new ResponseEntity<>(course, HttpStatus.CREATED);
 	}
 	
-	
-	
 	@RequestMapping(value = "/edit", method = RequestMethod.PUT)
 	public ResponseEntity<Object> modifyCourse(@RequestBody Course course) {
+		
+		log.info("CRUD operation: Updating course");
 		
 		ResponseEntity<Object> authorized = authorizationService.checkBackendLogged();
 		if (authorized != null){
@@ -130,6 +141,8 @@ public class CourseController {
 		if (teacherAuthorized != null) { // If the user is not the teacher of the course
 			return teacherAuthorized;
 		} else {
+			log.info("Updating course. Previous value: {}", c.toString());
+			
 			//Modifying the course attributes
 			c.setImage(course.getImage());
 			c.setTitle(course.getTitle());
@@ -140,14 +153,17 @@ public class CourseController {
 			}
 			//Saving the modified course
 			courseRepository.save(c);
+			
+			log.info("Course succesfully updated. Modified value: {}", c.toString());
+			
 			return new ResponseEntity<>(c, HttpStatus.OK);
 		}
 	}
 	
-	
-	
 	@RequestMapping(value = "/delete/{courseId}", method = RequestMethod.DELETE)
 	public ResponseEntity<Object> deleteCourse(@PathVariable(value="courseId") String courseId) {
+		
+		log.info("CRUD operation: Deleting course");
 		
 		ResponseEntity<Object> authorized = authorizationService.checkBackendLogged();
 		if (authorized != null){
@@ -158,6 +174,7 @@ public class CourseController {
 		try{
 			id_course = Long.parseLong(courseId);
 		}catch(NumberFormatException e){
+			log.error("Course ID '{}' is not of type Long", courseId);
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 		
@@ -167,6 +184,9 @@ public class CourseController {
 		if (teacherAuthorized != null) { // If the user is not the teacher of the course
 			return teacherAuthorized;
 		} else {
+			
+			log.info("Deleting course: {}", c.toString());
+			
 			//Removing the deleted course from its attenders
 			Collection<Course> courses = new HashSet<>();
 			courses.add(c);
@@ -177,8 +197,10 @@ public class CourseController {
 			userRepository.save(users);
 			c.getAttenders().clear();
 			
-			
 			courseRepository.delete(c);
+			
+			log.info("Course successfully deleted");
+			
 			return new ResponseEntity<>(c, HttpStatus.OK);
 		}
 	}
@@ -191,6 +213,8 @@ public class CourseController {
 			@PathVariable(value="courseId") String courseId) 
 	{
 		
+		log.info("CRUD operation: Adding attenders to course");
+		
 		ResponseEntity<Object> authorized = authorizationService.checkBackendLogged();
 		if (authorized != null){
 			return authorized;
@@ -199,7 +223,8 @@ public class CourseController {
 		long id_course = -1;
 		try{
 			id_course = Long.parseLong(courseId);
-		}catch(NumberFormatException e){
+		}catch(NumberFormatException e) {
+			log.error("Course ID '{}' is not of type Long", courseId);
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 
@@ -209,6 +234,8 @@ public class CourseController {
 		if (teacherAuthorized != null) { // If the user is not the teacher of the course
 			return teacherAuthorized;
 		} else {
+			
+			log.info("Adding attenders {} to course {}", Arrays.toString(attenderEmails), c.toString());
 		
 			//Strings with a valid email format
 			Set<String> attenderEmailsValid = new HashSet<>();
@@ -255,6 +282,12 @@ public class CourseController {
 			customResponse.emailsInvalid = attenderEmailsInvalid;
 			customResponse.emailsValidNotRegistered = attenderEmailsNotRegistered;
 			
+			log.info("Attenders added: {} | Attenders already exist: {} | Emails not valid: {} | Emails valid but no registered: {}",
+					customResponse.attendersAdded,
+					customResponse.attendersAlreadyAdded,
+					customResponse.emailsInvalid,
+					customResponse.emailsValidNotRegistered);
+			
 			return new ResponseEntity<>(customResponse, HttpStatus.OK);
 		}
 	}
@@ -263,6 +296,8 @@ public class CourseController {
 	
 	@RequestMapping(value = "/edit/delete-attenders", method = RequestMethod.PUT)
 	public ResponseEntity<Object> deleteAttenders(@RequestBody Course course) {
+		
+		log.info("CRUD operation: Deleting attender from course");
 		
 		ResponseEntity<Object> authorized = authorizationService.checkBackendLogged();
 		if (authorized != null){
@@ -275,6 +310,8 @@ public class CourseController {
 		if (teacherAuthorized != null) { // If the user is not the teacher of the course
 			return teacherAuthorized;
 		} else {
+			
+			log.info("Deleting attender from course {}", c);
 		
 			Set<Course> setCourse = new HashSet<>();
 			setCourse.add(c);
@@ -283,6 +320,7 @@ public class CourseController {
 			for (User attender : courseAttenders){
 				if (!course.getAttenders().contains(attender)){
 					attender.getCourses().remove(c);
+					log.info("Attender '{}' succesfully deleted from course", attender.getNickName());
 				}
 			}
 			
