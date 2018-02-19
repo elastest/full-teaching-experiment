@@ -82,7 +82,7 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 	@BeforeEach
 	void setup(TestInfo info) {
 
-		log.info("##### Start test: " + info.getTestMethod().get().getName() + "()");
+		log.info("##### Start test: " + info.getTestMethod().get().getName());
 
 		loginTeacher(info); // Teacher login
 		addCourse(COURSE_NAME); // Add test course
@@ -94,7 +94,7 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 		this.logout(user);
 		user.dispose();
 
-		log.info("##### Finish test: " + info.getTestMethod().get().getName() + "()");
+		log.info("##### Finish test: " + info.getTestMethod().get().getName());
 	}
 
 	/*** Test methods ***/

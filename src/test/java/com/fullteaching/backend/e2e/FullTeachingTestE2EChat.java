@@ -101,13 +101,13 @@ public class FullTeachingTestE2EChat extends FullTeachingTestE2E {
 		this.logout(user);
 		user.dispose();
 
-		log.info("##### Finish test: " +  info.getTestMethod().get().getName() + "()");
+		log.info("##### Finish test: " +  info.getTestMethod().get().getName());
 	}
 
 	@Test
 	void oneToOneChatInSessionChrome(TestInfo info) throws Exception {
 
-		log.info("##### Start test: " + info.getTestMethod().get().getName() + "()");
+		log.info("##### Start test: " + info.getTestMethod().get().getName());
 
 		// TEACHER
 

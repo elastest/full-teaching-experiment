@@ -1,5 +1,7 @@
 package com.fullteaching.backend.session;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +19,8 @@ import com.fullteaching.backend.security.AuthorizationService;
 @RequestMapping("/api-sessions")
 public class SessionController {
 	
+	private static final Logger log = LoggerFactory.getLogger(SessionController.class);
+	
 	@Autowired
 	private CourseRepository courseRepository;
 	
@@ -29,6 +33,8 @@ public class SessionController {
 	@RequestMapping(value = "/course/{id}", method = RequestMethod.POST)
 	public ResponseEntity<Object> newSession(@RequestBody Session session, @PathVariable(value="id") String id) {
 		
+		log.info("CRUD operation: Adding new session");
+		
 		ResponseEntity<Object> authorized = authorizationService.checkBackendLogged();
 		if (authorized != null){
 			return authorized;
@@ -38,6 +44,7 @@ public class SessionController {
 		try {
 			id_i = Long.parseLong(id);
 		} catch(NumberFormatException e){
+			log.error("Session ID '{}' is not of type Long", id);
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 		
@@ -54,6 +61,9 @@ public class SessionController {
 			//Saving the modified course: Cascade relationship between course and sessions
 			//will add the new session to SessionRepository
 			courseRepository.save(course);
+			
+			log.info("New session succesfully added: {}", session.toString());
+			
 			//Entire course is returned
 			return new ResponseEntity<>(course, HttpStatus.CREATED);
 		}
@@ -63,12 +73,16 @@ public class SessionController {
 	@RequestMapping(value = "/edit", method = RequestMethod.PUT)
 	public ResponseEntity<Object> modifySession(@RequestBody Session session) {
 		
+		log.info("CRUD operation: Updating session");
+		
 		ResponseEntity<Object> authorized = authorizationService.checkBackendLogged();
 		if (authorized != null){
 			return authorized;
 		};
 		
 		Session s = sessionRepository.findOne(session.getId());
+		
+		log.info("Updating session. Previous value: {}", s.toString());
 		
 		ResponseEntity<Object> teacherAuthorized = authorizationService.checkAuthorization(s, s.getCourse().getTeacher());
 		if (teacherAuthorized != null) { // If the user is not the teacher of the course
@@ -79,6 +93,9 @@ public class SessionController {
 			s.setDate(session.getDate());
 			//Saving the modified session
 			sessionRepository.save(s);
+			
+			log.info("Session succesfully updated. Modified value: {}", session.toString());
+			
 			return new ResponseEntity<>(s, HttpStatus.OK);
 		}
 	}
@@ -86,6 +103,8 @@ public class SessionController {
 	
 	@RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
 	public ResponseEntity<Object> deleteSession(@PathVariable(value="id") String id) {
+		
+		log.info("CRUD operation: Deleting session");
 		
 		ResponseEntity<Object> authorized = authorizationService.checkBackendLogged();
 		if (authorized != null){
@@ -96,6 +115,7 @@ public class SessionController {
 		try{
 			id_i = Long.parseLong(id);
 		}catch(NumberFormatException e){
+			log.error("Session ID '{}' is not of type Long", id);
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 		
@@ -108,9 +128,15 @@ public class SessionController {
 		
 			Course course = courseRepository.findOne(session.getCourse().getId());
 			if (course != null){
+				
+				log.info("Deleting session: {}", session.toString());
+				
 				course.getSessions().remove(session);
 				sessionRepository.delete(id_i);
 				courseRepository.save(course);
+				
+				log.info("Session successfully deleted");
+				
 				return new ResponseEntity<>(session, HttpStatus.OK);
 			}
 			else {
