@@ -108,7 +108,9 @@ public class Comment {
 	@Override
 	public String toString() {
 		String parent = this.commentParent != null ? commentParent.message : "null";
-		return "Comment[message: \"" + this.message + "\", author: \"" + this.user.getNickName() + "\", parent: \"" + parent + "\", #replies: " + replies.size() + "date: \"" + this.date + "\"]";
+		String user = this.user != null ? this.user.getNickName() : "";
+		int nReplies = this.replies != null ? this.replies.size() : 0;
+		return "Comment[message: \"" + this.message + "\", author: \"" + user + "\", parent: \"" + parent + "\", #replies: " + nReplies + "date: \"" + this.date + "\"]";
 	}
 
 }
