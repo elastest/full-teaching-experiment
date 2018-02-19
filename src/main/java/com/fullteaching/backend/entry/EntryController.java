@@ -1,5 +1,7 @@
 package com.fullteaching.backend.entry;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +23,8 @@ import com.fullteaching.backend.user.UserComponent;
 @RequestMapping("/api-entries")
 public class EntryController {
 	
+	private static final Logger log = LoggerFactory.getLogger(EntryController.class);
+	
 	@Autowired
 	private ForumRepository forumRepository;
 	
@@ -36,6 +40,8 @@ public class EntryController {
 	@RequestMapping(value = "/forum/{id}", method = RequestMethod.POST)
 	public ResponseEntity<Object> newEntry(@RequestBody Entry entry, @PathVariable(value="id") String courseDetailsId) {
 		
+		log.info("CRUD operation: Adding new entry");
+		
 		ResponseEntity<Object> authorized = authorizationService.checkBackendLogged();
 		if (authorized != null){
 			return authorized;
@@ -45,6 +51,7 @@ public class EntryController {
 		try {
 			id_i = Long.parseLong(courseDetailsId);
 		} catch(NumberFormatException e){
+			log.error("CourseDetails ID '{}' is not of type Long", courseDetailsId);
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 		
@@ -72,6 +79,9 @@ public class EntryController {
 			/*Saving the modified forum: Cascade relationship between forum and entries
 			  will add the new entry to EntryRepository*/
 			forumRepository.save(forum);
+			
+			log.info("New entry succesfully added: {}", entry.toString());
+			
 			/*Entire forum is returned in order to have the new entry ID available just
 			in case the author wants to add to it a new comment without refreshing the page*/
 			return new ResponseEntity<>(forum, HttpStatus.CREATED);

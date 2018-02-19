@@ -118,5 +118,10 @@ public class File {
 		if (i >= 0) s += originalName.substring(i);
 		return s;
 	}
+	
+	@Override
+	public String toString() {
+		return "File[name: \"" + this.name + "\", id: \"" + this.nameIdent + "\", link: \"" + this.link + ", indexOrder: " + this.indexOrder + "]";
+	}
 
 }

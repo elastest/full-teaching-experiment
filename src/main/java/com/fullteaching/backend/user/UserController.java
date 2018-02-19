@@ -20,6 +20,8 @@ import javax.net.ssl.HttpsURLConnection;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fullteaching.backend.user.UserRepository;
 import com.fullteaching.backend.user.UserComponent;
@@ -30,6 +32,8 @@ import com.fullteaching.backend.user.User;
 @RestController
 @RequestMapping("/api-users")
 public class UserController {
+	
+	private static final Logger log = LoggerFactory.getLogger(UserController.class);
 	
 	@Autowired
 	private UserRepository userRepository;
@@ -50,7 +54,7 @@ public class UserController {
 	@RequestMapping(value = "/new", method = RequestMethod.POST)
 	public ResponseEntity<User> newUser(@RequestBody String[] userData) throws Exception {
 		
-		System.out.println("Signing up a user...");
+		log.info("Signing up a user...");
 		
 		if(this.validateGoogleCaptcha(userData[3])){
 		
@@ -62,39 +66,40 @@ public class UserController {
 					
 					//If the email has a valid format
 					if (EmailValidator.getInstance().isValid(userData[0])){
-						System.out.println("Email and password are valid");
+						log.info("Email, password and captcha are valid");
 						User newUser = new User(userData[0], userData[1], userData[2], "", "ROLE_STUDENT");
 						userRepository.save(newUser);
+						log.info("User successfully signed up");
+						
 						return new ResponseEntity<>(newUser, HttpStatus.CREATED);
 					}
 					else{
-						System.out.println("Email NOT valid");
+						log.error("Email NOT valid");
 						return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 					}
 				}
 				
 				else{
-					System.out.println("Password NOT valid");
+					log.error("Password NOT valid");
 					return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 				}
 				
 			} else {
-				System.out.println("Email already in use");
+				log.error("Email already in use");
 				return new ResponseEntity<>(HttpStatus.CONFLICT);
 			}
 		}
 		else{
-			System.out.println("Captcha not validated");
+			log.error("Captcha not validated");
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 	}
-	
 	
 	//userData: [oldPassword, newPassword]
 	@RequestMapping(value = "/changePassword", method = RequestMethod.PUT)
 	public ResponseEntity<Object> changePassword(@RequestBody String[] userData) {
 		
-		System.out.println("Changing password...");
+		log.info("Updating password...");
 		
 		ResponseEntity<Object> authorized = authorizationService.checkBackendLogged();
 		if (authorized != null){
@@ -108,23 +113,28 @@ public class UserController {
 			
 			//If the password has a valid format (at least 8 characters long and contains one uppercase, one lowercase and a number)
 			if (userData[1].matches(this.passRegex)){
-				System.out.println("Password successfully changed");
 				User modifiedUser = userRepository.findByName(user.getLoggedUser().getName());
 				modifiedUser.setPasswordHash(encoder.encode(userData[1]));
 				userRepository.save(modifiedUser);
+				
+				log.info("Password successfully updated");
+				
 				return new ResponseEntity<>(true, HttpStatus.OK);
 			}
 			else{
-				System.out.println("New password NOT valid");
+				log.error("New password NOT valid");
 				return new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
 			}
 		} else {
-			System.out.println("Invalid current password");
+			log.error("Invalid current password");
 			return new ResponseEntity<>(HttpStatus.CONFLICT);
 		}
 	}
 	
 	private boolean validateGoogleCaptcha(String token) throws Exception{
+		
+		log.info("Validating Google Captcha");
+		
 		String url = "https://www.google.com/recaptcha/api/siteverify";
 		URL obj = new URL(url);
 		HttpsURLConnection con = (HttpsURLConnection) obj.openConnection();
@@ -142,8 +152,6 @@ public class UserController {
 		wr.close();
 
 		int responseCode = con.getResponseCode();
-		System.out.println("\nSending 'POST' request to URL : " + url);
-		System.out.println("Response Code : " + responseCode);
 
 		BufferedReader in = new BufferedReader(
 		        new InputStreamReader(con.getInputStream()));
@@ -156,12 +164,20 @@ public class UserController {
 		in.close();
 
 		//Print result
-		System.out.println(response.toString());
+		log.debug("Response: {}", response.toString());
 		
 		JSONParser parser = new JSONParser();
 		JSONObject json = (JSONObject) parser.parse(response.toString());
 		
-		return (boolean) json.get("success");
+		boolean successCaptchaResponse = (boolean) json.get("success");
+		
+		if (successCaptchaResponse) {
+			log.info("Captcha response successful");
+		} else {
+			log.error("Captcha invalid");
+		}
+		
+		return successCaptchaResponse;
 	}
 
 }

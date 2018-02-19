@@ -252,7 +252,7 @@ public class FileGroupControllerTest extends AbstractLoggedControllerUnitTest {
 	
 			int status = result.getResponse().getStatus();
 			
-			int expected = HttpStatus.NOT_MODIFIED.value();
+			int expected = HttpStatus.NOT_FOUND.value();
 
 			Assert.assertEquals("failure - expected HTTP status "+expected, expected, status);
 		
