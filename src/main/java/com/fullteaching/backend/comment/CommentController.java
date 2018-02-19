@@ -1,5 +1,7 @@
 package com.fullteaching.backend.comment;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,8 @@ import com.fullteaching.backend.user.UserComponent;
 @RestController
 @RequestMapping("/api-comments")
 public class CommentController {
+	
+	private static final Logger log = LoggerFactory.getLogger(CommentController.class);
 	
 	@Autowired
 	private EntryRepository entryRepository;
@@ -43,6 +47,8 @@ public class CommentController {
 			@PathVariable(value="courseDetailsId") String courseDetailsId
 	) {
 		
+		log.info("CRUD operation: Adding new comment");
+		
 		ResponseEntity<Object> authorized = authorizationService.checkBackendLogged();
 		if (authorized != null){
 			return authorized;
@@ -54,6 +60,7 @@ public class CommentController {
 			id_entry = Long.parseLong(entryId);
 			id_courseDetails = Long.parseLong(courseDetailsId);
 		} catch(NumberFormatException e){
+			log.error("Entry ID '{}' or CourseDetails ID '{}' are not of type Long", entryId, courseDetailsId);
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 		
@@ -71,22 +78,27 @@ public class CommentController {
 			comment.setDate(System.currentTimeMillis());
 			
 			//The comment is a root comment
-			if (comment.getCommentParent() == null){
+			if (comment.getCommentParent() == null) {
+				log.info("Adding new root comment");
 				Entry entry = entryRepository.findOne(id_entry);
-				if(entry != null){
+				if(entry != null) {
 					entry.getComments().add(comment);
 					/*Saving the modified entry: Cascade relationship between entry and comments
 					  will add the new comment to CommentRepository*/
 					entryRepository.save(entry);
+					
+					log.info("New comment succesfully added: {}", comment.toString());
+					
 					/*Entire entry is returned*/
 					return new ResponseEntity<>(entry, HttpStatus.CREATED);
-				}else{
+				} else {
 					return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 				}
 			}
 			
 			//The comment is a replay to another existing comment
 			else{
+				log.info("Adding new comment reply");
 				Comment cParent = commentRepository.findOne(comment.getCommentParent().getId());
 				if(cParent != null){
 					cParent.getReplies().add(comment);
@@ -94,6 +106,9 @@ public class CommentController {
 					 its replies will add the new comment to CommentRepository*/
 					commentRepository.save(cParent);
 					Entry entry = entryRepository.findOne(id_entry);
+					
+					log.info("New comment succesfully added: {}", comment.toString());
+					
 					/*Entire entry is returned*/
 					return new ResponseEntity<>(entry, HttpStatus.CREATED);
 				}else{
