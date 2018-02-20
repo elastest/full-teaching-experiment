@@ -2,13 +2,13 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
 import { environment } from '../../../environments/environment';
-import { Constants }   from '../../constants';
+import { Constants } from '../../constants';
 
-import { FileUploader }      from 'ng2-file-upload';
+import { FileUploader } from 'ng2-file-upload';
 
-import { UploaderModalService }   from '../../services/uploader-modal.service';
+import { UploaderModalService } from '../../services/uploader-modal.service';
 
-declare var Materialize : any;
+declare var Materialize: any;
 
 @Component({
   selector: 'app-file-uploader',
@@ -17,8 +17,8 @@ declare var Materialize : any;
 })
 export class FileUploaderComponent implements OnInit {
 
-  public uploader:FileUploader;
-  public hasBaseDropZoneOver:boolean = false;
+  public uploader: FileUploader;
+  public hasBaseDropZoneOver: boolean = false;
 
   subscription: Subscription;
 
@@ -44,28 +44,32 @@ export class FileUploaderComponent implements OnInit {
 
     //Subscription for clearing the queue
     this.subscription = this.uploaderModalService.uploaderClosedAnnounced$.subscribe(
-      objs => {this.uploader.clearQueue(); this.fileIncorrect = false;}
+      objs => { this.uploader.clearQueue(); this.fileIncorrect = false; }
     );
 
   }
 
   ngOnInit() {
-    this.uploader = new FileUploader({url: this.URLUPLOAD, maxFileSize: Constants.FILE_SIZE_LIMIT});
-    this.uploader.onCompleteItem = (item:any, response:string, status:number, headers:any)=> {
-      console.log("File uploaded...");
+    this.uploader = new FileUploader({ url: this.URLUPLOAD, maxFileSize: Constants.FILE_SIZE_LIMIT });
+    this.uploader.onBeforeUploadItem = (item: any) => {
+      this.onUploadStarted.emit(true);
+    }
+    this.uploader.onCompleteItem = (item: any, response: string, status: number, headers: any) => {
       this.onCompleteFileUpload.emit(response);
     }
-    this.uploader.onWhenAddingFileFailed = (fileItem) => {
+    this.uploader.onWhenAddingFileFailed = (fileItem, filter, options) => {
       this.handleFileSizeError();
+    }
+    this.uploader.onCancelItem = (item, response, status, headers) => {
+      console.log("File upload canceled");
     }
   }
 
   ngOnChanges() {
-    if(this.uploader){
+    if (this.uploader) {
       this.uploader.destroy();
-      this.uploader = new FileUploader({url: this.URLUPLOAD, maxFileSize: Constants.FILE_SIZE_LIMIT});
-      this.uploader.onCompleteItem = (item:any, response:string, status:number, headers:any)=> {
-        console.log("File uploaded...");
+      this.uploader = new FileUploader({ url: this.URLUPLOAD, maxFileSize: Constants.FILE_SIZE_LIMIT });
+      this.uploader.onCompleteItem = (item: any, response: string, status: number, headers: any) => {
         this.onCompleteFileUpload.emit(response);
       }
       this.uploader.onWhenAddingFileFailed = (fileItem) => {
@@ -76,18 +80,18 @@ export class FileUploaderComponent implements OnInit {
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
-    if(this.uploader){
+    if (this.uploader) {
       this.uploader.destroy();
       this.uploader.clearQueue();
     }
   }
 
-  fileOverBase(e:any):void {
+  fileOverBase(e: any): void {
     this.hasBaseDropZoneOver = e;
   }
 
-  handleFileSizeError(){
-    console.log("File too big. " + this.URLUPLOAD);
+  handleFileSizeError() {
+    console.error("File too big. " + this.URLUPLOAD);
     if (window.innerWidth <= Constants.PHONE_MAX_WIDTH) { // On mobile phones error on toast
       Materialize.toast('Files cannot be bigger than 5MB!', Constants.TOAST_SHOW_TIME, 'rounded');
     } else { // On desktop error on error-message
