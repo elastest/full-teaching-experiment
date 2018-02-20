@@ -30,13 +30,13 @@ public class AuthorizationService {
 	// Checks authorization of teacher
 	public ResponseEntity<Object> checkAuthorization(Object o, User u){
 		if(o == null){
-			//The object does not exist
+			// The object does not exist
 			log.error("Element not found");
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 		if(!this.user.getLoggedUser().equals(u)){
-			//The teacher is not authorized to edit it if he is not its owner
-			log.error("Teacher not authorized. Must be the owner of the course");
+			// The user does not match the logged one
+			log.warn("The user is not authorized");
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED); 
 		}
 		return null;
