@@ -25,9 +25,6 @@ export class AuthenticationService {
   }
 
   logIn(user: string, pass: string) {
-
-    console.log("Login service started...");
-
     let userPass = user + ":" + pass;
     let headers = new Headers({
   			'Authorization': 'Basic '+ utf8_to_b64(userPass),
@@ -38,27 +35,6 @@ export class AuthenticationService {
       .map(response => {
         this.processLogInResponse(response);
         return this.user;
-
-    /*return this.http.post('/api/authenticate', JSON.stringify({ email: email, pass: pass }))
-      .map((response: Response) => {
-        // login successful if there's a jwt token in the response
-        let token = response.json() && response.json().token;
-        if (token) {
-          // set token property
-          this.token = token;
-
-          // store email and jwt token in local storage to keep user logged in between page refreshes
-          localStorage.setItem('auth_token', JSON.stringify({ email: email, token: token }));
-          localStorage.setItem('current_user', JSON.stringify( response.json().user ));
-          // stores the user information in this.user attribute
-
-          // return true to indicate successful login
-          return true;
-        } else {
-          // return false to indicate failed login
-          this.user = null;
-          return false;
-        }*/
       })
       .catch(error => Observable.throw(error));
   }
@@ -88,8 +64,6 @@ export class AuthenticationService {
 
   private processLogInResponse(response){
       // Correctly logged in
-      console.log("Login succesful processing...");
-
   		this.user = (response.json() as User);
 
       localStorage.setItem("login", "FULLTEACHING");
@@ -109,7 +83,7 @@ export class AuthenticationService {
 
   reqIsLogged(){
 
-      console.log("ReqIsLogged called");
+      console.log("Trying automatic login");
 
   		let headers = new Headers({
   			'X-Requested-With': 'XMLHttpRequest'
@@ -119,10 +93,12 @@ export class AuthenticationService {
   		this.http.get(this.urlLogIn, options).subscribe(
   			response => this.processLogInResponse(response),
   			error => {
-  				if(error.status != 401){
+  				if(error.status != 401) {
   					console.error("Error when asking if logged: "+ JSON.stringify(error));
             this.logOut();
-  				}
+  				} else {
+            console.error("User is not logged in");
+          }
   			}
   		);
   	}
