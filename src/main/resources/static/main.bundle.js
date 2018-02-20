@@ -1015,7 +1015,6 @@ var CourseDetailsComponent = /** @class */ (function () {
         this.subscription3 = this.filesEditionService.fileGroupDeletedAnnounced$.subscribe(function (fileGroupDeletedId) {
             //fileGroupDeletedId is the id of the FileGroup that has been deleted by the child component (FileGroupComponent)
             if (_this.recursiveFileGroupDeletion(_this.course.courseDetails.files, fileGroupDeletedId)) {
-                console.log("Succesful local deletion of FileGroup with id " + fileGroupDeletedId);
                 if (_this.course.courseDetails.files.length == 0)
                     _this.changeModeEdition(); //If there are no fileGroups, mode edit is closed
             }
@@ -1043,8 +1042,6 @@ var CourseDetailsComponent = /** @class */ (function () {
             var id = +params['id'];
             _this.tabId = +params['tabId'];
             _this.courseService.getCourse(id).subscribe(function (course) {
-                console.log("Course " + course.id + ":");
-                console.log(course);
                 _this.sortSessionsByDate(course.sessions);
                 _this.course = course;
                 _this.selectedEntry = _this.course.courseDetails.forum.entries[0]; //selectedEntry default to first entry
@@ -1052,7 +1049,7 @@ var CourseDetailsComponent = /** @class */ (function () {
                     _this.changeUpdatedSession(_this.course.sessions[0]); //updatedSession default to first session
                 _this.updateCheckboxForumEdition(_this.course.courseDetails.forum.activated);
                 _this.welcomeText = _this.course.courseDetails.info;
-            }, function (error) { return console.log(error); });
+            }, function (error) { });
         });
     };
     CourseDetailsComponent.prototype.ngOnDestroy = function () {
@@ -1132,14 +1129,11 @@ var CourseDetailsComponent = /** @class */ (function () {
         }
     };
     CourseDetailsComponent.prototype.filesUploadStarted = function (event) {
-        console.log("Started...");
+        console.log("File upload started...");
     };
     CourseDetailsComponent.prototype.filesUploadCompleted = function (response) {
-        console.log("Finished...");
-        console.log("Items uploaded successfully");
-        console.log(response);
         var fg = JSON.parse(response);
-        console.log(fg);
+        console.log("File upload completed (items successfully uploadded). Response: ", fg);
         for (var i = 0; i < this.course.courseDetails.files.length; i++) {
             if (this.course.courseDetails.files[i].id == fg.id) {
                 this.course.courseDetails.files[i] = fg;
@@ -1154,36 +1148,30 @@ var CourseDetailsComponent = /** @class */ (function () {
         this.processingPost = true;
         //If modal is opened in "New Entry" mode
         if (this.postModalMode === 0) {
-            console.log("Saving new Entry: Title -> " + this.inputTitle + "  |  Comment -> " + this.inputComment);
             var e = new __WEBPACK_IMPORTED_MODULE_17__classes_entry__["a" /* Entry */](this.inputTitle, [new __WEBPACK_IMPORTED_MODULE_18__classes_comment__["a" /* Comment */](this.inputComment, null)]);
             this.forumService.newEntry(e, this.course.courseDetails.id).subscribe(//POST method requires an Entry and the CourseDetails id that contains its Forum
             function (//POST method requires an Entry and the CourseDetails id that contains its Forum
                 response) {
-                console.log(response);
                 _this.course.courseDetails.forum = response; //Only on succesful post we update the modified forum
                 _this.processingPost = false;
                 _this.actions2.emit({ action: "modal", params: ['close'] });
-            }, function (error) { console.log(error); _this.processingPost = false; });
+            }, function (error) { _this.processingPost = false; });
         }
         else if (this.postModalMode === 2) {
             var date = new Date(this.inputDate);
             var hoursMins = this.inputTime.split(":");
             date.setHours(parseInt(hoursMins[0]), parseInt(hoursMins[1]));
             var s = new __WEBPACK_IMPORTED_MODULE_15__classes_session__["a" /* Session */](this.inputTitle, this.inputComment, date.getTime());
-            console.log(s);
             this.sessionService.newSession(s, this.course.id).subscribe(function (response) {
-                console.log(response);
                 _this.sortSessionsByDate(response.sessions);
                 _this.course = response;
                 _this.processingPost = false;
                 _this.actions2.emit({ action: "modal", params: ['close'] });
-            }, function (error) { console.log(error); _this.processingPost = false; });
+            }, function (error) { _this.processingPost = false; });
         }
         else if (this.postModalMode === 1) {
             var c = new __WEBPACK_IMPORTED_MODULE_18__classes_comment__["a" /* Comment */](this.inputComment, this.postModalCommentReplay);
-            console.log(c);
             this.forumService.newComment(c, this.selectedEntry.id, this.course.courseDetails.id).subscribe(function (response) {
-                console.log(response);
                 //Only on succesful post we locally update the created entry
                 var ents = _this.course.courseDetails.forum.entries;
                 for (var i = 0; i < ents.length; i++) {
@@ -1195,41 +1183,19 @@ var CourseDetailsComponent = /** @class */ (function () {
                 }
                 _this.processingPost = false;
                 _this.actions2.emit({ action: "modal", params: ['close'] });
-            }, function (error) { console.log(error); _this.processingPost = false; });
+            }, function (error) { _this.processingPost = false; });
         }
         else if (this.postModalMode === 4) {
             var f = new __WEBPACK_IMPORTED_MODULE_19__classes_file_group__["a" /* FileGroup */](this.inputTitle, this.postModalFileGroup);
-            console.log(f);
             this.fileService.newFileGroup(f, this.course.courseDetails.id).subscribe(function (response) {
-                console.log(response);
                 //Only on succesful post we locally update the entire course details
                 _this.course.courseDetails = response;
                 _this.processingPost = false; // Stop the loading animation
                 _this.actions2.emit({ action: "modal", params: ['close'] }); // CLose the modal
                 if (!_this.allowFilesEdition)
                     _this.changeModeEdition(); // Activate file edition view if deactivated
-            }, function (error) { console.log(error); _this.processingPost = false; });
+            }, function (error) { _this.processingPost = false; });
         }
-        /*//If modal is opened in "New File" mode
-        else if (this.postModalMode === 5) {
-          let file = new File(1, this.inputTitle, "www.newlink.com");
-          console.log(file);
-          this.fileService.newFile(file, this.postModalFileGroup.id, this.course.courseDetails.id).subscribe(
-            response => {
-              console.log(response);
-    
-              //Only on succesful post we locally update the root filegroup that contains the created file
-              for (let i = 0; i < this.course.courseDetails.files.length; i++) {
-                if (this.course.courseDetails.files[i].id == response.id) {
-                  this.course.courseDetails.files[i] = response;
-                  break;
-                }
-              }
-              this.actions2.emit({action:"modal",params:['close']});
-            },
-            error => console.log(error)
-          );
-        }*/
     };
     //PUT existing Session or Forum
     CourseDetailsComponent.prototype.onPutDeleteSubmit = function () {
@@ -1241,7 +1207,6 @@ var CourseDetailsComponent = /** @class */ (function () {
             var s = new __WEBPACK_IMPORTED_MODULE_15__classes_session__["a" /* Session */](this.inputSessionTitle, this.inputSessionDescription, modifiedDate);
             s.id = this.updatedSession.id; //The new session must have the same id as the modified session in order to replace it
             this.sessionService.editSession(s).subscribe(function (response) {
-                console.log(response);
                 //Only on succesful put we locally update the modified session
                 for (var i = 0; i < _this.course.sessions.length; i++) {
                     if (_this.course.sessions[i].id == response.id) {
@@ -1252,25 +1217,22 @@ var CourseDetailsComponent = /** @class */ (function () {
                 }
                 _this.processingPut = false;
                 _this.actions3.emit({ action: "modal", params: ['close'] });
-            }, function (error) { console.log(error); _this.processingPut = false; });
+            }, function (error) { _this.processingPut = false; });
         }
         else if (this.putdeleteModalMode === 1) {
             this.forumService.editForum(!this.course.courseDetails.forum.activated, this.course.courseDetails.id).subscribe(function (response) {
-                console.log("Forum updated: active = " + response);
                 //Only on succesful put we locally update the modified session
                 _this.course.courseDetails.forum.activated = response;
                 _this.allowForumEdition = false;
                 _this.updateCheckboxForumEdition(response);
                 _this.processingPut = false;
                 _this.actions3.emit({ action: "modal", params: ['close'] });
-            }, function (error) { console.log(error); _this.processingPut = false; });
+            }, function (error) { _this.processingPut = false; });
         }
         else if (this.putdeleteModalMode === 2) {
             var fg = new __WEBPACK_IMPORTED_MODULE_19__classes_file_group__["a" /* FileGroup */](this.inputFileTitle, null);
             fg.id = this.updatedFileGroup.id;
             this.fileService.editFileGroup(fg, this.course.id).subscribe(function (response) {
-                console.log("FileGroup updated");
-                console.log(response);
                 for (var i = 0; i < _this.course.courseDetails.files.length; i++) {
                     if (_this.course.courseDetails.files[i].id == response.id) {
                         _this.course.courseDetails.files[i] = response; //The root fileGroup with the required ID is updated
@@ -1280,14 +1242,12 @@ var CourseDetailsComponent = /** @class */ (function () {
                 }
                 _this.processingPut = false;
                 _this.actions3.emit({ action: "modal", params: ['close'] });
-            }, function (error) { console.log(error); _this.processingPut = false; });
+            }, function (error) { _this.processingPut = false; });
         }
         else if (this.putdeleteModalMode === 3) {
             var f = new __WEBPACK_IMPORTED_MODULE_20__classes_file__["a" /* File */](1, this.inputFileTitle, "www.newlink.com");
             f.id = this.updatedFile.id;
             this.fileService.editFile(f, this.updatedFileGroup.id, this.course.id).subscribe(function (response) {
-                console.log("File updated");
-                console.log(response);
                 for (var i = 0; i < _this.course.courseDetails.files.length; i++) {
                     if (_this.course.courseDetails.files[i].id == response.id) {
                         _this.course.courseDetails.files[i] = response; //The root fileGroup with the required ID is updated
@@ -1297,7 +1257,7 @@ var CourseDetailsComponent = /** @class */ (function () {
                 }
                 _this.processingPut = false;
                 _this.actions3.emit({ action: "modal", params: ['close'] });
-            }, function (error) { console.log(error); _this.processingPut = false; });
+            }, function (error) { _this.processingPut = false; });
         }
         else if (this.putdeleteModalMode === 4) {
             //If the attenders are being added in the SIMPLE tab
@@ -1305,14 +1265,12 @@ var CourseDetailsComponent = /** @class */ (function () {
                 console.log("Adding one attender in the SIMPLE tab");
                 var arrayNewAttenders = [this.inputAttenderSimple];
                 this.courseService.addCourseAttenders(this.course.id, arrayNewAttenders).subscribe(function (response) {
-                    console.log("Course attenders modified (one attender added)");
-                    console.log(response);
                     var newAttenders = response.attendersAdded;
                     _this.course.attenders = _this.course.attenders.concat(newAttenders);
                     _this.handleAttendersMessage(response);
                     _this.processingPut = false;
                     _this.actions3.emit({ action: "modal", params: ['close'] });
-                }, function (error) { console.log(error); _this.processingPut = false; });
+                }, function (error) { _this.processingPut = false; });
             }
             else if (this.attenderTabSelected === 1) {
                 console.log("Adding multiple attenders in the MULTIPLE tab");
@@ -1324,14 +1282,12 @@ var CourseDetailsComponent = /** @class */ (function () {
                 }
                 var arrayNewAttenders = emailsFiltered.split(/\s+/).filter(function (v) { return v != ''; });
                 this.courseService.addCourseAttenders(this.course.id, arrayNewAttenders).subscribe(function (response) {
-                    console.log("Course attenders modified (multiple attenders added)");
-                    console.log(response);
                     var newAttenders = response.attendersAdded;
                     _this.course.attenders = _this.course.attenders.concat(newAttenders);
                     _this.handleAttendersMessage(response);
                     _this.processingPut = false;
                     _this.actions3.emit({ action: "modal", params: ['close'] });
-                }, function (error) { console.log(error); _this.processingPut = false; });
+                }, function (error) { _this.processingPut = false; });
             }
             else if (this.attenderTabSelected === 2) {
                 console.log("Adding attenders by file upload in the FILE UPLOAD tab");
@@ -1344,8 +1300,6 @@ var CourseDetailsComponent = /** @class */ (function () {
         var _this = this;
         this.processingPut = true;
         this.sessionService.deleteSession(this.updatedSession.id).subscribe(function (response) {
-            console.log("Session deleted");
-            console.log(response);
             //Only on succesful put we locally delete the session
             for (var i = 0; i < _this.course.sessions.length; i++) {
                 if (_this.course.sessions[i].id == response.id) {
@@ -1356,11 +1310,12 @@ var CourseDetailsComponent = /** @class */ (function () {
             }
             _this.processingPut = false;
             _this.actions3.emit({ action: "modal", params: ['close'] });
-        }, function (error) { console.log(error); _this.processingPut = false; });
+        }, function (error) { _this.processingPut = false; });
     };
     //Remove attender from course
     CourseDetailsComponent.prototype.deleteAttender = function (attender, j) {
         var _this = this;
+        console.log("Deleting attender " + attender.nickName);
         this.arrayOfAttDels[j] = true; // Start deleting animation
         var c = new __WEBPACK_IMPORTED_MODULE_16__classes_course__["a" /* Course */](this.course.title, this.course.image, this.course.courseDetails);
         c.id = this.course.id;
@@ -1369,31 +1324,28 @@ var CourseDetailsComponent = /** @class */ (function () {
                 c.attenders.push(new __WEBPACK_IMPORTED_MODULE_21__classes_user__["a" /* User */](this.course.attenders[i])); //Inserting a new User object equal to the attender but "courses" array empty
             }
         }
-        console.log(this.course);
-        console.log(c);
         this.courseService.deleteCourseAttenders(c).subscribe(function (response) {
             console.log("Course attenders modified (one attender deleted)");
             console.log(response);
             _this.arrayOfAttDels[j] = false;
             if (_this.course.attenders.length <= 1)
                 _this.changeModeAttenders(); //If there are no attenders, mode edit is closed
-        }, function (error) { console.log(error); _this.arrayOfAttDels[j] = false; });
+        }, function (error) { _this.arrayOfAttDels[j] = false; });
     };
     //Updates the course info
     CourseDetailsComponent.prototype.updateCourseInfo = function () {
         var _this = this;
+        console.log("Updating course info");
         this.processingCourseInfo = true;
         var c = new __WEBPACK_IMPORTED_MODULE_16__classes_course__["a" /* Course */](this.course.title, this.course.image, this.course.courseDetails);
         c.courseDetails.info = this.welcomeText;
         c.id = this.course.id;
-        console.log(c);
-        this.courseService.editCourse(c).subscribe(function (response) {
-            console.log("Course info updated: ");
+        this.courseService.editCourse(c, "updating course info").subscribe(function (response) {
             //Only on succesful put we locally update the modified course
             _this.course = response;
             _this.welcomeText = _this.course.courseDetails.info;
             _this.processingCourseInfo = false;
-        }, function (error) { console.log(error); _this.processingCourseInfo = false; });
+        }, function (error) { _this.processingCourseInfo = false; });
     };
     //Closes the course info editing mode
     CourseDetailsComponent.prototype.closeUpdateCourseInfo = function () {
@@ -1462,7 +1414,6 @@ var CourseDetailsComponent = /** @class */ (function () {
     CourseDetailsComponent.prototype.recursiveFileGroupDeletion = function (fileGroupLevel, fileGroupDeletedId) {
         if (fileGroupLevel) {
             for (var i = 0; i < fileGroupLevel.length; i++) {
-                console.log("ONE STEP IN THE SEARCH");
                 if (fileGroupLevel[i].id == fileGroupDeletedId) {
                     fileGroupLevel.splice(i, 1);
                     return true;
@@ -1532,13 +1483,10 @@ var CourseDetailsComponent = /** @class */ (function () {
         var fileMoved = el.dataset.id;
         var fileGroupSource = source.dataset.id;
         var fileGroupTarget = target.dataset.id;
-        console.log(this.course.courseDetails.files);
         var fileNewPosition = this.getFilePosition(fileMoved, fileGroupTarget);
         this.fileService.editFileOrder(fileMoved, fileGroupSource, fileGroupTarget, fileNewPosition, this.course.id).subscribe(function (response) {
-            console.log("Order of files updated");
-            console.log(response);
             _this.course.courseDetails.files = response;
-        }, function (error) { return console.log(error); });
+        }, function (error) { });
     };
     CourseDetailsComponent.prototype.getFilePosition = function (fileMoved, fileGroupTarget) {
         var fileGroupFound = null;
@@ -1693,13 +1641,11 @@ var DashboardComponent = /** @class */ (function () {
     DashboardComponent.prototype.getCourses = function () {
         var _this = this;
         this.courseService.getCourses(this.authenticationService.getCurrentUser()).subscribe(function (courses) {
-            console.log("User's courses: ");
-            console.log(courses);
             _this.authenticationService.getCurrentUser().courses = courses;
             _this.courses = courses;
             if (_this.courses.length > 0)
                 _this.updatedCourse = _this.courses[0];
-        }, function (error) { return console.log(error); });
+        }, function (error) { });
     };
     DashboardComponent.prototype.getImage = function (c) {
         if (c.image) {
@@ -1717,14 +1663,11 @@ var DashboardComponent = /** @class */ (function () {
         var newForum = new __WEBPACK_IMPORTED_MODULE_4__classes_forum__["a" /* Forum */](true);
         var newCourseDetails = new __WEBPACK_IMPORTED_MODULE_3__classes_course_details__["a" /* CourseDetails */](newForum, []);
         var newCourse = new __WEBPACK_IMPORTED_MODULE_2__classes_course__["a" /* Course */](this.inputPostCourseName, this.authenticationService.getCurrentUser().picture, newCourseDetails);
-        console.log(JSON.stringify(newCourse));
         this.courseService.newCourse(newCourse).subscribe(function (course) {
-            console.log("New course added: ");
-            console.log(course);
             _this.courses.push(course);
             _this.processingPost = false;
             _this.actions1.emit({ action: "modal", params: ['close'] });
-        }, function (error) { console.log(error); _this.processingPost = false; });
+        }, function (error) { _this.processingPost = false; });
     };
     //PUT existing Course
     DashboardComponent.prototype.onPutDeleteCourseSubmit = function () {
@@ -1732,10 +1675,7 @@ var DashboardComponent = /** @class */ (function () {
         this.processingPut = true;
         var c = new __WEBPACK_IMPORTED_MODULE_2__classes_course__["a" /* Course */](this.inputPutCourseName, this.updatedCourse.image, this.updatedCourse.courseDetails);
         c.id = this.updatedCourse.id;
-        console.log(c);
-        this.courseService.editCourse(c).subscribe(function (response) {
-            console.log("Course modified: ");
-            console.log(response);
+        this.courseService.editCourse(c, "updating course name").subscribe(function (response) {
             //Only on succesful put we locally update the modified course
             for (var i = 0; i < _this.courses.length; i++) {
                 if (_this.courses[i].id == response.id) {
@@ -1746,14 +1686,12 @@ var DashboardComponent = /** @class */ (function () {
             }
             _this.processingPut = false;
             _this.actions4.emit({ action: "modal", params: ['close'] });
-        }, function (error) { console.log(error); _this.processingPut = false; });
+        }, function (error) { _this.processingPut = false; });
     };
     //DELETE existing Course
     DashboardComponent.prototype.deleteCourse = function () {
         var _this = this;
         this.courseService.deleteCourse(this.updatedCourse.id).subscribe(function (response) {
-            console.log("Course deleted");
-            console.log(response);
             //Only on succesful put we locally delete the course
             for (var i = 0; i < _this.courses.length; i++) {
                 if (_this.courses[i].id == response.id) {
@@ -1763,7 +1701,7 @@ var DashboardComponent = /** @class */ (function () {
                 }
             }
             _this.actions4.emit({ action: "modal", params: ['close'] });
-        }, function (error) { return console.log(error); });
+        }, function (error) { });
     };
     DashboardComponent.prototype.changeUpdatedCourse = function (course) {
         this.updatedCourse = course;
@@ -1965,25 +1903,17 @@ var FileGroupComponent = /** @class */ (function () {
     };
     FileGroupComponent.prototype.deleteFileGroup = function () {
         var _this = this;
-        console.log(this.fileGroup);
-        console.log(this.fileGroup.id, this.courseId);
         this.fileGroupDeletion = true;
         this.fileService.deleteFileGroup(this.fileGroup.id, this.courseId).subscribe(function (response) {
-            console.log("FileGroup deleted");
-            console.log(response);
             //Only on succesful DELETE we locally delete the fileGroup sending an event to the suscribed parent component (CourseDetailsComponent)
             _this.filesEditionService.announceFileGroupDeleted(response.id);
             _this.fileGroupDeletion = false;
-        }, function (error) { console.log(error); _this.fileGroupDeletion = false; });
+        }, function (error) { _this.fileGroupDeletion = false; });
     };
     FileGroupComponent.prototype.deleteFile = function (file, i) {
         var _this = this;
-        console.log(file);
-        console.log(file.id, this.fileGroup.id, this.courseId);
         this.arrayOfDeletions[i] = true;
         this.fileService.deleteFile(file.id, this.fileGroup.id, this.courseId).subscribe(function (response) {
-            console.log("File deleted");
-            console.log(response);
             //Only on succesful delete we locally delete the file
             for (var i_1 = 0; i_1 < _this.fileGroup.files.length; i_1++) {
                 if (_this.fileGroup.files[i_1].id == response.id) {
@@ -1992,7 +1922,7 @@ var FileGroupComponent = /** @class */ (function () {
                 }
             }
             _this.arrayOfDeletions[i] = false;
-        }, function (error) { console.log(error); _this.arrayOfDeletions[i] = false; });
+        }, function (error) { _this.arrayOfDeletions[i] = false; });
     };
     FileGroupComponent.prototype.downloadFile = function (file) {
         this.fileService.downloadFile(this.courseId, file);
@@ -2082,7 +2012,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/components/file-uploader/file-uploader.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"row no-margin\">\n\n  <div *ngIf=\"uploader.queue.length == 0\" class=\"row no-margin text-centered\">\n    <div class=\"col l12 m12 s12\">\n      <label class=\"label-input-file waves-effect btn\" [attr.for]=\"'input-file-' + this.uniqueID\">{{buttonText}}</label>\n      <input *ngIf=\"!isMultiple\" class=\"input-file-uploader\" type=\"file\" [attr.name]=\"'input-file-' + this.uniqueID\" [attr.id]=\"'input-file-' + this.uniqueID\" ng2FileSelect [uploader]=\"uploader\"/>\n      <input *ngIf=\"isMultiple\" class=\"input-file-uploader\" type=\"file\" [attr.name]=\"'input-file-' + this.uniqueID\" [attr.id]=\"'input-file-' + this.uniqueID\" ng2FileSelect [uploader]=\"uploader\" multiple/>\n    </div>\n    <div class=\"col l12 m12\">\n      <div class=\"input-field\">\n        <div ng2FileDrop [ngClass]=\"{'nv-file-over': hasBaseDropZoneOver}\" (fileOver)=\"fileOverBase($event)\" [uploader]=\"uploader\" class=\"file-drop-zone\">\n          Or drop your {{typeOfFile}} here\n        </div>\n      </div>\n    </div>\n  </div>\n\n  <div class=\"row no-margin\">\n    <div *ngIf=\"uploader.queue.length > 0\" class=\"col s12 table-header\">\n      <div *ngIf=\"isMultiple\">\n        <h5 class=\"table-title\">Files to upload</h5>\n        <p class=\"table-subtitle\">You have <strong>{{ uploader?.getNotUploadedItems().length }}</strong> files waiting to be uploaded</p>\n      </div>\n\n      <table class=\"table\">\n        <thead *ngIf=\"isMultiple\">\n          <tr>\n               <th width=\"50%\">Name</th>\n               <th>Status</th>\n               <th>Actions</th>\n          </tr>\n        </thead>\n\n        <tbody *ngIf=\"isMultiple\">\n            <tr *ngFor=\"let item of uploader.queue\">\n              <td class=\"table-td file-name-td mobile-file-td\"><strong>{{ item?.file?.name }}</strong></td>\n              <td class=\"table-td text-center mobile-file-td\">\n                <span *ngIf=\"item.isSuccess\"><i class=\"icon-status-upload material-icons\">done</i></span>\n                <span *ngIf=\"item.isUploading\"><i class=\"icon-status-upload material-icons\">cloud_upload</i></span>\n                <span *ngIf=\"item.isCancel\"><i class=\"icon-status-upload material-icons\">warning</i></span>\n                <span *ngIf=\"item.isError\"><i class=\"icon-status-upload material-icons\">clear</i></span>\n                <span *ngIf=\"!item.isSuccess && !item.isUploading && !item.isCancel && !item.isError\"><i class=\"material-icons\">schedule</i></span>\n              </td>\n              <td nowrap class=\"table-td mobile-file-td\">\n                <button *ngIf=\"!(item.isReady || item.isUploading || item.isSuccess)\" type=\"button\" class=\"btn button-small btn-uploader\" (click)=\"this.onUploadStarted.emit(true); item.upload()\">\n                     Upload\n                 </button>\n                <button *ngIf=\"item.isUploading\" type=\"button\" class=\"btn button-small btn-uploader\" (click)=\"item.cancel()\">\n                     Cancel\n                 </button>\n                <button *ngIf=\"!item.isSuccess && !item.isUploading\" type=\"button\" class=\"btn button-small btn-uploader\" (click)=\"item.remove()\">\n                     Cancel\n                 </button>\n              </td>\n            </tr>\n          </tbody>\n\n          <tbody *ngIf=\"!isMultiple\">\n            <tr>\n              <td class=\"table-td file-name-td\"><strong>{{ uploader.queue[0]?.file?.name }}</strong></td>\n              <td class=\"text-center\" class=\"table-td\">\n                <span *ngIf=\"uploader.queue[0].isSuccess\"><i class=\"material-icons\">done</i></span>\n                <span *ngIf=\"uploader.queue[0].isCancel\"><i class=\"material-icons\">warning</i></span>\n                <span *ngIf=\"uploader.queue[0].isError\"><i class=\"material-icons\">clear</i></span>\n              </td>\n              <td nowrap class=\"table-td\">\n                <button *ngIf=\"!(uploader.queue[0].isReady || uploader.queue[0].isUploading || uploader.queue[0].isSuccess)\" type=\"button\" class=\"btn button-small\" (click)=\"this.onUploadStarted.emit(true); uploader.queue[0].upload()\">\n                     Upload\n                 </button>\n                <button *ngIf=\"uploader.queue[0].isUploading\" type=\"button\" class=\"btn button-small\" (click)=\"uploader.queue[0].cancel()\">\n                     Cancel\n                 </button>\n                <button *ngIf=\"!uploader.queue[0].isSuccess && !uploader.queue[0].isUploading\" type=\"button\" class=\"btn button-small\" (click)=\"uploader.queue[0].remove()\">\n                     Cancel\n                 </button>\n              </td>\n            </tr>\n          </tbody>\n\n      </table>\n\n      <div *ngIf=\"isMultiple\" class=\"queue-progress\">\n         <div>\n           <span class=\"left\">Queue progress</span>\n           <div class=\"progress\">\n               <div class=\"determinate\" [ngStyle]=\"{ 'width': uploader.progress + '%' }\"></div>\n           </div>\n         </div>\n         <button *ngIf=\"uploader.getNotUploadedItems().length && !uploader.isUploading\" id=\"upload-all-btn\" type=\"button\" class=\"btn btn-file-table\" (click)=\"uploader.uploadAll()\">\n             Upload all\n         </button>\n         <button *ngIf=\"uploader.isUploading\" type=\"button\" class=\"btn btn-file-table\" id=\"cancel-all-btn\" (click)=\"uploader.cancelAll()\">\n             Cancel all\n         </button>\n         <button *ngIf=\"uploader.getNotUploadedItems().length\" type=\"button\" class=\"btn btn-file-table\" id=\"remove-all-btn\" (click)=\"uploader.clearQueue()\">\n             Remove all\n         </button>\n     </div>\n\n    </div>\n\n    <div *ngIf=\"fileIncorrect\" class=\"col s12 error-div\">\n      <app-error-message (eventShowable)=\"fileIncorrect = false\" [errorTitle]=\"'Files cannot be bigger than 5MB!'\" [errorContent]=\"\" [customClass]=\"'fail'\" [closable]=\"true\"></app-error-message>\n    </div>\n\n  </div>\n</div>\n"
+module.exports = "<div class=\"row no-margin\">\n\n  <div *ngIf=\"uploader.queue.length == 0\" class=\"row no-margin text-centered\">\n    <div class=\"col l12 m12 s12\">\n      <label class=\"label-input-file waves-effect btn\" [attr.for]=\"'input-file-' + this.uniqueID\">{{buttonText}}</label>\n      <input *ngIf=\"!isMultiple\" class=\"input-file-uploader\" type=\"file\" [attr.name]=\"'input-file-' + this.uniqueID\" [attr.id]=\"'input-file-' + this.uniqueID\" ng2FileSelect [uploader]=\"uploader\"/>\n      <input *ngIf=\"isMultiple\" class=\"input-file-uploader\" type=\"file\" [attr.name]=\"'input-file-' + this.uniqueID\" [attr.id]=\"'input-file-' + this.uniqueID\" ng2FileSelect [uploader]=\"uploader\" multiple/>\n    </div>\n    <div class=\"col l12 m12\">\n      <div class=\"input-field\">\n        <div ng2FileDrop [ngClass]=\"{'nv-file-over': hasBaseDropZoneOver}\" (fileOver)=\"fileOverBase($event)\" [uploader]=\"uploader\" class=\"file-drop-zone\">\n          Or drop your {{typeOfFile}} here\n        </div>\n      </div>\n    </div>\n  </div>\n\n  <div class=\"row no-margin\">\n    <div *ngIf=\"uploader.queue.length > 0\" class=\"col s12 table-header\">\n      <div *ngIf=\"isMultiple\">\n        <h5 class=\"table-title\">Files to upload</h5>\n        <p class=\"table-subtitle\">You have <strong>{{ uploader?.getNotUploadedItems().length }}</strong> files waiting to be uploaded</p>\n      </div>\n\n      <table class=\"table\">\n        <thead *ngIf=\"isMultiple\">\n          <tr>\n               <th width=\"50%\">Name</th>\n               <th>Status</th>\n               <th>Actions</th>\n          </tr>\n        </thead>\n\n        <tbody *ngIf=\"isMultiple\">\n            <tr *ngFor=\"let item of uploader.queue\">\n              <td class=\"table-td file-name-td mobile-file-td\"><strong>{{ item?.file?.name }}</strong></td>\n              <td class=\"table-td text-center mobile-file-td\">\n                <span *ngIf=\"item.isSuccess\"><i class=\"icon-status-upload material-icons\">done</i></span>\n                <span *ngIf=\"item.isUploading\"><i class=\"icon-status-upload material-icons\">cloud_upload</i></span>\n                <span *ngIf=\"item.isCancel\"><i class=\"icon-status-upload material-icons\">warning</i></span>\n                <span *ngIf=\"item.isError\"><i class=\"icon-status-upload material-icons\">clear</i></span>\n                <span *ngIf=\"!item.isSuccess && !item.isUploading && !item.isCancel && !item.isError\"><i class=\"material-icons\">schedule</i></span>\n              </td>\n              <td nowrap class=\"table-td mobile-file-td\">\n                <button *ngIf=\"!(item.isReady || item.isUploading || item.isSuccess)\" type=\"button\" class=\"btn button-small btn-uploader\" (click)=\"item.upload()\">\n                     Upload\n                 </button>\n                <button *ngIf=\"item.isUploading\" type=\"button\" class=\"btn button-small btn-uploader\" (click)=\"item.cancel()\">\n                     Cancel\n                 </button>\n                <button *ngIf=\"!item.isSuccess && !item.isUploading\" type=\"button\" class=\"btn button-small btn-uploader\" (click)=\"item.remove()\">\n                     Cancel\n                 </button>\n              </td>\n            </tr>\n          </tbody>\n\n          <tbody *ngIf=\"!isMultiple\">\n            <tr>\n              <td class=\"table-td file-name-td\"><strong>{{ uploader.queue[0]?.file?.name }}</strong></td>\n              <td class=\"text-center\" class=\"table-td\">\n                <span *ngIf=\"uploader.queue[0].isSuccess\"><i class=\"material-icons\">done</i></span>\n                <span *ngIf=\"uploader.queue[0].isCancel\"><i class=\"material-icons\">warning</i></span>\n                <span *ngIf=\"uploader.queue[0].isError\"><i class=\"material-icons\">clear</i></span>\n              </td>\n              <td nowrap class=\"table-td\">\n                <button *ngIf=\"!(uploader.queue[0].isReady || uploader.queue[0].isUploading || uploader.queue[0].isSuccess)\" type=\"button\" class=\"btn button-small\" (click)=\"uploader.queue[0].upload()\">\n                     Upload\n                 </button>\n                <button *ngIf=\"uploader.queue[0].isUploading\" type=\"button\" class=\"btn button-small\" (click)=\"uploader.queue[0].cancel()\">\n                     Cancel\n                 </button>\n                <button *ngIf=\"!uploader.queue[0].isSuccess && !uploader.queue[0].isUploading\" type=\"button\" class=\"btn button-small\" (click)=\"uploader.queue[0].remove()\">\n                     Cancel\n                 </button>\n              </td>\n            </tr>\n          </tbody>\n\n      </table>\n\n      <div *ngIf=\"isMultiple\" class=\"queue-progress\">\n         <div>\n           <span class=\"left\">Queue progress</span>\n           <div class=\"progress\">\n               <div class=\"determinate\" [ngStyle]=\"{ 'width': uploader.progress + '%' }\"></div>\n           </div>\n         </div>\n         <button *ngIf=\"uploader.getNotUploadedItems().length && !uploader.isUploading\" id=\"upload-all-btn\" type=\"button\" class=\"btn btn-file-table\" (click)=\"uploader.uploadAll()\">\n             Upload all\n         </button>\n         <button *ngIf=\"uploader.isUploading\" type=\"button\" class=\"btn btn-file-table\" id=\"cancel-all-btn\" (click)=\"uploader.cancelAll()\">\n             Cancel all\n         </button>\n         <button *ngIf=\"uploader.getNotUploadedItems().length\" type=\"button\" class=\"btn btn-file-table\" id=\"remove-all-btn\" (click)=\"uploader.clearQueue()\">\n             Remove all\n         </button>\n     </div>\n\n    </div>\n\n    <div *ngIf=\"fileIncorrect\" class=\"col s12 error-div\">\n      <app-error-message (eventShowable)=\"fileIncorrect = false\" [errorTitle]=\"'Files cannot be bigger than 5MB!'\" [errorContent]=\"\" [customClass]=\"'fail'\" [closable]=\"true\"></app-error-message>\n    </div>\n\n  </div>\n</div>\n"
 
 /***/ }),
 
@@ -2124,12 +2054,17 @@ var FileUploaderComponent = /** @class */ (function () {
     FileUploaderComponent.prototype.ngOnInit = function () {
         var _this = this;
         this.uploader = new __WEBPACK_IMPORTED_MODULE_2_ng2_file_upload__["FileUploader"]({ url: this.URLUPLOAD, maxFileSize: __WEBPACK_IMPORTED_MODULE_1__constants__["a" /* Constants */].FILE_SIZE_LIMIT });
+        this.uploader.onBeforeUploadItem = function (item) {
+            _this.onUploadStarted.emit(true);
+        };
         this.uploader.onCompleteItem = function (item, response, status, headers) {
-            console.log("File uploaded...");
             _this.onCompleteFileUpload.emit(response);
         };
-        this.uploader.onWhenAddingFileFailed = function (fileItem) {
+        this.uploader.onWhenAddingFileFailed = function (fileItem, filter, options) {
             _this.handleFileSizeError();
+        };
+        this.uploader.onCancelItem = function (item, response, status, headers) {
+            console.log("File upload canceled");
         };
     };
     FileUploaderComponent.prototype.ngOnChanges = function () {
@@ -2138,7 +2073,6 @@ var FileUploaderComponent = /** @class */ (function () {
             this.uploader.destroy();
             this.uploader = new __WEBPACK_IMPORTED_MODULE_2_ng2_file_upload__["FileUploader"]({ url: this.URLUPLOAD, maxFileSize: __WEBPACK_IMPORTED_MODULE_1__constants__["a" /* Constants */].FILE_SIZE_LIMIT });
             this.uploader.onCompleteItem = function (item, response, status, headers) {
-                console.log("File uploaded...");
                 _this.onCompleteFileUpload.emit(response);
             };
             this.uploader.onWhenAddingFileFailed = function (fileItem) {
@@ -2157,7 +2091,7 @@ var FileUploaderComponent = /** @class */ (function () {
         this.hasBaseDropZoneOver = e;
     };
     FileUploaderComponent.prototype.handleFileSizeError = function () {
-        console.log("File too big. " + this.URLUPLOAD);
+        console.error("File too big. " + this.URLUPLOAD);
         if (window.innerWidth <= __WEBPACK_IMPORTED_MODULE_1__constants__["a" /* Constants */].PHONE_MAX_WIDTH) {
             Materialize.toast('Files cannot be bigger than 5MB!', __WEBPACK_IMPORTED_MODULE_1__constants__["a" /* Constants */].TOAST_SHOW_TIME, 'rounded');
         }
@@ -2450,6 +2384,7 @@ var LoginModalComponent = /** @class */ (function () {
         }
     };
     LoginModalComponent.prototype.handleCorrectCaptcha = function (event) {
+        console.log("Captcha SUCCESS");
         this.captchaToken = event;
         this.captchaValidated = true;
     };
@@ -3012,7 +2947,7 @@ var VideoSessionComponent = /** @class */ (function () {
         // Request camera
         this.initPublisher();
         this.OVPublisher.on('accessAllowed', function (event) {
-            console.warn("ACCESS ALLOWED");
+            console.warn("OpenVidu camera access allowed");
             var msg = {
                 interventionRequired: !_this.interventionRequired
             };
@@ -3027,7 +2962,7 @@ var VideoSessionComponent = /** @class */ (function () {
             _this.interventionIcon = (_this.interventionRequired ? 'cancel' : 'record_voice_over');
         });
         this.OVPublisher.on('accessDenied', function (event) {
-            console.error("ACCESS DENIED");
+            console.error("OpenVidu camera access denied");
         });
     };
     VideoSessionComponent.prototype.grantIntervention = function (grant, userData) {
@@ -3051,14 +2986,13 @@ var VideoSessionComponent = /** @class */ (function () {
     };
     /* Video controls */
     VideoSessionComponent.prototype.toggleFullScreen = function () {
-        console.log("FULLSCREEN click");
         var fs = $('#video-session-div').get(0);
         var document = window.document;
         if (!document.fullscreenElement &&
             !document.mozFullScreenElement &&
             !document.webkitFullscreenElement &&
             !document.msFullscreenElement) {
-            console.log("enter FULLSCREEN!");
+            console.log("Entering fullscreen");
             this.fullscreenIcon = 'fullscreen_exit';
             if (fs.requestFullscreen) {
                 fs.requestFullscreen();
@@ -3074,7 +3008,7 @@ var VideoSessionComponent = /** @class */ (function () {
             }
         }
         else {
-            console.log("exit FULLSCREEN!");
+            console.log("Exiting fullscreen");
             this.fullscreenIcon = 'fullscreen';
             if (document.exitFullscreen) {
                 document.exitFullscreen();
@@ -3104,7 +3038,6 @@ var VideoSessionComponent = /** @class */ (function () {
         }
     };
     VideoSessionComponent.prototype.toggleMute = function () {
-        console.log(this.volumeLevel);
         var video = $('video')[0];
         if (video) {
             if (video.volume == 0.0) {
@@ -3122,7 +3055,7 @@ var VideoSessionComponent = /** @class */ (function () {
     };
     VideoSessionComponent.prototype.changeVolume = function (event) {
         var video = $('video')[0];
-        console.log(this.volumeLevel);
+        console.log('Changing volume to ' + this.volumeLevel);
         video.volume = this.volumeLevel;
         this.changeVolumeIcon(video);
     };
@@ -3145,8 +3078,7 @@ var VideoSessionComponent = /** @class */ (function () {
         this.OV = new __WEBPACK_IMPORTED_MODULE_3_openvidu_browser__["OpenVidu"]();
         this.OVSession = this.OV.initSession(this.OVSessionId);
         this.OVSession.on('streamCreated', function (event) {
-            console.warn("STREAM CREATED");
-            console.warn(event.stream);
+            console.warn("OpenVidu stream created: ", event.stream);
             _this.OVSession.subscribe(event.stream, 'nothing');
             var stream = event.stream;
             if (JSON.parse(stream.connection.data).isTeacher) {
@@ -3169,8 +3101,7 @@ var VideoSessionComponent = /** @class */ (function () {
             }
         });
         this.OVSession.on('streamDestroyed', function (event) {
-            console.warn("STREAM DESTROYED");
-            console.warn(event.stream);
+            console.warn("OpenVidu stream destroyed: ", event.stream);
             var stream = event.stream;
             if (JSON.parse(stream.connection.data).isTeacher) {
                 // Removing all streams if the teacher leaves the room
@@ -3193,8 +3124,7 @@ var VideoSessionComponent = /** @class */ (function () {
             }
         });
         this.OVSession.on('connectionCreated', function (event) {
-            console.warn("CONNECTION CREATED");
-            console.warn(event.connection);
+            console.warn("OpenVidu connection created: ", event.connection);
             if (event.connection === _this.OVSession.connection) {
                 _this.chatLines.push(new __WEBPACK_IMPORTED_MODULE_4__classes_chatline__["a" /* Chatline */]('system-msg', null, null, "Connected!", null));
             }
@@ -3210,8 +3140,7 @@ var VideoSessionComponent = /** @class */ (function () {
             _this.userData.push(uData);
         });
         this.OVSession.on('connectionDestroyed', function (event) {
-            console.warn("CONNECTION DESTROYED");
-            console.warn(event.connection);
+            console.warn("OpenVidu connection destroyed: ", event.connection);
             // Remove Connection
             var i1 = _this.OVConnections.indexOf(event.connection);
             if (i1 !== -1) {
@@ -3276,8 +3205,7 @@ var VideoSessionComponent = /** @class */ (function () {
         }
         this.OVSession.connect(this.OVToken, function (error) {
             if (error) {
-                console.log("Connect error");
-                return console.log(error);
+                console.error("Error connecting to OpenVidu session: ", error);
             }
             else {
                 if (_this.authenticationService.isTeacher()) {
@@ -3292,10 +3220,9 @@ var VideoSessionComponent = /** @class */ (function () {
         this.videoSessionService.getSessionIdAndToken(this.mySession.id).subscribe(function (sessionIdToken) {
             _this.OVSessionId = sessionIdToken[0];
             _this.OVToken = sessionIdToken[1];
-            console.log(_this.OVSessionId + " - " + _this.OVToken);
             _this.joinSession();
         }, function (error) {
-            console.warn("Error getting sessionId and token: " + error);
+            console.error("Error getting sessionId and token: " + error);
         });
     };
     VideoSessionComponent.prototype.leaveSession = function () {
@@ -3307,7 +3234,7 @@ var VideoSessionComponent = /** @class */ (function () {
         this.videoSessionService.removeUser(this.mySessionId).subscribe(function (res) {
             console.log("User left the session");
         }, function (error) {
-            console.warn("Error removing user!");
+            console.error("Error removing user");
         });
     };
     VideoSessionComponent.prototype.initPublisher = function () {
@@ -3316,8 +3243,7 @@ var VideoSessionComponent = /** @class */ (function () {
     VideoSessionComponent.prototype.publish = function () {
         var _this = this;
         this.OVPublisher.on('streamCreated', function (event) {
-            console.warn("STREAM CREATED BY PUBLISHER");
-            console.warn(event.stream);
+            console.warn("OpenVidu stream created by Publisher: ", event.stream);
             var stream = event.stream;
             if (JSON.parse(stream.connection.data).isTeacher) {
                 _this.teacherStream = stream;
@@ -3328,8 +3254,7 @@ var VideoSessionComponent = /** @class */ (function () {
             _this.bigStream = stream;
         });
         this.OVPublisher.on('videoElementCreated', function (event) {
-            console.warn("VIDEO ELEMENT CREATED BY PUBLISHER");
-            console.warn(event.element);
+            console.warn("OpenVidu video element created by Publisher: ", event.element);
         });
         this.OVSession.publish(this.OVPublisher);
     };
@@ -3502,7 +3427,6 @@ var AuthenticationService = /** @class */ (function () {
     }
     AuthenticationService.prototype.logIn = function (user, pass) {
         var _this = this;
-        console.log("Login service started...");
         var userPass = user + ":" + pass;
         var headers = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["a" /* Headers */]({
             'Authorization': 'Basic ' + utf8_to_b64(userPass),
@@ -3513,26 +3437,6 @@ var AuthenticationService = /** @class */ (function () {
             .map(function (response) {
             _this.processLogInResponse(response);
             return _this.user;
-            /*return this.http.post('/api/authenticate', JSON.stringify({ email: email, pass: pass }))
-              .map((response: Response) => {
-                // login successful if there's a jwt token in the response
-                let token = response.json() && response.json().token;
-                if (token) {
-                  // set token property
-                  this.token = token;
-        
-                  // store email and jwt token in local storage to keep user logged in between page refreshes
-                  localStorage.setItem('auth_token', JSON.stringify({ email: email, token: token }));
-                  localStorage.setItem('current_user', JSON.stringify( response.json().user ));
-                  // stores the user information in this.user attribute
-        
-                  // return true to indicate successful login
-                  return true;
-                } else {
-                  // return false to indicate failed login
-                  this.user = null;
-                  return false;
-                }*/
         })
             .catch(function (error) { return __WEBPACK_IMPORTED_MODULE_3_rxjs__["Observable"].throw(error); });
     };
@@ -3554,7 +3458,6 @@ var AuthenticationService = /** @class */ (function () {
     };
     AuthenticationService.prototype.processLogInResponse = function (response) {
         // Correctly logged in
-        console.log("Login succesful processing...");
         this.user = response.json();
         localStorage.setItem("login", "FULLTEACHING");
         if (this.user.roles.indexOf("ROLE_ADMIN") !== -1) {
@@ -3572,7 +3475,7 @@ var AuthenticationService = /** @class */ (function () {
     };
     AuthenticationService.prototype.reqIsLogged = function () {
         var _this = this;
-        console.log("ReqIsLogged called");
+        console.log("Trying automatic login");
         var headers = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["a" /* Headers */]({
             'X-Requested-With': 'XMLHttpRequest'
         });
@@ -3581,6 +3484,9 @@ var AuthenticationService = /** @class */ (function () {
             if (error.status != 401) {
                 console.error("Error when asking if logged: " + JSON.stringify(error));
                 _this.logOut();
+            }
+            else {
+                console.error("User is not logged in");
             }
         });
     };
@@ -3696,23 +3602,32 @@ var CourseService = /** @class */ (function () {
     }
     CourseService.prototype.getCourses = function (user) {
         var _this = this;
+        console.log("GET courses for user " + user.nickName);
         var headers = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["a" /* Headers */]({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + this.authenticationService.token });
         var options = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["d" /* RequestOptions */]({ headers: headers });
         return this.http.get(this.url + "/user/" + user.id, options) //Must send userId
-            .map(function (response) { return response.json(); })
-            .catch(function (error) { return _this.handleError(error); });
+            .map(function (response) {
+            console.log("GET courses SUCCESS. Response: ", response.json());
+            return response.json();
+        })
+            .catch(function (error) { return _this.handleError("GET courses FAIL. Response: ", error); });
     };
     CourseService.prototype.getCourse = function (courseId) {
         var _this = this;
+        console.log("GET course " + courseId);
         var headers = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["a" /* Headers */]({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + this.authenticationService.token });
         var options = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["d" /* RequestOptions */]({ headers: headers });
         return this.http.get(this.url + "/course/" + courseId, options) //Must send userId
-            .map(function (response) { return response.json(); })
-            .catch(function (error) { return _this.handleError(error); });
+            .map(function (response) {
+            console.log("GET course SUCCESS. Response: ", response.json());
+            return response.json();
+        })
+            .catch(function (error) { return _this.handleError("GET course FAIL. Response: ", error); });
     };
     //POST new course. On success returns the created course
     CourseService.prototype.newCourse = function (course) {
         var _this = this;
+        console.log("POST new course");
         var body = JSON.stringify(course);
         var headers = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["a" /* Headers */]({
             'Content-Type': 'application/json',
@@ -3720,50 +3635,69 @@ var CourseService = /** @class */ (function () {
         });
         var options = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["d" /* RequestOptions */]({ headers: headers });
         return this.http.post(this.url + "/new", body, options)
-            .map(function (response) { return response.json(); })
-            .catch(function (error) { return _this.handleError(error); });
+            .map(function (response) {
+            console.log("POST new course SUCCESS. Response: ", response.json());
+            return response.json();
+        })
+            .catch(function (error) { return _this.handleError("POST new course FAIL. Response: ", error); });
     };
     //PUT existing course. On success returns the updated course
-    CourseService.prototype.editCourse = function (course) {
+    CourseService.prototype.editCourse = function (course, context) {
         var _this = this;
+        console.log("PUT existing course " + course.id + " (" + context + ")");
         var body = JSON.stringify(course);
         var headers = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["a" /* Headers */]({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + this.authenticationService.token });
         var options = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["d" /* RequestOptions */]({ headers: headers });
         return this.http.put(this.url + "/edit", body, options)
-            .map(function (response) { return response.json(); })
-            .catch(function (error) { return _this.handleError(error); });
+            .map(function (response) {
+            console.log("PUT existing course SUCCESS (" + context + "). Response: ", response.json());
+            return response.json();
+        })
+            .catch(function (error) { return _this.handleError("PUT existing course FAIL (" + context + "). Response: ", error); });
     };
     //DELETE existing course. On success returns the deleted course (simplified version)
     CourseService.prototype.deleteCourse = function (courseId) {
         var _this = this;
+        console.log("DELETE course " + courseId);
         var headers = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["a" /* Headers */]({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + this.authenticationService.token });
         var options = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["d" /* RequestOptions */]({ headers: headers });
         return this.http.delete(this.url + "/delete/" + courseId, options)
-            .map(function (response) { return response.json(); })
-            .catch(function (error) { return _this.handleError(error); });
+            .map(function (response) {
+            console.log("DELETE course SUCCESS");
+            return response.json();
+        })
+            .catch(function (error) { return _this.handleError("DELETE course FAIL. Response: ", error); });
     };
     //PUT existing course, modifying its attenders (adding them). On success returns the updated course.attenders array
     CourseService.prototype.addCourseAttenders = function (courseId, userEmails) {
         var _this = this;
+        console.log("PUT exsiting course (add attenders)");
         var body = JSON.stringify(userEmails);
         var headers = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["a" /* Headers */]({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + this.authenticationService.token });
         var options = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["d" /* RequestOptions */]({ headers: headers });
         return this.http.put(this.url + "/edit/add-attenders/course/" + courseId, body, options)
-            .map(function (response) { return response.json(); })
-            .catch(function (error) { return _this.handleError(error); });
+            .map(function (response) {
+            console.log("PUT exsiting course SUCCESS (add attenders). Response: ", response.json());
+            return (response.json());
+        })
+            .catch(function (error) { return _this.handleError("PUT existing course FAIL (add attenders). Response: ", error); });
     };
     //PUT existing course, modifying its attenders (deleting them). On success returns the updated course.attenders array
     CourseService.prototype.deleteCourseAttenders = function (course) {
         var _this = this;
+        console.log("PUT exsiting course (remove attender)");
         var body = JSON.stringify(course);
         var headers = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["a" /* Headers */]({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + this.authenticationService.token });
         var options = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["d" /* RequestOptions */]({ headers: headers });
         return this.http.put(this.url + "/edit/delete-attenders", body, options)
-            .map(function (response) { return response.json(); })
-            .catch(function (error) { return _this.handleError(error); });
+            .map(function (response) {
+            console.log("PUT existing course SUCCESS (remove attender). Response: ", response.json());
+            return response.json();
+        })
+            .catch(function (error) { return _this.handleError("PUT existing course FAIL (remove attender). Response: ", error); });
     };
-    CourseService.prototype.handleError = function (error) {
-        console.error(error);
+    CourseService.prototype.handleError = function (message, error) {
+        console.error(message, error);
         return __WEBPACK_IMPORTED_MODULE_2_rxjs_Observable__["Observable"].throw("Server error (" + error.status + "): " + error.text());
     };
     CourseService = __decorate([
@@ -3818,66 +3752,91 @@ var FileService = /** @class */ (function () {
     //On success returns the entire updated CourseDetails
     FileService.prototype.newFileGroup = function (fileGroup, courseDetailsId) {
         var _this = this;
+        console.log("POST new filegroup");
         var body = JSON.stringify(fileGroup);
         var headers = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["a" /* Headers */]({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + this.authenticationService.token });
         var options = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["d" /* RequestOptions */]({ headers: headers });
         return this.http.post(this.url + "/" + courseDetailsId, body, options)
-            .map(function (response) { return response.json(); })
-            .catch(function (error) { return _this.handleError(error); });
+            .map(function (response) {
+            console.log("POST new filegroup SUCCESS. Response: ", response.json());
+            return response.json();
+        })
+            .catch(function (error) { return _this.handleError("POST new filegroup FAIL. Response: ", error); });
     };
     //DELETE existing FileGroup. Requires the fileGroup id and its course's id
     //On succes returns the deleted FileGroup
     FileService.prototype.deleteFileGroup = function (fileGroupId, courseId) {
         var _this = this;
+        console.log("DELETE filegroup " + fileGroupId);
         var headers = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["a" /* Headers */]({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + this.authenticationService.token });
         var options = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["d" /* RequestOptions */]({ headers: headers });
         return this.http.delete(this.url + "/delete/file-group/" + fileGroupId + "/course/" + courseId, options)
-            .map(function (response) { return response.json(); })
-            .catch(function (error) { return _this.handleError(error); });
+            .map(function (response) {
+            console.log("DELETE filegroup SUCCESS");
+            return response.json();
+        })
+            .catch(function (error) { return _this.handleError("DELETE filegroup FAIL. Response: ", error); });
     };
     //DELETE existing File. Requires the file id, the fileGroup id that owns it and their course's id
     //On succes returns the deleted File
     FileService.prototype.deleteFile = function (fileId, fileGroupId, courseId) {
         var _this = this;
+        console.log("DELETE file " + fileId);
         var headers = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["a" /* Headers */]({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + this.authenticationService.token });
         var options = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["d" /* RequestOptions */]({ headers: headers });
         return this.http.delete(this.url + "/delete/file/" + fileId + "/file-group/" + fileGroupId + "/course/" + courseId, options)
-            .map(function (response) { return response.json(); })
-            .catch(function (error) { return _this.handleError(error); });
+            .map(function (response) {
+            console.log("DELETE file SUCCESS");
+            return response.json();
+        })
+            .catch(function (error) { return _this.handleError("DELETE file FAIL. Response: ", error); });
     };
     //PUT existing FileGroup. Requires the modified FileGroup and the course id
     //On success returns the updated root FileGroup
     FileService.prototype.editFileGroup = function (fileGroup, courseId) {
         var _this = this;
+        console.log("PUT existing filegroup " + fileGroup.id);
         var body = JSON.stringify(fileGroup);
         var headers = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["a" /* Headers */]({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + this.authenticationService.token });
         var options = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["d" /* RequestOptions */]({ headers: headers });
         return this.http.put(this.url + "/edit/file-group/course/" + courseId, body, options)
-            .map(function (response) { return response.json(); })
-            .catch(function (error) { return _this.handleError(error); });
+            .map(function (response) {
+            console.log("PUT existing filegroup SUCCESS. Response: ", response.json());
+            return response.json();
+        })
+            .catch(function (error) { return _this.handleError("PUT existing filegroup FAIL. Response: ", error); });
     };
     //PUT 2 FileGroups. Requires the id of the file moved, the ids of the source and the target FileGroups, the id of the Course and the position of the file in the target FileGroup
     //On success returns the all the fileGroups of the course
     FileService.prototype.editFileOrder = function (fileMovedId, fileGroupSourceId, fileGroupTargetId, filePosition, courseId) {
         var _this = this;
+        console.log("PUT existing filegroups (editing file order). From " + fileGroupSourceId + " to " + fileGroupTargetId + " into position " + fileGroupTargetId);
         var headers = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["a" /* Headers */]({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + this.authenticationService.token });
         var options = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["d" /* RequestOptions */]({ headers: headers });
         return this.http.put(this.url + "/edit/file-order/course/" + courseId + "/file/" + fileMovedId + "/from/" + fileGroupSourceId + "/to/" + fileGroupTargetId + "/pos/" + filePosition, options)
-            .map(function (response) { return response.json(); })
-            .catch(function (error) { return _this.handleError(error); });
+            .map(function (response) {
+            console.log("PUT existing filegroups SUCCESS (edit file order). Response: ", response.json());
+            return response.json();
+        })
+            .catch(function (error) { return _this.handleError("PUT existing filegroups FAIL (edit file order). Response: ", error); });
     };
     //PUT existing File. Requires the modified File and the course id
     //On success returns the updated root FileGroup
     FileService.prototype.editFile = function (file, fileGroupId, courseId) {
         var _this = this;
+        console.log("PUT existing file " + file.name);
         var body = JSON.stringify(file);
         var headers = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["a" /* Headers */]({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + this.authenticationService.token });
         var options = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["d" /* RequestOptions */]({ headers: headers });
         return this.http.put(this.url + "/edit/file/file-group/" + fileGroupId + "/course/" + courseId, body, options)
-            .map(function (response) { return response.json(); })
-            .catch(function (error) { return _this.handleError(error); });
+            .map(function (response) {
+            console.log("PUT existing file SUCCESS. Response: ", response.json());
+            return response.json();
+        })
+            .catch(function (error) { return _this.handleError("PUT existing filegroup FAIL. Response: ", error); });
     };
     FileService.prototype.downloadFile = function (courseId, file) {
+        console.log("Downloading file " + file.name);
         // Xhr creates new context so we need to create reference to this
         var self = this;
         // Status flag used in the template.
@@ -3894,7 +3853,7 @@ var FileService = /** @class */ (function () {
             setTimeout(function () { self.pendingDownload = false; }, 0);
             // If we get an HTTP status OK (200), save the file using fileSaver
             if (xhr.readyState === 4 && xhr.status === 200) {
-                console.log(this.response);
+                console.log("File download SUCCESS. Response: ", this.response);
                 var blob = new Blob([this.response], { type: this.response.type });
                 __WEBPACK_IMPORTED_MODULE_3_file_saver__["saveAs"](blob, file.name);
             }
@@ -3903,13 +3862,12 @@ var FileService = /** @class */ (function () {
         xhr.send();
     };
     FileService.prototype.openFile = function (response) {
-        console.log(response);
         var blob = new Blob([response._body], { type: 'text/plain' });
         var url = window.URL.createObjectURL(blob);
         window.open(url);
     };
-    FileService.prototype.handleError = function (error) {
-        console.error(error);
+    FileService.prototype.handleError = function (message, error) {
+        console.error(message, error);
         return __WEBPACK_IMPORTED_MODULE_2_rxjs_Observable__["Observable"].throw("Server error (" + error.status + "): " + error.text());
     };
     FileService = __decorate([
@@ -4009,37 +3967,49 @@ var ForumService = /** @class */ (function () {
     //On success returns the updated Forum that owns the posted entry
     ForumService.prototype.newEntry = function (entry, courseDetailsId) {
         var _this = this;
+        console.log("POST new entry");
         var body = JSON.stringify(entry);
         var headers = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["a" /* Headers */]({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + this.authenticationService.token });
         var options = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["d" /* RequestOptions */]({ headers: headers });
         return this.http.post(this.urlNewEntry + "/forum/" + courseDetailsId, body, options)
-            .map(function (response) { return response.json(); })
-            .catch(function (error) { return _this.handleError(error); });
+            .map(function (response) {
+            console.log("POST new entry SUCCESS. Response: ", response.json());
+            return response.json();
+        })
+            .catch(function (error) { return _this.handleError("POST new entry FAIL. Response: ", error); });
     };
     //POST new Comment. Requires a Comment, the id of the Entry that owns it and the id of the CourseDetails that owns the Forum
     //On success returns the update Entry that owns the posted comment
     ForumService.prototype.newComment = function (comment, entryId, courseDetailsId) {
         var _this = this;
+        console.log("POST new comment");
         var body = JSON.stringify(comment);
         var headers = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["a" /* Headers */]({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + this.authenticationService.token });
         var options = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["d" /* RequestOptions */]({ headers: headers });
         return this.http.post(this.urlNewComment + "/entry/" + entryId + "/forum/" + courseDetailsId, body, options)
-            .map(function (response) { return response.json(); })
-            .catch(function (error) { return _this.handleError(error); });
+            .map(function (response) {
+            console.log("POST new comment SUCCESS. Response: ", response.json());
+            return response.json();
+        })
+            .catch(function (error) { return _this.handleError("POST new comment FAIL. Response: ", error); });
     };
     //PUT existing Forum. Requires a boolean value for activating/deactivating the Forum and the id of the CourseDetails that owns it
     //On success returns the updated 'activated' attribute
     ForumService.prototype.editForum = function (activated, courseDetailsId) {
         var _this = this;
+        console.log("PUT existing forum " + (activated ? "(activate)" : "(deactivate)"));
         var body = JSON.stringify(activated);
         var headers = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["a" /* Headers */]({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + this.authenticationService.token });
         var options = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["d" /* RequestOptions */]({ headers: headers });
         return this.http.put(this.urlEditForum + "/edit/" + courseDetailsId, body, options)
-            .map(function (response) { return response.json(); })
-            .catch(function (error) { return _this.handleError(error); });
+            .map(function (response) {
+            console.log("PUT existing forum SUCCESS. Response: ", response.json());
+            return response.json();
+        })
+            .catch(function (error) { return _this.handleError("PUT existing forum FAIL. Response: ", error); });
     };
-    ForumService.prototype.handleError = function (error) {
-        console.error(error);
+    ForumService.prototype.handleError = function (message, error) {
+        console.error(message, error);
         return __WEBPACK_IMPORTED_MODULE_2_rxjs_Observable__["Observable"].throw("Server error (" + error.status + "): " + error.text());
     };
     ForumService = __decorate([
@@ -4101,8 +4071,6 @@ var LoginModalService = /** @class */ (function () {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_rxjs_Observable__ = __webpack_require__("../../../../rxjs/Observable.js");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_rxjs_Observable___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_rxjs_Observable__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__authentication_service__ = __webpack_require__("../../../../../src/app/services/authentication.service.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_rxjs_Rx__ = __webpack_require__("../../../../rxjs/Rx.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_rxjs_Rx___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_rxjs_Rx__);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -4116,7 +4084,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
-
 var SessionService = /** @class */ (function () {
     function SessionService(http, authenticationService) {
         this.http = http;
@@ -4126,34 +4093,46 @@ var SessionService = /** @class */ (function () {
     //POST new session. On success returns the updated Course that owns the posted session
     SessionService.prototype.newSession = function (session, courseId) {
         var _this = this;
+        console.log("POST new session");
         var body = JSON.stringify(session);
         var headers = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["a" /* Headers */]({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + this.authenticationService.token });
         var options = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["d" /* RequestOptions */]({ headers: headers });
         return this.http.post(this.urlSessions + "/course/" + courseId, body, options)
-            .map(function (response) { return response.json(); })
-            .catch(function (error) { return _this.handleError(error); });
+            .map(function (response) {
+            console.log("POST new session SUCCESS. Response: ", response.json());
+            return response.json();
+        })
+            .catch(function (error) { return _this.handleError("POST new session FAIL. Response: ", error); });
     };
     //PUT existing session. On success returns the updated session
     SessionService.prototype.editSession = function (session) {
         var _this = this;
+        console.log("PUT existing session");
         var body = JSON.stringify(session);
         var headers = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["a" /* Headers */]({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + this.authenticationService.token });
         var options = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["d" /* RequestOptions */]({ headers: headers });
         return this.http.put(this.urlSessions + "/edit", body, options)
-            .map(function (response) { return response.json(); })
-            .catch(function (error) { return _this.handleError(error); });
+            .map(function (response) {
+            console.log("PUT existing session SUCCESS. Response: ", response.json());
+            return response.json();
+        })
+            .catch(function (error) { return _this.handleError("PUT existing session FAIL. Response: ", error); });
     };
     //DELETE existing session. On success returns the deleted session
     SessionService.prototype.deleteSession = function (sessionId) {
         var _this = this;
+        console.log("DELETE session");
         var headers = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["a" /* Headers */]({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + this.authenticationService.token });
         var options = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["d" /* RequestOptions */]({ headers: headers });
         return this.http.delete(this.urlSessions + "/delete/" + sessionId, options)
-            .map(function (response) { return response.json(); })
-            .catch(function (error) { return _this.handleError(error); });
+            .map(function (response) {
+            console.log("DELETE session SUCCESS. Response: ", response.json());
+            return response.json();
+        })
+            .catch(function (error) { return _this.handleError("DELETE session FAIL. Response: ", error); });
     };
-    SessionService.prototype.handleError = function (error) {
-        console.error(error);
+    SessionService.prototype.handleError = function (message, error) {
+        console.error(message, error);
         return __WEBPACK_IMPORTED_MODULE_2_rxjs_Observable__["Observable"].throw("Server error (" + error.status + "): " + error.text());
     };
     SessionService = __decorate([
@@ -4233,6 +4212,7 @@ var UserService = /** @class */ (function () {
     }
     UserService.prototype.newUser = function (name, pass, nickName, captchaToken) {
         var _this = this;
+        console.log("POST new user " + name);
         var body = JSON.stringify([name, pass, nickName, captchaToken]);
         var headers = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["a" /* Headers */]({
             'Content-Type': 'application/json',
@@ -4240,11 +4220,15 @@ var UserService = /** @class */ (function () {
         });
         var options = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["d" /* RequestOptions */]({ headers: headers });
         return this.http.post(this.url + "/new", body, options)
-            .map(function (response) { return response.json(); })
-            .catch(function (error) { return _this.handleError(error); });
+            .map(function (response) {
+            console.log("POST new user SUCCESS. Response: ", response.json());
+            return response.json();
+        })
+            .catch(function (error) { return _this.handleError("POST new user FAIL. Response: ", error); });
     };
     UserService.prototype.changePassword = function (oldPassword, newPassword) {
         var _this = this;
+        console.log("PUT existing user (change password)");
         var body = JSON.stringify([oldPassword, newPassword]);
         var headers = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["a" /* Headers */]({
             'Content-Type': 'application/json',
@@ -4252,8 +4236,11 @@ var UserService = /** @class */ (function () {
         });
         var options = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["d" /* RequestOptions */]({ headers: headers });
         return this.http.put(this.url + "/changePassword", body, options)
-            .map(function (response) { return response.json(); })
-            .catch(function (error) { return _this.handleError(error); });
+            .map(function (response) {
+            console.log("PUT existing user SUCCESS (change password). Response: ", response.json());
+            return response.json();
+        })
+            .catch(function (error) { return _this.handleError("PUT existing user FAIL (change password). Response: ", error); });
     };
     // private helper methods
     UserService.prototype.jwt = function () {
@@ -4264,8 +4251,9 @@ var UserService = /** @class */ (function () {
             return new __WEBPACK_IMPORTED_MODULE_1__angular_http__["d" /* RequestOptions */]({ headers: headers });
         }
     };
-    UserService.prototype.handleError = function (error) {
-        return __WEBPACK_IMPORTED_MODULE_2_rxjs_Observable__["Observable"].throw(error.status);
+    UserService.prototype.handleError = function (message, error) {
+        console.error(message, error);
+        return __WEBPACK_IMPORTED_MODULE_2_rxjs_Observable__["Observable"].throw("Server error (" + error.status + "): " + error.text());
     };
     UserService = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Injectable"])(),
@@ -4307,23 +4295,31 @@ var VideoSessionService = /** @class */ (function () {
     }
     VideoSessionService.prototype.getSessionIdAndToken = function (mySessionId) {
         var _this = this;
+        console.log("Getting OpenVidu sessionId and token for lesson '" + mySessionId + "'");
         return this.http.get(this.urlSessions + "/get-sessionid-token/" + mySessionId)
-            .map(function (response) { return response.json(); })
-            .catch(function (error) { return _this.handleError(error); });
+            .map(function (response) {
+            console.log("OpenVidu sessionId and token retrieval SUCCESS. Response: ", response);
+            return (response.json());
+        })
+            .catch(function (error) { return _this.handleError("ERROR getting OpenVidu sessionId and token: ", error); });
     };
     VideoSessionService.prototype.removeUser = function (sessionName) {
         var _this = this;
+        console.log("Removing user from session " + sessionName);
         var jsonBody = JSON.stringify({
             'lessonId': sessionName
         });
         var headers = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["a" /* Headers */]({ 'Content-Type': 'application/json' });
         var options = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["d" /* RequestOptions */]({ headers: headers });
         return this.http.post(this.urlSessions + "/remove-user", jsonBody, options)
-            .map(function (response) { return response.text(); })
-            .catch(function (error) { return _this.handleError(error); });
+            .map(function (response) {
+            console.log("User removed from session succesfully. Response: ", response.text());
+            return (response.text());
+        })
+            .catch(function (error) { return _this.handleError("ERROR removing user from session: ", error); });
     };
-    VideoSessionService.prototype.handleError = function (error) {
-        console.error(error);
+    VideoSessionService.prototype.handleError = function (message, error) {
+        console.error(message, error);
         return __WEBPACK_IMPORTED_MODULE_2_rxjs_Observable__["Observable"].throw("Server error (" + error.status + "): " + error.text());
     };
     VideoSessionService = __decorate([
