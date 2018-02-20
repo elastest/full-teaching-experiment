@@ -141,26 +141,26 @@ export class VideoSessionComponent implements OnInit {
     this.initPublisher();
 
     this.OVPublisher.on('accessAllowed', (event) => {
-      console.warn("ACCESS ALLOWED");
+      console.warn("OpenVidu camera access allowed");
 
       let msg = {
         interventionRequired: !this.interventionRequired
       };
-  
+
       this.OVSession.signal({
         type: 'askIntervention',
         to: [this.teacherConnection],
         data: JSON.stringify(msg)
       });
-  
+
       // Invert intervention request
       this.interventionRequired = !this.interventionRequired;
       // Change intervention icon
       this.interventionIcon = (this.interventionRequired ? 'cancel' : 'record_voice_over');
-      
+
     });
     this.OVPublisher.on('accessDenied', (event) => {
-      console.error("ACCESS DENIED");
+      console.error("OpenVidu camera access denied");
     });
   }
 
@@ -190,14 +190,13 @@ export class VideoSessionComponent implements OnInit {
   /* Video controls */
 
   toggleFullScreen() {
-    console.log("FULLSCREEN click");
     let fs = $('#video-session-div').get(0);
     var document: any = window.document;
     if (!document.fullscreenElement &&
       !document.mozFullScreenElement &&
       !document.webkitFullscreenElement &&
       !document.msFullscreenElement) {
-      console.log("enter FULLSCREEN!");
+      console.log("Entering fullscreen");
       this.fullscreenIcon = 'fullscreen_exit';
       if (fs.requestFullscreen) {
         fs.requestFullscreen();
@@ -209,7 +208,7 @@ export class VideoSessionComponent implements OnInit {
         fs.webkitRequestFullscreen();
       }
     } else {
-      console.log("exit FULLSCREEN!");
+      console.log("Exiting fullscreen");
       this.fullscreenIcon = 'fullscreen';
       if (document.exitFullscreen) {
         document.exitFullscreen();
@@ -238,7 +237,6 @@ export class VideoSessionComponent implements OnInit {
   }
 
   toggleMute() {
-    console.log(this.volumeLevel);
     let video = $('video')[0];
     if (video) {
       if (video.volume == 0.0) {
@@ -257,7 +255,7 @@ export class VideoSessionComponent implements OnInit {
 
   changeVolume(event) {
     let video = $('video')[0];
-    console.log(this.volumeLevel);
+    console.log('Changing volume to ' + this.volumeLevel);
     video.volume = this.volumeLevel;
     this.changeVolumeIcon(video);
   }
@@ -283,8 +281,8 @@ export class VideoSessionComponent implements OnInit {
     this.OVSession = this.OV.initSession(this.OVSessionId);
 
     this.OVSession.on('streamCreated', (event) => {
-      console.warn("STREAM CREATED");
-      console.warn(event.stream);
+      console.warn("OpenVidu stream created: ", event.stream);
+
       this.OVSession.subscribe(event.stream, 'nothing');
 
       let stream: Stream = event.stream;
@@ -307,11 +305,10 @@ export class VideoSessionComponent implements OnInit {
     });
 
     this.OVSession.on('streamDestroyed', (event) => {
-      console.warn("STREAM DESTROYED");
-      console.warn(event.stream);
+      console.warn("OpenVidu stream destroyed: ", event.stream);
 
       let stream: Stream = event.stream;
-      
+
       if (JSON.parse(stream.connection.data).isTeacher) {
         // Removing all streams if the teacher leaves the room
         if (this.myStudentAccessGranted) {
@@ -333,8 +330,7 @@ export class VideoSessionComponent implements OnInit {
     });
 
     this.OVSession.on('connectionCreated', (event) => {
-      console.warn("CONNECTION CREATED");
-      console.warn(event.connection);
+      console.warn("OpenVidu connection created: ", event.connection);
 
       if (event.connection === this.OVSession.connection) {
         this.chatLines.push(new Chatline('system-msg', null, null, "Connected!", null));
@@ -353,8 +349,7 @@ export class VideoSessionComponent implements OnInit {
     });
 
     this.OVSession.on('connectionDestroyed', (event) => {
-      console.warn("CONNECTION DESTROYED");
-      console.warn(event.connection);
+      console.warn("OpenVidu connection destroyed: ", event.connection);
 
       // Remove Connection
       let i1 = this.OVConnections.indexOf(event.connection);
@@ -423,7 +418,7 @@ export class VideoSessionComponent implements OnInit {
 
     this.OVSession.connect(this.OVToken, (error) => {
       if (error) {
-        console.log("Connect error"); return console.log(error);
+        console.error("Error connecting to OpenVidu session: ", error);
       } else {
         if (this.authenticationService.isTeacher()) {
           this.initPublisher();
@@ -438,11 +433,10 @@ export class VideoSessionComponent implements OnInit {
       sessionIdToken => {
         this.OVSessionId = sessionIdToken[0];
         this.OVToken = sessionIdToken[1];
-        console.log(this.OVSessionId + " - " + this.OVToken);
         this.joinSession();
       },
       error => {
-        console.warn("Error getting sessionId and token: " + error);
+        console.error("Error getting sessionId and token: " + error);
       }
     );
   }
@@ -458,7 +452,7 @@ export class VideoSessionComponent implements OnInit {
         console.log("User left the session");
       },
       error => {
-        console.warn("Error removing user!");
+        console.error("Error removing user");
       }
     );
   }
@@ -469,8 +463,7 @@ export class VideoSessionComponent implements OnInit {
 
   publish() {
     this.OVPublisher.on('streamCreated', (event) => {
-      console.warn("STREAM CREATED BY PUBLISHER");
-      console.warn(event.stream);
+      console.warn("OpenVidu stream created by Publisher: ", event.stream);
 
       let stream: Stream = event.stream;
       if (JSON.parse(stream.connection.data).isTeacher) {
@@ -481,8 +474,7 @@ export class VideoSessionComponent implements OnInit {
       this.bigStream = stream;
     });
     this.OVPublisher.on('videoElementCreated', (event) => {
-      console.warn("VIDEO ELEMENT CREATED BY PUBLISHER");
-      console.warn(event.element);
+      console.warn("OpenVidu video element created by Publisher: ", event.element);
     });
     this.OVSession.publish(this.OVPublisher);
   }
