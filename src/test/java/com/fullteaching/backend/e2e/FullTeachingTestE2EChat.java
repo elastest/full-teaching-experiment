@@ -98,10 +98,12 @@ public class FullTeachingTestE2EChat extends FullTeachingTestE2E {
 
 	@AfterEach
 	void dispose(TestInfo info) {
-		this.logout(user);
-		user.dispose();
-
-		log.info("##### Finish test: " +  info.getTestMethod().get().getName());
+		try {
+			this.logout(user);
+			user.dispose();
+		} finally {
+			log.info("##### Finish test: " +  info.getTestMethod().get().getName());
+		}
 	}
 
 	@Test

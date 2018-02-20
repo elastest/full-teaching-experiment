@@ -90,11 +90,13 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 
 	@AfterEach
 	void dispose(TestInfo info) {
-		this.deleteCourseIfExist();
-		this.logout(user);
-		user.dispose();
-
-		log.info("##### Finish test: " + info.getTestMethod().get().getName());
+		try {
+			this.deleteCourseIfExist();
+			this.logout(user);
+			user.dispose();
+		} finally {
+			log.info("##### Finish test: " + info.getTestMethod().get().getName());
+		}
 	}
 
 	/*** Test methods ***/
