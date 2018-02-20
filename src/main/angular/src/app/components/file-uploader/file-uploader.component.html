@@ -42,7 +42,7 @@
                 <span *ngIf="!item.isSuccess && !item.isUploading && !item.isCancel && !item.isError"><i class="material-icons">schedule</i></span>
               </td>
               <td nowrap class="table-td mobile-file-td">
-                <button *ngIf="!(item.isReady || item.isUploading || item.isSuccess)" type="button" class="btn button-small btn-uploader" (click)="this.onUploadStarted.emit(true); item.upload()">
+                <button *ngIf="!(item.isReady || item.isUploading || item.isSuccess)" type="button" class="btn button-small btn-uploader" (click)="item.upload()">
                      Upload
                  </button>
                 <button *ngIf="item.isUploading" type="button" class="btn button-small btn-uploader" (click)="item.cancel()">
@@ -64,7 +64,7 @@
                 <span *ngIf="uploader.queue[0].isError"><i class="material-icons">clear</i></span>
               </td>
               <td nowrap class="table-td">
-                <button *ngIf="!(uploader.queue[0].isReady || uploader.queue[0].isUploading || uploader.queue[0].isSuccess)" type="button" class="btn button-small" (click)="this.onUploadStarted.emit(true); uploader.queue[0].upload()">
+                <button *ngIf="!(uploader.queue[0].isReady || uploader.queue[0].isUploading || uploader.queue[0].isSuccess)" type="button" class="btn button-small" (click)="uploader.queue[0].upload()">
                      Upload
                  </button>
                 <button *ngIf="uploader.queue[0].isUploading" type="button" class="btn button-small" (click)="uploader.queue[0].cancel()">
