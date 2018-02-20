@@ -181,7 +181,6 @@ export class CourseDetailsComponent implements OnInit {
       fileGroupDeletedId => {
         //fileGroupDeletedId is the id of the FileGroup that has been deleted by the child component (FileGroupComponent)
         if (this.recursiveFileGroupDeletion(this.course.courseDetails.files, fileGroupDeletedId)){
-          console.log("Succesful local deletion of FileGroup with id " + fileGroupDeletedId);
           if (this.course.courseDetails.files.length == 0) this.changeModeEdition(); //If there are no fileGroups, mode edit is closed
         }
       });
@@ -212,8 +211,6 @@ export class CourseDetailsComponent implements OnInit {
       this.tabId = +params['tabId'];
       this.courseService.getCourse(id).subscribe(
         course => {
-          console.log("Course " + course.id + ":");
-          console.log(course);
           this.sortSessionsByDate(course.sessions);
           this.course = course;
           this.selectedEntry = this.course.courseDetails.forum.entries[0]; //selectedEntry default to first entry
@@ -221,7 +218,7 @@ export class CourseDetailsComponent implements OnInit {
           this.updateCheckboxForumEdition(this.course.courseDetails.forum.activated);
           this.welcomeText = this.course.courseDetails.info;
         },
-        error => console.log(error));
+        error => {});
     });
   }
 
@@ -310,15 +307,13 @@ export class CourseDetailsComponent implements OnInit {
   }
 
   filesUploadStarted(event){
-    console.log("Started...");
+    console.log("File upload started...");
   }
 
-  filesUploadCompleted(response){
-    console.log("Finished...");
-    console.log("Items uploaded successfully");
-    console.log(response);
+  filesUploadCompleted(response) {
     let fg = JSON.parse(response) as FileGroup;
-    console.log(fg);
+    console.log("File upload completed (items successfully uploadded). Response: ", fg);
+    
     for (let i = 0; i < this.course.courseDetails.files.length; i++){
       if (this.course.courseDetails.files[i].id == fg.id){
         this.course.courseDetails.files[i] = fg;
@@ -335,18 +330,16 @@ export class CourseDetailsComponent implements OnInit {
 
     //If modal is opened in "New Entry" mode
     if (this.postModalMode === 0) {
-      console.log("Saving new Entry: Title -> " + this.inputTitle + "  |  Comment -> " + this.inputComment);
       let e = new Entry(this.inputTitle, [new Comment(this.inputComment, null)]);
 
       this.forumService.newEntry(e, this.course.courseDetails.id).subscribe( //POST method requires an Entry and the CourseDetails id that contains its Forum
         response  => {
-          console.log(response);
           this.course.courseDetails.forum = response; //Only on succesful post we update the modified forum
 
           this.processingPost = false;
           this.actions2.emit({action:"modal",params:['close']});
         },
-        error => {console.log(error); this.processingPost = false;}
+        error => {this.processingPost = false;}
       );
     }
 
@@ -356,27 +349,23 @@ export class CourseDetailsComponent implements OnInit {
       let hoursMins = this.inputTime.split(":");
       date.setHours(parseInt(hoursMins[0]), parseInt(hoursMins[1]));
       let s = new Session(this.inputTitle, this.inputComment, date.getTime());
-      console.log(s);
       this.sessionService.newSession(s, this.course.id).subscribe(
         response => {
-          console.log(response);
           this.sortSessionsByDate(response.sessions);
           this.course = response;
 
           this.processingPost = false;
           this.actions2.emit({action:"modal",params:['close']});
         },
-        error => {console.log(error); this.processingPost = false;}
+        error => {this.processingPost = false;}
       );
     }
 
     //If modal is opened in "New Comment" mode (replaying or not replaying)
     else if (this.postModalMode === 1) {
       let c = new Comment(this.inputComment, this.postModalCommentReplay);
-      console.log(c);
       this.forumService.newComment(c, this.selectedEntry.id, this.course.courseDetails.id).subscribe(
         response => {
-          console.log(response);
           //Only on succesful post we locally update the created entry
           let ents = this.course.courseDetails.forum.entries;
           for (let i = 0; i < ents.length; i++) {
@@ -390,17 +379,15 @@ export class CourseDetailsComponent implements OnInit {
           this.processingPost = false;
           this.actions2.emit({action:"modal",params:['close']});
         },
-        error => {console.log(error); this.processingPost = false;}
+        error => {this.processingPost = false;}
       );
     }
 
     //If modal is opened in "New FileGroup" mode
     else if (this.postModalMode === 4) {
       let f = new FileGroup(this.inputTitle, this.postModalFileGroup);
-      console.log(f);
       this.fileService.newFileGroup(f, this.course.courseDetails.id).subscribe(
         response => {
-          console.log(response);
           //Only on succesful post we locally update the entire course details
           this.course.courseDetails = response;
 
@@ -408,30 +395,9 @@ export class CourseDetailsComponent implements OnInit {
           this.actions2.emit({action:"modal",params:['close']}); // CLose the modal
           if (!this.allowFilesEdition) this.changeModeEdition(); // Activate file edition view if deactivated
         },
-        error => {console.log(error); this.processingPost = false;}
+        error => {this.processingPost = false;}
       );
     }
-
-    /*//If modal is opened in "New File" mode
-    else if (this.postModalMode === 5) {
-      let file = new File(1, this.inputTitle, "www.newlink.com");
-      console.log(file);
-      this.fileService.newFile(file, this.postModalFileGroup.id, this.course.courseDetails.id).subscribe(
-        response => {
-          console.log(response);
-
-          //Only on succesful post we locally update the root filegroup that contains the created file
-          for (let i = 0; i < this.course.courseDetails.files.length; i++) {
-            if (this.course.courseDetails.files[i].id == response.id) {
-              this.course.courseDetails.files[i] = response;
-              break;
-            }
-          }
-          this.actions2.emit({action:"modal",params:['close']});
-        },
-        error => console.log(error)
-      );
-    }*/
   }
 
   //PUT existing Session or Forum
@@ -446,7 +412,6 @@ export class CourseDetailsComponent implements OnInit {
       s.id = this.updatedSession.id; //The new session must have the same id as the modified session in order to replace it
       this.sessionService.editSession(s).subscribe(
         response => {
-          console.log(response);
           //Only on succesful put we locally update the modified session
           for (let i = 0; i < this.course.sessions.length; i++) {
             if (this.course.sessions[i].id == response.id) {
@@ -458,7 +423,7 @@ export class CourseDetailsComponent implements OnInit {
           this.processingPut = false;
           this.actions3.emit({action:"modal",params:['close']});
         },
-        error => {console.log(error); this.processingPut = false;}
+        error => {this.processingPut = false;}
       );
     }
 
@@ -466,7 +431,6 @@ export class CourseDetailsComponent implements OnInit {
     else if (this.putdeleteModalMode === 1){
       this.forumService.editForum(!this.course.courseDetails.forum.activated, this.course.courseDetails.id).subscribe(
         response => {
-          console.log("Forum updated: active = " + response);
           //Only on succesful put we locally update the modified session
           this.course.courseDetails.forum.activated = response;
           this.allowForumEdition = false;
@@ -475,7 +439,7 @@ export class CourseDetailsComponent implements OnInit {
           this.processingPut = false;
           this.actions3.emit({action:"modal",params:['close']});
         },
-        error => {console.log(error); this.processingPut = false;}
+        error => {this.processingPut = false;}
       );
     }
 
@@ -485,8 +449,6 @@ export class CourseDetailsComponent implements OnInit {
       fg.id = this.updatedFileGroup.id;
       this.fileService.editFileGroup(fg, this.course.id).subscribe(
         response => {
-          console.log("FileGroup updated");
-          console.log(response);
           for (let i = 0; i < this.course.courseDetails.files.length; i++) {
             if (this.course.courseDetails.files[i].id == response.id) {
               this.course.courseDetails.files[i] = response; //The root fileGroup with the required ID is updated
@@ -498,7 +460,7 @@ export class CourseDetailsComponent implements OnInit {
           this.processingPut = false;
           this.actions3.emit({action:"modal",params:['close']});
         },
-        error => {console.log(error); this.processingPut = false;}
+        error => {this.processingPut = false;}
       );
     }
 
@@ -508,8 +470,6 @@ export class CourseDetailsComponent implements OnInit {
       f.id = this.updatedFile.id;
       this.fileService.editFile(f, this.updatedFileGroup.id, this.course.id).subscribe(
         response => {
-          console.log("File updated");
-          console.log(response);
           for (let i = 0; i < this.course.courseDetails.files.length; i++) {
             if (this.course.courseDetails.files[i].id == response.id) {
               this.course.courseDetails.files[i] = response; //The root fileGroup with the required ID is updated
@@ -521,7 +481,7 @@ export class CourseDetailsComponent implements OnInit {
           this.processingPut = false;
           this.actions3.emit({action:"modal",params:['close']});
         },
-        error => {console.log(error); this.processingPut = false;}
+        error => {this.processingPut = false;}
       );
     }
 
@@ -533,8 +493,6 @@ export class CourseDetailsComponent implements OnInit {
         let arrayNewAttenders = [this.inputAttenderSimple];
         this.courseService.addCourseAttenders(this.course.id, arrayNewAttenders).subscribe(
           response => {
-            console.log("Course attenders modified (one attender added)");
-            console.log(response);
             let newAttenders = response.attendersAdded as User[];
             this.course.attenders = this.course.attenders.concat(newAttenders);
             this.handleAttendersMessage(response);
@@ -542,7 +500,7 @@ export class CourseDetailsComponent implements OnInit {
             this.processingPut = false;
             this.actions3.emit({action:"modal",params:['close']});
           },
-          error => {console.log(error); this.processingPut = false;}
+          error => {this.processingPut = false;}
         );
       }
       //If the attenders are being added in the MULTIPLE tab
@@ -559,8 +517,6 @@ export class CourseDetailsComponent implements OnInit {
 
         this.courseService.addCourseAttenders(this.course.id, arrayNewAttenders).subscribe(
           response => { //response is an object with 4 arrays: attenders added, attenders that were already added, emails invalid and emails not registered
-            console.log("Course attenders modified (multiple attenders added)");
-            console.log(response);
             let newAttenders = response.attendersAdded as User[];
             this.course.attenders = this.course.attenders.concat(newAttenders);
             this.handleAttendersMessage(response);
@@ -568,7 +524,7 @@ export class CourseDetailsComponent implements OnInit {
             this.processingPut = false;
             this.actions3.emit({action:"modal",params:['close']});
           },
-          error => {console.log(error); this.processingPut = false;}
+          error => {this.processingPut = false;}
         );
       }
       //If the attenders are being added in the FILE UPLOAD tab
@@ -585,8 +541,6 @@ export class CourseDetailsComponent implements OnInit {
 
     this.sessionService.deleteSession(this.updatedSession.id).subscribe(
       response => {
-        console.log("Session deleted");
-        console.log(response);
         //Only on succesful put we locally delete the session
         for (let i = 0; i < this.course.sessions.length; i++) {
           if (this.course.sessions[i].id == response.id) {
@@ -599,12 +553,14 @@ export class CourseDetailsComponent implements OnInit {
         this.processingPut = false;
         this.actions3.emit({action:"modal",params:['close']});
       },
-      error => {console.log(error); this.processingPut = false;}
+      error => {this.processingPut = false;}
     );
   }
 
   //Remove attender from course
-  deleteAttender(attender: User, j: number){
+  deleteAttender(attender: User, j: number) {
+    console.log("Deleting attender " + attender.nickName);
+
     this.arrayOfAttDels[j] = true; // Start deleting animation
 
     let c = new Course(this.course.title, this.course.image, this.course.courseDetails);
@@ -614,38 +570,34 @@ export class CourseDetailsComponent implements OnInit {
         c.attenders.push(new User(this.course.attenders[i])); //Inserting a new User object equal to the attender but "courses" array empty
       }
     }
-    console.log(this.course);
-    console.log(c);
     this.courseService.deleteCourseAttenders(c).subscribe(
       response => {
-        console.log("Course attenders modified (one attender deleted)");
-        console.log(response);
         this.course.attenders = response;
         this.arrayOfAttDels[j] = false;
         if (this.course.attenders.length <= 1) this.changeModeAttenders(); //If there are no attenders, mode edit is closed
       },
-      error => {console.log(error); this.arrayOfAttDels[j] = false;}
+      error => {this.arrayOfAttDels[j] = false;}
     );
   }
 
   //Updates the course info
   updateCourseInfo(){
+    console.log("Updating course info");
+
     this.processingCourseInfo = true;
 
     let c: Course = new Course(this.course.title, this.course.image, this.course.courseDetails);
     c.courseDetails.info = this.welcomeText;
     c.id = this.course.id;
-    console.log(c);
-    this.courseService.editCourse(c).subscribe(
+    this.courseService.editCourse(c, "updating course info").subscribe(
       response => {
-        console.log("Course info updated: ");
         //Only on succesful put we locally update the modified course
         this.course = response;
         this.welcomeText = this.course.courseDetails.info;
 
         this.processingCourseInfo = false;
       },
-      error => {console.log(error); this.processingCourseInfo = false;}
+      error => {this.processingCourseInfo = false;}
     )
   }
 
@@ -727,7 +679,6 @@ export class CourseDetailsComponent implements OnInit {
   recursiveFileGroupDeletion(fileGroupLevel: FileGroup[], fileGroupDeletedId: number): boolean{
     if (fileGroupLevel){
       for (let i = 0; i < fileGroupLevel.length; i++) {
-        console.log("ONE STEP IN THE SEARCH");
         if (fileGroupLevel[i].id == fileGroupDeletedId){
           fileGroupLevel.splice(i, 1);
           return true;
@@ -793,15 +744,12 @@ export class CourseDetailsComponent implements OnInit {
     let fileMoved = el.dataset.id;
     let fileGroupSource = source.dataset.id;
     let fileGroupTarget = target.dataset.id;
-    console.log(this.course.courseDetails.files);
     let fileNewPosition: number = this.getFilePosition(fileMoved, fileGroupTarget);
     this.fileService.editFileOrder(fileMoved, fileGroupSource, fileGroupTarget, fileNewPosition, this.course.id).subscribe(
       response => {
-        console.log("Order of files updated");
-        console.log(response);
         this.course.courseDetails.files = response;
       },
-      error => console.log(error)
+      error => {}
     );
   }
 
