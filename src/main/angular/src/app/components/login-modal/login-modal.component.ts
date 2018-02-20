@@ -1,18 +1,18 @@
 import { Component, EventEmitter } from '@angular/core';
-import { Router }                  from '@angular/router';
+import { Router } from '@angular/router';
 
 import { environment } from '../../../environments/environment';
 
 import { MaterializeAction } from 'angular2-materialize';
 
 import { AuthenticationService } from '../../services/authentication.service';
-import { LoginModalService }     from '../../services/login-modal.service';
-import { UserService }           from '../../services/user.service';
-import { Constants }             from '../../constants';
+import { LoginModalService } from '../../services/login-modal.service';
+import { UserService } from '../../services/user.service';
+import { Constants } from '../../constants';
 
 import { User } from '../../classes/user';
 
-declare var Materialize : any;
+declare var Materialize: any;
 
 @Component({
   selector: 'login-modal',
@@ -30,7 +30,7 @@ export class LoginModalComponent {
   private loginView: boolean;
   private fieldsIncorrect: boolean;
   private submitProcessing: boolean;
-  private actions = new EventEmitter<string|MaterializeAction>();
+  private actions = new EventEmitter<string | MaterializeAction>();
 
   private captchaValidated: boolean = false;
   private captchaPublicKey: string;
@@ -61,7 +61,7 @@ export class LoginModalComponent {
 
     // Suscription to LoginModal shared service (navbar actions on modal)
     this.loginModalService.wat$.subscribe((value) => {
-       this.loginView = value;
+      this.loginView = value;
     });
   }
 
@@ -96,7 +96,7 @@ export class LoginModalComponent {
 
         // Login successful
         this.fieldsIncorrect = false;
-        this.actions.emit({action:"modal",params:['close']});
+        this.actions.emit({ action: "modal", params: ['close'] });
         this.router.navigate(['/courses']);
       },
       error => {
@@ -117,14 +117,14 @@ export class LoginModalComponent {
   signUp() {
 
     //Captcha has not been validated (user must have tricked the front-end in order to enter this if)
-    if(!this.captchaValidated){
+    if (!this.captchaValidated) {
       this.errorTitle = 'You must validate the captcha!';
       this.errorContent = '';
       this.customClass = 'fail';
       this.toastMessage = 'Your must validate the captcha!';
       this.handleError();
     }
-    else{
+    else {
 
       //Passwords don't match
       if (this.password !== this.confirmPassword) {
@@ -139,7 +139,7 @@ export class LoginModalComponent {
 
         let regex = new RegExp(Constants.PASS_REGEX);
 
-        if (!(this.password.match(regex))){
+        if (!(this.password.match(regex))) {
           this.errorTitle = 'Your password does not have a valid format!';
           this.errorContent = 'It must be at least 8 characters long and include one uppercase, one lowercase and a number';
           this.customClass = 'fail';
@@ -162,25 +162,25 @@ export class LoginModalComponent {
             error => {
 
               console.log("Sign up failed (error): " + error);
-              if (error === 409){ //CONFLICT: Email already in use
+              if (error === 409) { //CONFLICT: Email already in use
                 this.errorTitle = 'Invalid email';
                 this.errorContent = 'That email is already in use';
                 this.customClass = 'fail';
                 this.toastMessage = 'That email is already in use!';
               }
-              else if (error === 400){ //BAD_REQUEST: Invalid password format
+              else if (error === 400) { //BAD_REQUEST: Invalid password format
                 this.errorTitle = 'Invalid password format';
                 this.errorContent = 'Our server has rejected that password';
                 this.customClass = 'fail';
                 this.toastMessage = 'That password has not a valid format according to our server!';
               }
-              else if (error === 403){ //FORBIDDEN: Invalid email format
+              else if (error === 403) { //FORBIDDEN: Invalid email format
                 this.errorTitle = 'Invalid email format';
                 this.errorContent = 'Our server has rejected that email';
                 this.customClass = 'fail';
                 this.toastMessage = 'That email has not a valid format according to our server!';
               }
-              else if (error === 401){ //UNAUTHORIZED: Captcha not validated
+              else if (error === 401) { //UNAUTHORIZED: Captcha not validated
                 this.errorTitle = 'Captcha not validated!';
                 this.errorContent = 'I am sorry, but your bot does not work here :)';
                 this.customClass = 'fail';
@@ -196,12 +196,13 @@ export class LoginModalComponent {
     }
   }
 
-  handleCorrectCaptcha(event){
+  handleCorrectCaptcha(event) {
+    console.log("Captcha SUCCESS");
     this.captchaToken = event;
     this.captchaValidated = true;
   }
 
-  handleError(){
+  handleError() {
     this.submitProcessing = false;
     if (window.innerWidth <= Constants.PHONE_MAX_WIDTH) { // On mobile phones error on toast
       Materialize.toast(this.toastMessage, Constants.TOAST_SHOW_TIME, 'rounded');
