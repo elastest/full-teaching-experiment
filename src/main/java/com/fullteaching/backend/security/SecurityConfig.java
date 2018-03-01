@@ -43,7 +43,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	private void configureUrlAuthorization(HttpSecurity http) throws Exception {
 		
-		http.csrf().disable().authorizeRequests().antMatchers("/assets/pictures/*").authenticated();
+		http.csrf().disable();
 
 		// APP: This rules have to be changed by app developer
 
@@ -68,6 +68,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		http.authorizeRequests().antMatchers(HttpMethod.POST, "/load-files/upload/course/**").hasRole("TEACHER");
 		http.authorizeRequests().antMatchers(HttpMethod.POST, "/load-files/upload/picture/**").hasAnyRole("TEACHER", "STUDENT");
 		http.authorizeRequests().antMatchers(HttpMethod.GET, "/load-files/course/**").hasAnyRole("TEACHER", "STUDENT");
+		
+		// Pictures
+		http.authorizeRequests().antMatchers(HttpMethod.GET, "/assets/pictures/*").authenticated();
 		
 		// Other URLs can be accessed without authentication
 		http.authorizeRequests().anyRequest().permitAll();
