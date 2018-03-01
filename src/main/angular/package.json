@@ -10,6 +10,8 @@
   "angular-cli": {},
   "scripts": {
     "start": "ng serve",
+    "cert": "openssl req -newkey rsa:2048 -new -nodes -x509 -days 3650 -subj '/CN=www.mydom.com/O=My Company LTD./C=US' -keyout key.pem -out cert.pem",
+    "start-front": "ng serve --ssl 1 --ssl-key key.pem --ssl-cert cert.pem --proxy-config proxy.conf.json",
     "lint": "tslint \"src/**/*.ts\"",
     "test": "ng test --watch=false",
     "pree2e": "webdriver-manager update",
