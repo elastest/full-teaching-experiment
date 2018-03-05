@@ -24,8 +24,8 @@ public class Comment {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
 	
-	private String videourl = "empty";
-	private boolean audioonly = false;
+	private String videourl;
+	private boolean audioonly;
 	private String message;
 	
 	private long date;
