@@ -4,9 +4,12 @@ import static org.junit.Assert.fail;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.servlet.http.HttpSession;
 
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.junit.Assert;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -42,11 +45,15 @@ public class ForumTestUtils {
 			
 			
 			String content = result.getResponse().getContentAsString();
-			int status = result.getResponse().getStatus();	
+			int status = result.getResponse().getStatus();
 			
-			Forum forum = json2Forum(content);
+			JSONObject json = (JSONObject) new JSONParser().parse(content);
+			json = (JSONObject) json.get("entry");
 			
-			c.getCourseDetails().setForum(forum);
+			Entry entry = json2Entry(json.toJSONString());
+			
+			c.getCourseDetails().getForum().setEntries(new ArrayList<>());
+			c.getCourseDetails().getForum().getEntries().add(entry);
 			
 			int expected = HttpStatus.CREATED.value();
 

@@ -3,6 +3,8 @@ package com.fullteaching.backend.integration.comment;
 import static org.junit.Assert.fail;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -70,7 +72,11 @@ public class CommentControllerTest extends AbstractLoggedControllerUnitTest {
 					                ).andReturn();
 			
 			String content = result.getResponse().getContentAsString();
-			Entry e = ForumTestUtils.json2Entry(content);
+			
+			JSONObject json = (JSONObject) new JSONParser().parse(content);
+			json = (JSONObject) json.get("entry");
+			
+			Entry e = ForumTestUtils.json2Entry(json.toJSONString());
 			
 			int status = result.getResponse().getStatus();
 			
@@ -159,7 +165,11 @@ public class CommentControllerTest extends AbstractLoggedControllerUnitTest {
 					                ).andReturn();
 			
 			String content = result.getResponse().getContentAsString();
-			Entry e = ForumTestUtils.json2Entry(content);
+			
+			JSONObject json = (JSONObject) new JSONParser().parse(content);
+			json = (JSONObject) json.get("entry");
+			
+			Entry e = ForumTestUtils.json2Entry(json.toJSONString());
 
 			int status = result.getResponse().getStatus();
 			

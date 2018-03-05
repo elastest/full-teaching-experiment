@@ -101,7 +101,7 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 
 	/*** Test methods ***/
 
-	@Test
+	/*@Test
 	void courseRestOperations() throws Exception {
 
 		// Edit course
@@ -261,7 +261,7 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 
 		log.info("Session successfully deleted");
 
-	}
+	}*/
 
 	@Test
 	void forumRestOperations() throws Exception {
@@ -307,7 +307,7 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 		entryEl.click();
 
 		user.waitUntil(ExpectedConditions.textToBe(
-				By.cssSelector(".comment-block > app-comment:first-child > div.comment-div .forum-comment-msg"),
+				By.cssSelector(".comment-block > app-comment:first-child > div.comment-div .message-itself"),
 				comment), "Unexpected entry title in the entry details view");
 		user.waitUntil(ExpectedConditions.textToBe(
 				By.cssSelector(".comment-block > app-comment:first-child > div.comment-div .forum-comment-author"),
@@ -327,7 +327,7 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 		waitForDialogClosed("course-details-modal", "Addition of entry reply failed", user);
 
 		user.waitUntil(ExpectedConditions.textToBe(By.cssSelector(
-				".comment-block > app-comment:first-child > div.comment-div div.comment-div .forum-comment-msg"),
+				".comment-block > app-comment:first-child > div.comment-div div.comment-div .message-itself"),
 				reply), "Unexpected reply message in the entry details view");
 		user.waitUntil(ExpectedConditions.textToBe(By.cssSelector(
 				".comment-block > app-comment:first-child > div.comment-div div.comment-div .forum-comment-author"),
@@ -359,7 +359,7 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 
 	}
 
-	@Test
+	/*@Test
 	void filesRestOperations() throws Exception {
 
 		enterCourseAndNavigateTab(COURSE_NAME, "files-tab-icon");
