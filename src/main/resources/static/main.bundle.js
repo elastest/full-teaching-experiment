@@ -2290,7 +2290,8 @@ var Publisher = /** @class */ (function () {
         this.stream.getWebRtcPeer().videoEnabled = value;
     };
     Publisher.prototype.destroy = function () {
-        this.session.unpublish(this);
+        if (!!this.session)
+            this.session.unpublish(this);
         this.stream.dispose();
         this.stream.removeVideo(this.element);
         return this;
@@ -2497,6 +2498,7 @@ var Session = /** @class */ (function () {
     };
     Session.prototype.streamPublish = function (publisher) {
         publisher.session = this;
+        this.connection.addStream(publisher.stream);
         publisher.stream.publish();
     };
     Session.prototype.unpublish = function (publisher) {
@@ -2663,7 +2665,7 @@ var Connection = /** @class */ (function () {
         this.options = options;
         this.streams = {};
         console.info("'Connection' created (" + (local ? "local" : "remote") + ")" + (local ? "" : ", with 'connectionId' [" + (options ? options.id : '') + "] "));
-        if (options) {
+        if (options && !local) {
             this.connectionId = options.id;
             if (options.metadata) {
                 this.data = options.metadata;
@@ -2674,6 +2676,7 @@ var Connection = /** @class */ (function () {
         }
     }
     Connection.prototype.addStream = function (stream) {
+        stream.connection = this;
         this.streams[stream.streamId] = stream;
         this.room.getStreams()[stream.streamId] = stream;
     };
@@ -2742,7 +2745,8 @@ var LocalRecorder = /** @class */ (function () {
         this.chunks = [];
         this.count = 0;
         this.stream = stream;
-        this.id = this.stream.streamId + '_' + this.stream.connection.connectionId + '_localrecord';
+        this.connectionId = (!!this.stream.connection) ? this.stream.connection.connectionId : 'default-connection';
+        this.id = this.stream.streamId + '_' + this.connectionId + '_localrecord';
         this.state = "READY" /* READY */;
     }
     LocalRecorder.prototype.record = function () {
@@ -2754,7 +2758,7 @@ var LocalRecorder = /** @class */ (function () {
         if (this.state !== "READY" /* READY */) {
             throw (Error('\'LocalRecord.record()\' needs \'LocalRecord.state\' to be \'READY\' (current value: \'' + this.state + '\'). Call \'LocalRecorder.clean()\' or init a new LocalRecorder before'));
         }
-        console.log("Starting local recording of stream '" + this.stream.streamId + "' of connection '" + this.stream.connection.connectionId + "'");
+        console.log("Starting local recording of stream '" + this.stream.streamId + "' of connection '" + this.connectionId + "'");
         if (typeof MediaRecorder.isTypeSupported == 'function') {
             var options = void 0;
             if (MediaRecorder.isTypeSupported('video/webm;codecs=vp9')) {
@@ -2906,8 +2910,9 @@ var LocalRecorder = /** @class */ (function () {
                 http_1.open("POST", endpoint, true);
                 http_1.onreadystatechange = function () {
                     if (http_1.readyState === 4) {
-                        if (http_1.status === 200) {
-                            resolve("File uploaded");
+                        if (http_1.status.toString().charAt(0) === '2') {
+                            // Success response from server (HTTP status standard: 2XX is success)
+                            resolve(http_1.responseText);
                         }
                         else {
                             reject(Error("Upload error: " + http_1.status));
@@ -2928,12 +2933,12 @@ var LocalRecorder = /** @class */ (function () {
                 var http_2 = new XMLHttpRequest();
                 http_2.open("POST", endpoint, true);
                 var sendable = new FormData();
-                sendable.append("name", _this.id);
-                sendable.append("file", _this.blob);
+                sendable.append("file", _this.blob, _this.id + ".webm");
                 http_2.onreadystatechange = function () {
                     if (http_2.readyState === 4) {
-                        if (http_2.status === 200) {
-                            resolve("File uploaded");
+                        if (http_2.status.toString().charAt(0) === '2') {
+                            // Success response from server (HTTP status standard: 2XX is success)
+                            resolve(http_2.responseText);
                         }
                         else {
                             reject(Error("Upload error: " + http_2.status));
@@ -3018,7 +3023,6 @@ var OpenViduInternal = /** @class */ (function () {
         if (newStream) {
             if (cameraOptions == null) {
                 cameraOptions = {
-                    connection: this.session.getLocalParticipant(),
                     sendAudio: true,
                     sendVideo: true,
                     activeAudio: true,
@@ -3029,9 +3033,6 @@ var OpenViduInternal = /** @class */ (function () {
                         video: { width: { ideal: 1280 } }
                     }
                 };
-            }
-            else {
-                cameraOptions.connection = this.session.getLocalParticipant();
             }
             this.localStream = new Stream_1.Stream(this, true, this.session, cameraOptions);
         }
@@ -3361,7 +3362,7 @@ var SessionInternal = /** @class */ (function () {
         this.connected = false;
         this.sessionId = this.getUrlWithoutSecret(sessionId);
         this.localParticipant = new Connection_1.Connection(this.openVidu, true, this);
-        if (!this.openVidu.getWsUri()) {
+        if (!this.openVidu.getWsUri() && !!sessionId) {
             this.processOpenViduUrl(sessionId);
         }
     }
@@ -3506,6 +3507,9 @@ var SessionInternal = /** @class */ (function () {
         this.updateSpeakerInterval = options.updateSpeakerInterval || 1500;
         this.thresholdSpeaker = options.thresholdSpeaker || -50;
         this.activateUpdateMainSpeaker();
+        if (!this.openVidu.getWsUri()) {
+            this.processOpenViduUrl(options.sessionId);
+        }
     };
     SessionInternal.prototype.getId = function () {
         return this.id;
@@ -3928,6 +3932,7 @@ var Stream = /** @class */ (function () {
         this.isScreenRequestedReady = false;
         this.isScreenRequested = false;
         if (options !== 'screen-options') {
+            // Outbound stream (not screen share) or Inbound stream
             if ('id' in options) {
                 this.inboundOptions = options;
             }
@@ -3936,12 +3941,15 @@ var Stream = /** @class */ (function () {
             }
             this.streamId = (options.id != null) ? options.id : ((options.sendVideo) ? "CAMERA" : "MICRO");
             this.typeOfVideo = (options.typeOfVideo != null) ? options.typeOfVideo : '';
-            this.connection = options.connection;
+            if ('recvAudio' in options) {
+                // Set Connection for an Inbound stream (for Outbound streams will be set on Session.Publish(Publisher))
+                this.connection = options.connection;
+            }
         }
         else {
+            // Outbound stream for screen share
             this.isScreenRequested = true;
             this.typeOfVideo = 'SCREEN';
-            this.connection = this.room.getLocalParticipant();
         }
         this.addEventListener('mediastream-updated', function () {
             if (_this.video)
@@ -4130,7 +4138,6 @@ var Stream = /** @class */ (function () {
     };
     Stream.prototype.requestCameraAccess = function (callback) {
         var _this = this;
-        this.connection.addStream(this);
         var constraints = this.outboundOptions.mediaConstraints;
         /*let constraints2 = {
             audio: true,
@@ -4543,7 +4550,7 @@ var WebRtcStats = /** @class */ (function () {
                     console.log("WebRtc stats succesfully sent to " + url + " for stream " + _this.stream.streamId + " of connection " + _this.stream.connection.connectionId);
                 }
             };
-            http.send(JSON.stringify(json));
+            http.send(json);
         };
         var f = function (stats) {
             if (adapter.browserDetails.browser === 'firefox') {
@@ -4585,8 +4592,9 @@ var WebRtcStats = /** @class */ (function () {
                             "@timestamp": new Date(stat.timestamp).toISOString(),
                             "exec": instrumentation.exec,
                             "component": instrumentation.component,
+                            "stream": "webRtc",
                             "type": metricId,
-                            "stream_type": "composed_metric",
+                            "stream_type": "composed_metrics",
                             "units": units
                         };
                         json[metricId] = metrics;
@@ -4617,8 +4625,9 @@ var WebRtcStats = /** @class */ (function () {
                             "@timestamp": new Date(stat.timestamp).toISOString(),
                             "exec": instrumentation.exec,
                             "component": instrumentation.component,
+                            "stream": "webRtc",
                             "type": metricId,
-                            "stream_type": "composed_metric",
+                            "stream_type": "composed_metrics",
                             "units": units
                         };
                         json[metricId] = metrics;
@@ -4663,8 +4672,9 @@ var WebRtcStats = /** @class */ (function () {
                                 "@timestamp": new Date(stat.timestamp).toISOString(),
                                 "exec": instrumentation.exec,
                                 "component": instrumentation.component,
+                                "stream": "webRtc",
                                 "type": metricId,
-                                "stream_type": "composed_metric",
+                                "stream_type": "composed_metrics",
                                 "units": units
                             };
                             json[metricId] = metrics;
@@ -4692,8 +4702,9 @@ var WebRtcStats = /** @class */ (function () {
                                 "@timestamp": new Date(stat.timestamp).toISOString(),
                                 "exec": instrumentation.exec,
                                 "component": instrumentation.component,
+                                "stream": "webRtc",
                                 "type": metricId,
-                                "stream_type": "composed_metric",
+                                "stream_type": "composed_metrics",
                                 "units": units
                             };
                             json[metricId] = metrics;
@@ -14086,24 +14097,22 @@ var AppComponent = /** @class */ (function () {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_32__services_user_service__ = __webpack_require__("../../../../../src/app/services/user.service.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_33__services_animation_service__ = __webpack_require__("../../../../../src/app/services/animation.service.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_34__services_video_session_service__ = __webpack_require__("../../../../../src/app/services/video-session.service.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_35__auth_guard__ = __webpack_require__("../../../../../src/app/auth.guard.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_36_angular_calendar__ = __webpack_require__("../../../../angular-calendar/dist/esm/src/index.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_37__components_calendar_calendar_component__ = __webpack_require__("../../../../../src/app/components/calendar/calendar.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_38_time_ago_pipe__ = __webpack_require__("../../../../time-ago-pipe/time-ago-pipe.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_38_time_ago_pipe___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_38_time_ago_pipe__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_39_ng2_dragula_ng2_dragula__ = __webpack_require__("../../../../ng2-dragula/ng2-dragula.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_39_ng2_dragula_ng2_dragula___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_39_ng2_dragula_ng2_dragula__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_40_primeng_components_editor_editor__ = __webpack_require__("../../../../primeng/components/editor/editor.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_40_primeng_components_editor_editor___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_40_primeng_components_editor_editor__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_41_angular2_recaptcha__ = __webpack_require__("../../../../angular2-recaptcha/angular2-recaptcha.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_41_angular2_recaptcha___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_41_angular2_recaptcha__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_35_angular_calendar__ = __webpack_require__("../../../../angular-calendar/dist/esm/src/index.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_36__components_calendar_calendar_component__ = __webpack_require__("../../../../../src/app/components/calendar/calendar.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_37_time_ago_pipe__ = __webpack_require__("../../../../time-ago-pipe/time-ago-pipe.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_37_time_ago_pipe___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_37_time_ago_pipe__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_38_ng2_dragula_ng2_dragula__ = __webpack_require__("../../../../ng2-dragula/ng2-dragula.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_38_ng2_dragula_ng2_dragula___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_38_ng2_dragula_ng2_dragula__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_39_primeng_components_editor_editor__ = __webpack_require__("../../../../primeng/components/editor/editor.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_39_primeng_components_editor_editor___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_39_primeng_components_editor_editor__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_40_angular2_recaptcha__ = __webpack_require__("../../../../angular2-recaptcha/angular2-recaptcha.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_40_angular2_recaptcha___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_40_angular2_recaptcha__);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-
 
 
 
@@ -14158,10 +14167,10 @@ var AppModule = /** @class */ (function () {
                 __WEBPACK_IMPORTED_MODULE_5_angular2_materialize__["MaterializeModule"],
                 __WEBPACK_IMPORTED_MODULE_7__angular_material__["a" /* MaterialModule */].forRoot(),
                 __WEBPACK_IMPORTED_MODULE_4__app_routing__["a" /* routing */],
-                __WEBPACK_IMPORTED_MODULE_36_angular_calendar__["CalendarModule"].forRoot(),
-                __WEBPACK_IMPORTED_MODULE_39_ng2_dragula_ng2_dragula__["DragulaModule"],
-                __WEBPACK_IMPORTED_MODULE_40_primeng_components_editor_editor__["EditorModule"],
-                __WEBPACK_IMPORTED_MODULE_41_angular2_recaptcha__["ReCaptchaModule"],
+                __WEBPACK_IMPORTED_MODULE_35_angular_calendar__["CalendarModule"].forRoot(),
+                __WEBPACK_IMPORTED_MODULE_38_ng2_dragula_ng2_dragula__["DragulaModule"],
+                __WEBPACK_IMPORTED_MODULE_39_primeng_components_editor_editor__["EditorModule"],
+                __WEBPACK_IMPORTED_MODULE_40_angular2_recaptcha__["ReCaptchaModule"],
             ],
             declarations: [
                 __WEBPACK_IMPORTED_MODULE_9__app_component__["a" /* AppComponent */],
@@ -14175,8 +14184,8 @@ var AppModule = /** @class */ (function () {
                 __WEBPACK_IMPORTED_MODULE_17__components_error_message_error_message_component__["a" /* ErrorMessageComponent */],
                 __WEBPACK_IMPORTED_MODULE_18__components_comment_comment_component__["a" /* CommentComponent */],
                 __WEBPACK_IMPORTED_MODULE_19__components_file_group_file_group_component__["a" /* FileGroupComponent */],
-                __WEBPACK_IMPORTED_MODULE_37__components_calendar_calendar_component__["a" /* CalendarComponent */],
-                __WEBPACK_IMPORTED_MODULE_38_time_ago_pipe__["TimeAgoPipe"],
+                __WEBPACK_IMPORTED_MODULE_36__components_calendar_calendar_component__["a" /* CalendarComponent */],
+                __WEBPACK_IMPORTED_MODULE_37_time_ago_pipe__["TimeAgoPipe"],
                 __WEBPACK_IMPORTED_MODULE_6_ng2_file_upload__["FileSelectDirective"],
                 __WEBPACK_IMPORTED_MODULE_6_ng2_file_upload__["FileDropDirective"],
                 __WEBPACK_IMPORTED_MODULE_20__components_video_session_video_session_component__["a" /* VideoSessionComponent */],
@@ -14197,7 +14206,6 @@ var AppModule = /** @class */ (function () {
                 __WEBPACK_IMPORTED_MODULE_32__services_user_service__["a" /* UserService */],
                 __WEBPACK_IMPORTED_MODULE_33__services_animation_service__["a" /* AnimationService */],
                 __WEBPACK_IMPORTED_MODULE_34__services_video_session_service__["a" /* VideoSessionService */],
-                __WEBPACK_IMPORTED_MODULE_35__auth_guard__["a" /* AuthGuard */],
             ],
             bootstrap: [__WEBPACK_IMPORTED_MODULE_9__app_component__["a" /* AppComponent */]]
         })
@@ -14220,8 +14228,6 @@ var AppModule = /** @class */ (function () {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_course_details_course_details_component__ = __webpack_require__("../../../../../src/app/components/course-details/course-details.component.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_settings_settings_component__ = __webpack_require__("../../../../../src/app/components/settings/settings.component.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_video_session_video_session_component__ = __webpack_require__("../../../../../src/app/components/video-session/video-session.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__auth_guard__ = __webpack_require__("../../../../../src/app/auth.guard.ts");
-
 
 
 
@@ -14236,73 +14242,23 @@ var appRoutes = [
     },
     {
         path: 'courses',
-        component: __WEBPACK_IMPORTED_MODULE_2__components_dashboard_dashboard_component__["a" /* DashboardComponent */],
-        canActivate: [__WEBPACK_IMPORTED_MODULE_6__auth_guard__["a" /* AuthGuard */]]
+        component: __WEBPACK_IMPORTED_MODULE_2__components_dashboard_dashboard_component__["a" /* DashboardComponent */]
     },
     {
         path: 'courses/:id/:tabId',
-        component: __WEBPACK_IMPORTED_MODULE_3__components_course_details_course_details_component__["a" /* CourseDetailsComponent */],
-        canActivate: [__WEBPACK_IMPORTED_MODULE_6__auth_guard__["a" /* AuthGuard */]]
+        component: __WEBPACK_IMPORTED_MODULE_3__components_course_details_course_details_component__["a" /* CourseDetailsComponent */]
     },
     {
         path: 'settings',
-        component: __WEBPACK_IMPORTED_MODULE_4__components_settings_settings_component__["a" /* SettingsComponent */],
-        canActivate: [__WEBPACK_IMPORTED_MODULE_6__auth_guard__["a" /* AuthGuard */]]
+        component: __WEBPACK_IMPORTED_MODULE_4__components_settings_settings_component__["a" /* SettingsComponent */]
     },
     {
         path: 'session/:id',
-        component: __WEBPACK_IMPORTED_MODULE_5__components_video_session_video_session_component__["a" /* VideoSessionComponent */],
-        canActivate: [__WEBPACK_IMPORTED_MODULE_6__auth_guard__["a" /* AuthGuard */]]
+        component: __WEBPACK_IMPORTED_MODULE_5__components_video_session_video_session_component__["a" /* VideoSessionComponent */]
     },
 ];
-var routing = __WEBPACK_IMPORTED_MODULE_0__angular_router__["c" /* RouterModule */].forRoot(appRoutes);
+var routing = __WEBPACK_IMPORTED_MODULE_0__angular_router__["c" /* RouterModule */].forRoot(appRoutes, { useHash: true });
 //# sourceMappingURL=/home/pablo/Documents/Git/full-teaching-experiment/src/main/angular/src/app.routing.js.map
-
-/***/ }),
-
-/***/ "../../../../../src/app/auth.guard.ts":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return AuthGuard; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/index.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_router__ = __webpack_require__("../../../router/index.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__services_authentication_service__ = __webpack_require__("../../../../../src/app/services/authentication.service.ts");
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-
-
-
-var AuthGuard = /** @class */ (function () {
-    function AuthGuard(router, authenticationService) {
-        this.router = router;
-        this.authenticationService = authenticationService;
-    }
-    AuthGuard.prototype.canActivate = function () {
-        if (localStorage.getItem('login') && localStorage.getItem('rol') && this.authenticationService.isLoggedIn()) {
-            // logged in so return true
-            return true;
-        }
-        // not logged in so redirect to login page
-        this.router.navigate(['']);
-        return false;
-    };
-    AuthGuard = __decorate([
-        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Injectable"])(),
-        __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* Router */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_2__services_authentication_service__["a" /* AuthenticationService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__services_authentication_service__["a" /* AuthenticationService */]) === "function" && _b || Object])
-    ], AuthGuard);
-    return AuthGuard;
-    var _a, _b;
-}());
-
-//# sourceMappingURL=/home/pablo/Documents/Git/full-teaching-experiment/src/main/angular/src/auth.guard.js.map
 
 /***/ }),
 
@@ -14332,8 +14288,10 @@ var Chatline = /** @class */ (function () {
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Comment; });
 var Comment = /** @class */ (function () {
-    function Comment(message, commentParent) {
+    function Comment(message, videourl, audioonly, commentParent) {
         this.message = message;
+        this.videourl = videourl;
+        this.audioonly = audioonly;
         this.replies = [];
         this.commentParent = commentParent;
         this.user = null; //Backend will take care of it
@@ -14743,7 +14701,7 @@ exports = module.exports = __webpack_require__("../../../../css-loader/lib/css-b
 
 
 // module
-exports.push([module.i, ".comment-div {\n  padding-left: 20px;\n}\n\n.row-margin-bottom {\n  margin-bottom: 10px;\n}\n\n.user-name {\n  display: inline-block;\n  font-size: small;\n  font-weight: 300;\n}\n\n.message {\n  display: inline-block;\n}\n\n.message-itself {\n   word-wrap: break-word;\n}\n\n.replay-icon {\n  font-size: 20px;\n  color: rgba(94, 97, 95, 0.51);\n  cursor: pointer;\n}\n.replay-icon:hover {\n  color: #91a59b;\n}\n\n.user-date-separator {\n  display: inline-block;\n  padding-right: 10px;\n  padding-left: 10px;\n}\n", ""]);
+exports.push([module.i, ".comment-div {\n  padding-left: 20px;\n}\n\n.row-margin-bottom {\n  margin-bottom: 10px;\n}\n\n.user-name {\n  display: inline-block;\n  font-size: small;\n  font-weight: 300;\n}\n\n.message {\n  display: inline-block;\n}\n\n.message-itself {\n  word-wrap: break-word;\n}\n\n.video-itself {\n  width: -webkit-fit-content;\n  width: -moz-fit-content;\n  width: fit-content;\n  border-radius: 6px;\n  overflow: hidden;\n  margin-top: 25px;\n  margin-bottom: 25px;\n  margin-left: auto;\n  margin-right: auto;\n}\n\n.video-itself video {\n  width: 500px;\n}\n\n.replay-icon {\n  font-size: 20px;\n  color: rgba(94, 97, 95, 0.51);\n  cursor: pointer;\n}\n\n.replay-icon:hover {\n  color: #91a59b;\n}\n\n.user-date-separator {\n  display: inline-block;\n  padding-right: 10px;\n  padding-left: 10px;\n}\n", ""]);
 
 // exports
 
@@ -14756,7 +14714,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/components/comment/comment.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"comment-div\">\n  <div class=\"row row-margin-bottom\">\n    <div class=\"col l11 m11 s11\" [class.teacher-forum]=\"isCommentTeacher(this.comment)\">\n      <div class=\"message-itself forum-comment-msg\">{{comment.message}}</div>\n      <div class=\"user-name forum-comment-author\" [class.teacher-name]=\"isCommentTeacher(comment)\">{{comment.user.nickName}}</div>\n      <div class=\"user-date-separator\">-</div>\n      <div class=\"user-name\">{{comment.date | date}} - {{comment.date | date:'H:mm' }}</div>\n    </div>\n    <div class=\"col l1 m1 s1 no-padding-left right-align\">\n      <a href=\"#course-details-modal\" [title]=\"'Send replay'\" (click)=\"updatePostModalMode(1, 'New replay', null, this.comment, null); this.animationService.animateIfSmall()\">\n        <i class=\"material-icons replay-icon\">feedback</i>\n      </a>\n    </div>\n  </div>\n\n  <div *ngFor=\"let replay of comment.replies; let i = index\">\n    <app-comment [comment]=\"replay\"></app-comment>\n  </div>\n</div>\n"
+module.exports = "<div class=\"comment-div\">\n  <div class=\"row row-margin-bottom\">\n    <div class=\"col l11 m11 s11\" [class.teacher-forum]=\"isCommentTeacher(this.comment)\">\n      <div *ngIf=\"!!comment.message\" class=\"message-itself\">{{comment.message}}</div>\n      <div *ngIf=\"!!comment.videourl\" class=\"video-itself\">\n        <video [attr.id]=\"comment.videourl\" [src]=\"comment.videourl\" (mouseenter)=\"onHovering($event)\" (mouseleave)=\"onUnhovering($event)\"\n          [attr.poster]=\"comment.audioonly ? 'assets/images/volume.png' : ''\" [style.background-color]=\"comment.audioonly ? 'rgb(77,77,77)' : ''\"\n          [style.max-height]=\"comment.audioonly ? '375px' : ''\"></video>\n      </div>\n      <div class=\"user-name forum-comment-author\" [class.teacher-name]=\"isCommentTeacher(comment)\">{{comment.user.nickName}}</div>\n      <div class=\"user-date-separator\">-</div>\n      <div class=\"user-name\">{{comment.date | date}} - {{comment.date | date:'H:mm' }}</div>\n    </div>\n    <div class=\"col l1 m1 s1 no-padding-left right-align\">\n      <a href=\"#course-details-modal\" [title]=\"'Send replay'\" (click)=\"updatePostModalMode(1, 'New replay', null, this.comment, null); this.animationService.animateIfSmall()\">\n        <i class=\"material-icons replay-icon\">feedback</i>\n      </a>\n      <a href=\"#course-details-modal\" [title]=\"'Send video replay'\" (click)=\"updatePostModalMode(6, 'New video replay', null, this.comment, null); this.animationService.animateIfSmall()\">\n        <i class=\"material-icons replay-icon\">videocam</i>\n      </a>\n    </div>\n  </div>\n\n  <div *ngFor=\"let replay of comment.replies; let i = index\">\n    <app-comment [comment]=\"replay\"></app-comment>\n  </div>\n</div>\n"
 
 /***/ }),
 
@@ -14795,6 +14753,12 @@ var CommentComponent = /** @class */ (function () {
     CommentComponent.prototype.isCommentTeacher = function (comment) {
         return (comment.user.roles.indexOf('ROLE_TEACHER') > -1);
     };
+    CommentComponent.prototype.onHovering = function (event) {
+        $(event.target).attr("controls", "");
+    };
+    CommentComponent.prototype.onUnhovering = function (event) {
+        $(event.target).removeAttr("controls");
+    };
     __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Input"])(),
         __metadata("design:type", typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__classes_comment__["a" /* Comment */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__classes_comment__["a" /* Comment */]) === "function" && _a || Object)
@@ -14823,7 +14787,7 @@ exports = module.exports = __webpack_require__("../../../../css-loader/lib/css-b
 
 
 // module
-exports.push([module.i, "#tabs-course-details{\n  margin-bottom: 30px;\n}\n\n/*Text editor*/\n.ql-editor-custom {\n  box-sizing: initial;\n  cursor: initial;\n  line-height: initial;\n  height: initial;\n  outline: initial;\n  overflow-y: initial;\n  padding: 20px;\n  -o-tab-size: initial;\n     tab-size: initial;\n  -moz-tab-size: initial;\n  text-align: initial;\n  white-space: initial;\n  word-wrap: initial;\n}\n\n#textEditorRowButtons{\n  padding-top: 10px;\n  margin: 0;\n}\n/*Text editor*/\n\n.course-detail-div {\n  padding-top: 30px;\n}\n\n.comments-col{\n  padding-left: 0;\n}\n\n.tab-template-content {\n  width: 100%;\n  height: 100%;\n  padding: 15px 15px 15px 15px;\n}\n\n.tab-template-content-2 {\n  width: inherit !important;\n  height: inherit !important;\n  padding: 15px 15px 15px 15px;\n}\n\n.md-tab-label-aux {\n  width: 100%;\n  height: 100%;\n}\n\n.md-tab-label-aux:hover {\n  color: #375646;\n}\n\n.md-tab-label-aux i {\n  padding-top: 10px;\n}\n\na.btn-floating {\n  background-color: #e0e0e0;\n}\n\n.delete-attenders-div {\n  float: right;\n  padding-right: 10px;\n  height: 30px;\n}\n\n.del-attender-icon {\n  cursor: pointer;\n}\n\n.del-attender-icon:hover {\n  color: #91a59b;\n}\n\n.user-attender-row {\n  background-color: #f3f3f3;\n  border-radius: 3px;\n  margin-top: 10px !important;\n  margin-bottom: 5px !important;\n}\n\n.att-row-padding {\n  padding: 20px;\n}\n\n.att-info-tooltip {\n  cursor: pointer;\n}\n\n#tooltip-file{\n  position: absolute;\n  margin-left: 10px;\n  margin-top: 10px;\n}\n\n/*Forum view*/\n\n.entries-side-view {\n  height: 100%;\n}\n\n#entries-sml-btn {\n  color: #375646;\n  cursor: pointer;\n}\n\n#entries-sml-btn:hover {\n  color: #91a59b;\n}\n\n.session-data {\n  padding: 25px 25px 25px 25px;\n  display: list-item !important;\n  transition: all .2s ease-out !important;\n}\n\n.session-data a {\n  color: inherit !important;\n}\n\n.session-title {\n  font-weight: bold;\n  font-size: 20px;\n}\n\n.entry-row-sep {\n  margin-bottom: 10px !important;\n}\n\n.entry-title {\n  cursor: pointer;\n  padding: 8px 0 8px 0;\n  display: list-item !important;\n  transition: all .2s ease-out !important;\n}\n\n.entry-title:hover {\n  background-color: rgba(224, 224, 224, 0.5);\n}\n\n.entry-title a {\n  color: #375646;\n  font-weight: bold;\n}\n\n.user-name {\n  display: inline-block;\n  font-size: small;\n  font-weight: 300;\n}\n\n.user-date-separator {\n  display: inline-block;\n  padding-right: 10px;\n  padding-left: 10px;\n}\n\n.user-date-column {\n  text-align: right;\n}\n\n.last-comment-row {\n  font-size: 13px;\n  font-weight: 300;\n  color: #375345;\n}\n\n.entry-user {\n  display: inline-block;\n  font-size: small;\n  font-weight: 500;\n}\n\n.comment-section-title {\n  font-weight: bold;\n}\n\n.comment-block {\n  padding: 8px 0 4px 0;\n}\n\n.comment-divider {\n  border-bottom: 1px solid #e0e0e0;\n}\n\n.forum-icon {\n  font-size: 20px;\n  color: #5e615f;\n  cursor: pointer;\n}\n\n.forum-icon:hover {\n  color: #91a59b;\n}\n\n.back-icon {\n  font-size: 28px;\n  color: #375646;\n  cursor: pointer;\n}\n\n.div-entry-icon {\n  padding-top: 10px;\n}\n\n.course-title {\n  font-weight: 300;\n}\n\n#inputDate {\n  cursor: pointer;\n}\n\n#inputTime {\n  cursor: pointer;\n}\n\n.userImage {\n  display: inline !important;\n}\n\n.attender-col {\n  margin: inherit !important;\n}\n\n.p-name{\n  font-size: small;\n  color: #828282;\n}\n\n@media only screen and (max-width: 600px) and (orientation: portrait), screen and (max-width: 992px) and (orientation: landscape) {\n  .p-nickName {\n    margin: 0;\n  }\n\n  .p-name {\n    font-size: small;\n    color: #828282;\n    margin: 0;\n  }\n}\n\n@media only screen and (min-width: 993px) {\n  .userImage {\n    width: 70px;\n    height: 70px;\n  }\n}\n\n@media only screen and (max-width: 992px) {\n  .userImage {\n    width: 45px;\n    height: 45px;\n  }\n}\n\n/*Active Session*/\n.session-ready{\n  background-color: rgba(55, 86, 70, 0.15);\n  cursor: pointer;\n}\n\n@keyframes sessionReadyFrames{\n  0% {\n    transform:  scaleX(1.00) scaleY(1.00) ;\n  }\n  50% {\n    transform:  scaleX(1.06) scaleY(1.06) ;\n  }\n  100% {\n    transform:  scaleX(1.00) scaleY(1.00) ;\n  }\n}\n", ""]);
+exports.push([module.i, "#tabs-course-details{\n  margin-bottom: 30px;\n}\n\n/*Text editor*/\n.ql-editor-custom {\n  box-sizing: initial;\n  cursor: initial;\n  line-height: initial;\n  height: initial;\n  outline: initial;\n  overflow-y: initial;\n  padding: 20px;\n  -o-tab-size: initial;\n     tab-size: initial;\n  -moz-tab-size: initial;\n  text-align: initial;\n  white-space: initial;\n  word-wrap: initial;\n}\n\n#textEditorRowButtons{\n  padding-top: 10px;\n  margin: 0;\n}\n/*Text editor*/\n\n.course-detail-div {\n  padding-top: 30px;\n}\n\n.comments-col{\n  padding-left: 0;\n}\n\n.tab-template-content {\n  width: 100%;\n  height: 100%;\n  padding: 15px 15px 15px 15px;\n}\n\n.tab-template-content-2 {\n  width: inherit !important;\n  height: inherit !important;\n  padding: 15px 15px 15px 15px;\n}\n\n.md-tab-label-aux {\n  width: 100%;\n  height: 100%;\n}\n\n.md-tab-label-aux:hover {\n  color: #375646;\n}\n\n.md-tab-label-aux i {\n  padding-top: 10px;\n}\n\na.btn-floating {\n  background-color: #e0e0e0;\n}\n\n.delete-attenders-div {\n  float: right;\n  padding-right: 10px;\n  height: 30px;\n}\n\n.del-attender-icon {\n  cursor: pointer;\n}\n\n.del-attender-icon:hover {\n  color: #91a59b;\n}\n\n.user-attender-row {\n  background-color: #f3f3f3;\n  border-radius: 3px;\n  margin-top: 10px !important;\n  margin-bottom: 5px !important;\n}\n\n.att-row-padding {\n  padding: 20px;\n}\n\n.att-info-tooltip {\n  cursor: pointer;\n}\n\n#tooltip-file{\n  position: absolute;\n  margin-left: 10px;\n  margin-top: 10px;\n}\n\n/*Forum view*/\n\n.entries-side-view {\n  height: 100%;\n}\n\n#entries-sml-btn {\n  color: #375646;\n  cursor: pointer;\n}\n\n#entries-sml-btn:hover {\n  color: #91a59b;\n}\n\n.session-data {\n  padding: 25px 25px 25px 25px;\n  display: list-item !important;\n  transition: all .2s ease-out !important;\n}\n\n.session-data a {\n  color: inherit !important;\n}\n\n.session-title {\n  font-weight: bold;\n  font-size: 20px;\n}\n\n.entry-row-sep {\n  margin-bottom: 10px !important;\n}\n\n.entry-title {\n  cursor: pointer;\n  padding: 8px 0 8px 0;\n  display: list-item !important;\n  transition: all .2s ease-out !important;\n}\n\n.entry-title:hover {\n  background-color: rgba(224, 224, 224, 0.5);\n}\n\n.entry-title a {\n  color: #375646;\n  font-weight: bold;\n}\n\n.user-name {\n  display: inline-block;\n  font-size: small;\n  font-weight: 300;\n}\n\n.user-date-separator {\n  display: inline-block;\n  padding-right: 10px;\n  padding-left: 10px;\n}\n\n.user-date-column {\n  text-align: right;\n}\n\n.last-comment-row {\n  font-size: 13px;\n  font-weight: 300;\n  color: #375345;\n}\n\n.entry-user {\n  display: inline-block;\n  font-size: small;\n  font-weight: 500;\n}\n\n.comment-section-title {\n  font-weight: bold;\n}\n\n.comment-block {\n  padding: 8px 0 4px 0;\n}\n\n.comment-divider {\n  border-bottom: 1px solid #e0e0e0;\n}\n\n.forum-icon {\n  font-size: 22px;\n  color: #5e615f;\n  cursor: pointer;\n}\n\n.forum-icon:hover {\n  color: #91a59b;\n}\n\n.back-icon {\n  font-size: 28px;\n  color: #375646;\n  cursor: pointer;\n}\n\n.div-entry-icon {\n  padding-top: 10px;\n}\n\n.course-title {\n  font-weight: 300;\n}\n\n#inputDate {\n  cursor: pointer;\n}\n\n#inputTime {\n  cursor: pointer;\n}\n\n.userImage {\n  display: inline !important;\n}\n\n.attender-col {\n  margin: inherit !important;\n}\n\n.p-name{\n  font-size: small;\n  color: #828282;\n}\n\n#record-form-div {\n  margin-top: 10px;\n  margin-bottom: 30px;\n}\n\n#record-error-div {\n  margin-top: 20px;\n}\n\n@media only screen and (max-width: 600px) and (orientation: portrait), screen and (max-width: 992px) and (orientation: landscape) {\n  .p-nickName {\n    margin: 0;\n  }\n\n  .p-name {\n    font-size: small;\n    color: #828282;\n    margin: 0;\n  }\n}\n\n@media only screen and (min-width: 993px) {\n  .userImage {\n    width: 70px;\n    height: 70px;\n  }\n}\n\n@media only screen and (max-width: 992px) {\n  .userImage {\n    width: 45px;\n    height: 45px;\n  }\n}\n\n/*Active Session*/\n.session-ready{\n  background-color: rgba(55, 86, 70, 0.15);\n  cursor: pointer;\n}\n\n@keyframes sessionReadyFrames{\n  0% {\n    transform:  scaleX(1.00) scaleY(1.00) ;\n  }\n  50% {\n    transform:  scaleX(1.06) scaleY(1.06) ;\n  }\n  100% {\n    transform:  scaleX(1.00) scaleY(1.00) ;\n  }\n}\n", ""]);
 
 // exports
 
@@ -14836,7 +14800,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/components/course-details/course-details.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div *ngIf=\"!this.course\" class=\"loading\"></div>\n\n<div *ngIf=\"this.course\" class=\"container course-detail-div\">\n\n\n  <!--POST DIALOG-->\n  <div id=\"course-details-modal\" class=\"modal my-modal-class course-details-modal\" materialize=\"modal\" [materializeParams]=\"[{dismissible: false}]\" [materializeActions]=\"actions2\">\n\n    <div *ngIf=\"processingPost\" class=\"loading\"></div>\n\n    <div class=\"modal-content\" [class.filtered]=\"processingPost\">\n      <p class=\"p-bold-modal-header\">{{this.postModalTitle}}</p>\n      <h5 *ngIf=\"isCurrentPostMode(['1'])\">{{this.postModalEntry?.title}}</h5>\n      <p *ngIf=\"isCurrentPostMode(['1'])\">{{this.postModalCommentReplay?.message}}</p>\n      <div class=\"row no-margin\">\n\n        <form materialize #courseDetailsForm class=\"col s12\" (ngSubmit)=\"onCourseDetailsSubmit(); courseDetailsForm.reset();\">\n          <div class=\"row no-margin\">\n\n            <div *ngIf=\"isCurrentPostMode(['0', '2', '4'])\" class=\"row row-mobile\">\n              <div class=\"input-field col s12\">\n                <input [(ngModel)]=\"inputTitle\" name=\"inputTitle\" id=\"input-post-title\" type=\"text\" class=\"validate\" autocomplete=\"off\" required>\n                <label *ngIf=\"isCurrentPostMode(['0'])\" for=\"inputTitle\">Entry title</label>\n                <label *ngIf=\"isCurrentPostMode(['2'])\" for=\"inputTitle\">Session title</label>\n                <label *ngIf=\"isCurrentPostMode(['4'])\" for=\"inputTitle\">File group title</label>\n              </div>\n            </div>\n\n            <div *ngIf=\"isCurrentPostMode(['0', '1', '2'])\" class=\"row row-mobile\">\n              <div class=\"input-field col s12\">\n                <textarea maxlength=\"2500\" [(ngModel)]=\"inputComment\" name=\"inputComment\" id=\"input-post-comment\" class=\"materialize-textarea validate\" required></textarea>\n                <label *ngIf=\"isCurrentPostMode(['0', '1'])\" for=\"inputComment\">Write your comment here</label>\n                <label *ngIf=\"isCurrentPostMode(['2'])\" for=\"inputComment\">Description</label>\n              </div>\n            </div>\n\n            <div class=\"row no-margin\">\n              <div class=\"col l6 m6 s6\">\n                <div *ngIf=\"isCurrentPostMode(['2'])\" class=\"row\">\n                  <label for=\"inputDate\">Date</label>\n                  <div class=\"input-field col s12\">\n                    <input [(ngModel)]=\"inputDate\" name=\"inputDate\" id=\"input-post-date\" type=\"date\" required>\n                  </div>\n                </div>\n              </div>\n              <div class=\"col l6 m6 s6\">\n                <div *ngIf=\"isCurrentPostMode(['2'])\" class=\"row\">\n                  <label for=\"inputTime\">Time</label>\n                  <div class=\"input-field col s12\">\n                    <input type=\"time\" [(ngModel)]=\"inputTime\" name=\"inputTime\" id=\"input-post-time\" class=\"validate\" required>\n                  </div>\n                </div>\n              </div>\n            </div>\n\n            <div *ngIf=\"isCurrentPostMode(['5'])\" class=\"row\">\n\n              <app-file-uploader (onCompleteFileUpload)=\"filesUploadCompleted($event)\" (onUploadStarted)=\"filesUploadStarted($event)\" [uniqueID]=\"1\" [isMultiple]=\"true\" [URLUPLOAD]=\"this.url_file_upload\" [typeOfFile]=\"'files'\" [buttonText]=\"'Select files'\"></app-file-uploader>\n\n            </div>\n\n          </div>\n          <div class=\"row no-margin-bottom right-align\">\n            <a *ngIf=\"!isCurrentPostMode(['5'])\" (click)=\"courseDetailsForm.reset()\" class=\"modal-action modal-close waves-effect btn-flat modal-footer-button cancel-modal-btn\">Cancel</a>\n            <a *ngIf=\"isCurrentPostMode(['5'])\" (click)=\"courseDetailsForm.reset(); this.uploaderModalService.announceUploaderClosed(true);\" id=\"close-upload-modal-btn\" class=\"modal-action modal-close waves-effect btn-flat modal-footer-button\">Close</a>\n            <button id=\"post-modal-btn\" *ngIf=\"!isCurrentPostMode(['5'])\" type=\"submit\" class=\"waves-effect btn-flat modal-footer-button\">Send</button>\n          </div>\n        </form>\n\n      </div>\n    </div>\n  </div>\n  <!--POST DIALOG-->\n\n\n\n  <!--PUT/DELETE DIALOG-->\n  <div *ngIf=\"this.authenticationService.isTeacher()\" id=\"put-delete-modal\" class=\"modal my-modal-class course-details-modal\" materialize=\"modal\" [materializeParams]=\"[{dismissible: false}]\" [materializeActions]=\"actions3\">\n\n    <div *ngIf=\"processingPut\" class=\"loading\"></div>\n\n    <div class=\"modal-content\" [class.filtered]=\"processingPut\">\n      <p class=\"p-bold-modal-header\">{{this.putdeleteModalTitle}}</p>\n      <div class=\"row no-margin\">\n\n        <form materialize #putDeleteForm class=\"col s12\" (ngSubmit)=\"onPutDeleteSubmit(); putDeleteForm.reset(); this.allowSessionDeletion = false;\">\n\n          <div *ngIf=\"isCurrentPutdeleteMode(['0'])\" class=\"row no-margin\">\n            <div class=\"row row-mobile\">\n              <label for=\"inputSessionTitle\">Session title</label>\n              <div class=\"input-field col s12\">\n                <input [(ngModel)]=\"inputSessionTitle\" name=\"inputSessionTitle\" id=\"input-put-title\" type=\"text\" class=\"validate\" required>\n              </div>\n            </div>\n\n            <div class=\"row row-mobile\">\n              <label for=\"inputSessionDescription\">Description</label>\n              <div class=\"input-field col s12\">\n                <textarea [(ngModel)]=\"inputSessionDescription\" name=\"inputSessionDescription\" id=\"input-put-comment\" class=\"materialize-textarea validate\" required></textarea>\n              </div>\n            </div>\n\n            <div class=\"row\">\n              <div class=\"col l6 m6 s6\">\n                <div class=\"row row-mobile\">\n                  <label for=\"inputSessionDate\">Date</label>\n                  <div class=\"input-field col s12\">\n                    <input [(ngModel)]=\"this.updatedSessionDate\" name=\"inputSessionDate\" id=\"input-put-date\" type=\"date\" [value]=\"this.updatedSessionDate\" required>\n                  </div>\n                </div>\n              </div>\n              <div class=\"col l6 m6 s6\">\n                <div class=\"row row-mobile\">\n                  <label for=\"inputSessionTime\">Time</label>\n                  <div class=\"input-field col s12\">\n                    <input [(ngModel)]=\"this.inputSessionTime\" type=\"time\" name=\"inputSessionTime\" id=\"input-put-time\" class=\"validate\" [value]=\"this.inputSessionTime\" required>\n                  </div>\n                </div>\n              </div>\n            </div>\n          </div>\n\n          <div *ngIf=\"isCurrentPutdeleteMode(['1'])\" class=\"row no-margin-lateral\">\n            <input #forumCheckbox type=\"checkbox\" class=\"filled-in\" id=\"delete-checkbox\" name=\"delete-checkbox\" (change)=\"this.allowForumEdition = forumCheckbox.checked\"/>\n            <label for=\"delete-checkbox\" id=\"label-forum-checkbox\">Allow forum {{this.checkboxForumEdition}}?</label>\n          </div>\n\n          <div *ngIf=\"isCurrentPutdeleteMode(['2', '3'])\" class=\"row no-margin\">\n            <div class=\"row\">\n              <label *ngIf=\"isCurrentPutdeleteMode(['2'])\" for=\"inputFileTitle\">File group title</label>\n              <label *ngIf=\"isCurrentPutdeleteMode(['3'])\" for=\"inputFileTitle\">File name</label>\n              <div class=\"input-field col s12\">\n                <input [(ngModel)]=\"inputFileTitle\" name=\"inputFileTitle\" id=\"input-file-title\" type=\"text\" class=\"validate\" required>\n              </div>\n            </div>\n          </div>\n\n          <div *ngIf=\"isCurrentPutdeleteMode(['4'])\" id=\"tabs-attenders\" class=\"row no-margin\">\n            <md-tab-group [(selectedIndex)]=\"this.attenderTabSelected\">\n              <md-tab>\n                <template md-tab-label><div class=\"md-tab-label-aux waves-effect\">SIMPLE</div></template>\n                <template md-tab-content>\n                  <div class=\"row no-margin att-row-padding\">\n                    <div class=\"input-field col s12\">\n                      <input [(ngModel)]=\"inputAttenderSimple\" name=\"inputAttenderSimple\" id=\"input-attender-simple\" type=\"email\" class=\"validate\" required>\n                      <label for=\"inputAttenderSimple\">Attender email</label>\n                    </div>\n                  </div>\n                </template>\n              </md-tab>\n              <md-tab>\n                <template md-tab-label><div class=\"md-tab-label-aux waves-effect\">MULTIPLE</div></template>\n                <template md-tab-content>\n                  <div class=\"row no-margin att-row-padding\">\n                    <i materialize=\"tooltip\" class=\"material-icons tooltipped att-info-tooltip\" data-position=\"right\" data-delay=\"65\" data-html=\"true\" data-tooltip=\"<p class='att-tooltip-text'>We always separate by <b>WHITE SPACES</b><br>and <b>NEW LINES</b>. If there's any other<br>combination of characters that should<br>be taken into account as separator,<br>include it here</p>\">info</i>\n                    <div class=\"input-field col l4 m4 s6\">\n                      <input [(ngModel)]=\"inputAttenderSeparator\" name=\"inputAttenderSeparator\" id=\"input-attender-separator\" type=\"text\" class=\"validate\">\n                      <label for=\"inputAttenderSeparator\">SEPARATOR</label>\n                    </div>\n                    <div class=\"input-field col s12\">\n                      <textarea maxlength=\"1500\" [(ngModel)]=\"inputAttenderMultiple\" name=\"inputAttenderMultiple\" id=\"input-attender-multiple\" class=\"materialize-textarea validate\" required></textarea>\n                      <label for=\"inputAttenderMultiple\">Attender emails</label>\n                    </div>\n                  </div>\n                </template>\n              </md-tab>\n              <md-tab>\n                <template md-tab-label><div class=\"md-tab-label-aux waves-effect\">FILE UPLOAD</div></template>\n                <template md-tab-content>\n                  <i id=\"tooltip-file\" materialize=\"tooltip\" class=\"material-icons tooltipped att-info-tooltip\" data-position=\"right\" data-delay=\"65\" data-html=\"true\" data-tooltip=\"<p class='att-tooltip-text'>We will automatically find and add<br>to the course all the <b>EMAILS</b> in the file</p>\">info</i>\n                  <div class=\"row no-margin att-row-padding\">\n\n                    <app-file-uploader (onCompleteFileUpload)=\"fileReaderUploadCompleted($event)\" (onUploadStarted)=\"fileReaderUploadStarted($event)\" [uniqueID]=\"2\" [URLUPLOAD]=\"this.URL_FILE_READER_UPLOAD + this.course.id\" [isMultiple]=\"false\" [typeOfFile]=\"'file'\" [buttonText]=\"'Upload file'\"></app-file-uploader>\n\n                  </div>\n                </template>\n              </md-tab>\n            </md-tab-group>\n          </div>\n\n          <div class=\"row no-margin-bottom right-align\">\n            <div *ngIf=\"isCurrentPutdeleteMode(['0'])\" class=\"valign-wrapper delete-div\">\n              <a id=\"delete-session-btn\" (click)=\"this.deleteSession(); putDeleteForm.reset(); this.allowSessionDeletion = false;\" class=\"waves-effect btn-flat modal-footer-button float-to-left\" [class.disabled]=\"!this.allowSessionDeletion\">Delete</a>\n              <div class=\"float-to-left\">\n                <input #deleteCheckbox type=\"checkbox\" class=\"filled-in\" id=\"delete-checkbox\" name=\"delete-checkbox\" (change)=\"this.allowSessionDeletion = deleteCheckbox.checked\"/>\n                <label for=\"delete-checkbox\" id=\"label-delete-checkbox\">Allow deletion?</label>\n              </div>\n            </div>\n            <a (click)=\"putDeleteForm.reset(); this.allowSessionDeletion = false; this.allowForumEdition = false; this.uploaderModalService.announceUploaderClosed(true);\" class=\"modal-action modal-close waves-effect btn-flat modal-footer-button cancel-modal-btn\">Cancel</a>\n            <button id=\"put-modal-btn\" *ngIf=\"!((this.putdeleteModalMode === 4) && (this.attenderTabSelected === 2))\" type=\"submit\" class=\"waves-effect btn-flat modal-footer-button\" [class.disabled]=\"isCurrentPutdeleteMode(['1']) && (!this.allowForumEdition)\">Send</button>\n          </div>\n        </form>\n\n      </div>\n    </div>\n  </div>\n  <!--PUT/DELETE DIALOG-->\n\n\n\n  <div class=\"row valign-wrapper\">\n    <div class=\"col l1 m1 s2 valign\"><a id=\"back-to-dashboard-btn\" routerLink=\"/courses\" [title]=\"'Back to courses'\" class=\"btn-floating\"><i class=\"material-icons medium back-icon\">arrow_back</i></a></div>\n    <div class=\"col l11 m11 s10 valign\">\n      <h4 id=\"main-course-title\" class=\"course-title\">{{course.title}}</h4></div>\n  </div>\n\n  <!--TABS-->\n  <div id=\"tabs-course-details\" class=\"row\">\n    <md-tab-group [selectedIndex]=\"this.tabId\">\n\n      <md-tab><!--Course Info Tab-->\n        <template md-tab-label><div class=\"md-tab-label-aux waves-effect\" (click)=\"changeUrlTab(0)\"><i id=\"info-tab-icon\" materialize=\"tooltip\" class=\"material-icons tooltipped\" data-position=\"top\" data-delay=\"65\" data-tooltip=\"Course info\">home</i></div></template>\n        <template md-tab-content>\n\n            <div *ngIf=\"processingCourseInfo\" class=\"loading\"></div>\n\n            <div class=\"tab-template-content\" [class.filtered]=\"processingCourseInfo\">\n              <div class=\"row no-margin\">\n                <a *ngIf=\"this.authenticationService.isTeacher() && !this.welcomeTextEdition\" (click)=\"this.welcomeTextEdition = true\" class=\"right\" [title]=\"'Edit info'\">\n                  <i id=\"edit-course-info\" class=\"material-icons add-element-icon\">edit</i>\n                </a>\n              </div>\n              <div *ngIf=\"!this.welcomeTextEdition && this.course.courseDetails.info\" class=\"ql-editor ql-editor-custom\" [innerHTML]=\"this.course.courseDetails.info\"></div>\n              <div *ngIf=\"this.welcomeTextEdition\">\n                <p-editor *ngIf=\"!this.welcomeTextPreview\" [(ngModel)]=\"this.welcomeText\" [style]=\"{'height':'320px'}\"></p-editor>\n                <div *ngIf=\"this.welcomeTextPreview\" class=\"ql-editor ql-editor-custom\" [innerHTML]=\"this.welcomeText\"></div>\n                <div id=\"textEditorRowButtons\" class=\"row no-margin-bottom right-align\">\n                  <a (click)=\"this.closeUpdateCourseInfo()\" class=\"waves-effect btn-flat modal-footer-button\">Cancel</a>\n                  <button id=\"send-info-btn\" (click)=\"this.updateCourseInfo(); this.closeUpdateCourseInfo()\" class=\"waves-effect btn-flat modal-footer-button\">Send</button>\n                  <a (click)=\"this.welcomeTextPreview = !this.welcomeTextPreview; this.previewButton = (this.welcomeTextPreview ? 'edit' : 'preview');\" class=\"left waves-effect btn-flat modal-footer-button\">{{this.previewButton}}</a>\n                </div>\n              </div>\n              <div *ngIf=\"!this.course.courseDetails.info && !this.welcomeTextEdition\"><app-error-message [errorTitle]=\"'There is no info yet'\" [errorContent]=\"''\" [customClass]=\"'warning'\" [closable]=\"false\"></app-error-message></div>\n            </div>\n          </template>\n      </md-tab>\n\n      <md-tab><!--Sessions Tab-->\n        <template md-tab-label><div class=\"md-tab-label-aux waves-effect\" (click)=\"changeUrlTab(1)\"><i id=\"sessions-tab-icon\" materialize=\"tooltip\" class=\"material-icons tooltipped\" data-position=\"top\" data-delay=\"65\" data-tooltip=\"Sessions\">school</i></div></template>\n        <template md-tab-content>\n            <div class=\"tab-template-content\">\n              <div class=\"row no-margin\">\n                <a href=\"#course-details-modal\" *ngIf=\"this.authenticationService.isTeacher()\" (click)=\"updatePostModalMode(2, 'New session', null, null, null); this.animationService.animateIfSmall()\" class=\"right\" [title]=\"'New session'\">\n                  <i id=\"add-session-icon\" class=\"material-icons add-element-icon\">add_circle_outline</i>\n                </a>\n              </div>\n              <ul>\n                <div *ngFor=\"let session of this.course.sessions; let last1 = last\">\n                  <li class=\"session-data\">\n                    <div class=\"row no-margin\">\n                      <div (click)=\"goToSessionVideo(session)\" [class.session-ready]=\"this.isSessionReady(session)\" class=\"col l7 m6 s6\">\n                        <div class=\"session-title\">{{session.title}}</div>\n                        <div class=\"session-description\">{{session.description}}</div>\n                      </div>\n                      <div class=\"col l4 m5 s5 right-align session-datetime\">\n                        {{numberToDate(session.date) | date}} - {{numberToDate(session.date) | date:'H:mm' }}\n                      </div>\n                      <div class=\"col l1 m1 s1 right-align no-padding-lateral\">\n                        <a href=\"#put-delete-modal\" *ngIf=\"this.authenticationService.isTeacher()\" (click)=\"updatePutDeleteModalMode(0, 'Modify session'); this.changeUpdatedSession(session); this.animationService.animateIfSmall()\" [title]=\"'Modify session'\">\n                          <i class=\"edit-session-icon material-icons forum-icon\">mode_edit</i>\n                        </a>\n                      </div>\n                    </div>\n                  </li>\n                  <li *ngIf=\"!last1\"><div class=\"divider\"></div></li>\n                </div>\n            </ul>\n            <div *ngIf=\"this.course.sessions.length === 0\"><app-error-message [errorTitle]=\"'There are no sessions'\" [errorContent]=\"''\" [customClass]=\"'warning'\" [closable]=\"false\"></app-error-message></div>\n            </div>\n          </template>\n      </md-tab>\n\n      <md-tab><!--Forum Tab-->\n        <template md-tab-label><div class=\"md-tab-label-aux waves-effect\" (click)=\"changeUrlTab(2)\"><i id=\"forum-tab-icon\" materialize=\"tooltip\" class=\"material-icons tooltipped\" data-position=\"top\" data-delay=\"65\" data-tooltip=\"Forum\">forum</i></div></template>\n        <template md-tab-content>\n          <div class=\"tab-template-content row no-margin\" [class.tab-template-content-2]=\"!this.course.courseDetails?.forum.activated || !this.course.courseDetails?.forum.entries.length > 0\">\n\n            <!--Forum view-->\n            <ul class=\"entries-side-view row no-margin\" [class.hide]=\"this.fadeAnim === 'commentsShown'\">\n              <div *ngIf=\"this.course.courseDetails?.forum.activated\">\n                <div *ngFor=\"let entry of this.course.courseDetails?.forum.entries; let last2 = last\">\n                  <li (mousedown)=\"this.fadeAnim = 'commentsHidden';\" (click)=\"this.selectedEntry = entry; this.fadeAnim = 'commentsShown';\" class=\"entry-title waves-effect\" [class.teacher-forum]=\"isEntryTeacher(entry)\">\n                    <div class=\"row no-margin entry-row-sep\">\n                      <div class=\"col l6 m6 s6\">\n                        <a class=\"forum-entry-title\" [title]=\"entry.title\">{{entry.title}}</a>\n                      </div>\n                      <div class=\"col l6 m6 s6 user-date-column\">\n                        <div class=\"row no-margin\">\n                          <div class=\"col l6 m6 s6 user-name forum-entry-author\" [class.teacher-name]=\"isEntryTeacher(entry)\">{{entry?.user?.nickName}}</div>\n                          <div class=\"col l6 m6 s6 user-name forum-entry-date\">{{entry?.date | timeAgo}}</div>\n                        </div>\n                      </div>\n                    </div>\n                    <div *ngIf=\"entry.comments.length > 0\" class=\"row no-margin last-comment-row\">\n                      <div class=\"col\">Last comment:</div>\n                      <div class=\"col\">{{getLastEntryComment(entry)?.user?.nickName}}, {{getLastEntryComment(entry)?.date | timeAgo}}</div>\n                    </div>\n                    <div *ngIf=\"entry.comments.length === 0\" class=\"row no-margin last-comment-row\">\n                      <div class=\"col\">No comments</div>\n                    </div>\n                  </li>\n                  <li *ngIf=\"!last2\"><div class=\"divider\"></div></li>\n                </div>\n              </div>\n              <div class=\"center-align div-entry-icon\">\n                <a href=\"#course-details-modal\" *ngIf=\"this.course.courseDetails?.forum.activated\" (click)=\"updatePostModalMode(0, 'New entry', null, null, null); this.animationService.animateIfSmall()\" [title]=\"'New entry'\">\n                  <i id=\"add-entry-icon\" class=\"material-icons forum-icon\">chat</i>\n                </a>\n                <a href=\"#put-delete-modal\" *ngIf=\"this.authenticationService.isTeacher()\" (click)=\"updatePutDeleteModalMode(1, 'Activate/Deactivate forum'); this.animationService.animateIfSmall()\" class=\"float-to-right\" title=\"Activate/Deactivate forum\">\n                    <i id=\"edit-forum-icon\" class=\"material-icons forum-icon\">mode_edit</i>\n                </a>\n              </div>\n            </ul>\n\n            <div *ngIf=\"this.course.courseDetails?.forum.activated\" id=\"row-of-comments\" class=\"row no-margin\" [@fadeAnim]=\"this.fadeAnim\" [class.hide]=\"this.fadeAnim === 'commentsHidden'\">\n              <div class=\"row no-margin-lateral\">\n                <a><i id=\"entries-sml-btn\" class=\"material-icons center-align col l1 m1 s1 no-padding-lateral\" (click)=\"this.fadeAnim = 'commentsHidden'\">arrow_back</i></a>\n                <div class=\"col l10 m10 s10 no-padding-lateral\">\n                  <div class=\"row no-margin comment-section-title\">\n                    <div class=\"col l6 m6 s6\">{{selectedEntry?.title}}</div>\n                    <div class=\"col l6 m6 s6 user-date-column\">\n                      <div class=\"row no-margin\">\n                        <div class=\"col l6 m6 s6 user-name\">{{selectedEntry?.user.nickName}}</div>\n                        <div class=\"col l6 m6 s6 user-name\">{{selectedEntry?.date | date}} - {{selectedEntry?.date | date:'H:mm' }}</div>\n                      </div>\n                    </div>\n                  </div>\n                </div>\n                <div class=\"col l1 m1 s1 no-padding-lateral right-align\">\n                  <a href=\"#course-details-modal\" [title]=\"'New comment'\" (click)=\"updatePostModalMode(1, 'New comment', selectedEntry, null, null); this.postModalCommentReplay = null; this.animationService.animateIfSmall()\">\n                    <i class=\"material-icons forum-icon\">chat</i>\n                  </a>\n                </div>\n              </div>\n              <div class=\"row no-margin comments-col\">\n                <div *ngFor=\"let comment of this.selectedEntry?.comments; let last3 = last\" class=\"comment-block\" [class.comment-divider]=\"!last3\">\n                  <app-comment [comment]=\"comment\"></app-comment>\n                </div>\n              </div>\n            </div>\n            <!--Forum view-->\n\n            <div *ngIf=\"!this.course.courseDetails?.forum.activated\"><app-error-message [errorTitle]=\"'The forum is not activated!'\" [errorContent]=\"'The teacher must activate it before you can comment'\" [customClass]=\"'warning'\" [closable]=\"false\"></app-error-message></div>\n            <div *ngIf=\"this.course.courseDetails?.forum.activated && this.course.courseDetails?.forum.entries.length === 0\"><app-error-message [errorTitle]=\"'There are no entries yet'\" [errorContent]=\"'Be the first one! Just click on the icon above'\" [customClass]=\"'warning'\" [closable]=\"false\"></app-error-message></div>\n          </div>\n        </template>\n      </md-tab>\n\n      <md-tab><!--Files Tab-->\n        <template md-tab-label><div class=\"md-tab-label-aux waves-effect\" (click)=\"changeUrlTab(3)\"><i id=\"files-tab-icon\" materialize=\"tooltip\" class=\"material-icons tooltipped\" data-position=\"top\" data-delay=\"65\" data-tooltip=\"Files\">description</i></div></template>\n        <template md-tab-content>\n          <div class=\"tab-template-content row no-margin\">\n            <div *ngIf=\"this.authenticationService.isTeacher()\" class=\"row no-margin\">\n              <a href=\"#course-details-modal\" *ngIf=\"!allowFilesEdition\" (click)=\"updatePostModalMode(4, 'New file group', null, null, null); this.animationService.animateIfSmall()\" class=\"right\" [title]=\"'New file group'\">\n                <i id=\"add-files-icon\" class=\"material-icons add-element-icon\">add_circle_outline</i>\n              </a>\n              <i *ngIf=\"this.course.courseDetails.files.length > 0\" (click)=\"this.changeModeEdition()\" class=\"material-icons add-element-icon right\" [title]=\"'Modify file groups'\">{{this.filesEditionIcon}}</i>\n            </div>\n            <div *ngFor=\"let fileG of this.course.courseDetails?.files; let last4 = last\">\n              <app-file-group [fileGroup]=\"fileG\" [courseId]=\"this.course.id\" [depth]=\"0\"></app-file-group>\n              <div *ngIf=\"!last4\" class=\"divider\"></div>\n            </div>\n            <div *ngIf=\"this.course.courseDetails?.files.length === 0\"><app-error-message [errorTitle]=\"'There are no files associated'\" [errorContent]=\"'Need something? Just open an entry on the forum'\" [customClass]=\"'warning'\" [closable]=\"false\"></app-error-message></div>\n          </div>\n        </template>\n      </md-tab>\n\n      <md-tab><!--Attenders Tab-->\n        <template md-tab-label><div class=\"md-tab-label-aux waves-effect\" (click)=\"changeUrlTab(4)\"><i id=\"attenders-tab-icon\" materialize=\"tooltip\" class=\"material-icons tooltipped\" data-position=\"top\" data-delay=\"65\" data-tooltip=\"Attenders\">supervisor_account</i></div></template>\n        <template md-tab-content>\n          <div class=\"tab-template-content\">\n            <div *ngIf=\"this.authenticationService.isTeacher()\" class=\"row no-margin\">\n              <a  href=\"#put-delete-modal\" *ngIf=\"!this.allowAttendersEdition\" (click)=\"updatePutDeleteModalMode(4, 'Add attenders'); this.animationService.animateIfSmall()\" class=\"right\" [title]=\"'Add attenders'\">\n                <i id=\"add-attenders-icon\" class=\"material-icons add-element-icon\">add_circle_outline</i>\n              </a>\n              <i *ngIf=\"this.course.attenders.length > 1\" (click)=\"this.changeModeAttenders()\" id=\"edit-attenders-icon\" class=\"material-icons add-element-icon right\" [title]=\"'Modify attenders'\">{{this.attendersEditionIcon}}</i>\n            </div>\n\n            <app-error-message *ngIf=\"addAttendersCorrect\" (eventShowable)=\"addAttendersCorrect = false\" [errorTitle]=\"attCorrectTitle\" [errorContent]=\"attCorrectContent\" [customClass]=\"'correct'\" [closable]=\"true\"></app-error-message>\n            <app-error-message *ngIf=\"addAttendersError\" (eventShowable)=\"addAttendersError = false\" [errorTitle]=\"attErrorTitle\" [errorContent]=\"attErrorContent\" [customClass]=\"'fail'\" [closable]=\"true\"></app-error-message>\n\n            <div class=\"row no-margin valign-wrapper user-attender-row attender-row-div\">\n              <div class=\"col l2 m2 s3 valign attender-col\">\n                <img materialize=\"materialbox\" class=\"circle materialboxed userImage\" src={{this.authenticationService.getCurrentUser().picture}}>\n              </div>\n              <div class=\"col l5 m5 s9 valign attender-col\">\n                <p class=\"attender-name-p\">{{this.authenticationService.getCurrentUser().nickName}}</p>\n              </div>\n            </div>\n            <div *ngFor=\"let attender of this.course.attenders; let j = index\">\n              <div *ngIf=\"attender.id != this.authenticationService.getCurrentUser().id\" class=\"row no-margin valign-wrapper attender-row-div\">\n                <div class=\"col l2 m2 s3 valign attender-col\">\n                  <img materialize=\"materialbox\" class=\"circle materialboxed userImage\" src={{attender.picture}}>\n                </div>\n                <div class=\"col l9 l9 s7 no-margin-left\">\n                  <div class=\"row no-margin\">\n                    <div class=\"col l6 m6 s12 no-padding-lateral valign attender-col\">\n                      <p class=\"p-nickName\">{{attender?.nickName}}</p>\n                    </div>\n                    <div class=\"col l6 m6 s12 no-padding-lateral valign attender-col\">\n                      <p class=\"p-name\">{{attender?.name}}</p>\n                    </div>\n                  </div>\n                </div>\n                <i *ngIf=\"this.allowAttendersEdition && this.authenticationService.isTeacher() && !this.arrayOfAttDels[j]\" (click)=\"deleteAttender(attender, j)\" class=\"material-icons del-attender-icon\" [title]=\"'Remove ' + attender.nickName\">clear</i>\n                <i *ngIf=\"this.allowAttendersEdition && this.authenticationService.isTeacher() && this.arrayOfAttDels[j]\" class=\"material-icons del-attender-icon rotating\">cached</i>\n              </div>\n            </div>\n        </div>\n        </template>\n      </md-tab>\n\n    </md-tab-group>\n  </div>\n  <!--TABS-->\n\n</div>\n"
+module.exports = "<div *ngIf=\"!this.course\" class=\"loading\"></div>\n\n<div *ngIf=\"this.course\" class=\"container course-detail-div\">\n\n\n  <!--POST DIALOG-->\n  <div id=\"course-details-modal\" class=\"modal my-modal-class course-details-modal\" materialize=\"modal\" [materializeParams]=\"[{dismissible: false}]\" [materializeActions]=\"actions2\">\n\n    <div *ngIf=\"processingPost\" class=\"loading\"></div>\n\n    <div class=\"modal-content\" [class.filtered]=\"processingPost\">\n      <p class=\"p-bold-modal-header\">{{this.postModalTitle}}</p>\n      <h5 *ngIf=\"isCurrentPostMode(['1', '6'])\">{{this.postModalEntry?.title}}</h5>\n      <p *ngIf=\"isCurrentPostMode(['1', '6'])\">{{this.postModalCommentReplay?.message}}</p>\n      <div class=\"row no-margin\">\n\n        <form materialize #courseDetailsForm id=\"courseDetailsForm\" class=\"col s12\" (ngSubmit)=\"onCourseDetailsSubmit(); courseDetailsForm.reset();\">\n          <div class=\"row no-margin\">\n\n            <div *ngIf=\"isCurrentPostMode(['0', '2', '3', '4'])\" class=\"row row-mobile\">\n              <div class=\"input-field col s12\">\n                <input [(ngModel)]=\"inputTitle\" name=\"inputTitle\" id=\"input-post-title\" type=\"text\" class=\"validate\" autocomplete=\"off\" required>\n                <label *ngIf=\"isCurrentPostMode(['0', '3'])\" for=\"inputTitle\">Entry title</label>\n                <label *ngIf=\"isCurrentPostMode(['2'])\" for=\"inputTitle\">Session title</label>\n                <label *ngIf=\"isCurrentPostMode(['4'])\" for=\"inputTitle\">File group title</label>\n              </div>\n            </div>\n\n            <div *ngIf=\"isCurrentPostMode(['0', '1', '2'])\" class=\"row row-mobile\">\n              <div class=\"input-field col s12\">\n                <textarea maxlength=\"2500\" [(ngModel)]=\"inputComment\" name=\"inputComment\" id=\"input-post-comment\" class=\"materialize-textarea validate\" required></textarea>\n                <label *ngIf=\"isCurrentPostMode(['0', '1'])\" for=\"inputComment\">Write your comment here</label>\n                <label *ngIf=\"isCurrentPostMode(['2'])\" for=\"inputComment\">Description</label>\n              </div>\n            </div>\n\n            <div *ngIf=\"isCurrentPostMode(['3', '6'])\" class=\"row row-mobile\">\n              <div class=\"col s12 center-align\">\n                <a *ngIf=\"!this.publisher\" (click)=\"recordVideo(this.getPublisherOptions('video'))\" class=\"waves-effect waves-light btn\">Record video</a>\n                <div *ngIf=\"!this.publisherErrorMessage\">\n                  <div id=\"record-form-div\">\n                    <form *ngIf=\"!!this.publisher\">\n                        <input name=\"record-radio\" type=\"radio\" id=\"record-video\" value=\"video\" checked (change)=\"recordRadioChange($event)\" [disabled]=\"!recordRadioEnabled\"/>\n                        <label for=\"record-video\">Video</label>\n                        <input name=\"record-radio\" type=\"radio\" id=\"record-audio\" value=\"audio\" (change)=\"recordRadioChange($event)\" [disabled]=\"!recordRadioEnabled\"/>\n                        <label for=\"record-audio\">Audio</label>\n                        <input name=\"record-radio\" type=\"radio\" id=\"record-screen\" value=\"screen\" (change)=\"recordRadioChange($event)\" [disabled]=\"!recordRadioEnabled\"/>\n                        <label for=\"record-screen\">Screen</label>\n                    </form>\n                  </div>\n                  <div id=\"post-video\"></div>\n                </div>\n                <div id=\"record-error-div\" *ngIf=\"!!this.publisherErrorMessage\">\n                  <app-error-message (eventShowable)=\"cleanRecording()\" [errorTitle]=\"'Error when initializing a Publisher!'\" [errorContent]=\"publisherErrorMessage\" [customClass]=\"'fail'\" [closable]=\"true\"></app-error-message>\n                </div>\n              </div>\n            </div>\n\n            <div class=\"row no-margin\">\n              <div class=\"col l6 m6 s6\">\n                <div *ngIf=\"isCurrentPostMode(['2'])\" class=\"row\">\n                  <label for=\"inputDate\">Date</label>\n                  <div class=\"input-field col s12\">\n                    <input [(ngModel)]=\"inputDate\" name=\"inputDate\" id=\"input-post-date\" type=\"date\" required>\n                  </div>\n                </div>\n              </div>\n              <div class=\"col l6 m6 s6\">\n                <div *ngIf=\"isCurrentPostMode(['2'])\" class=\"row\">\n                  <label for=\"inputTime\">Time</label>\n                  <div class=\"input-field col s12\">\n                    <input type=\"time\" [(ngModel)]=\"inputTime\" name=\"inputTime\" id=\"input-post-time\" class=\"validate\" required>\n                  </div>\n                </div>\n              </div>\n            </div>\n\n            <div *ngIf=\"isCurrentPostMode(['5'])\" class=\"row\">\n\n              <app-file-uploader (onCompleteFileUpload)=\"filesUploadCompleted($event)\" (onUploadStarted)=\"filesUploadStarted($event)\" [uniqueID]=\"1\" [isMultiple]=\"true\" [URLUPLOAD]=\"this.url_file_upload\" [typeOfFile]=\"'files'\" [buttonText]=\"'Select files'\"></app-file-uploader>\n\n            </div>\n\n          </div>\n          <div class=\"row no-margin-bottom right-align\">\n            <a *ngIf=\"!isCurrentPostMode(['5'])\" (click)=\"courseDetailsForm.reset(); this.cleanRecording()\" class=\"modal-action modal-close waves-effect btn-flat modal-footer-button cancel-modal-btn\">Cancel</a>\n            <a *ngIf=\"isCurrentPostMode(['5'])\" (click)=\"courseDetailsForm.reset(); this.uploaderModalService.announceUploaderClosed(true);\" id=\"close-upload-modal-btn\" class=\"modal-action modal-close waves-effect btn-flat modal-footer-button\">Close</a>\n            <button id=\"post-modal-btn\" *ngIf=\"!isCurrentPostMode(['5', '3'])\" type=\"submit\" class=\"waves-effect btn-flat modal-footer-button\">Send</button>\n          </div>\n        </form>\n\n      </div>\n    </div>\n  </div>\n  <!--POST DIALOG-->\n\n\n\n  <!--PUT/DELETE DIALOG-->\n  <div *ngIf=\"this.authenticationService.isTeacher()\" id=\"put-delete-modal\" class=\"modal my-modal-class course-details-modal\" materialize=\"modal\" [materializeParams]=\"[{dismissible: false}]\" [materializeActions]=\"actions3\">\n\n    <div *ngIf=\"processingPut\" class=\"loading\"></div>\n\n    <div class=\"modal-content\" [class.filtered]=\"processingPut\">\n      <p class=\"p-bold-modal-header\">{{this.putdeleteModalTitle}}</p>\n      <div class=\"row no-margin\">\n\n        <form materialize #putDeleteForm class=\"col s12\" (ngSubmit)=\"onPutDeleteSubmit(); putDeleteForm.reset(); this.allowSessionDeletion = false;\">\n\n          <div *ngIf=\"isCurrentPutdeleteMode(['0'])\" class=\"row no-margin\">\n            <div class=\"row row-mobile\">\n              <label for=\"inputSessionTitle\">Session title</label>\n              <div class=\"input-field col s12\">\n                <input [(ngModel)]=\"inputSessionTitle\" name=\"inputSessionTitle\" id=\"input-put-title\" type=\"text\" class=\"validate\" required>\n              </div>\n            </div>\n\n            <div class=\"row row-mobile\">\n              <label for=\"inputSessionDescription\">Description</label>\n              <div class=\"input-field col s12\">\n                <textarea [(ngModel)]=\"inputSessionDescription\" name=\"inputSessionDescription\" id=\"input-put-comment\" class=\"materialize-textarea validate\" required></textarea>\n              </div>\n            </div>\n\n            <div class=\"row\">\n              <div class=\"col l6 m6 s6\">\n                <div class=\"row row-mobile\">\n                  <label for=\"inputSessionDate\">Date</label>\n                  <div class=\"input-field col s12\">\n                    <input [(ngModel)]=\"this.updatedSessionDate\" name=\"inputSessionDate\" id=\"input-put-date\" type=\"date\" [value]=\"this.updatedSessionDate\" required>\n                  </div>\n                </div>\n              </div>\n              <div class=\"col l6 m6 s6\">\n                <div class=\"row row-mobile\">\n                  <label for=\"inputSessionTime\">Time</label>\n                  <div class=\"input-field col s12\">\n                    <input [(ngModel)]=\"this.inputSessionTime\" type=\"time\" name=\"inputSessionTime\" id=\"input-put-time\" class=\"validate\" [value]=\"this.inputSessionTime\" required>\n                  </div>\n                </div>\n              </div>\n            </div>\n          </div>\n\n          <div *ngIf=\"isCurrentPutdeleteMode(['1'])\" class=\"row no-margin-lateral\">\n            <input #forumCheckbox type=\"checkbox\" class=\"filled-in\" id=\"delete-checkbox\" name=\"delete-checkbox\" (change)=\"this.allowForumEdition = forumCheckbox.checked\"/>\n            <label for=\"delete-checkbox\" id=\"label-forum-checkbox\">Allow forum {{this.checkboxForumEdition}}?</label>\n          </div>\n\n          <div *ngIf=\"isCurrentPutdeleteMode(['2', '3'])\" class=\"row no-margin\">\n            <div class=\"row\">\n              <label *ngIf=\"isCurrentPutdeleteMode(['2'])\" for=\"inputFileTitle\">File group title</label>\n              <label *ngIf=\"isCurrentPutdeleteMode(['3'])\" for=\"inputFileTitle\">File name</label>\n              <div class=\"input-field col s12\">\n                <input [(ngModel)]=\"inputFileTitle\" name=\"inputFileTitle\" id=\"input-file-title\" type=\"text\" class=\"validate\" required>\n              </div>\n            </div>\n          </div>\n\n          <div *ngIf=\"isCurrentPutdeleteMode(['4'])\" id=\"tabs-attenders\" class=\"row no-margin\">\n            <md-tab-group [(selectedIndex)]=\"this.attenderTabSelected\">\n              <md-tab>\n                <template md-tab-label><div class=\"md-tab-label-aux waves-effect\">SIMPLE</div></template>\n                <template md-tab-content>\n                  <div class=\"row no-margin att-row-padding\">\n                    <div class=\"input-field col s12\">\n                      <input [(ngModel)]=\"inputAttenderSimple\" name=\"inputAttenderSimple\" id=\"input-attender-simple\" type=\"email\" class=\"validate\" required>\n                      <label for=\"inputAttenderSimple\">Attender email</label>\n                    </div>\n                  </div>\n                </template>\n              </md-tab>\n              <md-tab>\n                <template md-tab-label><div class=\"md-tab-label-aux waves-effect\">MULTIPLE</div></template>\n                <template md-tab-content>\n                  <div class=\"row no-margin att-row-padding\">\n                    <i materialize=\"tooltip\" class=\"material-icons tooltipped att-info-tooltip\" data-position=\"right\" data-delay=\"65\" data-html=\"true\" data-tooltip=\"<p class='att-tooltip-text'>We always separate by <b>WHITE SPACES</b><br>and <b>NEW LINES</b>. If there's any other<br>combination of characters that should<br>be taken into account as separator,<br>include it here</p>\">info</i>\n                    <div class=\"input-field col l4 m4 s6\">\n                      <input [(ngModel)]=\"inputAttenderSeparator\" name=\"inputAttenderSeparator\" id=\"input-attender-separator\" type=\"text\" class=\"validate\">\n                      <label for=\"inputAttenderSeparator\">SEPARATOR</label>\n                    </div>\n                    <div class=\"input-field col s12\">\n                      <textarea maxlength=\"1500\" [(ngModel)]=\"inputAttenderMultiple\" name=\"inputAttenderMultiple\" id=\"input-attender-multiple\" class=\"materialize-textarea validate\" required></textarea>\n                      <label for=\"inputAttenderMultiple\">Attender emails</label>\n                    </div>\n                  </div>\n                </template>\n              </md-tab>\n              <md-tab>\n                <template md-tab-label><div class=\"md-tab-label-aux waves-effect\">FILE UPLOAD</div></template>\n                <template md-tab-content>\n                  <i id=\"tooltip-file\" materialize=\"tooltip\" class=\"material-icons tooltipped att-info-tooltip\" data-position=\"right\" data-delay=\"65\" data-html=\"true\" data-tooltip=\"<p class='att-tooltip-text'>We will automatically find and add<br>to the course all the <b>EMAILS</b> in the file</p>\">info</i>\n                  <div class=\"row no-margin att-row-padding\">\n\n                    <app-file-uploader (onCompleteFileUpload)=\"fileReaderUploadCompleted($event)\" (onUploadStarted)=\"fileReaderUploadStarted($event)\" [uniqueID]=\"2\" [URLUPLOAD]=\"this.URL_FILE_READER_UPLOAD + this.course.id\" [isMultiple]=\"false\" [typeOfFile]=\"'file'\" [buttonText]=\"'Upload file'\"></app-file-uploader>\n\n                  </div>\n                </template>\n              </md-tab>\n            </md-tab-group>\n          </div>\n\n          <div class=\"row no-margin-bottom right-align\">\n            <div *ngIf=\"isCurrentPutdeleteMode(['0'])\" class=\"valign-wrapper delete-div\">\n              <a id=\"delete-session-btn\" (click)=\"this.deleteSession(); putDeleteForm.reset(); this.allowSessionDeletion = false;\" class=\"waves-effect btn-flat modal-footer-button float-to-left\" [class.disabled]=\"!this.allowSessionDeletion\">Delete</a>\n              <div class=\"float-to-left\">\n                <input #deleteCheckbox type=\"checkbox\" class=\"filled-in\" id=\"delete-checkbox\" name=\"delete-checkbox\" (change)=\"this.allowSessionDeletion = deleteCheckbox.checked\"/>\n                <label for=\"delete-checkbox\" id=\"label-delete-checkbox\">Allow deletion?</label>\n              </div>\n            </div>\n            <a (click)=\"putDeleteForm.reset(); this.allowSessionDeletion = false; this.allowForumEdition = false; this.uploaderModalService.announceUploaderClosed(true);\" class=\"modal-action modal-close waves-effect btn-flat modal-footer-button cancel-modal-btn\">Cancel</a>\n            <button id=\"put-modal-btn\" *ngIf=\"!((this.putdeleteModalMode === 4) && (this.attenderTabSelected === 2))\" type=\"submit\" class=\"waves-effect btn-flat modal-footer-button\" [class.disabled]=\"isCurrentPutdeleteMode(['1']) && (!this.allowForumEdition)\">Send</button>\n          </div>\n        </form>\n\n      </div>\n    </div>\n  </div>\n  <!--PUT/DELETE DIALOG-->\n\n\n\n  <div class=\"row valign-wrapper\">\n    <div class=\"col l1 m1 s2 valign\"><a id=\"back-to-dashboard-btn\" routerLink=\"/courses\" [title]=\"'Back to courses'\" class=\"btn-floating\"><i class=\"material-icons medium back-icon\">arrow_back</i></a></div>\n    <div class=\"col l11 m11 s10 valign\">\n      <h4 id=\"main-course-title\" class=\"course-title\">{{course.title}}</h4></div>\n  </div>\n\n  <!--TABS-->\n  <div id=\"tabs-course-details\" class=\"row\">\n    <md-tab-group [selectedIndex]=\"this.tabId\">\n\n      <md-tab><!--Course Info Tab-->\n        <template md-tab-label><div class=\"md-tab-label-aux waves-effect\" (click)=\"changeUrlTab(0)\"><i id=\"info-tab-icon\" materialize=\"tooltip\" class=\"material-icons tooltipped\" data-position=\"top\" data-delay=\"65\" data-tooltip=\"Course info\">home</i></div></template>\n        <template md-tab-content>\n\n            <div *ngIf=\"processingCourseInfo\" class=\"loading\"></div>\n\n            <div class=\"tab-template-content\" [class.filtered]=\"processingCourseInfo\">\n              <div class=\"row no-margin\">\n                <a *ngIf=\"this.authenticationService.isTeacher() && !this.welcomeTextEdition\" (click)=\"this.welcomeTextEdition = true\" class=\"right\" [title]=\"'Edit info'\">\n                  <i id=\"edit-course-info\" class=\"material-icons add-element-icon\">edit</i>\n                </a>\n              </div>\n              <div *ngIf=\"!this.welcomeTextEdition && this.course.courseDetails.info\" class=\"ql-editor ql-editor-custom\" [innerHTML]=\"this.course.courseDetails.info\"></div>\n              <div *ngIf=\"this.welcomeTextEdition\">\n                <p-editor *ngIf=\"!this.welcomeTextPreview\" [(ngModel)]=\"this.welcomeText\" [style]=\"{'height':'320px'}\"></p-editor>\n                <div *ngIf=\"this.welcomeTextPreview\" class=\"ql-editor ql-editor-custom\" [innerHTML]=\"this.welcomeText\"></div>\n                <div id=\"textEditorRowButtons\" class=\"row no-margin-bottom right-align\">\n                  <a (click)=\"this.closeUpdateCourseInfo()\" class=\"waves-effect btn-flat modal-footer-button\">Cancel</a>\n                  <button id=\"send-info-btn\" (click)=\"this.updateCourseInfo(); this.closeUpdateCourseInfo()\" class=\"waves-effect btn-flat modal-footer-button\">Send</button>\n                  <a (click)=\"this.welcomeTextPreview = !this.welcomeTextPreview; this.previewButton = (this.welcomeTextPreview ? 'edit' : 'preview');\" class=\"left waves-effect btn-flat modal-footer-button\">{{this.previewButton}}</a>\n                </div>\n              </div>\n              <div *ngIf=\"!this.course.courseDetails.info && !this.welcomeTextEdition\"><app-error-message [errorTitle]=\"'There is no info yet'\" [errorContent]=\"''\" [customClass]=\"'warning'\" [closable]=\"false\"></app-error-message></div>\n            </div>\n          </template>\n      </md-tab>\n\n      <md-tab><!--Sessions Tab-->\n        <template md-tab-label><div class=\"md-tab-label-aux waves-effect\" (click)=\"changeUrlTab(1)\"><i id=\"sessions-tab-icon\" materialize=\"tooltip\" class=\"material-icons tooltipped\" data-position=\"top\" data-delay=\"65\" data-tooltip=\"Sessions\">school</i></div></template>\n        <template md-tab-content>\n            <div class=\"tab-template-content\">\n              <div class=\"row no-margin\">\n                <a href=\"#course-details-modal\" *ngIf=\"this.authenticationService.isTeacher()\" (click)=\"updatePostModalMode(2, 'New session', null, null, null); this.animationService.animateIfSmall()\" class=\"right\" [title]=\"'New session'\">\n                  <i id=\"add-session-icon\" class=\"material-icons add-element-icon\">add_circle_outline</i>\n                </a>\n              </div>\n              <ul>\n                <div *ngFor=\"let session of this.course.sessions; let last1 = last\">\n                  <li class=\"session-data\">\n                    <div class=\"row no-margin\">\n                      <div (click)=\"goToSessionVideo(session)\" [class.session-ready]=\"this.isSessionReady(session)\" class=\"col l7 m6 s6\">\n                        <div class=\"session-title\">{{session.title}}</div>\n                        <div class=\"session-description\">{{session.description}}</div>\n                      </div>\n                      <div class=\"col l4 m5 s5 right-align session-datetime\">\n                        {{numberToDate(session.date) | date}} - {{numberToDate(session.date) | date:'H:mm' }}\n                      </div>\n                      <div class=\"col l1 m1 s1 right-align no-padding-lateral\">\n                        <a href=\"#put-delete-modal\" *ngIf=\"this.authenticationService.isTeacher()\" (click)=\"updatePutDeleteModalMode(0, 'Modify session'); this.changeUpdatedSession(session); this.animationService.animateIfSmall()\" [title]=\"'Modify session'\">\n                          <i class=\"edit-session-icon material-icons forum-icon\">mode_edit</i>\n                        </a>\n                      </div>\n                    </div>\n                  </li>\n                  <li *ngIf=\"!last1\"><div class=\"divider\"></div></li>\n                </div>\n            </ul>\n            <div *ngIf=\"this.course.sessions.length === 0\"><app-error-message [errorTitle]=\"'There are no sessions'\" [errorContent]=\"''\" [customClass]=\"'warning'\" [closable]=\"false\"></app-error-message></div>\n            </div>\n          </template>\n      </md-tab>\n\n      <md-tab><!--Forum Tab-->\n        <template md-tab-label><div class=\"md-tab-label-aux waves-effect\" (click)=\"changeUrlTab(2)\"><i id=\"forum-tab-icon\" materialize=\"tooltip\" class=\"material-icons tooltipped\" data-position=\"top\" data-delay=\"65\" data-tooltip=\"Forum\">forum</i></div></template>\n        <template md-tab-content>\n          <div class=\"tab-template-content row no-margin\" [class.tab-template-content-2]=\"!this.course.courseDetails?.forum.activated || !this.course.courseDetails?.forum.entries.length > 0\">\n\n            <!--Forum view-->\n            <ul class=\"entries-side-view row no-margin\" [class.hide]=\"this.fadeAnim === 'commentsShown'\">\n              <div *ngIf=\"this.course.courseDetails?.forum.activated\">\n                <div *ngFor=\"let entry of this.course.courseDetails?.forum.entries; let last2 = last\">\n                  <li (mousedown)=\"this.fadeAnim = 'commentsHidden';\" (click)=\"this.selectedEntry = entry; this.fadeAnim = 'commentsShown';\" class=\"entry-title waves-effect\" [class.teacher-forum]=\"isEntryTeacher(entry)\">\n                    <div class=\"row no-margin entry-row-sep\">\n                      <div class=\"col l6 m6 s6\">\n                        <a class=\"forum-entry-title\" [title]=\"entry.title\">{{entry.title}}</a>\n                      </div>\n                      <div class=\"col l6 m6 s6 user-date-column\">\n                        <div class=\"row no-margin\">\n                          <div class=\"col l6 m6 s6 user-name forum-entry-author\" [class.teacher-name]=\"isEntryTeacher(entry)\">{{entry?.user?.nickName}}</div>\n                          <div class=\"col l6 m6 s6 user-name forum-entry-date\">{{entry?.date | timeAgo}}</div>\n                        </div>\n                      </div>\n                    </div>\n                    <div *ngIf=\"entry.comments.length > 0\" class=\"row no-margin last-comment-row\">\n                      <div class=\"col\">Last comment:</div>\n                      <div class=\"col\">{{getLastEntryComment(entry)?.user?.nickName}}, {{getLastEntryComment(entry)?.date | timeAgo}}</div>\n                    </div>\n                    <div *ngIf=\"entry.comments.length === 0\" class=\"row no-margin last-comment-row\">\n                      <div class=\"col\">No comments</div>\n                    </div>\n                  </li>\n                  <li *ngIf=\"!last2\"><div class=\"divider\"></div></li>\n                </div>\n              </div>\n              <div class=\"center-align div-entry-icon\">\n                <a href=\"#course-details-modal\" *ngIf=\"this.course.courseDetails?.forum.activated\" (click)=\"updatePostModalMode(0, 'New entry', null, null, null); this.animationService.animateIfSmall()\" [title]=\"'New entry'\">\n                  <i id=\"add-entry-icon\" class=\"material-icons forum-icon\">chat</i>\n                </a>\n                <a href=\"#course-details-modal\" *ngIf=\"this.course.courseDetails?.forum.activated\" (click)=\"updatePostModalMode(3, 'New video entry', null, null, null); this.animationService.animateIfSmall()\" [title]=\"'New videoentry'\">\n                  <i id=\"add-videoentry-icon\" class=\"material-icons forum-icon\">videocam</i>\n                </a>\n                <a href=\"#put-delete-modal\" *ngIf=\"this.authenticationService.isTeacher()\" (click)=\"updatePutDeleteModalMode(1, 'Activate/Deactivate forum'); this.animationService.animateIfSmall()\" class=\"float-to-right\" title=\"Activate/Deactivate forum\">\n                    <i id=\"edit-forum-icon\" class=\"material-icons forum-icon\">mode_edit</i>\n                </a>\n              </div>\n            </ul>\n\n            <div *ngIf=\"this.course.courseDetails?.forum.activated\" id=\"row-of-comments\" class=\"row no-margin\" [@fadeAnim]=\"this.fadeAnim\" [class.hide]=\"this.fadeAnim === 'commentsHidden'\">\n              <div class=\"row no-margin-lateral\">\n                <a><i id=\"entries-sml-btn\" class=\"material-icons center-align col l1 m1 s1 no-padding-lateral\" (click)=\"this.fadeAnim = 'commentsHidden'\">arrow_back</i></a>\n                <div class=\"col l10 m10 s10 no-padding-lateral\">\n                  <div class=\"row no-margin comment-section-title\">\n                    <div class=\"col l6 m6 s6\">{{selectedEntry?.title}}</div>\n                    <div class=\"col l6 m6 s6 user-date-column\">\n                      <div class=\"row no-margin\">\n                        <div class=\"col l6 m6 s6 user-name\">{{selectedEntry?.user.nickName}}</div>\n                        <div class=\"col l6 m6 s6 user-name\">{{selectedEntry?.date | date}} - {{selectedEntry?.date | date:'H:mm' }}</div>\n                      </div>\n                    </div>\n                  </div>\n                </div>\n                <div class=\"col l1 m1 s1 no-padding-lateral right-align\">\n                  <a href=\"#course-details-modal\" [title]=\"'New comment'\" (click)=\"updatePostModalMode(1, 'New comment', selectedEntry, null, null); this.postModalCommentReplay = null; this.animationService.animateIfSmall()\">\n                    <i class=\"material-icons forum-icon\">chat</i>\n                  </a>\n                  <a href=\"#course-details-modal\" [title]=\"'New video comment'\" (click)=\"updatePostModalMode(6, 'New video comment', selectedEntry, null, null); this.postModalCommentReplay = null; this.animationService.animateIfSmall()\">\n                    <i class=\"material-icons forum-icon\">videocam</i>\n                  </a>\n                </div>\n              </div>\n              <div class=\"row no-margin comments-col\">\n                <div *ngFor=\"let comment of this.selectedEntry?.comments; let last3 = last\" class=\"comment-block\" [class.comment-divider]=\"!last3\">\n                  <app-comment [comment]=\"comment\"></app-comment>\n                </div>\n              </div>\n            </div>\n            <!--Forum view-->\n\n            <div *ngIf=\"!this.course.courseDetails?.forum.activated\"><app-error-message [errorTitle]=\"'The forum is not activated!'\" [errorContent]=\"'The teacher must activate it before you can comment'\" [customClass]=\"'warning'\" [closable]=\"false\"></app-error-message></div>\n            <div *ngIf=\"this.course.courseDetails?.forum.activated && this.course.courseDetails?.forum.entries.length === 0\"><app-error-message [errorTitle]=\"'There are no entries yet'\" [errorContent]=\"'Be the first one! Just click on the icon above'\" [customClass]=\"'warning'\" [closable]=\"false\"></app-error-message></div>\n          </div>\n        </template>\n      </md-tab>\n\n      <md-tab><!--Files Tab-->\n        <template md-tab-label><div class=\"md-tab-label-aux waves-effect\" (click)=\"changeUrlTab(3)\"><i id=\"files-tab-icon\" materialize=\"tooltip\" class=\"material-icons tooltipped\" data-position=\"top\" data-delay=\"65\" data-tooltip=\"Files\">description</i></div></template>\n        <template md-tab-content>\n          <div class=\"tab-template-content row no-margin\">\n            <div *ngIf=\"this.authenticationService.isTeacher()\" class=\"row no-margin\">\n              <a href=\"#course-details-modal\" *ngIf=\"!allowFilesEdition\" (click)=\"updatePostModalMode(4, 'New file group', null, null, null); this.animationService.animateIfSmall()\" class=\"right\" [title]=\"'New file group'\">\n                <i id=\"add-files-icon\" class=\"material-icons add-element-icon\">add_circle_outline</i>\n              </a>\n              <i *ngIf=\"this.course.courseDetails.files.length > 0\" (click)=\"this.changeModeEdition()\" class=\"material-icons add-element-icon right\" [title]=\"'Modify file groups'\">{{this.filesEditionIcon}}</i>\n            </div>\n            <div *ngFor=\"let fileG of this.course.courseDetails?.files; let last4 = last\">\n              <app-file-group [fileGroup]=\"fileG\" [courseId]=\"this.course.id\" [depth]=\"0\"></app-file-group>\n              <div *ngIf=\"!last4\" class=\"divider\"></div>\n            </div>\n            <div *ngIf=\"this.course.courseDetails?.files.length === 0\"><app-error-message [errorTitle]=\"'There are no files associated'\" [errorContent]=\"'Need something? Just open an entry on the forum'\" [customClass]=\"'warning'\" [closable]=\"false\"></app-error-message></div>\n          </div>\n        </template>\n      </md-tab>\n\n      <md-tab><!--Attenders Tab-->\n        <template md-tab-label><div class=\"md-tab-label-aux waves-effect\" (click)=\"changeUrlTab(4)\"><i id=\"attenders-tab-icon\" materialize=\"tooltip\" class=\"material-icons tooltipped\" data-position=\"top\" data-delay=\"65\" data-tooltip=\"Attenders\">supervisor_account</i></div></template>\n        <template md-tab-content>\n          <div class=\"tab-template-content\">\n            <div *ngIf=\"this.authenticationService.isTeacher()\" class=\"row no-margin\">\n              <a  href=\"#put-delete-modal\" *ngIf=\"!this.allowAttendersEdition\" (click)=\"updatePutDeleteModalMode(4, 'Add attenders'); this.animationService.animateIfSmall()\" class=\"right\" [title]=\"'Add attenders'\">\n                <i id=\"add-attenders-icon\" class=\"material-icons add-element-icon\">add_circle_outline</i>\n              </a>\n              <i *ngIf=\"this.course.attenders.length > 1\" (click)=\"this.changeModeAttenders()\" id=\"edit-attenders-icon\" class=\"material-icons add-element-icon right\" [title]=\"'Modify attenders'\">{{this.attendersEditionIcon}}</i>\n            </div>\n\n            <app-error-message *ngIf=\"addAttendersCorrect\" (eventShowable)=\"addAttendersCorrect = false\" [errorTitle]=\"attCorrectTitle\" [errorContent]=\"attCorrectContent\" [customClass]=\"'correct'\" [closable]=\"true\"></app-error-message>\n            <app-error-message *ngIf=\"addAttendersError\" (eventShowable)=\"addAttendersError = false\" [errorTitle]=\"attErrorTitle\" [errorContent]=\"attErrorContent\" [customClass]=\"'fail'\" [closable]=\"true\"></app-error-message>\n\n            <div class=\"row no-margin valign-wrapper user-attender-row attender-row-div\">\n              <div class=\"col l2 m2 s3 valign attender-col\">\n                <img materialize=\"materialbox\" class=\"circle materialboxed userImage\" src={{this.authenticationService.getCurrentUser().picture}}>\n              </div>\n              <div class=\"col l5 m5 s9 valign attender-col\">\n                <p class=\"attender-name-p\">{{this.authenticationService.getCurrentUser().nickName}}</p>\n              </div>\n            </div>\n            <div *ngFor=\"let attender of this.course.attenders; let j = index\">\n              <div *ngIf=\"attender.id != this.authenticationService.getCurrentUser().id\" class=\"row no-margin valign-wrapper attender-row-div\">\n                <div class=\"col l2 m2 s3 valign attender-col\">\n                  <img materialize=\"materialbox\" class=\"circle materialboxed userImage\" src={{attender.picture}}>\n                </div>\n                <div class=\"col l9 l9 s7 no-margin-left\">\n                  <div class=\"row no-margin\">\n                    <div class=\"col l6 m6 s12 no-padding-lateral valign attender-col\">\n                      <p class=\"p-nickName\">{{attender?.nickName}}</p>\n                    </div>\n                    <div class=\"col l6 m6 s12 no-padding-lateral valign attender-col\">\n                      <p class=\"p-name\">{{attender?.name}}</p>\n                    </div>\n                  </div>\n                </div>\n                <i *ngIf=\"this.allowAttendersEdition && this.authenticationService.isTeacher() && !this.arrayOfAttDels[j]\" (click)=\"deleteAttender(attender, j)\" class=\"material-icons del-attender-icon\" [title]=\"'Remove ' + attender.nickName\">clear</i>\n                <i *ngIf=\"this.allowAttendersEdition && this.authenticationService.isTeacher() && this.arrayOfAttDels[j]\" class=\"material-icons del-attender-icon rotating\">cached</i>\n              </div>\n            </div>\n        </div>\n        </template>\n      </md-tab>\n\n    </md-tab-group>\n  </div>\n  <!--TABS-->\n\n</div>\n"
 
 /***/ }),
 
@@ -14868,6 +14832,8 @@ module.exports = "<div *ngIf=\"!this.course\" class=\"loading\"></div>\n\n<div *
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__classes_file_group__ = __webpack_require__("../../../../../src/app/classes/file-group.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_20__classes_file__ = __webpack_require__("../../../../../src/app/classes/file.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_21__classes_user__ = __webpack_require__("../../../../../src/app/classes/user.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_22_openvidu_browser__ = __webpack_require__("../../../../../../../../../openvidu/openvidu-browser/lib/OpenVidu/index.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_22_openvidu_browser___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_22_openvidu_browser__);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -14877,6 +14843,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+
 
 
 
@@ -14920,8 +14887,13 @@ var CourseDetailsComponent = /** @class */ (function () {
         this.tabId = 0;
         //POST MODAL
         this.processingPost = false;
-        this.postModalMode = 3; //0 -> New entry | 1 -> New comment | 2 -> New session | 4 -> Add fileGroup | 5 -> Add file
+        this.postModalMode = 3; //0 -> New entry | 1 -> New comment | 2 -> New session | 4 -> Add fileGroup | 5 -> Add file | 6 -> New video comment
         this.postModalTitle = "New session";
+        this.recordRadioEnabled = false;
+        this.recordType = 'video';
+        this.publisherErrorMessage = '';
+        this.recording = false;
+        this.paused = false;
         //PUT-DELETE MODAL
         this.processingPut = false;
         this.putdeleteModalMode = 0; //0 -> Modify session | 1 -> Modify forum | 2 -> Modify file group | 3 -> Modify file | 4 -> Add attenders
@@ -14999,19 +14971,23 @@ var CourseDetailsComponent = /** @class */ (function () {
     }
     CourseDetailsComponent.prototype.ngOnInit = function () {
         var _this = this;
-        this.route.params.forEach(function (params) {
-            var id = +params['id'];
-            _this.tabId = +params['tabId'];
-            _this.courseService.getCourse(id).subscribe(function (course) {
-                _this.sortSessionsByDate(course.sessions);
-                _this.course = course;
-                _this.selectedEntry = _this.course.courseDetails.forum.entries[0]; //selectedEntry default to first entry
-                if (_this.course.sessions.length > 0)
-                    _this.changeUpdatedSession(_this.course.sessions[0]); //updatedSession default to first session
-                _this.updateCheckboxForumEdition(_this.course.courseDetails.forum.activated);
-                _this.welcomeText = _this.course.courseDetails.info;
-            }, function (error) { });
-        });
+        this.authenticationService.checkCredentials()
+            .then(function () {
+            _this.route.params.forEach(function (params) {
+                var id = +params['id'];
+                _this.tabId = +params['tabId'];
+                _this.courseService.getCourse(id).subscribe(function (course) {
+                    _this.sortSessionsByDate(course.sessions);
+                    _this.course = course;
+                    _this.selectedEntry = _this.course.courseDetails.forum.entries[0]; //selectedEntry default to first entry
+                    if (_this.course.sessions.length > 0)
+                        _this.changeUpdatedSession(_this.course.sessions[0]); //updatedSession default to first session
+                    _this.updateCheckboxForumEdition(_this.course.courseDetails.forum.activated);
+                    _this.welcomeText = _this.course.courseDetails.info;
+                }, function (error) { });
+            });
+        })
+            .catch(function (e) { });
     };
     CourseDetailsComponent.prototype.ngOnDestroy = function () {
         this.subscription1.unsubscribe();
@@ -15028,6 +15004,7 @@ var CourseDetailsComponent = /** @class */ (function () {
             this.router.navigate(['/session', session.id]);
     };
     CourseDetailsComponent.prototype.updatePostModalMode = function (mode, title, header, commentReplay, fileGroup) {
+        // mode[0: "New Entry", 1: "New comment", 2: "New session", 3: "New VideoEntry", 4: "New FileGroup", 5: "Add files"]
         var objs = [mode, title, header, commentReplay, fileGroup];
         this.courseDetailsModalDataService.announcePostMode(objs);
     };
@@ -15109,11 +15086,11 @@ var CourseDetailsComponent = /** @class */ (function () {
         this.processingPost = true;
         //If modal is opened in "New Entry" mode
         if (this.postModalMode === 0) {
-            var e = new __WEBPACK_IMPORTED_MODULE_17__classes_entry__["a" /* Entry */](this.inputTitle, [new __WEBPACK_IMPORTED_MODULE_18__classes_comment__["a" /* Comment */](this.inputComment, null)]);
+            var e = new __WEBPACK_IMPORTED_MODULE_17__classes_entry__["a" /* Entry */](this.inputTitle, [new __WEBPACK_IMPORTED_MODULE_18__classes_comment__["a" /* Comment */](this.inputComment, '', false, null)]);
             this.forumService.newEntry(e, this.course.courseDetails.id).subscribe(//POST method requires an Entry and the CourseDetails id that contains its Forum
             function (//POST method requires an Entry and the CourseDetails id that contains its Forum
                 response) {
-                _this.course.courseDetails.forum = response; //Only on succesful post we update the modified forum
+                _this.course.courseDetails.forum.entries.push(response.entry); //Only on succesful post we update the modified forum
                 _this.processingPost = false;
                 _this.actions2.emit({ action: "modal", params: ['close'] });
             }, function (error) { _this.processingPost = false; });
@@ -15131,13 +15108,13 @@ var CourseDetailsComponent = /** @class */ (function () {
             }, function (error) { _this.processingPost = false; });
         }
         else if (this.postModalMode === 1) {
-            var c = new __WEBPACK_IMPORTED_MODULE_18__classes_comment__["a" /* Comment */](this.inputComment, this.postModalCommentReplay);
+            var c = new __WEBPACK_IMPORTED_MODULE_18__classes_comment__["a" /* Comment */](this.inputComment, '', false, this.postModalCommentReplay);
             this.forumService.newComment(c, this.selectedEntry.id, this.course.courseDetails.id).subscribe(function (response) {
                 //Only on succesful post we locally update the created entry
                 var ents = _this.course.courseDetails.forum.entries;
                 for (var i = 0; i < ents.length; i++) {
                     if (ents[i].id == _this.selectedEntry.id) {
-                        _this.course.courseDetails.forum.entries[i] = response; //The entry with the required ID is updated
+                        _this.course.courseDetails.forum.entries[i] = response.entry; //The entry with the required ID is updated
                         _this.selectedEntry = _this.course.courseDetails.forum.entries[i];
                         break;
                     }
@@ -15155,6 +15132,51 @@ var CourseDetailsComponent = /** @class */ (function () {
                 _this.actions2.emit({ action: "modal", params: ['close'] }); // CLose the modal
                 if (!_this.allowFilesEdition)
                     _this.changeModeEdition(); // Activate file edition view if deactivated
+            }, function (error) { _this.processingPost = false; });
+        }
+        else if (this.postModalMode === 3) {
+            console.log('Sending new videoentry');
+            var e = new __WEBPACK_IMPORTED_MODULE_17__classes_entry__["a" /* Entry */](this.inputTitle, [new __WEBPACK_IMPORTED_MODULE_18__classes_comment__["a" /* Comment */](this.inputComment, 'new-url', this.recordType === 'audio', null)]);
+            this.forumService.newEntry(e, this.course.courseDetails.id).subscribe(//POST method requires an Entry and the CourseDetails id that contains its Forum
+            function (//POST method requires an Entry and the CourseDetails id that contains its Forum
+                response) {
+                _this.recorder.uploadAsMultipartfile(_this.URL_UPLOAD + _this.course.id + '/comment/' + response.comment.id)
+                    .then(function (responseAsText) {
+                    _this.cleanRecording();
+                    var comment = JSON.parse(responseAsText);
+                    var entry = response.entry;
+                    var index = entry.comments.map(function (c) { return c.id; }).indexOf(response.comment.id);
+                    if (index != -1) {
+                        entry.comments[index] = comment;
+                    }
+                    _this.course.courseDetails.forum.entries.push(entry); //Only on succesful post we update the modified forum
+                    _this.processingPost = false;
+                    _this.actions2.emit({ action: "modal", params: ['close'] });
+                })
+                    .catch(function (e) { });
+            }, function (error) { _this.processingPost = false; });
+        }
+        else if (this.postModalMode === 6) {
+            var c = new __WEBPACK_IMPORTED_MODULE_18__classes_comment__["a" /* Comment */](this.inputComment, 'new-url', this.recordType === 'audio', this.postModalCommentReplay);
+            this.forumService.newComment(c, this.selectedEntry.id, this.course.courseDetails.id).subscribe(function (response) {
+                _this.recorder.uploadAsMultipartfile(_this.URL_UPLOAD + _this.course.id + '/comment/' + response.comment.id)
+                    .then(function (responseAsText) {
+                    _this.cleanRecording();
+                    var comment = JSON.parse(responseAsText);
+                    var entry = response.entry;
+                    _this.replaceComment(entry.comments, comment);
+                    var ents = _this.course.courseDetails.forum.entries;
+                    for (var i = 0; i < ents.length; i++) {
+                        if (ents[i].id == _this.selectedEntry.id) {
+                            _this.course.courseDetails.forum.entries[i] = entry; // The entry with the required ID is updated
+                            _this.selectedEntry = _this.course.courseDetails.forum.entries[i];
+                            break;
+                        }
+                    }
+                    _this.processingPost = false;
+                    _this.actions2.emit({ action: "modal", params: ['close'] });
+                })
+                    .catch(function (e) { });
             }, function (error) { _this.processingPost = false; });
         }
     };
@@ -15488,6 +15510,173 @@ var CourseDetailsComponent = /** @class */ (function () {
         //return (d.toDateString() === this.numberToDate(session.date).toDateString());
         return true;
     };
+    CourseDetailsComponent.prototype.recordVideo = function (publisherOptions) {
+        var _this = this;
+        this.recordRadioEnabled = false;
+        this.OV = new __WEBPACK_IMPORTED_MODULE_22_openvidu_browser__["OpenVidu"]();
+        this.publisher = this.OV.initPublisher('post-video', publisherOptions, function (err) {
+            if (err) {
+                _this.publisherErrorMessage = err.message;
+                console.warn(err);
+                if (err.name === 'SCREEN_EXTENSION_NOT_INSTALLED') {
+                    _this.publisherErrorMessage = 'In Chrome you need an extension installed to share your screen. Go to <a href="' + err.message + '">this link</a> to install the extension. YOU MUST REFRESH THE PAGE AFTER INSTALLING IT';
+                }
+            }
+        });
+        this.publisher.on('videoElementCreated', function (e) {
+            if (publisherOptions.audio && !publisherOptions.video) {
+                $(e.element).css({ 'background-color': '#4d4d4d', 'padding': '50px' });
+                $(e.element).attr('poster', 'assets/images/volume.png');
+            }
+        });
+        this.publisher.on('videoPlaying', function (e) {
+            _this.recordRadioEnabled = true;
+            _this.addRecordingControls(e.element);
+        });
+    };
+    CourseDetailsComponent.prototype.startStopRecording = function () {
+        var _this = this;
+        if (!this.recording) {
+            this.recorder = new __WEBPACK_IMPORTED_MODULE_22_openvidu_browser__["LocalRecorder"](this.publisher.stream);
+            this.recorder.record();
+            document.getElementById('record-start-stop').innerHTML = 'Finish';
+            document.getElementById('record-pause-resume').style.display = 'inline-block';
+        }
+        else {
+            this.recorder.stop()
+                .then(function () {
+                document.getElementById('post-video').getElementsByTagName('video')[0].style.display = 'none';
+                _this.removeRecordingControls();
+                var recordingPreview = _this.recorder.preview('post-video');
+                recordingPreview.controls = true;
+                _this.addPostRecordingControls(recordingPreview);
+            })
+                .catch(function (e) { });
+        }
+        this.recording = !this.recording;
+    };
+    CourseDetailsComponent.prototype.pauseResumeRecording = function () {
+        if (!this.paused) {
+            this.recorder.pause();
+            document.getElementById('record-pause-resume').innerHTML = 'Resume';
+            document.getElementById('post-video').getElementsByTagName('video')[0].pause();
+        }
+        else {
+            this.recorder.resume();
+            document.getElementById('record-pause-resume').innerHTML = 'Pause';
+            document.getElementById('post-video').getElementsByTagName('video')[0].play();
+        }
+        this.paused = !this.paused;
+    };
+    CourseDetailsComponent.prototype.recordRadioChange = function (event) {
+        this.cleanRecording();
+        this.recordType = event.target.value;
+        this.recordVideo(this.getPublisherOptions(this.recordType));
+    };
+    CourseDetailsComponent.prototype.cleanRecording = function () {
+        if (!!this.recorder)
+            this.recorder.clean();
+        if (!!this.publisher)
+            this.publisher.destroy();
+        delete this.publisher;
+        this.recordRadioEnabled = true;
+        this.publisherErrorMessage = '';
+        this.recordType = 'video';
+        this.removeRecordingControls();
+        this.removePostRecordingControls();
+        var el = document.getElementById('post-video');
+        if (!!el) {
+            el = el.getElementsByTagName('video')[0];
+            if (!!el) {
+                el.outerHTML = '';
+            }
+        }
+        this.recording = false;
+        this.paused = false;
+    };
+    CourseDetailsComponent.prototype.repeatRecording = function (type) {
+        this.cleanRecording();
+        this.recordType = type;
+        this.recordVideo(this.getPublisherOptions(type));
+    };
+    CourseDetailsComponent.prototype.getPublisherOptions = function (option) {
+        var options = {};
+        switch (option) {
+            case 'video':
+                options = {
+                    audio: true,
+                    video: true,
+                    quality: 'MEDIUM'
+                };
+                break;
+            case 'audio':
+                options = {
+                    audio: true,
+                    video: false
+                };
+                break;
+            case 'screen':
+                options = {
+                    audio: true,
+                    video: true,
+                    quality: 'MEDIUM',
+                    screen: true
+                };
+                break;
+        }
+        return options;
+    };
+    CourseDetailsComponent.prototype.addRecordingControls = function (videoElement) {
+        var dataNode = document.createElement('div');
+        dataNode.id = 'recording-controls';
+        dataNode.innerHTML =
+            '<a id="record-start-stop" class="btn waves-effect button-small button-small-margin" title="Start/End recording">Start</a>' +
+                '<a id="record-pause-resume" class="btn waves-effect button-small button-small-margin" title="Pause/Resume recording" style="display: none">Pause</a>' +
+                '<a id="record-cancel" class="btn waves-effect button-small button-small-margin" title="Cancel recording">Cancel</a>';
+        videoElement.parentNode.insertBefore(dataNode, videoElement.nextSibling);
+        document.getElementById('record-start-stop').addEventListener('click', this.startStopRecording.bind(this));
+        document.getElementById('record-pause-resume').addEventListener('click', this.pauseResumeRecording.bind(this));
+        document.getElementById('record-cancel').addEventListener('click', this.cleanRecording.bind(this));
+    };
+    CourseDetailsComponent.prototype.removeRecordingControls = function () {
+        var el = document.getElementById('recording-controls');
+        if (!!el) {
+            el.outerHTML = '';
+        }
+    };
+    CourseDetailsComponent.prototype.addPostRecordingControls = function (videoElement) {
+        var dataNode = document.createElement('div');
+        dataNode.id = 'recording-post-controls';
+        dataNode.innerHTML =
+            '<a id="record-post-repeat" class="btn waves-effect button-small button-small-margin" title="Repeat recording">Repeat</a>' +
+                '<button id="record-post-send" class="btn waves-effect button-small button-small-margin" title="Send entry" type="submit">Send</button>';
+        videoElement.parentNode.insertBefore(dataNode, videoElement.nextSibling);
+        var recordTypeAux = this.recordType;
+        document.getElementById('record-post-repeat').addEventListener('click', this.repeatRecording.bind(this, recordTypeAux));
+    };
+    CourseDetailsComponent.prototype.removePostRecordingControls = function () {
+        var el = document.getElementById('recording-post-controls');
+        if (!!el) {
+            el.outerHTML = '';
+        }
+    };
+    CourseDetailsComponent.prototype.replaceComment = function (comments, newComment) {
+        var rep = false;
+        for (var i = 0; i < comments.length; i++) {
+            if (comments[i].id === newComment.id) {
+                comments[i] = newComment;
+                return true;
+            }
+            if (comments[i].replies.length > 0) {
+                var replaced = this.replaceComment(comments[i].replies, newComment);
+                if (replaced) {
+                    rep = true;
+                    break;
+                }
+            }
+        }
+        return rep;
+    };
     CourseDetailsComponent = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
             selector: 'app-course-details',
@@ -15587,10 +15776,10 @@ var DashboardComponent = /** @class */ (function () {
         this.actions4 = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["EventEmitter"]();
     }
     DashboardComponent.prototype.ngOnInit = function () {
-        this.authenticationService.checkCredentials();
-        //this.courses = this.authenticationService.getCurrentUser().courses;
-        //One more interaction with the database!
-        this.getCourses();
+        var _this = this;
+        this.authenticationService.checkCredentials()
+            .then(function () { _this.getCourses(); })
+            .catch(function (e) { });
     };
     DashboardComponent.prototype.goToCourseDetail = function (id) {
         this.router.navigate(['/courses', id, 0]);
@@ -15691,7 +15880,7 @@ exports = module.exports = __webpack_require__("../../../../css-loader/lib/css-b
 
 
 // module
-exports.push([module.i, ".card-panel {\n  box-shadow: none !important;\n}\n\n.fail {\n  background-color: rgba(167, 56, 65, 0.2);\n  color: #a73841;\n}\n\n.warning {\n  background-color: rgba(175, 110, 0, 0.2);\n  color: #af6e00;\n}\n\n.card-panel.warning {\n  margin-bottom: 0.5rem;\n}\n\n.correct {\n  background-color: rgba(55, 86, 70, 0.25);\n  color: #375546;\n}\n\ni {\n  cursor: pointer;\n}\n", ""]);
+exports.push([module.i, ".card-panel {\n  box-shadow: none !important;\n  text-align: initial;\n}\n\n.fail {\n  background-color: rgba(167, 56, 65, 0.2);\n  color: #a73841;\n}\n\n.warning {\n  background-color: rgba(175, 110, 0, 0.2);\n  color: #af6e00;\n}\n\n.card-panel.warning {\n  margin-bottom: 0.5rem;\n}\n\n.correct {\n  background-color: rgba(55, 86, 70, 0.25);\n  color: #375546;\n}\n\ni {\n  cursor: pointer;\n}\n", ""]);
 
 // exports
 
@@ -16185,7 +16374,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/components/login-modal/login-modal.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div id=\"login-modal\" class=\"modal my-modal-class\" materialize=\"modal\" [materializeParams]=\"[{dismissible: false}]\" [materializeActions]=\"actions\">\n\n  <div *ngIf=\"submitProcessing\" class=\"loading\"></div>\n\n  <div class=\"modal-content\" [class.filtered]=\"submitProcessing\">\n    <h4 *ngIf=\"loginView\" class=\"center\">Welcome to <a id=\"modal-title-trade\" class=\"app-title-header secondaryColor-color\">FullTeaching</a> !</h4>\n    <div class=\"row\">\n\n      <form materialize #myForm class=\"col s12\" (ngSubmit)=\"onSubmit()\">\n\n        <div class=\"row row-mobile\">\n          <div class=\"input-field col s12\">\n            <input [(ngModel)]=\"email\" name=\"email\" id=\"email\" type=\"email\" class=\"validate\" required>\n            <label for=\"email\" data-error=\"Not an e-mail format!\">Email</label>\n          </div>\n        </div>\n\n        <div *ngIf=\"!loginView\" class=\"row row-mobile\">\n          <div class=\"input-field col s12\">\n            <input [(ngModel)]=\"nickName\" name=\"nickName\" id=\"nickName\" type=\"text\" class=\"validate\" required>\n            <label for=\"nickName\">Name</label>\n          </div>\n        </div>\n\n        <div class=\"row row-mobile\">\n          <div class=\"input-field col s12\">\n            <input [(ngModel)]=\"password\" name=\"password\" id=\"password\" type=\"password\" class=\"validate\" required>\n            <label for=\"password\">Password</label>\n          </div>\n        </div>\n\n        <div *ngIf=\"!loginView\" class=\"row\">\n          <div class=\"input-field col s12\">\n            <input [(ngModel)]=\"confirmPassword\" name=\"confirmPassword\" id=\"confirmPassword\" type=\"password\" class=\"validate\">\n            <label for=\"confirmPassword\">Confirm password</label>\n          </div>\n        </div>\n\n        <div class=\"recaptcha-div-outer\" [class.hide]=\"loginView\">\n          <div class=\"recaptcha-div-inner\">\n            <re-captcha (captchaResponse)=\"handleCorrectCaptcha($event)\" site_key=\"{{this.captchaPublicKey}}\"></re-captcha>\n          </div>\n        </div>\n\n        <app-error-message *ngIf=\"fieldsIncorrect\" (eventShowable)=\"fieldsIncorrect = false\" [errorTitle]=\"this.errorTitle\" [errorContent]=\"this.errorContent\" [customClass]=\"this.customClass\" [closable]=\"true\"></app-error-message>\n\n        <div class=\"row center margin-top-buttons\">\n          <button type=\"submit\" *ngIf=\"loginView\" id=\"log-in-btn\" class=\"waves-effect waves-light btn-flat white-text acceptColor-back\">Log in</button>\n          <a *ngIf=\"!loginView && !this.captchaValidated\" id=\"disabled-signup-btn\" materialize=\"tooltip\" data-position=\"bottom\" data-delay=\"65\" data-html=\"true\" data-tooltip=\"Click on <b><i>I'm not a robot</i></b> above\" class=\"btn-flat\">Sign up</a>\n          <button type=\"submit\" *ngIf=\"!loginView && this.captchaValidated\" id=\"sign-up-btn\" class=\"waves-effect waves-light btn-flat white-text signUpColor\">Sign up</button>\n          <a (click)=\"setLoginView(true); myForm.reset(); this.fieldsIncorrect = false;\" class=\"modal-action modal-close waves-effect waves-light btn-flat white-text cancelColor-back\">Close</a>\n        </div>\n\n      </form>\n\n    </div>\n  </div>\n\n  <div class=\"modal-footer\" [class.filtered]=\"submitProcessing\">\n    <div *ngIf=\"loginView\" class=\"right-align\">Not registered yet?<a (click)=\"setLoginView(false)\" class=\"waves-effect btn-flat modal-footer-button\">Sign up</a></div>\n    <div *ngIf=\"!loginView\" class=\"right-align\">Already registered?<a (click)=\"setLoginView(true)\" class=\"waves-effect btn-flat modal-footer-button\">Log in</a></div>\n  </div>\n\n</div>\n"
+module.exports = "<div id=\"login-modal\" class=\"modal my-modal-class\" materialize=\"modal\" [materializeParams]=\"[{dismissible: false}]\" [materializeActions]=\"actions\">\n\n  <div *ngIf=\"submitProcessing\" class=\"loading\"></div>\n\n  <div class=\"modal-content\" [class.filtered]=\"submitProcessing\">\n    <h4 *ngIf=\"loginView\" class=\"center\">Welcome to <a id=\"modal-title-trade\" class=\"app-title-header secondaryColor-color\">FullTeaching</a> !</h4>\n    <div class=\"row\">\n\n      <form materialize #myForm class=\"col s12\" (ngSubmit)=\"onSubmit()\">\n\n        <div class=\"row row-mobile\">\n          <div class=\"input-field col s12\">\n            <input [(ngModel)]=\"email\" name=\"email\" id=\"email\" type=\"email\" class=\"validate\" required autocomplete=\"email\">\n            <label for=\"email\" data-error=\"Not an e-mail format!\">Email</label>\n          </div>\n        </div>\n\n        <div *ngIf=\"!loginView\" class=\"row row-mobile\">\n          <div class=\"input-field col s12\">\n            <input [(ngModel)]=\"nickName\" name=\"nickName\" id=\"nickName\" type=\"text\" class=\"validate\" required>\n            <label for=\"nickName\">Name</label>\n          </div>\n        </div>\n\n        <div class=\"row row-mobile\">\n          <div class=\"input-field col s12\">\n            <input [(ngModel)]=\"password\" name=\"password\" id=\"password\" type=\"password\" class=\"validate\" required>\n            <label for=\"password\">Password</label>\n          </div>\n        </div>\n\n        <div *ngIf=\"!loginView\" class=\"row\">\n          <div class=\"input-field col s12\">\n            <input [(ngModel)]=\"confirmPassword\" name=\"confirmPassword\" id=\"confirmPassword\" type=\"password\" class=\"validate\">\n            <label for=\"confirmPassword\">Confirm password</label>\n          </div>\n        </div>\n\n        <div class=\"recaptcha-div-outer\" [class.hide]=\"loginView\">\n          <div class=\"recaptcha-div-inner\">\n            <re-captcha (captchaResponse)=\"handleCorrectCaptcha($event)\" site_key=\"{{this.captchaPublicKey}}\"></re-captcha>\n          </div>\n        </div>\n\n        <app-error-message *ngIf=\"fieldsIncorrect\" (eventShowable)=\"fieldsIncorrect = false\" [errorTitle]=\"this.errorTitle\" [errorContent]=\"this.errorContent\" [customClass]=\"this.customClass\" [closable]=\"true\"></app-error-message>\n\n        <div class=\"row center margin-top-buttons\">\n          <button type=\"submit\" *ngIf=\"loginView\" id=\"log-in-btn\" class=\"waves-effect waves-light btn-flat white-text acceptColor-back\">Log in</button>\n          <a *ngIf=\"!loginView && !this.captchaValidated\" id=\"disabled-signup-btn\" materialize=\"tooltip\" data-position=\"bottom\" data-delay=\"65\" data-html=\"true\" data-tooltip=\"Click on <b><i>I'm not a robot</i></b> above\" class=\"btn-flat\">Sign up</a>\n          <button type=\"submit\" *ngIf=\"!loginView && this.captchaValidated\" id=\"sign-up-btn\" class=\"waves-effect waves-light btn-flat white-text signUpColor\">Sign up</button>\n          <a (click)=\"setLoginView(true); myForm.reset(); this.fieldsIncorrect = false;\" class=\"modal-action modal-close waves-effect waves-light btn-flat white-text cancelColor-back\">Close</a>\n        </div>\n\n      </form>\n\n    </div>\n  </div>\n\n  <div class=\"modal-footer\" [class.filtered]=\"submitProcessing\">\n    <div *ngIf=\"loginView\" class=\"right-align\">Not registered yet?<a (click)=\"setLoginView(false)\" class=\"waves-effect btn-flat modal-footer-button\">Sign up</a></div>\n    <div *ngIf=\"!loginView\" class=\"right-align\">Already registered?<a (click)=\"setLoginView(true)\" class=\"waves-effect btn-flat modal-footer-button\">Log in</a></div>\n  </div>\n\n</div>\n"
 
 /***/ }),
 
@@ -16505,11 +16694,12 @@ var PresentationComponent = /** @class */ (function () {
         this.authenticationService = authenticationService;
         this.router = router;
     }
-    PresentationComponent.prototype.ngOnInit = function () { };
-    //If the user is loggedIn, navigates to dashboard
-    PresentationComponent.prototype.ngAfterViewChecked = function () {
-        if (this.authenticationService.isLoggedIn())
-            this.router.navigate(['/courses']);
+    PresentationComponent.prototype.ngOnInit = function () {
+        var _this = this;
+        //If the user is loggedIn, navigates to dashboard
+        this.authenticationService.checkCredentials()
+            .then(function () { _this.router.navigate(['/courses']); })
+            .catch(function (e) { });
     };
     PresentationComponent = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
@@ -16548,7 +16738,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/components/settings/settings.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"container margins-top-bottom\">\n\n  <!--CHANGE PASSWORD DIALOG-->\n  <div id=\"password-modal\" class=\"modal my-modal-class course-modal\" materialize=\"modal\" [materializeParams]=\"[{dismissible: false}]\">\n\n    <div *ngIf=\"processingPass\" class=\"loading\"></div>\n\n    <div class=\"modal-content\" [class.filtered]=\"processingPass\">\n      <p class=\"p-bold-modal-header\">Change password</p>\n      <div class=\"row no-margin\">\n\n        <form materialize #passwordForm class=\"col s12\" (ngSubmit)=\"onPasswordSubmit()\">\n          <div class=\"row no-margin\">\n\n            <div class=\"row row-mobile\">\n              <div class=\"input-field col s12\">\n                <input [(ngModel)]=\"inputCurrentPassword\" name=\"inputCurrentPassword\" id=\"inputCurrentPassword\" type=\"password\" class=\"validate\" required>\n                <label for=\"inputCurrentPassword\">Current password</label>\n              </div>\n            </div>\n\n            <div class=\"row row-mobile\">\n              <div class=\"input-field col s12\">\n                <input [(ngModel)]=\"inputNewPassword\" name=\"inputNewPassword\" id=\"inputNewPassword\" type=\"password\" class=\"validate\" required>\n                <label for=\"inputNewPassword\">New password</label>\n              </div>\n            </div>\n\n            <div class=\"row\">\n              <div class=\"input-field col s12\">\n                <input [(ngModel)]=\"inputNewPassword2\" name=\"inputNewPassword2\" id=\"inputNewPassword2\" type=\"password\" class=\"validate\" required>\n                <label for=\"inputNewPassword2\">Repeat new password</label>\n              </div>\n            </div>\n\n          </div>\n\n          <app-error-message *ngIf=\"fieldsIncorrect\" (eventShowable)=\"fieldsIncorrect = false\" [errorTitle]=\"this.errorTitle\" [errorContent]=\"this.errorContent\" [customClass]=\"this.customClass\" [closable]=\"true\"></app-error-message>\n\n          <div class=\"row row-mobile right-align\">\n            <a (click)=\"passwordForm.reset(); this.fieldsIncorrect = false;\" class=\"modal-action modal-close waves-effect btn-flat modal-footer-button cancel-modal-btn\">Close</a>\n            <button type=\"submit\" class=\"waves-effect btn-flat modal-footer-button\">Send</button>\n          </div>\n\n        </form>\n\n      </div>\n    </div>\n  </div>\n  <!--CHANGE PASSWORD DIALOG-->\n\n  <div class=\"setting-section\">PROFILE\n    <div class=\"row divider\"></div>\n  </div>\n\n  <div class=\"row profile-row\">\n\n    <div class=\"col l4 m6 s12\">\n\n      <div *ngIf=\"processingPic\" class=\"loading loading-pic\"></div>\n\n      <div class=\"row no-margin\" [class.filtered]=\"processingPic\">\n        <div class=\"col s12\">\n          <img class=\"circle profile-pic\" src=\"{{this.user.picture}}\">\n        </div>\n        <div class=\"col s12\">\n          <div class=\"row\">\n\n            <app-file-uploader (onCompleteFileUpload)=\"pictureUploadCompleted($event)\" (onUploadStarted)=\"pictureUploadStarted($event)\" [uniqueID]=\"0\" [URLUPLOAD]=\"this.URL_UPLOAD + this.user.id\" [isMultiple]=\"false\" [typeOfFile]=\"'picture'\" [buttonText]=\"'Change picture'\"></app-file-uploader>\n\n          </div>\n        </div>\n      </div>\n    </div>\n\n    <div class=\"col l8 m6 s12\">\n      <ul class=\"collection\">\n        <li class=\"collection-item setting-li\">\n          <div class=\"setting-title\">Mail</div>\n          <div id=\"stng-user-mail\" class=\"setting-content right\">{{this.user.name}}</div>\n        </li>\n        <li class=\"collection-item setting-li\">\n          <div class=\"setting-title\">Name</div>\n          <div class=\"setting-content right\">{{this.user.nickName}}</div>\n        </li>\n        <li class=\"collection-item setting-li\">\n          <div class=\"setting-title\">Registration date</div>\n          <div class=\"setting-content right\">{{this.user.registrationDate | date}}</div>\n        </li>\n        <li class=\"collection-item setting-li\">\n          <div class=\"setting-title\">Password</div>\n          <div class=\"setting-content right\">\n            <a href=\"#password-modal\" class=\"btn waves-effect button-small\" (click)=\"this.animationService.animateIfSmall()\">Change password</a>\n          </div>\n        </li>\n      </ul>\n    </div>\n\n  </div>\n\n  <div class=\"setting-section\">DEFAULT SETTINGS\n    <div class=\"row divider\"></div>\n  </div>\n\n  <div class=\"row\">\n\n    <div class=\"col l4 m6 s12\">\n      <div class=\"card\">\n        <div class=\"card-content\">\n          <span class=\"card-title grey-text text-darken-4\">Setting 1</span>\n          <p>About this particular setting</p>\n          <div class=\"switch\">\n            <label>Off<input type=\"checkbox\"><span class=\"lever\"></span> On</label>\n          </div>\n        </div>\n      </div>\n    </div>\n\n    <div class=\"col l4 m6 s12\">\n      <div class=\"card\">\n        <div class=\"card-content\">\n          <span class=\"card-title grey-text text-darken-4\">Setting 2</span>\n          <p>About this particular setting</p>\n          <div class=\"switch\">\n            <label>Off<input type=\"checkbox\"><span class=\"lever\"></span> On</label>\n          </div>\n        </div>\n      </div>\n    </div>\n\n    <div class=\"col l4 m6 s12\">\n      <div class=\"card\">\n        <div class=\"card-content\">\n          <span class=\"card-title grey-text text-darken-4\">Setting 3</span>\n          <p>About this particular setting</p>\n          <div class=\"switch\">\n            <label>Off<input type=\"checkbox\"><span class=\"lever\"></span> On</label>\n          </div>\n        </div>\n      </div>\n    </div>\n\n    <div class=\"col l4 m6 s12\">\n      <div class=\"card\">\n        <div class=\"card-content\">\n          <span class=\"card-title grey-text text-darken-4\">Setting 4</span>\n          <p>About this particular setting</p>\n          <div class=\"switch\">\n            <label>Off<input type=\"checkbox\"><span class=\"lever\"></span> On</label>\n          </div>\n        </div>\n      </div>\n    </div>\n\n    <div class=\"col l4 m6 s12\">\n      <div class=\"card\">\n        <div class=\"card-content\">\n          <span class=\"card-title grey-text text-darken-4\">Setting 5</span>\n          <p>About this particular setting</p>\n          <div class=\"switch\">\n            <label>Off<input type=\"checkbox\"><span class=\"lever\"></span> On</label>\n          </div>\n        </div>\n      </div>\n    </div>\n\n  </div>\n\n</div>\n"
+module.exports = "<div class=\"container margins-top-bottom\">\n\n  <!--CHANGE PASSWORD DIALOG-->\n  <div id=\"password-modal\" class=\"modal my-modal-class course-modal\" materialize=\"modal\" [materializeParams]=\"[{dismissible: false}]\">\n\n    <div *ngIf=\"processingPass\" class=\"loading\"></div>\n\n    <div class=\"modal-content\" [class.filtered]=\"processingPass\">\n      <p class=\"p-bold-modal-header\">Change password</p>\n      <div class=\"row no-margin\">\n\n        <form materialize #passwordForm class=\"col s12\" (ngSubmit)=\"onPasswordSubmit()\">\n          <div class=\"row no-margin\">\n\n            <div class=\"row row-mobile\">\n              <div class=\"input-field col s12\">\n                <input [(ngModel)]=\"inputCurrentPassword\" name=\"inputCurrentPassword\" id=\"inputCurrentPassword\" type=\"password\" class=\"validate\" required>\n                <label for=\"inputCurrentPassword\">Current password</label>\n              </div>\n            </div>\n\n            <div class=\"row row-mobile\">\n              <div class=\"input-field col s12\">\n                <input [(ngModel)]=\"inputNewPassword\" name=\"inputNewPassword\" id=\"inputNewPassword\" type=\"password\" class=\"validate\" required>\n                <label for=\"inputNewPassword\">New password</label>\n              </div>\n            </div>\n\n            <div class=\"row\">\n              <div class=\"input-field col s12\">\n                <input [(ngModel)]=\"inputNewPassword2\" name=\"inputNewPassword2\" id=\"inputNewPassword2\" type=\"password\" class=\"validate\" required>\n                <label for=\"inputNewPassword2\">Repeat new password</label>\n              </div>\n            </div>\n\n          </div>\n\n          <app-error-message *ngIf=\"fieldsIncorrect\" (eventShowable)=\"fieldsIncorrect = false\" [errorTitle]=\"this.errorTitle\" [errorContent]=\"this.errorContent\" [customClass]=\"this.customClass\" [closable]=\"true\"></app-error-message>\n\n          <div class=\"row row-mobile right-align\">\n            <a (click)=\"passwordForm.reset(); this.fieldsIncorrect = false;\" class=\"modal-action modal-close waves-effect btn-flat modal-footer-button cancel-modal-btn\">Close</a>\n            <button type=\"submit\" class=\"waves-effect btn-flat modal-footer-button\">Send</button>\n          </div>\n\n        </form>\n\n      </div>\n    </div>\n  </div>\n  <!--CHANGE PASSWORD DIALOG-->\n\n  <div class=\"setting-section\">PROFILE\n    <div class=\"row divider\"></div>\n  </div>\n\n  <div class=\"row profile-row\">\n\n    <div class=\"col l4 m6 s12\">\n\n      <div *ngIf=\"processingPic\" class=\"loading loading-pic\"></div>\n\n      <div class=\"row no-margin\" [class.filtered]=\"processingPic\">\n        <div class=\"col s12\">\n          <img *ngIf=\"!!this.user\" class=\"circle profile-pic\" src=\"{{this.user.picture}}\">\n        </div>\n        <div class=\"col s12\">\n          <div class=\"row\">\n\n            <app-file-uploader *ngIf=\"!!this.user\" (onCompleteFileUpload)=\"pictureUploadCompleted($event)\" (onUploadStarted)=\"pictureUploadStarted($event)\" [uniqueID]=\"0\" [URLUPLOAD]=\"this.URL_UPLOAD + this.user.id\" [isMultiple]=\"false\" [typeOfFile]=\"'picture'\" [buttonText]=\"'Change picture'\"></app-file-uploader>\n\n          </div>\n        </div>\n      </div>\n    </div>\n\n    <div class=\"col l8 m6 s12\">\n      <ul class=\"collection\">\n        <li class=\"collection-item setting-li\">\n          <div class=\"setting-title\">Mail</div>\n          <div *ngIf=\"!!this.user\" id=\"stng-user-mail\" class=\"setting-content right\">{{this.user.name}}</div>\n        </li>\n        <li class=\"collection-item setting-li\">\n          <div class=\"setting-title\">Name</div>\n          <div *ngIf=\"!!this.user\" class=\"setting-content right\">{{this.user.nickName}}</div>\n        </li>\n        <li class=\"collection-item setting-li\">\n          <div class=\"setting-title\">Registration date</div>\n          <div *ngIf=\"!!this.user\" class=\"setting-content right\">{{this.user.registrationDate | date}}</div>\n        </li>\n        <li class=\"collection-item setting-li\">\n          <div class=\"setting-title\">Password</div>\n          <div class=\"setting-content right\">\n            <a href=\"#password-modal\" class=\"btn waves-effect button-small\" (click)=\"this.animationService.animateIfSmall()\">Change password</a>\n          </div>\n        </li>\n      </ul>\n    </div>\n\n  </div>\n\n  <div class=\"setting-section\">DEFAULT SETTINGS\n    <div class=\"row divider\"></div>\n  </div>\n\n  <div class=\"row\">\n\n    <div class=\"col l4 m6 s12\">\n      <div class=\"card\">\n        <div class=\"card-content\">\n          <span class=\"card-title grey-text text-darken-4\">Setting 1</span>\n          <p>About this particular setting</p>\n          <div class=\"switch\">\n            <label>Off<input type=\"checkbox\"><span class=\"lever\"></span> On</label>\n          </div>\n        </div>\n      </div>\n    </div>\n\n    <div class=\"col l4 m6 s12\">\n      <div class=\"card\">\n        <div class=\"card-content\">\n          <span class=\"card-title grey-text text-darken-4\">Setting 2</span>\n          <p>About this particular setting</p>\n          <div class=\"switch\">\n            <label>Off<input type=\"checkbox\"><span class=\"lever\"></span> On</label>\n          </div>\n        </div>\n      </div>\n    </div>\n\n    <div class=\"col l4 m6 s12\">\n      <div class=\"card\">\n        <div class=\"card-content\">\n          <span class=\"card-title grey-text text-darken-4\">Setting 3</span>\n          <p>About this particular setting</p>\n          <div class=\"switch\">\n            <label>Off<input type=\"checkbox\"><span class=\"lever\"></span> On</label>\n          </div>\n        </div>\n      </div>\n    </div>\n\n    <div class=\"col l4 m6 s12\">\n      <div class=\"card\">\n        <div class=\"card-content\">\n          <span class=\"card-title grey-text text-darken-4\">Setting 4</span>\n          <p>About this particular setting</p>\n          <div class=\"switch\">\n            <label>Off<input type=\"checkbox\"><span class=\"lever\"></span> On</label>\n          </div>\n        </div>\n      </div>\n    </div>\n\n    <div class=\"col l4 m6 s12\">\n      <div class=\"card\">\n        <div class=\"card-content\">\n          <span class=\"card-title grey-text text-darken-4\">Setting 5</span>\n          <p>About this particular setting</p>\n          <div class=\"switch\">\n            <label>Off<input type=\"checkbox\"><span class=\"lever\"></span> On</label>\n          </div>\n        </div>\n      </div>\n    </div>\n\n  </div>\n\n</div>\n"
 
 /***/ }),
 
@@ -16590,7 +16780,10 @@ var SettingsComponent = /** @class */ (function () {
         this.URL_UPLOAD = __WEBPACK_IMPORTED_MODULE_1__environments_environment__["a" /* environment */].URL_PIC_UPLOAD;
     }
     SettingsComponent.prototype.ngOnInit = function () {
-        this.user = this.authenticationService.getCurrentUser();
+        var _this = this;
+        this.authenticationService.checkCredentials()
+            .then(function () { _this.user = _this.authenticationService.getCurrentUser(); })
+            .catch(function (e) { });
     };
     SettingsComponent.prototype.pictureUploadStarted = function (started) {
         this.processingPic = started;
@@ -16796,7 +16989,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/components/video-session/video-session.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div id=\"video-session-div\">\n\n  <a id=\"side-menu-button\" materialize=\"sideNav\" data-activates=\"slide-out\" [materializeParams]=\"[{draggable: false}]\"><i id=\"fixed-icon\" class=\"material-icons video-icon\" (onclick)=\"document.getElementsByTagName('body')[0].style.overflowY = 'hidden'\">menu</i></a>\n  <div id=\"div-header-buttons\" class=\"row no-margin\">\n    <div class=\"col s12 m12 l12 no-padding-right\"><a class=\"btn-floating btn-large waves-effect waves-light red floating-button\" (click)=\"toggleFullScreen()\"><i class=\"material-icons\">{{fullscreenIcon}}</i></a></div>\n    <div class=\"col s12 m12 l12 no-padding-right\"><a *ngIf=\"this.authenticationService.isStudent() && !this.myStudentAccessGranted\" class=\"btn-floating btn-large waves-effect waves-light red floating-button\" (click)=\"askForIntervention()\"><i class=\"material-icons\">{{interventionIcon}}</i></a></div>\n    <div class=\"row no-margin\" *ngIf=\"this.authenticationService.isTeacher()\">\n      <div *ngFor=\"let userData of this.userData | interventionAskedFilter ; let i = index\" class=\"col s12 m12 l12 no-padding-right\">\n        <a *ngIf=\"!studentAccessGranted || userData.accessGranted\"  materialize=\"tooltip\" data-position=\"left\" data-delay=\"65\" [attr.data-tooltip]=\"userData.name\" class=\"btn-floating btn-large waves-effect floating-button white usr-btn\" (click)=\"grantIntervention(!studentAccessGranted, userData)\" [style.border-color]=\"userData.color\">\n          <i *ngIf=\"this.studentAccessGranted\" class=\"material-icons\" [style.color]=\"userData.color\">cancel</i>\n          <img *ngIf=\"!this.studentAccessGranted\" class=\"circle responsive-img\" [src]=\"userData.picture\">\n        </a>\n      </div>\n    </div>\n  </div>\n\n  <div *ngIf=\"OVSession\">\n    <div class=\"session-title-div\">\n      <h2 id=\"session-title\">{{this.sessionName}}</h2>\n    </div>\n    <div>\n      <stream *ngIf=\"bigStream\" [stream]=\"bigStream\" [small]=\"false\" [muted]=\"(this.authenticationService.isTeacher() && !studentAccessGranted) || (!this.authenticationService.isTeacher() && myStudentAccessGranted)\"></stream>\n      <stream *ngIf=\"smallStream && studentAccessGranted\" [stream]=\"smallStream\" [small]=\"true\" [muted]=\"this.authenticationService.isTeacher()\"></stream>\n    </div>\n    <div class=\"session-bottom-div valign-wrapper\" (mouseenter)=\"this.controlsShown = true\"  (mouseleave)=\"this.controlsShown = false\">\n      <div id=\"div-video-control\" [class.div-video-control-shown]=\"this.playPauseIcon==='play_arrow'\" [class.fade-in-controls]=\"this.controlsShown\" [class.fade-out-controls]=\"!this.controlsShown\">\n        <div class=\"box-video-control\">\n          <a class=\"btn-floating waves-effect video-control\" (click)=\"togglePlayPause()\">\n            <i class=\"material-icons video-control-icon\">{{this.playPauseIcon}}</i>\n          </a>\n          <a class=\"btn-floating waves-effect video-control\" (click)=\"toggleMute()\">\n            <i class=\"material-icons video-control-icon\">{{this.volumeMuteIcon}}</i>\n          </a>\n          <input id=\"slider-volume\" name=\"slider-volume\" type=\"range\" min=\"0\" max=\"1\" step=\"0.01\" [(ngModel)]=\"this.volumeLevel\" (ngModelChange)=\"changeVolume($event)\"/>\n        </div>\n      </div>\n    </div>\n  </div>\n\n  <ul id=\"slide-out\" class=\"side-nav\">\n    <i (click)=\"this.exitFromSession()\" id=\"exit-icon\" class=\"right material-icons video-icon\" [title]=\"'Exit'\">exit_to_app</i>\n    <i (click)=\"changeShowChat()\" id=\"show-chat-icon\" class=\"left material-icons video-icon\">{{this.showChatIcon}}</i>\n    <div class=\"chat_wrapper\">\n\n      <div *ngIf=\"showChat\" id=\"message-box-cont\">\n        <div class=\"message_box\" id=\"message_box\">\n          <div *ngFor=\"let chatline of this.chatLines\">\n            <app-chat-line [chatLine]=\"chatline\"></app-chat-line>\n          </div>\n        </div>\n        <div class=\"panel\">\n          <form (ngSubmit)=\"sendChatMessage()\">\n            <input [(ngModel)]=\"myMessage\" type=\"text\" name=\"message\" id=\"message\" placeholder=\"Message\" maxlength=\"400\" autocomplete=\"off\"/>\n            <input *ngIf=\"this.myMessage\" type=\"submit\" id=\"send-btn\" class=\"btn waves-effect button-small\" value=\"Send\">\n            <a *ngIf=\"!this.myMessage\" id=\"fake-send-btn\" class=\"btn waves-effect button-small disabled\">Send</a>\n          </form>\n        </div>\n      </div>\n\n      <div *ngIf=\"!showChat\">\n        <div class=\"num-attenders-div\">\n          <span class=\"num-connected\">{{this.userData.length}}</span>\n           of\n           <span class=\"num-total\">{{this.course.attenders.length}}</span>\n            attenders connected\n        </div>\n        <div *ngFor=\"let user of this.userData\" class=\"attender-name\" [style.color]=\"user.color\">\n          {{user.name}}\n        </div>\n      </div>\n\n    </div>\n  </ul>\n\n</div>\n"
+module.exports = "<div *ngIf=\"this.authenticationService.isLoggedIn()\" id=\"video-session-div\">\n\n  <a id=\"side-menu-button\" materialize=\"sideNav\" data-activates=\"slide-out\" [materializeParams]=\"[{draggable: false}]\"><i id=\"fixed-icon\" class=\"material-icons video-icon\" (onclick)=\"document.getElementsByTagName('body')[0].style.overflowY = 'hidden'\">menu</i></a>\n  <div id=\"div-header-buttons\" class=\"row no-margin\">\n    <div class=\"col s12 m12 l12 no-padding-right\"><a class=\"btn-floating btn-large waves-effect waves-light red floating-button\" (click)=\"toggleFullScreen()\"><i class=\"material-icons\">{{fullscreenIcon}}</i></a></div>\n    <div class=\"col s12 m12 l12 no-padding-right\"><a *ngIf=\"this.authenticationService.isStudent() && !this.myStudentAccessGranted\" class=\"btn-floating btn-large waves-effect waves-light red floating-button\" (click)=\"askForIntervention()\"><i class=\"material-icons\">{{interventionIcon}}</i></a></div>\n    <div class=\"row no-margin\" *ngIf=\"this.authenticationService.isTeacher()\">\n      <div *ngFor=\"let userData of this.userData | interventionAskedFilter ; let i = index\" class=\"col s12 m12 l12 no-padding-right\">\n        <a *ngIf=\"!studentAccessGranted || userData.accessGranted\"  materialize=\"tooltip\" data-position=\"left\" data-delay=\"65\" [attr.data-tooltip]=\"userData.name\" class=\"btn-floating btn-large waves-effect floating-button white usr-btn\" (click)=\"grantIntervention(!studentAccessGranted, userData)\" [style.border-color]=\"userData.color\">\n          <i *ngIf=\"this.studentAccessGranted\" class=\"material-icons\" [style.color]=\"userData.color\">cancel</i>\n          <img *ngIf=\"!this.studentAccessGranted\" class=\"circle responsive-img\" [src]=\"userData.picture\">\n        </a>\n      </div>\n    </div>\n  </div>\n\n  <div *ngIf=\"OVSession\">\n    <div class=\"session-title-div\">\n      <h2 id=\"session-title\">{{this.sessionName}}</h2>\n    </div>\n    <div>\n      <stream *ngIf=\"bigStream\" [stream]=\"bigStream\" [small]=\"false\" [muted]=\"(this.authenticationService.isTeacher() && !studentAccessGranted) || (!this.authenticationService.isTeacher() && myStudentAccessGranted)\"></stream>\n      <stream *ngIf=\"smallStream && studentAccessGranted\" [stream]=\"smallStream\" [small]=\"true\" [muted]=\"this.authenticationService.isTeacher()\"></stream>\n    </div>\n    <div class=\"session-bottom-div valign-wrapper\" (mouseenter)=\"this.controlsShown = true\"  (mouseleave)=\"this.controlsShown = false\">\n      <div id=\"div-video-control\" [class.div-video-control-shown]=\"this.playPauseIcon==='play_arrow'\" [class.fade-in-controls]=\"this.controlsShown\" [class.fade-out-controls]=\"!this.controlsShown\">\n        <div class=\"box-video-control\">\n          <a class=\"btn-floating waves-effect video-control\" (click)=\"togglePlayPause()\">\n            <i class=\"material-icons video-control-icon\">{{this.playPauseIcon}}</i>\n          </a>\n          <a class=\"btn-floating waves-effect video-control\" (click)=\"toggleMute()\">\n            <i class=\"material-icons video-control-icon\">{{this.volumeMuteIcon}}</i>\n          </a>\n          <input id=\"slider-volume\" name=\"slider-volume\" type=\"range\" min=\"0\" max=\"1\" step=\"0.01\" [(ngModel)]=\"this.volumeLevel\" (ngModelChange)=\"changeVolume($event)\"/>\n        </div>\n      </div>\n    </div>\n  </div>\n\n  <ul id=\"slide-out\" class=\"side-nav\">\n    <i (click)=\"this.exitFromSession()\" id=\"exit-icon\" class=\"right material-icons video-icon\" [title]=\"'Exit'\">exit_to_app</i>\n    <i (click)=\"changeShowChat()\" id=\"show-chat-icon\" class=\"left material-icons video-icon\">{{this.showChatIcon}}</i>\n    <div class=\"chat_wrapper\">\n\n      <div *ngIf=\"showChat\" id=\"message-box-cont\">\n        <div class=\"message_box\" id=\"message_box\">\n          <div *ngFor=\"let chatline of this.chatLines\">\n            <app-chat-line [chatLine]=\"chatline\"></app-chat-line>\n          </div>\n        </div>\n        <div class=\"panel\">\n          <form (ngSubmit)=\"sendChatMessage()\">\n            <input [(ngModel)]=\"myMessage\" type=\"text\" name=\"message\" id=\"message\" placeholder=\"Message\" maxlength=\"400\" autocomplete=\"off\"/>\n            <input *ngIf=\"this.myMessage\" type=\"submit\" id=\"send-btn\" class=\"btn waves-effect button-small\" value=\"Send\">\n            <a *ngIf=\"!this.myMessage\" id=\"fake-send-btn\" class=\"btn waves-effect button-small disabled\">Send</a>\n          </form>\n        </div>\n      </div>\n\n      <div *ngIf=\"!showChat\">\n        <div class=\"num-attenders-div\">\n          <span class=\"num-connected\">{{this.userData.length}}</span>\n           of\n           <span class=\"num-total\">{{this.course.attenders.length}}</span>\n            attenders connected\n        </div>\n        <div *ngFor=\"let user of this.userData\" class=\"attender-name\" [style.color]=\"user.color\">\n          {{user.name}}\n        </div>\n      </div>\n\n    </div>\n  </ul>\n\n</div>\n"
 
 /***/ }),
 
@@ -16834,11 +17027,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 var VideoSessionComponent = /** @class */ (function () {
-    function VideoSessionComponent(authenticationService, videoSessionService, animationService, route, location) {
+    function VideoSessionComponent(authenticationService, videoSessionService, animationService, router, route, location) {
         var _this = this;
         this.authenticationService = authenticationService;
         this.videoSessionService = videoSessionService;
         this.animationService = animationService;
+        this.router = router;
         this.route = route;
         this.location = location;
         this.showChat = true;
@@ -16862,21 +17056,31 @@ var VideoSessionComponent = /** @class */ (function () {
             var id = +params['id'];
             _this.mySessionId = id;
         });
-        // Stablishing OpenVidu session
-        this.generateParticipantInfo();
     }
-    VideoSessionComponent.prototype.beforeunloadHandler = function () {
+    VideoSessionComponent.prototype.beforeunloadHandler = function (event) {
         this.removeUser();
         this.leaveSession();
     };
+    VideoSessionComponent.prototype.ngOnInit = function () {
+        var _this = this;
+        this.authenticationService.checkCredentials()
+            .then(function () {
+            if (!_this.mySession) {
+                _this.router.navigate(['/courses']);
+            }
+            else {
+                // Stablishing OpenVidu session
+                _this.generateParticipantInfo();
+                _this.getParamsAndJoin();
+                // Deletes the draggable element for the side menu (external to the menu itself in the DOM), avoiding memory leak
+                $("div.drag-target").remove();
+                _this.volumeLevel = 1;
+            }
+        })
+            .catch(function (e) { });
+    };
     VideoSessionComponent.prototype.ngAfterViewInit = function () {
         document.getElementsByTagName('body')[0].style.overflowY = 'hidden';
-    };
-    VideoSessionComponent.prototype.ngOnInit = function () {
-        this.getParamsAndJoin();
-        // Deletes the draggable element for the side menu (external to the menu itself in the DOM), avoiding memory leak
-        $("div.drag-target").remove();
-        this.volumeLevel = 1;
     };
     VideoSessionComponent.prototype.ngOnDestroy = function () {
         // Close the OpenVidu sesion
@@ -17030,8 +17234,10 @@ var VideoSessionComponent = /** @class */ (function () {
     /* Video controls */
     /* OpenVidu */
     VideoSessionComponent.prototype.generateParticipantInfo = function () {
-        this.sessionName = this.mySession.title;
-        this.participantName = this.user.nickName;
+        if (!!this.mySession)
+            this.sessionName = this.mySession.title;
+        if (!!this.user)
+            this.participantName = this.user.nickName;
     };
     VideoSessionComponent.prototype.joinSession = function () {
         var _this = this;
@@ -17222,9 +17428,9 @@ var VideoSessionComponent = /** @class */ (function () {
         this.OVSession.unpublish(this.OVPublisher);
     };
     __decorate([
-        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["HostListener"])('window:beforeunload'),
+        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["HostListener"])('window:beforeunload', ['$event']),
         __metadata("design:type", Function),
-        __metadata("design:paramtypes", []),
+        __metadata("design:paramtypes", [Object]),
         __metadata("design:returntype", void 0)
     ], VideoSessionComponent.prototype, "beforeunloadHandler", null);
     VideoSessionComponent = __decorate([
@@ -17234,10 +17440,10 @@ var VideoSessionComponent = /** @class */ (function () {
             styles: [__webpack_require__("../../../../../src/app/components/video-session/video-session.component.css")],
             providers: [__WEBPACK_IMPORTED_MODULE_8__pipes_intervention_asked_pipe__["a" /* InterventionAskedPipe */]]
         }),
-        __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_5__services_authentication_service__["a" /* AuthenticationService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_5__services_authentication_service__["a" /* AuthenticationService */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_6__services_video_session_service__["a" /* VideoSessionService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_6__services_video_session_service__["a" /* VideoSessionService */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_7__services_animation_service__["a" /* AnimationService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_7__services_animation_service__["a" /* AnimationService */]) === "function" && _c || Object, typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["a" /* ActivatedRoute */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["a" /* ActivatedRoute */]) === "function" && _d || Object, typeof (_e = typeof __WEBPACK_IMPORTED_MODULE_2__angular_common__["Location"] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__angular_common__["Location"]) === "function" && _e || Object])
+        __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_5__services_authentication_service__["a" /* AuthenticationService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_5__services_authentication_service__["a" /* AuthenticationService */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_6__services_video_session_service__["a" /* VideoSessionService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_6__services_video_session_service__["a" /* VideoSessionService */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_7__services_animation_service__["a" /* AnimationService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_7__services_animation_service__["a" /* AnimationService */]) === "function" && _c || Object, typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* Router */]) === "function" && _d || Object, typeof (_e = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["a" /* ActivatedRoute */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["a" /* ActivatedRoute */]) === "function" && _e || Object, typeof (_f = typeof __WEBPACK_IMPORTED_MODULE_2__angular_common__["Location"] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__angular_common__["Location"]) === "function" && _f || Object])
     ], VideoSessionComponent);
     return VideoSessionComponent;
-    var _a, _b, _c, _d, _e;
+    var _a, _b, _c, _d, _e, _f;
 }());
 
 //# sourceMappingURL=/home/pablo/Documents/Git/full-teaching-experiment/src/main/angular/src/video-session.component.js.map
@@ -17380,10 +17586,7 @@ var AuthenticationService = /** @class */ (function () {
         this.router = router;
         this.urlLogIn = '/api-logIn';
         this.urlLogOut = '/api-logOut';
-        this.reqIsLogged();
-        // set token if saved in local storage
-        //let auth_token = JSON.parse(localStorage.getItem('auth_token'));
-        //this.token = auth_token && auth_token.token;
+        //this.reqIsLogged().catch((e) => { });
     }
     AuthenticationService.prototype.logIn = function (user, pass) {
         var _this = this;
@@ -17418,6 +17621,7 @@ var AuthenticationService = /** @class */ (function () {
     };
     AuthenticationService.prototype.processLogInResponse = function (response) {
         // Correctly logged in
+        console.log("User is already logged");
         this.user = response.json();
         localStorage.setItem("login", "FULLTEACHING");
         if (this.user.roles.indexOf("ROLE_ADMIN") !== -1) {
@@ -17435,28 +17639,47 @@ var AuthenticationService = /** @class */ (function () {
     };
     AuthenticationService.prototype.reqIsLogged = function () {
         var _this = this;
-        console.log("Trying automatic login");
-        var headers = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["a" /* Headers */]({
-            'X-Requested-With': 'XMLHttpRequest'
-        });
-        var options = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["d" /* RequestOptions */]({ headers: headers });
-        this.http.get(this.urlLogIn, options).subscribe(function (response) { return _this.processLogInResponse(response); }, function (error) {
-            if (error.status != 401) {
-                console.error("Error when asking if logged: " + JSON.stringify(error));
-                _this.logOut();
-            }
-            else {
-                console.error("User is not logged in");
-            }
+        return new Promise(function (resolve, reject) {
+            console.log("Checking if user is logged");
+            var headers = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["a" /* Headers */]({
+                'X-Requested-With': 'XMLHttpRequest'
+            });
+            var options = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["d" /* RequestOptions */]({ headers: headers });
+            _this.http.get(_this.urlLogIn, options).subscribe(function (response) { _this.processLogInResponse(response); resolve(); }, function (error) {
+                var msg = '';
+                if (error.status != 401) {
+                    msg = "Error when asking if logged: " + JSON.stringify(error);
+                    console.error(msg);
+                    _this.logOut();
+                }
+                else {
+                    msg = "User is not logged in";
+                    console.warn(msg);
+                    _this.router.navigate(['']);
+                }
+                reject(msg);
+            });
         });
     };
     AuthenticationService.prototype.checkCredentials = function () {
-        if (!this.isLoggedIn()) {
-            this.logOut();
-        }
+        var _this = this;
+        return new Promise(function (resolve, reject) {
+            if (!_this.isLoggedIn()) {
+                _this.reqIsLogged()
+                    .then(function () {
+                    resolve();
+                })
+                    .catch(function (error) {
+                    reject(error);
+                });
+            }
+            else {
+                resolve();
+            }
+        });
     };
     AuthenticationService.prototype.isLoggedIn = function () {
-        return ((this.user != null) && (this.user != undefined));
+        return (!!this.user);
     };
     AuthenticationService.prototype.getCurrentUser = function () {
         return this.user;
@@ -17933,8 +18156,8 @@ var ForumService = /** @class */ (function () {
         var options = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["d" /* RequestOptions */]({ headers: headers });
         return this.http.post(this.urlNewEntry + "/forum/" + courseDetailsId, body, options)
             .map(function (response) {
-            console.log("POST new entry SUCCESS. Response: ", response.json());
-            return response.json();
+            console.log("POST new entry SUCCESS. Response: ", (response.json()));
+            return (response.json());
         })
             .catch(function (error) { return _this.handleError("POST new entry FAIL. Response: ", error); });
     };
@@ -17948,8 +18171,8 @@ var ForumService = /** @class */ (function () {
         var options = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["d" /* RequestOptions */]({ headers: headers });
         return this.http.post(this.urlNewComment + "/entry/" + entryId + "/forum/" + courseDetailsId, body, options)
             .map(function (response) {
-            console.log("POST new comment SUCCESS. Response: ", response.json());
-            return response.json();
+            console.log("POST new comment SUCCESS. Response: ", (response.json()));
+            return (response.json());
         })
             .catch(function (error) { return _this.handleError("POST new comment FAIL. Response: ", error); });
     };

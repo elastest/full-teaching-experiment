@@ -30,4 +30,12 @@ export class CommentComponent implements OnInit {
     return (comment.user.roles.indexOf('ROLE_TEACHER') > -1);
   }
 
+  onHovering(event) {
+    $(event.target).attr("controls", "");
+  }
+
+  onUnhovering(event) {
+    $(event.target).removeAttr("controls");
+  }
+
 }

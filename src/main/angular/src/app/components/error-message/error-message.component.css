@@ -1,5 +1,6 @@
 .card-panel {
   box-shadow: none !important;
+  text-align: initial;
 }
 
 .fail {

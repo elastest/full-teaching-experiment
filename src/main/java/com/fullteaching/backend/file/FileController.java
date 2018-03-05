@@ -26,6 +26,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 
+import com.fullteaching.backend.comment.Comment;
+import com.fullteaching.backend.comment.CommentRepository;
 import com.fullteaching.backend.course.Course;
 import com.fullteaching.backend.course.CourseRepository;
 import com.fullteaching.backend.filegroup.FileGroup;
@@ -49,6 +51,9 @@ public class FileController {
 
 	@Autowired
 	private CourseRepository courseRepository;
+	
+	@Autowired
+	private CommentRepository commentRepository;
 
 	@Autowired
 	private UserRepository userRepository;
@@ -66,6 +71,7 @@ public class FileController {
 	private String profileStage;
 
 	public static final Path FILES_FOLDER = Paths.get(System.getProperty("user.dir"), "/assets/files");
+	public static final Path VIDEOS_FOLDER = Paths.get(System.getProperty("user.dir"), "/assets/videos");
 	public static final Path PICTURES_FOLDER = Paths.get(System.getProperty("user.dir"), "/assets/pictures");
 
 	@RequestMapping(value = "/upload/course/{courseId}/file-group/{fileGroupId}", method = RequestMethod.POST)
@@ -79,7 +85,6 @@ public class FileController {
 		if (authorized != null) {
 			return authorized;
 		}
-		;
 
 		long id_course = -1;
 		long id_fileGroup = -1;
@@ -309,6 +314,100 @@ public class FileController {
 			}
 
 			return new ResponseEntity<>(u.getPicture(), HttpStatus.CREATED);
+		}
+	}
+	
+	@RequestMapping(value = "/upload/course/{courseId}/comment/{commentId}", method = RequestMethod.POST)
+	public ResponseEntity<Object> handleVideoMessageUpload(MultipartHttpServletRequest request,
+			@PathVariable(value = "courseId") String courseId, @PathVariable(value = "commentId") String commentId)
+			throws IOException {
+
+		log.info("Uploading video message...");
+
+		ResponseEntity<Object> authorized = authorizationService.checkBackendLogged();
+		if (authorized != null) {
+			return authorized;
+		}
+
+		long id_course = -1;
+		long id_comment = -1;
+		try {
+			id_course = Long.parseLong(courseId);
+			id_comment = Long.parseLong(commentId);
+		} catch (NumberFormatException e) {
+			log.error("Course ID '{}' or Comment ID '{}' are not of type Long", courseId, commentId);
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+
+		Course c = courseRepository.findOne(id_course);
+		Comment comment = commentRepository.findOne(id_comment);
+
+		ResponseEntity<Object> userAuthorized = authorizationService.checkAuthorizationUsers(c, c.getAttenders());
+		if (userAuthorized != null) { // If the user is not an attender of the course
+			return userAuthorized;
+		} else {
+			if (comment != null) {
+				userAuthorized = authorizationService.checkAuthorization(comment, comment.getUser());
+				if (userAuthorized != null) { // If the user is not the author of the comment
+					return userAuthorized;
+				} else {
+					
+					Iterator<String> i = request.getFileNames();
+					while (i.hasNext()) {
+	
+						String name = i.next();
+	
+						log.info("Video file name: '{}'", name);
+	
+						MultipartFile file = request.getFile(name);
+						String fileName = file.getOriginalFilename();
+	
+						log.info("Video file full name: " + fileName);
+	
+						if (file.isEmpty()) {
+							log.error("The video file is empty");
+							throw new RuntimeException("The video file is empty");
+						}
+	
+						if (!Files.exists(VIDEOS_FOLDER)) {
+							log.debug("Creating folder '{}'", VIDEOS_FOLDER);
+							Files.createDirectories(VIDEOS_FOLDER);
+						}
+						
+						String finalName = "video-comment-" + id_comment + ".webm";
+						log.info("Video file final name: " + finalName);
+						File uploadedFile = new File(VIDEOS_FOLDER.toFile(), finalName);
+	
+						file.transferTo(uploadedFile);
+	
+						if (this.isProductionStage()) {
+							// ONLY ON PRODUCTION
+							try {
+								fileOperationsService.productionFileSaver(finalName, "videos", uploadedFile);
+							} catch (InterruptedException e) {
+								fileOperationsService.deleteLocalFile(uploadedFile.getName(), VIDEOS_FOLDER);
+								e.printStackTrace();
+							}
+							
+							comment.setVideourl("https://" + FileOperationsService.bucketAWS + ".s3.amazonaws.com/videos/"
+									+ finalName);
+							fileOperationsService.deleteLocalFile(uploadedFile.getName(), VIDEOS_FOLDER);
+							// ONLY ON PRODUCTION
+						} else {
+							// ONLY ON DEVELOPMENT
+							comment.setVideourl("/assets/videos/" + courseId + "/" + finalName);
+							// ONLY ON DEVELOPMENT
+						}
+						log.info("File succesfully uploaded to path '{}'", uploadedFile.getPath());
+					}
+	
+					commentRepository.save(comment);
+					return new ResponseEntity<>(comment, HttpStatus.CREATED);	
+				}
+			} else {
+				log.error("Comment with id '{}' doesn't exist", id_comment);
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
+			}
 		}
 	}
 

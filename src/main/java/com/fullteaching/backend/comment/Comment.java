@@ -24,6 +24,8 @@ public class Comment {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
 	
+	private String videourl;
+	private boolean audioonly;
 	private String message;
 	
 	private long date;
@@ -71,6 +73,22 @@ public class Comment {
 
 	public void setMessage(String message) {
 		this.message = message;
+	}
+	
+	public String getVideourl() {
+		return videourl;
+	}
+
+	public void setVideourl(String videourl) {
+		this.videourl = videourl;
+	}
+	
+	public boolean getAudioonly() {
+		return audioonly;
+	}
+
+	public void setAudioonly(boolean audioonly) {
+		this.audioonly = audioonly;
 	}
 
 	public long getDate() {

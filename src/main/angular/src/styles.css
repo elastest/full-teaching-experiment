@@ -172,6 +172,10 @@ i {
   line-height: 27px;
 }
 
+.button-small-margin {
+  margin-left: 3px;
+  margin-right: 3px;
+}
 
 .teacher-forum{
   background-color: rgba(149, 165, 157, 0.3);
@@ -858,4 +862,13 @@ a.cal-event-title {
 
 .cal-month-view .cal-open-day-events a {
   color: #000000;
+}
+
+#post-video {
+  margin-top: 20px;
+}
+
+#post-video video {
+  width: 50%;
+  max-height: 270px;
 }

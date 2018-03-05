@@ -1,18 +1,18 @@
-import { Component, OnInit, EventEmitter }  from '@angular/core';
+import { Component, OnInit, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { MaterializeAction } from 'angular2-materialize';
 
-import { Course }         from '../../classes/course';
-import { CourseDetails }  from '../../classes/course-details';
-import { Session }        from '../../classes/session';
-import { Forum }          from '../../classes/forum';
+import { Course } from '../../classes/course';
+import { CourseDetails } from '../../classes/course-details';
+import { Session } from '../../classes/session';
+import { Forum } from '../../classes/forum';
 
 import { CalendarComponent } from '../calendar/calendar.component';
 
-import { CourseService }            from '../../services/course.service';
-import { AuthenticationService }    from '../../services/authentication.service';
-import { AnimationService }      from '../../services/animation.service';
+import { CourseService } from '../../services/course.service';
+import { AuthenticationService } from '../../services/authentication.service';
+import { AnimationService } from '../../services/animation.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -34,8 +34,8 @@ export class DashboardComponent implements OnInit {
   updatedCourse: Course;
   allowCourseDeletion: boolean = false;
 
-  actions1 = new EventEmitter<string|MaterializeAction>();
-  actions4 = new EventEmitter<string|MaterializeAction>();
+  actions1 = new EventEmitter<string | MaterializeAction>();
+  actions4 = new EventEmitter<string | MaterializeAction>();
 
   constructor(
     private courseService: CourseService,
@@ -45,10 +45,9 @@ export class DashboardComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.authenticationService.checkCredentials();
-    //this.courses = this.authenticationService.getCurrentUser().courses;
-    //One more interaction with the database!
-    this.getCourses();
+    this.authenticationService.checkCredentials()
+      .then(() => { this.getCourses(); })
+      .catch((e) => { });
   }
 
   goToCourseDetail(id): void {
@@ -64,9 +63,9 @@ export class DashboardComponent implements OnInit {
       courses => {
         this.authenticationService.getCurrentUser().courses = courses;
         this.courses = courses;
-        if(this.courses.length > 0) this.updatedCourse = this.courses[0];
+        if (this.courses.length > 0) this.updatedCourse = this.courses[0];
       },
-      error => {});
+      error => { });
   }
 
 
@@ -92,14 +91,14 @@ export class DashboardComponent implements OnInit {
         this.courses.push(course);
 
         this.processingPost = false;
-        this.actions1.emit({action:"modal",params:['close']});
+        this.actions1.emit({ action: "modal", params: ['close'] });
       },
-      error => {this.processingPost = false;}
+      error => { this.processingPost = false; }
     )
   }
 
   //PUT existing Course
-  onPutDeleteCourseSubmit(){
+  onPutDeleteCourseSubmit() {
     this.processingPut = true;
 
     let c: Course = new Course(this.inputPutCourseName, this.updatedCourse.image, this.updatedCourse.courseDetails);
@@ -116,9 +115,9 @@ export class DashboardComponent implements OnInit {
         }
 
         this.processingPut = false;
-        this.actions4.emit({action:"modal",params:['close']});
+        this.actions4.emit({ action: "modal", params: ['close'] });
       },
-      error => {this.processingPut = false;}
+      error => { this.processingPut = false; }
     )
   }
 
@@ -134,9 +133,9 @@ export class DashboardComponent implements OnInit {
             break;
           }
         }
-        this.actions4.emit({action:"modal",params:['close']});
+        this.actions4.emit({ action: "modal", params: ['close'] });
       },
-      error => {}
+      error => { }
     );
   }
 

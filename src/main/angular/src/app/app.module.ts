@@ -40,7 +40,6 @@ import { UploaderModalService }   from './services/uploader-modal.service';
 import { UserService }            from './services/user.service';
 import { AnimationService }       from './services/animation.service';
 import { VideoSessionService }    from './services/video-session.service';
-import { AuthGuard }              from './auth.guard';
 
 import { CalendarModule }         from 'angular-calendar';
 import { CalendarComponent }      from './components/calendar/calendar.component';
@@ -96,7 +95,6 @@ import { ReCaptchaModule }        from 'angular2-recaptcha';
     UserService,
     AnimationService,
     VideoSessionService,
-    AuthGuard,
   ],
   bootstrap: [AppComponent]
 })

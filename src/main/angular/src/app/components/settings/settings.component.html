@@ -61,12 +61,12 @@
 
       <div class="row no-margin" [class.filtered]="processingPic">
         <div class="col s12">
-          <img class="circle profile-pic" src="{{this.user.picture}}">
+          <img *ngIf="!!this.user" class="circle profile-pic" src="{{this.user.picture}}">
         </div>
         <div class="col s12">
           <div class="row">
 
-            <app-file-uploader (onCompleteFileUpload)="pictureUploadCompleted($event)" (onUploadStarted)="pictureUploadStarted($event)" [uniqueID]="0" [URLUPLOAD]="this.URL_UPLOAD + this.user.id" [isMultiple]="false" [typeOfFile]="'picture'" [buttonText]="'Change picture'"></app-file-uploader>
+            <app-file-uploader *ngIf="!!this.user" (onCompleteFileUpload)="pictureUploadCompleted($event)" (onUploadStarted)="pictureUploadStarted($event)" [uniqueID]="0" [URLUPLOAD]="this.URL_UPLOAD + this.user.id" [isMultiple]="false" [typeOfFile]="'picture'" [buttonText]="'Change picture'"></app-file-uploader>
 
           </div>
         </div>
@@ -77,15 +77,15 @@
       <ul class="collection">
         <li class="collection-item setting-li">
           <div class="setting-title">Mail</div>
-          <div id="stng-user-mail" class="setting-content right">{{this.user.name}}</div>
+          <div *ngIf="!!this.user" id="stng-user-mail" class="setting-content right">{{this.user.name}}</div>
         </li>
         <li class="collection-item setting-li">
           <div class="setting-title">Name</div>
-          <div class="setting-content right">{{this.user.nickName}}</div>
+          <div *ngIf="!!this.user" class="setting-content right">{{this.user.nickName}}</div>
         </li>
         <li class="collection-item setting-li">
           <div class="setting-title">Registration date</div>
-          <div class="setting-content right">{{this.user.registrationDate | date}}</div>
+          <div *ngIf="!!this.user" class="setting-content right">{{this.user.registrationDate | date}}</div>
         </li>
         <li class="collection-item setting-li">
           <div class="setting-title">Password</div>

@@ -1,5 +1,5 @@
-import { Component, OnInit, AfterViewChecked }             from '@angular/core';
-import { Router }                from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { AuthenticationService } from '../../services/authentication.service';
 
 @Component({
@@ -8,14 +8,15 @@ import { AuthenticationService } from '../../services/authentication.service';
   styleUrls: ['./presentation.component.css']
 })
 
-export class PresentationComponent implements OnInit{
+export class PresentationComponent implements OnInit {
 
-  constructor(private authenticationService: AuthenticationService, private router: Router) {}
+  constructor(private authenticationService: AuthenticationService, private router: Router) { }
 
-  ngOnInit() {}
-
-  //If the user is loggedIn, navigates to dashboard
-  ngAfterViewChecked() {
-    if (this.authenticationService.isLoggedIn()) this.router.navigate(['/courses']);
+  ngOnInit() {
+    //If the user is loggedIn, navigates to dashboard
+    this.authenticationService.checkCredentials()
+      .then(() => { this.router.navigate(['/courses']); })
+      .catch((e) => { });
   }
+
 }

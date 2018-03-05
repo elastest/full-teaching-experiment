@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fullteaching.backend.forum.Forum;
 import com.fullteaching.backend.forum.ForumRepository;
 import com.fullteaching.backend.security.AuthorizationService;
+import com.fullteaching.backend.comment.Comment;
+import com.fullteaching.backend.comment.CommentRepository;
 import com.fullteaching.backend.coursedetails.CourseDetails;
 import com.fullteaching.backend.coursedetails.CourseDetailsRepository;
 import com.fullteaching.backend.user.User;
@@ -27,6 +29,12 @@ public class EntryController {
 	
 	@Autowired
 	private ForumRepository forumRepository;
+	
+	@Autowired
+	private EntryRepository entryRepository;
+	
+	@Autowired
+	private CommentRepository commentRepository;
 	
 	@Autowired
 	private CourseDetailsRepository courseDetailsRepository;
@@ -69,22 +77,24 @@ public class EntryController {
 			entry.setUser(userLogged);
 			
 			//Setting the author and date of its first comment
-			entry.getComments().get(0).setUser(userLogged);
-			entry.getComments().get(0).setDate(System.currentTimeMillis());
+			Comment comment = entry.getComments().get(0);
+			comment.setUser(userLogged);
+			comment.setDate(System.currentTimeMillis());
 			
 			//Setting the date of the entry
 			entry.setDate(System.currentTimeMillis());
 			
+			comment = commentRepository.save(comment);
+			entry = entryRepository.save(entry);
+			
 			forum.getEntries().add(entry);
-			/*Saving the modified forum: Cascade relationship between forum and entries
-			  will add the new entry to EntryRepository*/
 			forumRepository.save(forum);
 			
 			log.info("New entry succesfully added: {}", entry.toString());
 			
 			/*Entire forum is returned in order to have the new entry ID available just
 			in case the author wants to add to it a new comment without refreshing the page*/
-			return new ResponseEntity<>(forum, HttpStatus.CREATED);
+			return new ResponseEntity<>(new NewEntryCommentResponse(entry, comment), HttpStatus.CREATED);
 		}
 	}
 

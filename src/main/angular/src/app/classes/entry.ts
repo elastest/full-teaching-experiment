@@ -9,11 +9,10 @@ export class Entry {
   public comments: Comment[];
   public user: User;
 
-  constructor(title: string, comments: Comment[]){
+  constructor(title: string, comments: Comment[]) {
     this.title = title;
     this.comments = comments;
     this.user = null; //Backend will take care of it
   }
-
 
 }

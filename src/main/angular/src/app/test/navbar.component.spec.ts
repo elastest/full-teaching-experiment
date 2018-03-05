@@ -42,7 +42,6 @@ import { LoginModalService }      from '../services/login-modal.service';
 import { UploaderModalService }   from '../services/uploader-modal.service';
 import { UserService }            from '../services/user.service';
 import { AnimationService }       from '../services/animation.service';
-import { AuthGuard }              from '../auth.guard';
 
 import { CalendarModule }         from 'angular-calendar';
 import { CalendarComponent }      from '../components/calendar/calendar.component';

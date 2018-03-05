@@ -31,8 +31,8 @@ export class ForumService {
     let options = new RequestOptions({ headers });
     return this.http.post(this.urlNewEntry + "/forum/" + courseDetailsId, body, options)
       .map(response => {
-        console.log("POST new entry SUCCESS. Response: ", (response.json() as Forum));
-        return (response.json() as Forum);
+        console.log("POST new entry SUCCESS. Response: ", (response.json()));
+        return (response.json());
       })
       .catch(error => this.handleError("POST new entry FAIL. Response: ", error));
   }
@@ -47,8 +47,8 @@ export class ForumService {
     let options = new RequestOptions({ headers });
     return this.http.post(this.urlNewComment + "/entry/" + entryId + "/forum/" + courseDetailsId, body, options)
       .map(response => {
-        console.log("POST new comment SUCCESS. Response: ", (response.json() as Entry));
-        return (response.json() as Entry);
+        console.log("POST new comment SUCCESS. Response: ", (response.json()));
+        return (response.json());
       })
       .catch(error => this.handleError("POST new comment FAIL. Response: ", error));
   }

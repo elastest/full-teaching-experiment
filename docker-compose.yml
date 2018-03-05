@@ -21,7 +21,7 @@ services:
      - openvidu.publicurl=docker
 
  full-teaching:
-   image: codeurjc/full-teaching:bug1
+   image: codeurjc/full-teaching:latest
    depends_on:
      - full-teaching-mysql
      - full-teaching-openvidu-server-kms

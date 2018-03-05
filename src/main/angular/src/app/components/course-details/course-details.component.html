@@ -10,17 +10,17 @@
 
     <div class="modal-content" [class.filtered]="processingPost">
       <p class="p-bold-modal-header">{{this.postModalTitle}}</p>
-      <h5 *ngIf="isCurrentPostMode(['1'])">{{this.postModalEntry?.title}}</h5>
-      <p *ngIf="isCurrentPostMode(['1'])">{{this.postModalCommentReplay?.message}}</p>
+      <h5 *ngIf="isCurrentPostMode(['1', '6'])">{{this.postModalEntry?.title}}</h5>
+      <p *ngIf="isCurrentPostMode(['1', '6'])">{{this.postModalCommentReplay?.message}}</p>
       <div class="row no-margin">
 
-        <form materialize #courseDetailsForm class="col s12" (ngSubmit)="onCourseDetailsSubmit(); courseDetailsForm.reset();">
+        <form materialize #courseDetailsForm id="courseDetailsForm" class="col s12" (ngSubmit)="onCourseDetailsSubmit(); courseDetailsForm.reset();">
           <div class="row no-margin">
 
-            <div *ngIf="isCurrentPostMode(['0', '2', '4'])" class="row row-mobile">
+            <div *ngIf="isCurrentPostMode(['0', '2', '3', '4'])" class="row row-mobile">
               <div class="input-field col s12">
                 <input [(ngModel)]="inputTitle" name="inputTitle" id="input-post-title" type="text" class="validate" autocomplete="off" required>
-                <label *ngIf="isCurrentPostMode(['0'])" for="inputTitle">Entry title</label>
+                <label *ngIf="isCurrentPostMode(['0', '3'])" for="inputTitle">Entry title</label>
                 <label *ngIf="isCurrentPostMode(['2'])" for="inputTitle">Session title</label>
                 <label *ngIf="isCurrentPostMode(['4'])" for="inputTitle">File group title</label>
               </div>
@@ -31,6 +31,28 @@
                 <textarea maxlength="2500" [(ngModel)]="inputComment" name="inputComment" id="input-post-comment" class="materialize-textarea validate" required></textarea>
                 <label *ngIf="isCurrentPostMode(['0', '1'])" for="inputComment">Write your comment here</label>
                 <label *ngIf="isCurrentPostMode(['2'])" for="inputComment">Description</label>
+              </div>
+            </div>
+
+            <div *ngIf="isCurrentPostMode(['3', '6'])" class="row row-mobile">
+              <div class="col s12 center-align">
+                <a *ngIf="!this.publisher" (click)="recordVideo(this.getPublisherOptions('video'))" class="waves-effect waves-light btn">Record video</a>
+                <div *ngIf="!this.publisherErrorMessage">
+                  <div id="record-form-div">
+                    <form *ngIf="!!this.publisher">
+                        <input name="record-radio" type="radio" id="record-video" value="video" checked (change)="recordRadioChange($event)" [disabled]="!recordRadioEnabled"/>
+                        <label for="record-video">Video</label>
+                        <input name="record-radio" type="radio" id="record-audio" value="audio" (change)="recordRadioChange($event)" [disabled]="!recordRadioEnabled"/>
+                        <label for="record-audio">Audio</label>
+                        <input name="record-radio" type="radio" id="record-screen" value="screen" (change)="recordRadioChange($event)" [disabled]="!recordRadioEnabled"/>
+                        <label for="record-screen">Screen</label>
+                    </form>
+                  </div>
+                  <div id="post-video"></div>
+                </div>
+                <div id="record-error-div" *ngIf="!!this.publisherErrorMessage">
+                  <app-error-message (eventShowable)="cleanRecording()" [errorTitle]="'Error when initializing a Publisher!'" [errorContent]="publisherErrorMessage" [customClass]="'fail'" [closable]="true"></app-error-message>
+                </div>
               </div>
             </div>
 
@@ -61,9 +83,9 @@
 
           </div>
           <div class="row no-margin-bottom right-align">
-            <a *ngIf="!isCurrentPostMode(['5'])" (click)="courseDetailsForm.reset()" class="modal-action modal-close waves-effect btn-flat modal-footer-button cancel-modal-btn">Cancel</a>
+            <a *ngIf="!isCurrentPostMode(['5'])" (click)="courseDetailsForm.reset(); this.cleanRecording()" class="modal-action modal-close waves-effect btn-flat modal-footer-button cancel-modal-btn">Cancel</a>
             <a *ngIf="isCurrentPostMode(['5'])" (click)="courseDetailsForm.reset(); this.uploaderModalService.announceUploaderClosed(true);" id="close-upload-modal-btn" class="modal-action modal-close waves-effect btn-flat modal-footer-button">Close</a>
-            <button id="post-modal-btn" *ngIf="!isCurrentPostMode(['5'])" type="submit" class="waves-effect btn-flat modal-footer-button">Send</button>
+            <button id="post-modal-btn" *ngIf="!isCurrentPostMode(['5', '3'])" type="submit" class="waves-effect btn-flat modal-footer-button">Send</button>
           </div>
         </form>
 
@@ -306,6 +328,9 @@
                 <a href="#course-details-modal" *ngIf="this.course.courseDetails?.forum.activated" (click)="updatePostModalMode(0, 'New entry', null, null, null); this.animationService.animateIfSmall()" [title]="'New entry'">
                   <i id="add-entry-icon" class="material-icons forum-icon">chat</i>
                 </a>
+                <a href="#course-details-modal" *ngIf="this.course.courseDetails?.forum.activated" (click)="updatePostModalMode(3, 'New video entry', null, null, null); this.animationService.animateIfSmall()" [title]="'New videoentry'">
+                  <i id="add-videoentry-icon" class="material-icons forum-icon">videocam</i>
+                </a>
                 <a href="#put-delete-modal" *ngIf="this.authenticationService.isTeacher()" (click)="updatePutDeleteModalMode(1, 'Activate/Deactivate forum'); this.animationService.animateIfSmall()" class="float-to-right" title="Activate/Deactivate forum">
                     <i id="edit-forum-icon" class="material-icons forum-icon">mode_edit</i>
                 </a>
@@ -329,6 +354,9 @@
                 <div class="col l1 m1 s1 no-padding-lateral right-align">
                   <a href="#course-details-modal" [title]="'New comment'" (click)="updatePostModalMode(1, 'New comment', selectedEntry, null, null); this.postModalCommentReplay = null; this.animationService.animateIfSmall()">
                     <i class="material-icons forum-icon">chat</i>
+                  </a>
+                  <a href="#course-details-modal" [title]="'New video comment'" (click)="updatePostModalMode(6, 'New video comment', selectedEntry, null, null); this.postModalCommentReplay = null; this.animationService.animateIfSmall()">
+                    <i class="material-icons forum-icon">videocam</i>
                   </a>
                 </div>
               </div>

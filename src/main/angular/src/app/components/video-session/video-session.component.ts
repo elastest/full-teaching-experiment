@@ -1,5 +1,5 @@
 import { Component, OnInit, HostListener } from '@angular/core';
-import { ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Location } from '@angular/common';
 
 import { OpenVidu, Session, Stream, Publisher, Connection } from "openvidu-browser";
@@ -72,6 +72,7 @@ export class VideoSessionComponent implements OnInit {
   constructor(private authenticationService: AuthenticationService,
     private videoSessionService: VideoSessionService,
     private animationService: AnimationService,
+    private router: Router,
     private route: ActivatedRoute,
     private location: Location) {
     this.user = this.authenticationService.getCurrentUser();
@@ -83,28 +84,33 @@ export class VideoSessionComponent implements OnInit {
       let id = +params['id'];
       this.mySessionId = id;
     });
-
-    // Stablishing OpenVidu session
-    this.generateParticipantInfo();
   }
 
-  @HostListener('window:beforeunload')
-  beforeunloadHandler() {
+  @HostListener('window:beforeunload', ['$event'])
+  beforeunloadHandler(event) {
     this.removeUser();
     this.leaveSession();
   }
 
-  ngAfterViewInit() {
-    document.getElementsByTagName('body')[0].style.overflowY = 'hidden';
+  ngOnInit() {
+    this.authenticationService.checkCredentials()
+      .then(() => {
+        if (!this.mySession) {
+          this.router.navigate(['/courses']);
+        } else {
+          // Stablishing OpenVidu session
+          this.generateParticipantInfo();
+          this.getParamsAndJoin();
+          // Deletes the draggable element for the side menu (external to the menu itself in the DOM), avoiding memory leak
+          $("div.drag-target").remove();
+          this.volumeLevel = 1;
+        }
+      })
+      .catch((e) => { });
   }
 
-  ngOnInit() {
-
-    this.getParamsAndJoin();
-
-    // Deletes the draggable element for the side menu (external to the menu itself in the DOM), avoiding memory leak
-    $("div.drag-target").remove();
-    this.volumeLevel = 1;
+  ngAfterViewInit() {
+    document.getElementsByTagName('body')[0].style.overflowY = 'hidden';
   }
 
   ngOnDestroy() {
@@ -272,8 +278,8 @@ export class VideoSessionComponent implements OnInit {
   /* OpenVidu */
 
   private generateParticipantInfo() {
-    this.sessionName = this.mySession.title;
-    this.participantName = this.user.nickName;
+    if (!!this.mySession) this.sessionName = this.mySession.title;
+    if (!!this.user) this.participantName = this.user.nickName;
   }
 
   joinSession() {

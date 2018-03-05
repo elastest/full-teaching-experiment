@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fullteaching.backend.entry.Entry;
 import com.fullteaching.backend.entry.EntryRepository;
+import com.fullteaching.backend.entry.NewEntryCommentResponse;
 import com.fullteaching.backend.security.AuthorizationService;
 import com.fullteaching.backend.coursedetails.CourseDetails;
 import com.fullteaching.backend.coursedetails.CourseDetailsRepository;
@@ -82,6 +83,9 @@ public class CommentController {
 				log.info("Adding new root comment");
 				Entry entry = entryRepository.findOne(id_entry);
 				if(entry != null) {
+					
+					comment = commentRepository.save(comment);
+					
 					entry.getComments().add(comment);
 					/*Saving the modified entry: Cascade relationship between entry and comments
 					  will add the new comment to CommentRepository*/
@@ -89,8 +93,7 @@ public class CommentController {
 					
 					log.info("New comment succesfully added: {}", comment.toString());
 					
-					/*Entire entry is returned*/
-					return new ResponseEntity<>(entry, HttpStatus.CREATED);
+					return new ResponseEntity<>(new NewEntryCommentResponse(entry, comment), HttpStatus.CREATED);
 				} else {
 					return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 				}
@@ -101,6 +104,9 @@ public class CommentController {
 				log.info("Adding new comment reply");
 				Comment cParent = commentRepository.findOne(comment.getCommentParent().getId());
 				if(cParent != null){
+					
+					comment = commentRepository.save(comment);
+					
 					cParent.getReplies().add(comment);
 					/*Saving the modified parent comment: Cascade relationship between comment and 
 					 its replies will add the new comment to CommentRepository*/
@@ -109,8 +115,7 @@ public class CommentController {
 					
 					log.info("New comment succesfully added: {}", comment.toString());
 					
-					/*Entire entry is returned*/
-					return new ResponseEntity<>(entry, HttpStatus.CREATED);
+					return new ResponseEntity<>(new NewEntryCommentResponse(entry, comment), HttpStatus.CREATED);
 				}else{
 					return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 				}
