@@ -101,7 +101,7 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 
 	/*** Test methods ***/
 
-	/*@Test
+	@Test
 	void courseRestOperations() throws Exception {
 
 		// Edit course
@@ -261,7 +261,7 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 
 		log.info("Session successfully deleted");
 
-	}*/
+	}
 
 	@Test
 	void forumRestOperations() throws Exception {
@@ -359,7 +359,7 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 
 	}
 
-	/*@Test
+	@Test
 	void filesRestOperations() throws Exception {
 
 		enterCourseAndNavigateTab(COURSE_NAME, "files-tab-icon");
