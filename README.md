@@ -1,4 +1,4 @@
-# FullTeaching
+# FullTeaching Experiment
 
 [![Build Status](https://travis-ci.org/pabloFuente/full-teaching.png?branch=master)](https://travis-ci.org/pabloFuente/full-teaching)
 
