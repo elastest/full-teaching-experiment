@@ -25,7 +25,7 @@ services:
      - elastest_elastest
 
  full-teaching:
-   image: codeurjc/full-teaching:bug1
+   image: codeurjc/full-teaching:demo
    depends_on:
      - full-teaching-mysql
      - full-teaching-openvidu-server-kms
