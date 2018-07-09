@@ -30,6 +30,7 @@ public class UserRestTest {
     static String ok_parameters_2 = "[\"unique2@gmail.com\", \"Mock66666\", \"fakeUser\", \"IGNORE\"]";
     // passParameters
     static String pass_parameters = "[\"Mock66666\", \"Mock77777\"]";
+    static String revert_pass_parameters = "[\"Mock77777\", \"Mock66666\"]";
 
     @Before
     public void setUp() {
@@ -82,6 +83,12 @@ public class UserRestTest {
             Assert.assertTrue("failure login - expected HTTP status "
                     + HttpStatus.OK.value() + " but was: " + status_pass,
                     status_pass == HttpStatus.OK.value());
+            
+            // Revert the change of user password
+            httpApiClient = new HttpApiClient(null, ET_SUT_HOST, ET_SUT_PORT,
+                    change_password_uri, "unique2@gmail.com", "Mock77777");
+
+            httpApiClient.sendRequest(revert_pass_parameters, "put");
 
         } catch (IOException | KeyManagementException | NoSuchAlgorithmException
                 | KeyStoreException e) {
