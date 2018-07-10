@@ -1,19 +1,25 @@
 package com.fullteaching.backend.e2e.rest;
 
 import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.runner.RunWith;
 import org.springframework.http.HttpStatus;
 
 import com.fullteaching.backend.utils.HttpApiClient;
 
+@DisplayName("Tests for Fullteaching login")
+@RunWith(JUnitPlatform.class)
 public class UserRestTest {
 
     protected static String APP_URL;
@@ -32,8 +38,8 @@ public class UserRestTest {
     static String pass_parameters = "[\"Mock66666\", \"Mock77777\"]";
     static String revert_pass_parameters = "[\"Mock77777\", \"Mock66666\"]";
 
-    @Before
-    public void setUp() {
+    @BeforeAll
+    public static void setUp() {
         if (System.getenv("ET_SUT_HOST") != null) {
             ET_SUT_HOST = System.getenv("ET_SUT_HOST");
         } else {
@@ -60,8 +66,8 @@ public class UserRestTest {
 
             int expected = HttpStatus.CREATED.value();
 
-            Assert.assertEquals("failure - expected HTTP status " + expected,
-                    expected, status);
+            assertEquals(expected, status,
+                    "failure - expected HTTP status " + expected);
         } catch (IOException | KeyManagementException | NoSuchAlgorithmException
                 | KeyStoreException e) {
             e.printStackTrace();
@@ -80,10 +86,11 @@ public class UserRestTest {
                     change_password_uri, "unique2@gmail.com", "Mock66666");
 
             int status_pass = httpApiClient.sendRequest(pass_parameters, "put");
-            Assert.assertTrue("failure login - expected HTTP status "
-                    + HttpStatus.OK.value() + " but was: " + status_pass,
-                    status_pass == HttpStatus.OK.value());
-            
+            assertTrue(status_pass == HttpStatus.OK.value(),
+                    "failure login - expected HTTP status "
+                            + HttpStatus.OK.value() + " but was: "
+                            + status_pass);
+
             // Revert the change of user password
             httpApiClient = new HttpApiClient(null, ET_SUT_HOST, ET_SUT_PORT,
                     change_password_uri, "unique2@gmail.com", "Mock77777");
