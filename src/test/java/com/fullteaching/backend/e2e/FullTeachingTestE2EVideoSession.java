@@ -108,7 +108,7 @@ public class FullTeachingTestE2EVideoSession extends FullTeachingTestE2E {
     }
 
     @Test
-    void oneToOneVideoAudioSessionChrome() throws Exception {
+    void oneToOneVideoAudioSessionChrome(TestInfo info) throws Exception {
         String testName = new Object() {
         }.getClass().getEnclosingMethod().getName();
 
