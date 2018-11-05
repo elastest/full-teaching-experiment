@@ -107,13 +107,16 @@ public class FullTeachingTestE2EChat extends FullTeachingTestE2E {
 	}
 
 	@Test
-	void oneToOneChatInSessionChrome(TestInfo info) throws Exception {
+	void oneToOneChatInSessionChrome() throws Exception {
 
-		log.info("##### Start test: " + info.getTestMethod().get().getName());
+        String testName = new Object() {
+        }.getClass().getEnclosingMethod().getName();
+
+        log.info("##### Start test: " + testName);
 
 		// TEACHER
 
-		this.user = setupBrowser(TEACHER_BROWSER, info, "Teacher", 30);
+		this.user = setupBrowser(TEACHER_BROWSER, testName, "Teacher", 30);
 
 		this.slowLogin(user, teacherMail, teacherPass);
 
@@ -147,7 +150,7 @@ public class FullTeachingTestE2EChat extends FullTeachingTestE2E {
 
 		// STUDENT
 
-		BrowserUser student = setupBrowser(STUDENT_BROWSER, info, "Student", 30);
+		BrowserUser student = setupBrowser(STUDENT_BROWSER, testName, "Student", 30);
 		this.slowLogin(student, studentMail, studentPass);
 
 		waitSeconds(1);
