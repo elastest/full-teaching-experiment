@@ -19,6 +19,7 @@ package com.fullteaching.backend.e2e;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -108,6 +109,7 @@ public class FullTeachingTestE2EVideoSession extends FullTeachingTestE2E {
     }
 
     @Test
+    @Disabled
     void oneToOneVideoAudioSessionChrome() throws Exception {
         String testName = new Object() {
         }.getClass().getEnclosingMethod().getName();
