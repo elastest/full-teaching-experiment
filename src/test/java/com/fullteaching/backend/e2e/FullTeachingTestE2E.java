@@ -25,202 +25,247 @@ import io.github.bonigarcia.wdm.FirefoxDriverManager;
 @RunWith(JUnitPlatform.class)
 public class FullTeachingTestE2E {
 
-	protected static String APP_URL;
+    protected static String APP_URL;
 
-	protected static final String CHROME = "chrome";
-	protected static final String FIREFOX = "firefox";
+    protected static final String CHROME = "chrome";
+    protected static final String FIREFOX = "firefox";
 
-	final static Logger log = getLogger(lookup().lookupClass());
+    final static Logger log = getLogger(lookup().lookupClass());
 
-	public FullTeachingTestE2E() {
-		if (System.getenv("ET_EUS_API") == null) {
-			// Outside ElasTest
-			ChromeDriverManager.getInstance().setup();
-			FirefoxDriverManager.getInstance().setup();
-		}
+    public FullTeachingTestE2E() {
+        if (System.getenv("ET_EUS_API") == null) {
+            // Outside ElasTest
+            ChromeDriverManager.getInstance().setup();
+            FirefoxDriverManager.getInstance().setup();
+        }
 
-		if (System.getenv("ET_SUT_HOST") != null) {
-			APP_URL = "https://" + System.getenv("ET_SUT_HOST") + ":5000/";
-		} else {
-			APP_URL = System.getProperty("app.url");
-			if (APP_URL == null) {
-				APP_URL = "https://localhost:5000/";
-			}
-		}
-	}
+        if (System.getenv("ET_SUT_HOST") != null) {
+            APP_URL = "https://" + System.getenv("ET_SUT_HOST") + ":5000/";
+        } else {
+            APP_URL = System.getProperty("app.url");
+            if (APP_URL == null) {
+                APP_URL = "https://localhost:5000/";
+            }
+        }
+    }
 
-	protected BrowserUser setupBrowser(String browser, TestInfo testInfo, String userIdentifier, int secondsOfWait) {
+    protected BrowserUser setupBrowser(String browser, TestInfo testInfo,
+            String userIdentifier, int secondsOfWait) {
+        return this.setupBrowser(browser,
+                testInfo.getTestMethod().get().getName(), userIdentifier,
+                secondsOfWait);
+    }
 
-		BrowserUser u;
-		
-		log.info("Starting browser ({})", browser);
+    protected BrowserUser setupBrowser(String browser, String testName,
+            String userIdentifier, int secondsOfWait) {
 
-		switch (browser) {
-		case "chrome":
-			u = new ChromeUser(userIdentifier, secondsOfWait, testInfo.getTestMethod().get().getName(), userIdentifier);
-			break;
-		case "firefox":
-			u = new FirefoxUser(userIdentifier, secondsOfWait, testInfo.getTestMethod().get().getName(), userIdentifier);
-			break;
-		default:
-			u = new ChromeUser(userIdentifier, secondsOfWait,  testInfo.getTestMethod().get().getName(), userIdentifier);
-		}
-		
-		log.info("Navigating to {}", APP_URL);
+        BrowserUser u;
 
-		u.getDriver().get(APP_URL);
+        log.info("Starting browser ({})", browser);
 
-		final String GLOBAL_JS_FUNCTION = "var s = window.document.createElement('script');"
-				+ "s.innerText = 'window.MY_FUNC = function(containerQuerySelector) {"
-				+ "var elem = document.createElement(\"div\");" + "elem.id = \"video-playing-div\";"
-				+ "elem.innerText = \"VIDEO PLAYING\";" + "document.body.appendChild(elem);"
-				+ "console.log(\"Video check function successfully added to DOM by Selenium\")}';"
-				+ "window.document.head.appendChild(s);";
+        switch (browser) {
+        case "chrome":
+            u = new ChromeUser(userIdentifier, secondsOfWait, testName,
+                    userIdentifier);
+            break;
+        case "firefox":
+            u = new FirefoxUser(userIdentifier, secondsOfWait, testName,
+                    userIdentifier);
+            break;
+        default:
+            u = new ChromeUser(userIdentifier, secondsOfWait, testName,
+                    userIdentifier);
+        }
 
-		u.runJavascript(GLOBAL_JS_FUNCTION);
+        log.info("Navigating to {}", APP_URL);
 
-		return u;
-	}
-	
-	protected void slowLogin(BrowserUser user, String userEmail, String userPass) {
-		this.login(user, userEmail, userPass, true);
-	}
-	
-	protected void quickLogin(BrowserUser user, String userEmail, String userPass) {
-		this.login(user, userEmail, userPass, false);
-	}
+        u.getDriver().get(APP_URL);
 
-	private void login(BrowserUser user, String userEmail, String userPass, boolean slow) {
-		
-		log.info("Logging in user {} with mail '{}'", user.getClientData(), userEmail);
-		
-		openDialog("#download-button", user);
+        final String GLOBAL_JS_FUNCTION = "var s = window.document.createElement('script');"
+                + "s.innerText = 'window.MY_FUNC = function(containerQuerySelector) {"
+                + "var elem = document.createElement(\"div\");"
+                + "elem.id = \"video-playing-div\";"
+                + "elem.innerText = \"VIDEO PLAYING\";"
+                + "document.body.appendChild(elem);"
+                + "console.log(\"Video check function successfully added to DOM by Selenium\")}';"
+                + "window.document.head.appendChild(s);";
 
-		// Find form elements (login modal is already opened)
-		WebElement userNameField = user.getDriver().findElement(By.id("email"));
-		WebElement userPassField = user.getDriver().findElement(By.id("password"));
+        u.runJavascript(GLOBAL_JS_FUNCTION);
 
-		// Fill input fields
-		userNameField.sendKeys(userEmail);
-		if (slow) waitSeconds(1);
-		userPassField.sendKeys(userPass);
-		if (slow) waitSeconds(1);
+        return u;
+    }
 
-		// Ensure fields contain what has been entered
-		Assert.assertEquals(userNameField.getAttribute("value"), userEmail);
-		Assert.assertEquals(userPassField.getAttribute("value"), userPass);
+    protected void slowLogin(BrowserUser user, String userEmail,
+            String userPass) {
+        this.login(user, userEmail, userPass, true);
+    }
 
-		user.getDriver().findElement(By.id("log-in-btn")).click();
-		
-		user.waitUntil(ExpectedConditions.elementToBeClickable(By.id(("course-list"))), "Course list not present");
-		
-		log.info("Logging in successful for user {}", user.getClientData());
-	}
+    protected void quickLogin(BrowserUser user, String userEmail,
+            String userPass) {
+        this.login(user, userEmail, userPass, false);
+    }
 
-	protected void logout(BrowserUser user) {
-		
-		log.info("Logging out {}", user.getClientData());
-		
-		if (user.getDriver().findElements(By.cssSelector("#fixed-icon")).size() > 0) {
-			// Get out of video session page
-			if (!isClickable("#exit-icon", user)) { // Side menu not opened
-				user.getDriver().findElement(By.cssSelector("#fixed-icon")).click();
-				waitForAnimations();
-			}
-			user.getWaiter().until(ExpectedConditions.elementToBeClickable(By.cssSelector("#exit-icon")));
-			user.getDriver().findElement(By.cssSelector("#exit-icon")).click();
-		}
-		try {
-			// Up bar menu
-			user.getWaiter().withTimeout(1000, TimeUnit.MILLISECONDS)
-					.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#arrow-drop-down")));
-			user.getDriver().findElement(By.cssSelector("#arrow-drop-down")).click();
-			waitForAnimations();
-			user.getWaiter().until(ExpectedConditions.elementToBeClickable(By.cssSelector("#logout-button")));
-			user.getDriver().findElement(By.cssSelector("#logout-button")).click();
-		} catch (TimeoutException e) {
-			// Shrunk menu
-			user.getWaiter().withTimeout(1000, TimeUnit.MILLISECONDS)
-					.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("a.button-collapse")));
-			user.getDriver().findElement(By.cssSelector("a.button-collapse")).click();
-			waitForAnimations();
-			user.getWaiter().until(
-					ExpectedConditions.elementToBeClickable(By.xpath("//ul[@id='nav-mobile']//a[text() = 'Logout']")));
-			user.getDriver().findElement(By.xpath("//ul[@id='nav-mobile']//a[text() = 'Logout']")).click();
-		}
-		
-		log.info("Logging out successful for {}", user.getClientData());
-		
-		waitSeconds(1);
-	}
-	
-	private boolean isClickable(String selector, BrowserUser user) {
-		try {
-			WebDriverWait wait = new WebDriverWait(user.getDriver(), 1);
-			wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(selector)));
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
-	}
+    private void login(BrowserUser user, String userEmail, String userPass,
+            boolean slow) {
 
-	protected void openDialog(String cssSelector, BrowserUser user) {
+        log.info("Logging in user {} with mail '{}'", user.getClientData(),
+                userEmail);
 
-		log.debug("User {} opening dialog by clicking CSS '{}'", user.getClientData(), cssSelector);
+        openDialog("#download-button", user);
 
-		user.waitUntil(ExpectedConditions.elementToBeClickable(By.cssSelector(cssSelector)),
-				"Button for opening the dialog not clickable");
-		user.getDriver().findElement(By.cssSelector(cssSelector)).click();
-		user.waitUntil(
-				ExpectedConditions.presenceOfElementLocated(
-						By.xpath("//div[contains(@class, 'modal-overlay') and contains(@style, 'opacity: 0.5')]")),
-				"Dialog not opened");
-		
-		log.debug("Dialog opened for user {}", user.getClientData());
-	}
+        // Find form elements (login modal is already opened)
+        WebElement userNameField = user.getDriver().findElement(By.id("email"));
+        WebElement userPassField = user.getDriver()
+                .findElement(By.id("password"));
 
-	protected void openDialog(WebElement el, BrowserUser user) {
+        // Fill input fields
+        userNameField.sendKeys(userEmail);
+        if (slow)
+            waitSeconds(1);
+        userPassField.sendKeys(userPass);
+        if (slow)
+            waitSeconds(1);
 
-		log.debug("User {} opening dialog by web element '{}'", user.getClientData(), el);
+        // Ensure fields contain what has been entered
+        Assert.assertEquals(userNameField.getAttribute("value"), userEmail);
+        Assert.assertEquals(userPassField.getAttribute("value"), userPass);
 
-		user.waitUntil(ExpectedConditions.elementToBeClickable(el), "Button for opening the dialog not clickable");
-		el.click();
-		user.waitUntil(
-				ExpectedConditions.presenceOfElementLocated(
-						By.xpath("//div[contains(@class, 'modal-overlay') and contains(@style, 'opacity: 0.5')]")),
-				"Dialog not opened");
-		
-		log.debug("Dialog opened for user {}", user.getClientData());
-	}
+        user.getDriver().findElement(By.id("log-in-btn")).click();
 
-	protected void waitForDialogClosed(String dialogId, String errorMessage, BrowserUser user) {
-		log.debug("User {} waiting for dialog with id '{}' to be closed", user.getClientData(), dialogId);
+        user.waitUntil(
+                ExpectedConditions.elementToBeClickable(By.id(("course-list"))),
+                "Course list not present");
 
-		user.waitUntil(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[@id='" + dialogId
-				+ "' and contains(@class, 'my-modal-class') and contains(@style, 'opacity: 0') and contains(@style, 'display: none')]")),
-				"Dialog not closed. Reason: " + errorMessage);
-		user.waitUntil(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".modal.my-modal-class.open")),
-				"Dialog not closed. Reason: " + errorMessage);
-		user.waitUntil(ExpectedConditions.numberOfElementsToBe(By.cssSelector(".modal-overlay"), 0),
-				"Dialog not closed. Reason: " + errorMessage);
-		
-		log.debug("Dialog closed for user {}", user.getClientData());
-	}
+        log.info("Logging in successful for user {}", user.getClientData());
+    }
 
-	protected void waitForAnimations() {
-		try {
-			Thread.sleep(750);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-	}
+    protected void logout(BrowserUser user) {
 
-	protected void waitSeconds(int seconds) {
-		try {
-			Thread.sleep(1000 * seconds);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-	}
+        log.info("Logging out {}", user.getClientData());
+
+        if (user.getDriver().findElements(By.cssSelector("#fixed-icon"))
+                .size() > 0) {
+            // Get out of video session page
+            if (!isClickable("#exit-icon", user)) { // Side menu not opened
+                user.getDriver().findElement(By.cssSelector("#fixed-icon"))
+                        .click();
+                waitForAnimations();
+            }
+            user.getWaiter().until(ExpectedConditions
+                    .elementToBeClickable(By.cssSelector("#exit-icon")));
+            user.getDriver().findElement(By.cssSelector("#exit-icon")).click();
+        }
+        try {
+            // Up bar menu
+            user.getWaiter().withTimeout(1000, TimeUnit.MILLISECONDS)
+                    .until(ExpectedConditions.visibilityOfElementLocated(
+                            By.cssSelector("#arrow-drop-down")));
+            user.getDriver().findElement(By.cssSelector("#arrow-drop-down"))
+                    .click();
+            waitForAnimations();
+            user.getWaiter().until(ExpectedConditions
+                    .elementToBeClickable(By.cssSelector("#logout-button")));
+            user.getDriver().findElement(By.cssSelector("#logout-button"))
+                    .click();
+        } catch (TimeoutException e) {
+            // Shrunk menu
+            user.getWaiter().withTimeout(1000, TimeUnit.MILLISECONDS)
+                    .until(ExpectedConditions.visibilityOfElementLocated(
+                            By.cssSelector("a.button-collapse")));
+            user.getDriver().findElement(By.cssSelector("a.button-collapse"))
+                    .click();
+            waitForAnimations();
+            user.getWaiter().until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//ul[@id='nav-mobile']//a[text() = 'Logout']")));
+            user.getDriver()
+                    .findElement(By.xpath(
+                            "//ul[@id='nav-mobile']//a[text() = 'Logout']"))
+                    .click();
+        }
+
+        log.info("Logging out successful for {}", user.getClientData());
+
+        waitSeconds(1);
+    }
+
+    private boolean isClickable(String selector, BrowserUser user) {
+        try {
+            WebDriverWait wait = new WebDriverWait(user.getDriver(), 1);
+            wait.until(ExpectedConditions
+                    .elementToBeClickable(By.cssSelector(selector)));
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    protected void openDialog(String cssSelector, BrowserUser user) {
+
+        log.debug("User {} opening dialog by clicking CSS '{}'",
+                user.getClientData(), cssSelector);
+
+        user.waitUntil(
+                ExpectedConditions
+                        .elementToBeClickable(By.cssSelector(cssSelector)),
+                "Button for opening the dialog not clickable");
+        user.getDriver().findElement(By.cssSelector(cssSelector)).click();
+        user.waitUntil(ExpectedConditions.presenceOfElementLocated(By.xpath(
+                "//div[contains(@class, 'modal-overlay') and contains(@style, 'opacity: 0.5')]")),
+                "Dialog not opened");
+
+        log.debug("Dialog opened for user {}", user.getClientData());
+    }
+
+    protected void openDialog(WebElement el, BrowserUser user) {
+
+        log.debug("User {} opening dialog by web element '{}'",
+                user.getClientData(), el);
+
+        user.waitUntil(ExpectedConditions.elementToBeClickable(el),
+                "Button for opening the dialog not clickable");
+        el.click();
+        user.waitUntil(ExpectedConditions.presenceOfElementLocated(By.xpath(
+                "//div[contains(@class, 'modal-overlay') and contains(@style, 'opacity: 0.5')]")),
+                "Dialog not opened");
+
+        log.debug("Dialog opened for user {}", user.getClientData());
+    }
+
+    protected void waitForDialogClosed(String dialogId, String errorMessage,
+            BrowserUser user) {
+        log.debug("User {} waiting for dialog with id '{}' to be closed",
+                user.getClientData(), dialogId);
+
+        user.waitUntil(ExpectedConditions
+                .presenceOfElementLocated(By.xpath("//div[@id='" + dialogId
+                        + "' and contains(@class, 'my-modal-class') and contains(@style, 'opacity: 0') and contains(@style, 'display: none')]")),
+                "Dialog not closed. Reason: " + errorMessage);
+        user.waitUntil(
+                ExpectedConditions.invisibilityOfElementLocated(
+                        By.cssSelector(".modal.my-modal-class.open")),
+                "Dialog not closed. Reason: " + errorMessage);
+        user.waitUntil(
+                ExpectedConditions.numberOfElementsToBe(
+                        By.cssSelector(".modal-overlay"), 0),
+                "Dialog not closed. Reason: " + errorMessage);
+
+        log.debug("Dialog closed for user {}", user.getClientData());
+    }
+
+    protected void waitForAnimations() {
+        try {
+            Thread.sleep(750);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    protected void waitSeconds(int seconds) {
+        try {
+            Thread.sleep(1000 * seconds);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 
 }
