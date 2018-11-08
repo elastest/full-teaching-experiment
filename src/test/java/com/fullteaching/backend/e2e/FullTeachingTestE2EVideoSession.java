@@ -17,6 +17,7 @@
 
 package com.fullteaching.backend.e2e;
 
+import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -24,9 +25,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.runner.RunWith;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -43,7 +41,6 @@ import io.github.bonigarcia.wdm.FirefoxDriverManager;
 @Tag("e2e")
 @DisplayName("E2E tests for FullTeaching video session")
 @ExtendWith(SeleniumExtension.class)
-@RunWith(JUnitPlatform.class)
 public class FullTeachingTestE2EVideoSession extends FullTeachingTestE2E {
 
     private static String TEACHER_BROWSER;

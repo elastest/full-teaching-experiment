@@ -12,14 +12,11 @@ import java.security.NoSuchAlgorithmException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 import org.springframework.http.HttpStatus;
 
 import com.fullteaching.backend.utils.HttpApiClient;
 
 @DisplayName("Tests for Fullteaching login")
-@RunWith(JUnitPlatform.class)
 public class UserRestTest {
 
     protected static String APP_URL;

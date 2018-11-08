@@ -8,8 +8,6 @@ import java.util.concurrent.TimeUnit;
 import org.junit.Assert;
 import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
@@ -22,7 +20,6 @@ import io.github.bonigarcia.wdm.ChromeDriverManager;
 import io.github.bonigarcia.wdm.FirefoxDriverManager;
 
 @ExtendWith(SeleniumExtension.class)
-@RunWith(JUnitPlatform.class)
 public class FullTeachingTestE2E {
 
     protected static String APP_URL;

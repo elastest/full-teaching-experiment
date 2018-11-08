@@ -29,7 +29,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 
 public class ChromeUser extends BrowserUser {
 
-	public ChromeUser(String userName, int timeOfWaitInSeconds, String browserId, String userIdentifier) {
+	public ChromeUser(String userName, int timeOfWaitInSeconds, String testName, String userIdentifier) {
 		super(userName, timeOfWaitInSeconds);
 
 		ChromeOptions options = new ChromeOptions();
@@ -52,7 +52,7 @@ public class ChromeUser extends BrowserUser {
 			this.driver = new ChromeDriver(capabilities);	
 		} else {
 			try {
-				capabilities.setCapability("browserId", browserId + "_" + userIdentifier);
+				capabilities.setCapability("testName", testName + "_" + userIdentifier);
 				RemoteWebDriver remote = new RemoteWebDriver(new URL(eusApiURL),  capabilities);
 				remote.setFileDetector(new LocalFileDetector());
 				this.driver = remote;

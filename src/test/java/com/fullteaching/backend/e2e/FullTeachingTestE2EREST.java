@@ -27,8 +27,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.runner.RunWith;
-import org.junit.platform.runner.JUnitPlatform;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -43,7 +41,6 @@ import io.github.bonigarcia.SeleniumExtension;
 @Tag("e2e")
 @DisplayName("E2E tests for FullTeaching REST CRUD operations")
 @ExtendWith(SeleniumExtension.class)
-@RunWith(JUnitPlatform.class)
 public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 
 	private static String BROWSER;
