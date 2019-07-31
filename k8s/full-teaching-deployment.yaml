@@ -40,7 +40,7 @@ spec:
           value: https://full-teaching-openvidu-server-kms:8443
         - name: server.port
           value: "5001"
-        image: 'codeurjc/full-teaching:'
+        image: codeurjc/full-teaching
         name: full-teaching
         ports:
         - containerPort: 5001
