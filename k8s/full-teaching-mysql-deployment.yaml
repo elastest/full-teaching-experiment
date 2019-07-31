@@ -1,0 +1,36 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    io.elastest.service.type: SUT
+  creationTimestamp: null
+  labels:
+    io.elastest.service.type: SUT
+    io.elastest: "true"
+    io.elastest.service: full-teaching-mysql
+  name: full-teaching-mysql
+spec:
+  replicas: 1
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.elastest: "true"
+        io.elastest.service: full-teaching-mysql
+    spec:
+      containers:
+      - env:
+        - name: MYSQL_DATABASE
+          value: full_teaching
+        - name: MYSQL_PASSWORD
+          value: pass
+        - name: MYSQL_ROOT_PASSWORD
+          value: pass
+        - name: MYSQL_USER
+          value: ft-root
+        image: mysql:5.7.21
+        name: full-teaching-mysql
+        resources: {}
+      restartPolicy: Always
+status: {}
