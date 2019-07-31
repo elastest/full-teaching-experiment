@@ -14,7 +14,6 @@ spec:
   - name: "full-teaching-mysql-3306-node-port"
     port: 3306
     targetPort: 3306
-    nodePort: 3306
   selector:
     io.elastest.service: full-teaching-mysql
   type: NodePort
