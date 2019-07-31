@@ -4,24 +4,24 @@ node {
             try {
                 stage("Start SUT") {
                     git(
-                        url: 'https://github.com/elastest/demo-projects'
+                        url: 'https://github.com/elastest/full-teaching-experiment.git'
                         ) 
-                    sh "cd ./openvidu-test/k8s;./addSutPrefix.sh;kubectl create -f ."
-                    checkPodStatus(5, "${ET_SUT_CONTAINER_NAME}-openvidu-java-sut")
+                    sh "cd ./k8s; export BUG_TAG=demo;./addSutPrefix.sh;kubectl create -f ."
+                    checkPodStatus(5, "${ET_SUT_CONTAINER_NAME}-full-teaching")
                 }
                 
                 stage("Run tests") {
                     mvnHome = tool 'M3.3.9'
-                    def sutIp = getPodIp('openvidu-java-sut')
-                    waitForService(5, "https://" + sutIp + ":5000")
+                    def sutIp = getPodIp('full-teaching')
+                    waitForService(5, "https://" + sutIp + ":5001")
                     withEnv(['ET_SUT_HOST=' + sutIp]) {
                         echo "Running test"
-                        sh "cd ./openvidu-test/; '${mvnHome}/bin/mvn' -Dbrowser=chrome -DforkCount=0 test" 
+                        sh "'${mvnHome}/bin/mvn' -Dapp.url=https://" + sutIp +":5001/ -Dtest=FullTeachingTestE2EREST,FullTeachingTestE2EVideoSession,FullTeachingTestE2EChat -B -DforkCount=0 test"
                     }
                 }
             
             } finally {
-                sh "cd ./openvidu-test/;kubectl delete -f k8s/"
+                sh "kubectl delete -f k8s/"
             }
         }
     }
