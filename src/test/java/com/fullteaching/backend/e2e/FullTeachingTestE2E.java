@@ -111,8 +111,6 @@ public class FullTeachingTestE2E {
 
         openDialog("#download-button", user);
 
-        waitSeconds(1); // Sleep for it to work in elastest
-        
         // Find form elements (login modal is already opened)
         WebElement userNameField = user.getDriver().findElement(By.id("email"));
         WebElement userPassField = user.getDriver()
@@ -132,7 +130,7 @@ public class FullTeachingTestE2E {
 
         user.getDriver().findElement(By.id("log-in-btn")).click();
 
-        //waitSeconds(1); // Sleep for it to work in elastest
+        waitSeconds(1); // Sleep for it to work in elastest
 
         user.waitUntil(
                 ExpectedConditions.elementToBeClickable(By.id(("course-list"))),
