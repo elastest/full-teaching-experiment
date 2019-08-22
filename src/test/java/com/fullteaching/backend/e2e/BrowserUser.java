@@ -70,7 +70,7 @@ public class BrowserUser {
 	}
 
 	protected void configureDriver() {
-		this.waiter = new WebDriverWait(this.driver, 10);
+		this.waiter = new WebDriverWait(this.driver, this.timeOfWaitInSeconds);
 	}
 
 	public void dispose() {

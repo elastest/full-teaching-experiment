@@ -253,6 +253,8 @@ public class FullTeachingTestE2E {
         log.debug("User {} waiting for dialog with id '{}' to be closed",
                 user.getClientData(), dialogId);
 
+        waitSeconds(5);
+
         user.waitUntil(ExpectedConditions
                 .presenceOfElementLocated(By.xpath("//div[@id='" + dialogId
                         + "' and contains(@class, 'my-modal-class') and contains(@style, 'opacity: 0') and contains(@style, 'display: none')]")),
