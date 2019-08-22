@@ -19,6 +19,7 @@ package com.fullteaching.backend.e2e;
 
 import java.util.List;
 
+import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -66,8 +67,8 @@ public class FullTeachingTestE2EChat extends FullTeachingTestE2E {
 
 		if (System.getenv("ET_EUS_API") == null) {
 			// Outside ElasTest
-			ChromeDriverManager.getInstance().setup();
-			FirefoxDriverManager.getInstance().setup();
+			WebDriverManager.chromedriver().setup();
+			WebDriverManager.firefoxdriver().setup();
 		}
 
 		if (System.getenv("ET_SUT_HOST") != null) {

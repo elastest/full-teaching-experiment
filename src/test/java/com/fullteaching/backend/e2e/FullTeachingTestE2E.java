@@ -5,6 +5,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 
 import java.util.concurrent.TimeUnit;
 
+import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.Assert;
 import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,8 +33,8 @@ public class FullTeachingTestE2E {
     public FullTeachingTestE2E() {
         if (System.getenv("ET_EUS_API") == null) {
             // Outside ElasTest
-            ChromeDriverManager.getInstance().setup();
-            FirefoxDriverManager.getInstance().setup();
+            WebDriverManager.chromedriver().setup();
+            WebDriverManager.firefoxdriver().setup();
         }
 
         if (System.getenv("ET_SUT_HOST") != null) {
