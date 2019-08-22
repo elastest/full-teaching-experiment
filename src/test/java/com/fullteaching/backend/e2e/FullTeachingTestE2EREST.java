@@ -649,6 +649,8 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 
 		courseSpan.click();
 
+		waitSeconds(10);
+
 		user.waitUntil(ExpectedConditions.textToBe(By.id("main-course-title"), courseName), "Unexpected course title");
 
 		log.info("Navigating to tab by clicking icon with id '{}'", tabId);
