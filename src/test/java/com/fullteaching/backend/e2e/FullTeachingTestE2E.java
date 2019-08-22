@@ -130,7 +130,7 @@ public class FullTeachingTestE2E {
 
         user.getDriver().findElement(By.id("log-in-btn")).click();
 
-        waitSeconds(4);
+        waitSeconds(2); // Sleep for it to work in elastest
 
         user.waitUntil(
                 ExpectedConditions.elementToBeClickable(By.id(("course-list"))),
@@ -210,11 +210,13 @@ public class FullTeachingTestE2E {
                 "Button for opening the dialog not clickable");
         user.getDriver().findElement(By.cssSelector(cssSelector)).click();
 
-        waitSeconds(4);
+        waitSeconds(2); // Sleep for it to work in elastest
 
         user.waitUntil(ExpectedConditions.presenceOfElementLocated(By.xpath(
                 "//div[contains(@class, 'modal-overlay') and contains(@style, 'opacity: 0.5')]")),
                 "Dialog not opened");
+
+        waitSeconds(2); // Sleep for it to work in elastest
 
         log.debug("Dialog opened for user {}", user.getClientData());
     }
