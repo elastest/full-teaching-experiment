@@ -130,6 +130,8 @@ public class FullTeachingTestE2E {
 
         user.getDriver().findElement(By.id("log-in-btn")).click();
 
+        waitSeconds(4);
+
         user.waitUntil(
                 ExpectedConditions.elementToBeClickable(By.id(("course-list"))),
                 "Course list not present");
@@ -213,8 +215,6 @@ public class FullTeachingTestE2E {
         user.waitUntil(ExpectedConditions.presenceOfElementLocated(By.xpath(
                 "//div[contains(@class, 'modal-overlay') and contains(@style, 'opacity: 0.5')]")),
                 "Dialog not opened");
-
-        waitSeconds(4); // Wait open dialog
 
         log.debug("Dialog opened for user {}", user.getClientData());
     }
