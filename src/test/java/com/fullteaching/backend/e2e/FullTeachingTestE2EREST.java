@@ -647,11 +647,7 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 			}
 		}
 
-		waitSeconds(10);
-
 		courseSpan.click();
-
-		waitSeconds(10);
 
 		user.waitUntil(ExpectedConditions.textToBe(By.id("main-course-title"), courseName), "Unexpected course title");
 
