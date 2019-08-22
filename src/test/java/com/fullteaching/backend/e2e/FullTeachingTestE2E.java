@@ -109,9 +109,7 @@ public class FullTeachingTestE2E {
         log.info("Logging in user {} with mail '{}'", user.getClientData(),
                 userEmail);
 
-        waitSeconds(10);
-
-        openDialog("#signUpButton", user);
+        openDialog("#download-button", user);
 
         // Find form elements (login modal is already opened)
         WebElement userNameField = user.getDriver().findElement(By.id("email"));
@@ -212,6 +210,8 @@ public class FullTeachingTestE2E {
         user.waitUntil(ExpectedConditions.presenceOfElementLocated(By.xpath(
                 "//div[contains(@class, 'modal-overlay') and contains(@style, 'opacity: 0.5')]")),
                 "Dialog not opened");
+
+        waitSeconds(4); // Wait open dialog
 
         log.debug("Dialog opened for user {}", user.getClientData());
     }
