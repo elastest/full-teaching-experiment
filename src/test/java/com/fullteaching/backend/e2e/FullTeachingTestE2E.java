@@ -130,7 +130,7 @@ public class FullTeachingTestE2E {
 
         user.getDriver().findElement(By.id("log-in-btn")).click();
 
-        waitSeconds(1); // Sleep for it to work in elastest
+        //waitSeconds(1); // Sleep for it to work in elastest
 
         user.waitUntil(
                 ExpectedConditions.elementToBeClickable(By.id(("course-list"))),
@@ -150,7 +150,7 @@ public class FullTeachingTestE2E {
                 user.getDriver().findElement(By.cssSelector("#fixed-icon"))
                         .click();
 
-                waitSeconds(1); // Sleep for it to work in elastest
+                //waitSeconds(1); // Sleep for it to work in elastest
 
                 waitForAnimations();
             }
@@ -166,7 +166,7 @@ public class FullTeachingTestE2E {
             user.getDriver().findElement(By.cssSelector("#arrow-drop-down"))
                     .click();
 
-            waitSeconds(1); // Sleep for it to work in elastest
+            //waitSeconds(1); // Sleep for it to work in elastest
 
             waitForAnimations();
             user.getWaiter().until(ExpectedConditions
@@ -181,7 +181,7 @@ public class FullTeachingTestE2E {
             user.getDriver().findElement(By.cssSelector("a.button-collapse"))
                     .click();
 
-            waitSeconds(1); // Sleep for it to work in elastest
+            //waitSeconds(1); // Sleep for it to work in elastest
 
             waitForAnimations();
             user.getWaiter().until(ExpectedConditions.elementToBeClickable(
@@ -219,13 +219,13 @@ public class FullTeachingTestE2E {
                 "Button for opening the dialog not clickable");
         user.getDriver().findElement(By.cssSelector(cssSelector)).click();
 
-        waitSeconds(1); // Sleep for it to work in elastest
+        //waitSeconds(1); // Sleep for it to work in elastest
 
         user.waitUntil(ExpectedConditions.presenceOfElementLocated(By.xpath(
                 "//div[contains(@class, 'modal-overlay') and contains(@style, 'opacity: 0.5')]")),
                 "Dialog not opened");
 
-        waitSeconds(1); // Sleep for it to work in elastest
+        //waitSeconds(1); // Sleep for it to work in elastest
 
         log.debug("Dialog opened for user {}", user.getClientData());
     }
@@ -239,7 +239,7 @@ public class FullTeachingTestE2E {
                 "Button for opening the dialog not clickable");
         el.click();
 
-        waitSeconds(1); // Sleep for it to work in elastest
+        //waitSeconds(1); // Sleep for it to work in elastest
 
         user.waitUntil(ExpectedConditions.presenceOfElementLocated(By.xpath(
                 "//div[contains(@class, 'modal-overlay') and contains(@style, 'opacity: 0.5')]")),
@@ -253,7 +253,7 @@ public class FullTeachingTestE2E {
         log.debug("User {} waiting for dialog with id '{}' to be closed",
                 user.getClientData(), dialogId);
 
-        waitSeconds(5);
+        //waitSeconds(5);
 
         user.waitUntil(ExpectedConditions
                 .presenceOfElementLocated(By.xpath("//div[@id='" + dialogId

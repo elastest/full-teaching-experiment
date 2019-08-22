@@ -573,7 +573,7 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 	/*** Auxiliary methods ***/
 
 	private void loginTeacher(TestInfo info) {
-		this.user = setupBrowser(BROWSER, info, "TestUser", 15);
+		this.user = setupBrowser(BROWSER, info, "TestUser", 40);
 		this.quickLogin(user, TEACHER_MAIL, TEACHER_PASS);
 	}
 
