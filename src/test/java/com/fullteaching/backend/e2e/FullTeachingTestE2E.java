@@ -253,28 +253,20 @@ public class FullTeachingTestE2E {
         log.debug("User {} waiting for dialog with id '{}' to be closed",
                 user.getClientData(), dialogId);
 
-        waitSeconds(1); // Sleep for it to work in elastest
-
         user.waitUntil(ExpectedConditions
                 .presenceOfElementLocated(By.xpath("//div[@id='" + dialogId
                         + "' and contains(@class, 'my-modal-class') and contains(@style, 'opacity: 0') and contains(@style, 'display: none')]")),
                 "Dialog not closed. Reason: " + errorMessage);
 
-        waitSeconds(1); // Sleep for it to work in elastest
-        
         user.waitUntil(
                 ExpectedConditions.invisibilityOfElementLocated(
                         By.cssSelector(".modal.my-modal-class.open")),
                 "Dialog not closed. Reason: " + errorMessage);
 
-        waitSeconds(1); // Sleep for it to work in elastest
-
         user.waitUntil(
                 ExpectedConditions.numberOfElementsToBe(
                         By.cssSelector(".modal-overlay"), 0),
                 "Dialog not closed. Reason: " + errorMessage);
-
-        waitSeconds(1); // Sleep for it to work in elastest
 
         log.debug("Dialog closed for user {}", user.getClientData());
     }
