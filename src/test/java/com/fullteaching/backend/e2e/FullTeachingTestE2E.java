@@ -149,6 +149,9 @@ public class FullTeachingTestE2E {
             if (!isClickable("#exit-icon", user)) { // Side menu not opened
                 user.getDriver().findElement(By.cssSelector("#fixed-icon"))
                         .click();
+
+                waitSeconds(1); // Sleep for it to work in elastest
+
                 waitForAnimations();
             }
             user.getWaiter().until(ExpectedConditions
@@ -162,6 +165,9 @@ public class FullTeachingTestE2E {
                             By.cssSelector("#arrow-drop-down")));
             user.getDriver().findElement(By.cssSelector("#arrow-drop-down"))
                     .click();
+
+            waitSeconds(1); // Sleep for it to work in elastest
+
             waitForAnimations();
             user.getWaiter().until(ExpectedConditions
                     .elementToBeClickable(By.cssSelector("#logout-button")));
@@ -174,6 +180,9 @@ public class FullTeachingTestE2E {
                             By.cssSelector("a.button-collapse")));
             user.getDriver().findElement(By.cssSelector("a.button-collapse"))
                     .click();
+
+            waitSeconds(1); // Sleep for it to work in elastest
+
             waitForAnimations();
             user.getWaiter().until(ExpectedConditions.elementToBeClickable(
                     By.xpath("//ul[@id='nav-mobile']//a[text() = 'Logout']")));
@@ -183,8 +192,6 @@ public class FullTeachingTestE2E {
                     .click();
         }
 
-        waitSeconds(1); // Sleep for it to work in elastest
-        
         log.info("Logging out successful for {}", user.getClientData());
 
         waitSeconds(1);
