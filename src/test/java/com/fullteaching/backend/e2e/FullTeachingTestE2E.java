@@ -207,6 +207,9 @@ public class FullTeachingTestE2E {
                         .elementToBeClickable(By.cssSelector(cssSelector)),
                 "Button for opening the dialog not clickable");
         user.getDriver().findElement(By.cssSelector(cssSelector)).click();
+
+        waitSeconds(4);
+
         user.waitUntil(ExpectedConditions.presenceOfElementLocated(By.xpath(
                 "//div[contains(@class, 'modal-overlay') and contains(@style, 'opacity: 0.5')]")),
                 "Dialog not opened");
