@@ -225,6 +225,8 @@ public class FullTeachingTestE2E {
                 "//div[contains(@class, 'modal-overlay') and contains(@style, 'opacity: 0.5')]")),
                 "Dialog not opened");
 
+        waitSeconds(1); // Sleep for it to work in elastest
+
         log.debug("Dialog opened for user {}", user.getClientData());
     }
 
