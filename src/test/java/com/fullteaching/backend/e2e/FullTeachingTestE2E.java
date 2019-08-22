@@ -268,6 +268,8 @@ public class FullTeachingTestE2E {
                         By.cssSelector(".modal-overlay"), 0),
                 "Dialog not closed. Reason: " + errorMessage);
 
+        waitSeconds(1); // Sleep for it to work in elastest
+
         log.debug("Dialog closed for user {}", user.getClientData());
     }
 
