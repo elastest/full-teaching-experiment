@@ -183,6 +183,8 @@ public class FullTeachingTestE2E {
                     .click();
         }
 
+        waitSeconds(1); // Sleep for it to work in elastest
+        
         log.info("Logging out successful for {}", user.getClientData());
 
         waitSeconds(1);
