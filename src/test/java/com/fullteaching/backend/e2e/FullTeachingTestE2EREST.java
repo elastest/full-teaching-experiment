@@ -647,6 +647,8 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 			}
 		}
 
+		waitSeconds(10);
+
 		courseSpan.click();
 
 		waitSeconds(10);
