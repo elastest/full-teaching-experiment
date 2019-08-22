@@ -584,6 +584,8 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 
 		openDialog("#add-course-icon", user);
 
+		waitSeconds(1); // Sleep for it to work in elastest
+
 		user.waitUntil(ExpectedConditions.elementToBeClickable(By.id(("input-post-course-name"))),
 				"Input for course name not clickable");
 		user.getDriver().findElement(By.id("input-post-course-name")).sendKeys(courseName);
