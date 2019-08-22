@@ -111,7 +111,7 @@ public class FullTeachingTestE2E {
 
         waitSeconds(10);
 
-        openDialog("#download-button", user);
+        openDialog("#signUpButton", user);
 
         // Find form elements (login modal is already opened)
         WebElement userNameField = user.getDriver().findElement(By.id("email"));
