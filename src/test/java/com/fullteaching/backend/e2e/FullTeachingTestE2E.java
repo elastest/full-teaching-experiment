@@ -109,6 +109,8 @@ public class FullTeachingTestE2E {
         log.info("Logging in user {} with mail '{}'", user.getClientData(),
                 userEmail);
 
+        waitSeconds(3);
+
         openDialog("#download-button", user);
 
         // Find form elements (login modal is already opened)
