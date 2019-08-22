@@ -49,8 +49,10 @@ public class BrowserUser {
 	}
 	
 	public void waitUntil(ExpectedCondition<?> condition, String errorMessage) {
+		WebDriverWait waiter = new WebDriverWait(driver, 40);
+
 		try {
-			this.waiter.until(condition);
+			waiter.until(condition);
 		} catch(org.openqa.selenium.TimeoutException timeout) {
 			log.error(errorMessage);
 			throw new org.openqa.selenium.TimeoutException("\"" + errorMessage + "\" (checked with condition) > " + timeout.getMessage());
