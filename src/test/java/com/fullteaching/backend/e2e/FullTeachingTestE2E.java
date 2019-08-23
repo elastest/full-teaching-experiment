@@ -77,7 +77,7 @@ public class FullTeachingTestE2E {
 
         u.getDriver().get(APP_URL);
 
-        final String GLOBAL_JS_FUNCTION = "var s = window.document.createElement('script');"
+        /*final String GLOBAL_JS_FUNCTION = "var s = window.document.createElement('script');"
                 + "s.innerText = 'window.MY_FUNC = function(containerQuerySelector) {"
                 + "var elem = document.createElement(\"div\");"
                 + "elem.id = \"video-playing-div\";"
@@ -86,7 +86,7 @@ public class FullTeachingTestE2E {
                 + "console.log(\"Video check function successfully added to DOM by Selenium\")}';"
                 + "window.document.head.appendChild(s);";
 
-        u.runJavascript(GLOBAL_JS_FUNCTION);
+        u.runJavascript(GLOBAL_JS_FUNCTION);*/
 
         return u;
     }
