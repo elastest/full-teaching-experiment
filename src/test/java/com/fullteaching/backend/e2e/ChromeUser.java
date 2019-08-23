@@ -52,7 +52,7 @@ public class ChromeUser extends BrowserUser {
         capabilities.setCapability(ChromeOptions.CAPABILITY, options);
 
         if (eusApiURL == null) {
-            this.driver = new ChromeDriver(options);
+            this.driver = new ChromeDriver(capabilities);
         } else {
             try {
                 String browserVersion = System.getProperty("browserVersion");
