@@ -584,10 +584,16 @@ public class FullTeachingTestE2EREST extends FullTeachingTestE2E {
 
 		openDialog("#add-course-icon", user);
 
-		user.waitUntil(ExpectedConditions.elementToBeClickable(By.id(("input-post-course-name"))),
+		String courseNameInputId = "input-post-course-name";
+        user.waitUntil(ExpectedConditions.elementToBeClickable(By.id(courseNameInputId)),
 				"Input for course name not clickable");
-		user.getDriver().findElement(By.id("input-post-course-name")).sendKeys(courseName);
-		user.getDriver().findElement(By.id("submit-post-course-btn")).click();
+		user.getDriver().findElement(By.id(courseNameInputId)).sendKeys(courseName);
+		
+		
+		String courseSubmitBtnId = "submit-post-course-btn";
+        user.waitUntil(ExpectedConditions.elementToBeClickable(By.id(courseSubmitBtnId)),
+                "Submit for course not clickable");		
+		user.getDriver().findElement(By.id(courseSubmitBtnId)).click();
 
 		waitForDialogClosed("course-modal", "Addition of course failed", user);
 
