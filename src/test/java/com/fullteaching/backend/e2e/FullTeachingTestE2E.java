@@ -130,7 +130,7 @@ public class FullTeachingTestE2E {
 
         user.getDriver().findElement(By.id("log-in-btn")).click();
 
-        waitSeconds(1); // Sleep for it to work in elastest
+        //waitSeconds(1); // Sleep for it to work in elastest
 
         user.waitUntil(
                 ExpectedConditions.elementToBeClickable(By.id(("course-list"))),
