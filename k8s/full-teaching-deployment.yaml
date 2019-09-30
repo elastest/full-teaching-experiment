@@ -39,11 +39,11 @@ spec:
         - name: openvidu.url
           value: https://full-teaching-openvidu-server-kms:8443
         - name: server.port
-          value: "5001"
+          value: "5000"
         image: codeurjc/full-teaching
         name: full-teaching
         ports:
-        - containerPort: 5001
+        - containerPort: 5000
         resources: {}
       restartPolicy: Always
 status: {}
