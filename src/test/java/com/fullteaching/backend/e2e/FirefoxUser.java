@@ -29,38 +29,49 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 
 public class FirefoxUser extends BrowserUser {
 
-	public FirefoxUser(String userName, int timeOfWaitInSeconds, String browserId, String userIdentifier) {
-		super(userName, timeOfWaitInSeconds);
-		
-		FirefoxProfile profile = new FirefoxProfile();
-		// This flag avoids granting the access to the camera
-		profile.setPreference("media.navigator.permission.disabled", true);
-		// This flag force to use fake user media (synthetic video of multiple color)
-		profile.setPreference("media.navigator.streams.fake", true);
-		profile.setPreference("dom.file.createInChild", true);
-		
-		String eusApiURL = System.getenv("ET_EUS_API");
-		
-		DesiredCapabilities capabilities = DesiredCapabilities.firefox();
-		capabilities.setCapability("acceptInsecureCerts", true);
-		capabilities.setCapability(FirefoxDriver.PROFILE, profile);
-		
-		if(eusApiURL == null) {
-			this.driver = new FirefoxDriver(capabilities);
-		} else {
-			try {
-				capabilities.setCapability("browserId", browserId + "_" + userIdentifier);
-				RemoteWebDriver remote = new RemoteWebDriver(new URL(eusApiURL),  capabilities);
-				remote.setFileDetector(new LocalFileDetector());
-				this.driver = remote;
-			} catch (MalformedURLException e) {
-				throw new RuntimeException("Exception creaing eusApiURL",e);
-			}
-		}
-		
-		this.driver.manage().timeouts().setScriptTimeout(this.timeOfWaitInSeconds, TimeUnit.SECONDS);
-		
-		this.configureDriver();
-	}
+    public FirefoxUser(String userName, int timeOfWaitInSeconds,
+            String testName, String userIdentifier) {
+        super(userName, timeOfWaitInSeconds);
+
+        FirefoxProfile profile = new FirefoxProfile();
+        // This flag avoids granting the access to the camera
+        profile.setPreference("media.navigator.permission.disabled", true);
+        // This flag force to use fake user media (synthetic video of multiple
+        // color)
+        profile.setPreference("media.navigator.streams.fake", true);
+        profile.setPreference("dom.file.createInChild", true);
+
+        String eusApiURL = System.getenv("ET_EUS_API");
+
+        DesiredCapabilities capabilities = DesiredCapabilities.firefox();
+        capabilities.setCapability("acceptInsecureCerts", true);
+        capabilities.setCapability(FirefoxDriver.PROFILE, profile);
+
+        if (eusApiURL == null) {
+            this.driver = new FirefoxDriver(capabilities);
+        } else {
+            try {
+                String browserVersion = System.getProperty("browserVersion");
+                if (browserVersion != null) {
+                    capabilities.setVersion(browserVersion);
+                }
+
+                capabilities.setCapability("testName",
+                        testName + "_" + userIdentifier);
+                
+                RemoteWebDriver remote = new RemoteWebDriver(new URL(eusApiURL),
+                        capabilities);
+                remote.setFileDetector(new LocalFileDetector());
+                this.driver = remote;
+            } catch (MalformedURLException e) {
+                throw new RuntimeException("Exception creaing eusApiURL", e);
+            }
+        }
+
+        this.driver.manage().timeouts()
+                .setScriptTimeout(this.timeOfWaitInSeconds, TimeUnit.SECONDS);
+
+        this.configureDriver();
+    }
 
 }
