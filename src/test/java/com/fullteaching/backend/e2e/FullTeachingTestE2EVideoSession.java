@@ -111,7 +111,7 @@ public class FullTeachingTestE2EVideoSession extends FullTeachingTestE2E {
 
         // TEACHER
 
-        this.user = setupBrowser(TEACHER_BROWSER, info, "Teacher", 30);
+        this.user = setupBrowser(TEACHER_BROWSER, info, "Teacher", 120);
 
         this.slowLogin(user, teacherMail, teacherPass);
 
