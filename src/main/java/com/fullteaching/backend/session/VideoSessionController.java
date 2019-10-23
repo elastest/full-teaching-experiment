@@ -4,14 +4,9 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.annotation.PostConstruct;
-
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 import io.openvidu.java.client.OpenVidu;
 import io.openvidu.java.client.TokenOptions;
 
-import com.fullteaching.backend.security.AuthorizationService;
 import com.fullteaching.backend.user.User;
 import com.fullteaching.backend.user.UserComponent;
 
@@ -31,22 +25,11 @@ import com.fullteaching.backend.user.UserComponent;
 @RequestMapping("/api-video-sessions")
 public class VideoSessionController {
 	
-	private static final Logger log = LoggerFactory.getLogger(VideoSessionController.class);
-	
 	@Autowired
 	private SessionRepository sessionRepository;
 	
 	@Autowired
-	private AuthorizationService authorizationService;
-	
-	@Autowired
 	private UserComponent user;
-	
-	@Value("${openvidu.url}")
-	private String openviduUrl;
-
-	@Value("${openvidu.secret}")
-	private String openviduSecret;
 	
 	private Map<Long, io.openvidu.java.client.Session> lessonIdSession = new ConcurrentHashMap<>();
 	private Map<String, Map<Long, String>> sessionIdUserIdToken = new ConcurrentHashMap<>();
@@ -58,12 +41,9 @@ public class VideoSessionController {
 	String SECRET;
 	String URL;
 	
-	public VideoSessionController() {}
-	
-	@PostConstruct
-	public void initIt() throws Exception {
-		this.SECRET = openviduSecret;
-    	this.URL = openviduUrl;
+	public VideoSessionController() {
+    	this.SECRET = System.getenv("openvidu.secret") != null ? System.getenv("openvidu.secret") : "MY_SECRET";
+    	this.URL = System.getenv("openvidu.url") != null ? System.getenv("openvidu.url") : "https://localhost:8443/";
     	System.out.println(" ------------ OPENVIDU_URL ---------------- : " + this.URL);
 		this.openVidu = new OpenVidu(this.URL, this.SECRET);
 	}
@@ -71,9 +51,7 @@ public class VideoSessionController {
 	@RequestMapping(value = "/get-sessionid-token/{id}", method = RequestMethod.GET)
 	public ResponseEntity<Object> getSessionIdAndToken(@PathVariable(value="id") String id) {
 		
-		log.info("Getting OpenVidu sessionId and token for session with id '{}'", id);
-		
-		ResponseEntity<Object> authorized = authorizationService.checkBackendLogged();
+		ResponseEntity<Object> authorized = this.checkBackendLogged();
 		if (authorized != null){
 			return authorized;
 		};
@@ -82,7 +60,6 @@ public class VideoSessionController {
 		try {
 			id_i = Long.parseLong(id);
 		} catch(NumberFormatException e){
-			log.error("Session ID '{}' is not of type Long", id);
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 		
@@ -92,24 +69,18 @@ public class VideoSessionController {
 			String token;
 			JSONObject responseJson = new JSONObject();
 			
-			ResponseEntity<Object> teacherAuthorized = authorizationService.checkAuthorization(session, session.getCourse().getTeacher());
+			ResponseEntity<Object> teacherAuthorized = this.checkAuthorization(session, session.getCourse().getTeacher());
 			
 			if (this.lessonIdSession.get(id_i) == null) { // First user connecting to the session (only the teacher can)
 				if (teacherAuthorized != null) { // If the user is not the teacher of the course
-					log.error("Error geting OpenVidu sessionId and token: First user must be the teacher of the course");
 					return teacherAuthorized;
 				} else {
 					io.openvidu.java.client.Session s = this.openVidu.createSession();
 
 					sessionId = s.getSessionId();
-					
-					log.info("OpenVidu sessionId '{}' succesfully retrieved from OpenVidu Server", sessionId);
-					
 					token = s.generateToken(new TokenOptions.Builder()
 							.data("{\"name\": \"" + this.user.getLoggedUser().getNickName() + "\", \"isTeacher\": true, \"color\": \"" + colors[0] + "\"}")
 							.build());
-					
-					log.info("OpenVidu token '{}' (for session '{}') succesfully retrieved from OpenVidu Server", token, sessionId);
 					
 					responseJson.put(0, sessionId);
 					responseJson.put(1, token);
@@ -119,29 +90,20 @@ public class VideoSessionController {
 					this.sessionIdUserIdToken.get(s.getSessionId()).put(this.user.getLoggedUser().getId(), token);
 					this.sessionIdindexColor.put(s.getSessionId(), 1);
 					
-					log.info("sessionId '{}' successfully associated to lesson '{}'", sessionId, id_i);
-					log.info("Sending back to client sessionId '{}' and token '{}'", sessionId, token);
-					
 					return new ResponseEntity<>(responseJson, HttpStatus.OK);
 				}
 			} else { // The video session is already created
-				ResponseEntity<Object> userAuthorized = authorizationService.checkAuthorizationUsers(session, session.getCourse().getAttenders());
+				ResponseEntity<Object> userAuthorized = this.checkAuthorizationUsers(session, session.getCourse().getAttenders());
 				if (userAuthorized != null) { // If the user is not an attender of the course
-					log.error("Error geting OpenVidu token: user must be a student of the course");
 					return userAuthorized;
 				} else {
 					io.openvidu.java.client.Session s = this.openVidu.createSession();
 					sessionId = s.getSessionId();
-					
-					log.info("OpenVidu sessionId '{}' already exists for lesson '{}'", sessionId, id_i);
-					
 					token = s.generateToken(new TokenOptions.Builder()
 							.data("{\"name\": \"" + this.user.getLoggedUser().getNickName() + "\", \"isTeacher\": " 
 									+ ((teacherAuthorized == null) ? "true" : "false") + ", \"color\": \"" + colors[0] + "\"}")
 							.build());
 					
-					log.info("OpenVidu token '{}' (for session '{}') succesfully retrieved from OpenVidu Server", token, sessionId);
-					
 					responseJson.put(0, sessionId);
 					responseJson.put(1, token);
 					
@@ -149,8 +111,6 @@ public class VideoSessionController {
 					this.sessionIdUserIdToken.put(s.getSessionId(), new ConcurrentHashMap<>());
 					this.sessionIdUserIdToken.get(s.getSessionId()).put(this.user.getLoggedUser().getId(), token);
 					this.sessionIdindexColor.put(s.getSessionId(), 1);
-					
-					log.info("Sending back to client sessionId '{}' and token '{}'", sessionId, token);
 					
 					return new ResponseEntity<>(responseJson, HttpStatus.OK);
 				}
@@ -164,13 +124,12 @@ public class VideoSessionController {
 	@RequestMapping(value = "/remove-user", method = RequestMethod.POST)
 	public ResponseEntity<Object> removeUser(@RequestBody String sessionName)
 			throws Exception {
-		
-		log.info("Removing user '{}' from videosession '{}'", this.user.getLoggedUser().getNickName(), sessionName);
 
-		ResponseEntity<Object> authorized = authorizationService.checkBackendLogged();
+		ResponseEntity<Object> authorized = this.checkBackendLogged();
 		if (authorized != null){
 			return authorized;
 		};
+		System.out.println("Removing user | {sessionName}=" + sessionName);
 
 		JSONObject sessionNameTokenJSON = (JSONObject) new JSONParser().parse(sessionName);
 		Long lessonId = (Long) sessionNameTokenJSON.get("lessonId");
@@ -181,26 +140,62 @@ public class VideoSessionController {
 			if (this.sessionIdUserIdToken.containsKey(sessionId)) {
 				if (this.sessionIdUserIdToken.get(sessionId).remove(this.user.getLoggedUser().getId()) != null) {
 					// User left the session
-					log.info("User '{}' removed", this.user.getLoggedUser().getNickName());
+					System.out.println("User removed");
 					if (this.sessionIdUserIdToken.get(sessionId).isEmpty()) {
 						// Last user left the session
-						log.info("Last user removed from session. Session '{}' empty and removed", sessionName);
+						System.out.println("Session empty and removed");
 						this.lessonIdSession.remove(lessonId);
 						this.sessionIdindexColor.remove(sessionId);
 					}
 					return new ResponseEntity<>(HttpStatus.OK);
 				} else {
-					log.error("OpenVidu TOKEN asssociated to user '{}' wasn't valid", this.user.getLoggedUser().getNickName());
+					System.out.println("Problems in the app server: the TOKEN wasn't valid");
 					return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 				}
 			} else {
-				log.error("There was no OpenVidu SESSIONID associated with lesson '{}'", lessonId);
+				System.out.println("Problems in the app server: the SESSIONID wasn't valid");
 				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 		} else {
-			log.error("There was no OpenVidu session for lesson with id '{}'", lessonId);
+			System.out.println("Problems in the app server: the SESSION does not exist");
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 	
+	
+	
+	//Login checking method for the backend
+	private ResponseEntity<Object> checkBackendLogged(){
+		if (!user.isLoggedUser()) {
+			System.out.println("Not user logged");
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		}
+		return null; 
+	}
+	
+	//Authorization checking for creating the video session (only the teacher can do it)
+	private ResponseEntity<Object> checkAuthorization(Object o, User u){
+		if(o == null){
+			//The object does not exist
+			return new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
+		}
+		if(!this.user.getLoggedUser().equals(u)){
+			//The teacher is not authorized to edit it if he is not its owner
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED); 
+		}
+		return null;
+	}
+	
+	//Authorization checking for adding new Entries (the user must be an attender)
+	private ResponseEntity<Object> checkAuthorizationUsers(Object o, Collection<User> users){
+		if(o == null){
+			//The object does not exist
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+		if(!users.contains(this.user.getLoggedUser())){
+			//The user is not authorized to edit if it is not an attender of the Course
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED); 
+		}
+		return null;
+	}
 }
