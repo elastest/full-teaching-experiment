@@ -59,6 +59,8 @@ public class ChromeUser extends BrowserUser {
                 if (browserVersion != null) {
                     capabilities.setVersion(browserVersion);
                     log.info("Using specific version: {}", browserVersion);
+                } else {
+                    log.info("Using latest version", browserVersion);
                 }
 
                 capabilities.setCapability("testName",
