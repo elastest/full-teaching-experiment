@@ -17,7 +17,6 @@ import org.slf4j.Logger;
 
 import io.github.bonigarcia.SeleniumExtension;
 import io.github.bonigarcia.wdm.ChromeDriverManager;
-import io.github.bonigarcia.wdm.FirefoxDriverManager;
 
 @ExtendWith(SeleniumExtension.class)
 public class FullTeachingTestE2E {
@@ -32,8 +31,7 @@ public class FullTeachingTestE2E {
     public FullTeachingTestE2E() {
         if (System.getenv("ET_EUS_API") == null) {
             // Outside ElasTest
-            ChromeDriverManager.getInstance().setup();
-            FirefoxDriverManager.getInstance().setup();
+            ChromeDriverManager.chromedriver().setup();
         }
 
         if (System.getenv("ET_SUT_HOST") != null) {

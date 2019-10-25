@@ -66,8 +66,8 @@ public class FullTeachingTestE2EVideoSession extends FullTeachingTestE2E {
 
         if (System.getenv("ET_EUS_API") == null) {
             // Outside ElasTest
-            ChromeDriverManager.getInstance().setup();
-            FirefoxDriverManager.getInstance().setup();
+            ChromeDriverManager.chromedriver().setup();
+            FirefoxDriverManager.firefoxdriver().setup();
         }
 
         if (System.getenv("ET_SUT_HOST") != null) {
