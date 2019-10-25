@@ -15,7 +15,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 
-import io.github.bonigarcia.SeleniumExtension;
+import io.github.bonigarcia.seljup.SeleniumExtension;
 import io.github.bonigarcia.wdm.ChromeDriverManager;
 
 @ExtendWith(SeleniumExtension.class)

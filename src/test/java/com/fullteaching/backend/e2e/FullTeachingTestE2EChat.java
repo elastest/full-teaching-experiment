@@ -30,7 +30,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
-import io.github.bonigarcia.SeleniumExtension;
+import io.github.bonigarcia.seljup.SeleniumExtension;
 import io.github.bonigarcia.wdm.ChromeDriverManager;
 import io.github.bonigarcia.wdm.FirefoxDriverManager;
 
