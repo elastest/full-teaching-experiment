@@ -1,5 +1,7 @@
 package com.fullteaching.backend.session;
 
+import com.fullteaching.backend.course.CourseService;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,24 +14,25 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fullteaching.backend.course.Course;
-import com.fullteaching.backend.course.CourseRepository;
 import com.fullteaching.backend.security.AuthorizationService;
 
 @RestController
 @RequestMapping("/api-sessions")
+@Slf4j
 public class SessionController {
 	
-	private static final Logger log = LoggerFactory.getLogger(SessionController.class);
 	
+	private final CourseService courseService;
+	private final SessionService sessionService;
+	private final AuthorizationService authorizationService;
+
 	@Autowired
-	private CourseRepository courseRepository;
-	
-	@Autowired
-	private SessionRepository sessionRepository;
-	
-	@Autowired
-	private AuthorizationService authorizationService;
-	
+	public SessionController(CourseService courseService, SessionService sessionService, AuthorizationService authorizationService) {
+		this.courseService = courseService;
+		this.sessionService = sessionService;
+		this.authorizationService = authorizationService;
+	}
+
 	@RequestMapping(value = "/course/{id}", method = RequestMethod.POST)
 	public ResponseEntity<Object> newSession(@RequestBody Session session, @PathVariable(value="id") String id) {
 		
@@ -48,7 +51,7 @@ public class SessionController {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 		
-		Course course = courseRepository.findById(id_i);
+		Course course = courseService.getFromId(id_i);
 		
 		ResponseEntity<Object> teacherAuthorized = authorizationService.checkAuthorization(course, course.getTeacher());
 		if (teacherAuthorized != null) { // If the user is not the teacher of the course
@@ -59,8 +62,8 @@ public class SessionController {
 			course.getSessions().add(session);
 			
 			//Saving the modified course: Cascade relationship between course and sessions
-			//will add the new session to SessionRepository
-			courseRepository.save(course);
+			//will add the new session to sessionService
+			courseService.save(course);
 			
 			log.info("New session succesfully added: {}", session.toString());
 			
@@ -80,7 +83,7 @@ public class SessionController {
 			return authorized;
 		};
 		
-		Session s = sessionRepository.findById(session.getId());
+		Session s = sessionService.getFromId(session.getId());
 		
 		log.info("Updating session. Previous value: {}", s.toString());
 		
@@ -92,7 +95,7 @@ public class SessionController {
 			s.setDescription(session.getDescription());
 			s.setDate(session.getDate());
 			//Saving the modified session
-			sessionRepository.save(s);
+			sessionService.save(s);
 			
 			log.info("Session succesfully updated. Modified value: {}", session.toString());
 			
@@ -119,21 +122,21 @@ public class SessionController {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 		
-		Session session = sessionRepository.findById(id_i);
+		Session session = sessionService.getFromId(id_i);
 		
 		ResponseEntity<Object> teacherAuthorized = authorizationService.checkAuthorization(session, session.getCourse().getTeacher());
 		if (teacherAuthorized != null) { // If the user is not the teacher of the course
 			return teacherAuthorized;
 		} else {
 		
-			Course course = courseRepository.findById(session.getCourse().getId());
+			Course course = courseService.getFromId(session.getCourse().getId());
 			if (course != null){
 				
 				log.info("Deleting session: {}", session.toString());
 				
 				course.getSessions().remove(session);
-				sessionRepository.deleteById(id_i);
-				courseRepository.save(course);
+				sessionService.deleteById(id_i);
+				courseService.save(course);
 				
 				log.info("Session successfully deleted");
 				
@@ -142,7 +145,7 @@ public class SessionController {
 			else {
 				//The Course that owns the deleted session does not exist
 				//This code is presumed to be unreachable, because of the Cascade.ALL relationship from Course to Session
-				sessionRepository.delete(session);
+				sessionService.delete(session);
 				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 			}
 		}

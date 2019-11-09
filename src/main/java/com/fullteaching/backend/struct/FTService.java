@@ -2,6 +2,11 @@ package com.fullteaching.backend.struct;
 
 import org.springframework.data.repository.CrudRepository;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
 public interface FTService<T, ID> {
 
     CrudRepository<T, ID> getRepo();
@@ -41,4 +46,21 @@ public interface FTService<T, ID> {
     default T save(T entity){
         return this.getRepo().save(entity);
     }
+
+
+    default Collection<T> saveAll(Collection<T> entities){
+        return StreamSupport.stream(this.getRepo().saveAll(entities).spliterator(), false)
+                .collect(Collectors.toList());
+    }
+
+    default Collection<T> getAllFromIds(Iterable<ID> ids){
+        return StreamSupport.stream(this.getRepo().findAllById(ids).spliterator(), false)
+                .collect(Collectors.toList());
+    }
+
+
+    default void delete(T entity){
+        this.getRepo().delete(entity);
+    }
+
 }

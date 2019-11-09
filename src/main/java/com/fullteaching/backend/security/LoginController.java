@@ -2,6 +2,7 @@ package com.fullteaching.backend.security;
 
 import javax.servlet.http.HttpSession;
 
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +21,15 @@ import com.fullteaching.backend.user.UserComponent;
  * NOTE: This class is not intended to be modified by app developer.
  */
 @RestController
+@Slf4j
 public class LoginController {
 
-	private static final Logger log = LoggerFactory.getLogger(LoginController.class);
-	
+	private final UserComponent userComponent;
+
 	@Autowired
-	private UserComponent userComponent;
+	public LoginController(UserComponent userComponent) {
+		this.userComponent = userComponent;
+	}
 
 	@RequestMapping("/api-logIn")
 	public ResponseEntity<User> logIn() {

@@ -1,5 +1,6 @@
 package com.fullteaching.backend.forum;
 
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,16 +18,18 @@ import com.fullteaching.backend.security.AuthorizationService;
 
 @RestController
 @RequestMapping("/api-forum")
+@Slf4j
 public class ForumController {
 	
-	private static final Logger log = LoggerFactory.getLogger(ForumController.class);
-	
+	private final AuthorizationService authorizationService;
+	private final CourseDetailsRepository courseDetailsRepository;
+
 	@Autowired
-	private AuthorizationService authorizationService;
-	
-	@Autowired
-	private CourseDetailsRepository courseDetailsRepository;
-	
+	public ForumController(AuthorizationService authorizationService, CourseDetailsRepository courseDetailsRepository) {
+		this.authorizationService = authorizationService;
+		this.courseDetailsRepository = courseDetailsRepository;
+	}
+
 	@RequestMapping(value = "/edit/{courseDetailsId}", method = RequestMethod.PUT)
 	public ResponseEntity<Object> modifyForum(@RequestBody boolean activated, @PathVariable(value="courseDetailsId") String courseDetailsId) {
 		

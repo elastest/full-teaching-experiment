@@ -17,4 +17,6 @@ public interface UserRepository extends CrudRepository<User, Long> {
     Collection<User> findAllById(Collection<Long> ids);
 
     User findById(long id);
+
+    boolean existsByName(String name);
 }

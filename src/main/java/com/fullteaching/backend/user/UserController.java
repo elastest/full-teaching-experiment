@@ -1,5 +1,6 @@
 package com.fullteaching.backend.user;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -20,36 +21,32 @@ import javax.net.ssl.HttpsURLConnection;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import com.fullteaching.backend.user.UserRepository;
-import com.fullteaching.backend.user.UserComponent;
 import com.fullteaching.backend.security.AuthorizationService;
-import com.fullteaching.backend.user.User;
 
 
 @RestController
 @RequestMapping("/api-users")
+@Slf4j
 public class UserController {
 	
-	private static final Logger log = LoggerFactory.getLogger(UserController.class);
-	
-	@Autowired
-	private UserRepository userRepository;
-	
-	@Autowired
-	private UserComponent user;
-	
-	@Autowired
-	private AuthorizationService authorizationService;
+	private final UserService userService;
+	private final UserComponent user;
+	private final AuthorizationService authorizationService;
 	
     @Value("${recaptcha.private.key}")
     private String recaptchaPrivateKey;
 	
 	//Between 8-20 characters long, at least one uppercase, one lowercase and one number
 	private String passRegex = "^((?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,20})$";
-	
+
+	@Autowired
+	public UserController(UserService userService, UserComponent user, AuthorizationService authorizationService) {
+		this.userService = userService;
+		this.user = user;
+		this.authorizationService = authorizationService;
+	}
+
 	//userData: [name, pass, nickName, captchaToken]
 	@RequestMapping(value = "/new", method = RequestMethod.POST)
 	public ResponseEntity<User> newUser(@RequestBody String[] userData) throws Exception {
@@ -59,7 +56,7 @@ public class UserController {
 		if(this.validateGoogleCaptcha(userData[3])){
 		
 			//If the email is not already in use
-			if(userRepository.findByName(userData[0]) == null) {
+			if(!this.userService.existsByName(userData[0])) {
 				
 				//If the password has a valid format (at least 8 characters long and contains one uppercase, one lowercase and a number)
 				if (userData[1].matches(this.passRegex)){
@@ -68,7 +65,7 @@ public class UserController {
 					if (EmailValidator.getInstance().isValid(userData[0])){
 						log.info("Email, password and captcha are valid");
 						User newUser = new User(userData[0], userData[1], userData[2], "", "ROLE_STUDENT");
-						userRepository.save(newUser);
+						userService.save(newUser);
 						log.info("User successfully signed up");
 						
 						return new ResponseEntity<>(newUser, HttpStatus.CREATED);
@@ -113,9 +110,9 @@ public class UserController {
 			
 			//If the password has a valid format (at least 8 characters long and contains one uppercase, one lowercase and a number)
 			if (userData[1].matches(this.passRegex)){
-				User modifiedUser = userRepository.findByName(user.getLoggedUser().getName());
+				User modifiedUser = userService.getByName(user.getLoggedUser().getName());
 				modifiedUser.setPasswordHash(encoder.encode(userData[1]));
-				userRepository.save(modifiedUser);
+				userService.save(modifiedUser);
 				
 				log.info("Password successfully updated");
 				

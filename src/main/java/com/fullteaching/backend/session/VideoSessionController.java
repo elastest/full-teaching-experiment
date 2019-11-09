@@ -1,11 +1,11 @@
 package com.fullteaching.backend.session;
 
-import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.PostConstruct;
 
+import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.slf4j.Logger;
@@ -24,23 +24,16 @@ import io.openvidu.java.client.OpenVidu;
 import io.openvidu.java.client.TokenOptions;
 
 import com.fullteaching.backend.security.AuthorizationService;
-import com.fullteaching.backend.user.User;
 import com.fullteaching.backend.user.UserComponent;
 
 @RestController
 @RequestMapping("/api-video-sessions")
+@Slf4j
 public class VideoSessionController {
 	
-	private static final Logger log = LoggerFactory.getLogger(VideoSessionController.class);
-	
-	@Autowired
-	private SessionRepository sessionRepository;
-	
-	@Autowired
-	private AuthorizationService authorizationService;
-	
-	@Autowired
-	private UserComponent user;
+	private final SessionService sessionService;
+	private final AuthorizationService authorizationService;
+	private final UserComponent user;
 	
 	@Value("${openvidu.url}")
 	private String openviduUrl;
@@ -57,8 +50,13 @@ public class VideoSessionController {
 	private OpenVidu openVidu;
 	String SECRET;
 	String URL;
-	
-	public VideoSessionController() {}
+
+	@Autowired
+	public VideoSessionController(SessionService sessionService, AuthorizationService authorizationService, UserComponent user) {
+		this.sessionService = sessionService;
+		this.authorizationService = authorizationService;
+		this.user = user;
+	}
 	
 	@PostConstruct
 	public void initIt() throws Exception {
@@ -86,7 +84,7 @@ public class VideoSessionController {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 		
-		Session session = sessionRepository.findById(id_i);
+		Session session = sessionService.getFromId(id_i);
 		if (session != null) { // sessionId belongs to a real Session
 			String sessionId;
 			String token;
