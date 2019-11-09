@@ -85,7 +85,7 @@ public class FileReaderController {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 
-		Course c = courseRepository.findOne(id_course);
+		Course c = courseRepository.findById(id_course);
 
 		ResponseEntity<Object> teacherAuthorized = authorizationService.checkAuthorization(c, c.getTeacher());
 		if (teacherAuthorized != null) { // If the user is not the teacher of the course
@@ -183,7 +183,7 @@ public class FileReaderController {
 
 		// Saving the attenders (all of them, just in case a field of the bidirectional
 		// relationship is missing in a Course or a User)
-		userRepository.save(newPossibleAttenders);
+		userRepository.saveAll(newPossibleAttenders);
 		// Saving the modified course
 		courseRepository.save(c);
 
