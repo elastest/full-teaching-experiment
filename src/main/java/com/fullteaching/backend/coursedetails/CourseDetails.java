@@ -16,8 +16,15 @@ import com.fullteaching.backend.forum.Forum;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fullteaching.backend.course.Course;
 import com.fullteaching.backend.filegroup.FileGroup;
+import lombok.*;
 
 @Entity
+@Getter
+@Setter
+@EqualsAndHashCode
+@ToString
+@AllArgsConstructor
+@NoArgsConstructor
 public class CourseDetails {
 	
 	@Id
@@ -36,12 +43,6 @@ public class CourseDetails {
 	@JsonIgnore
 	@OneToOne(mappedBy="courseDetails")
 	private Course course;
-	
-	public CourseDetails() {
-		this.info = "";
-		this.forum = new Forum();
-		this.files =  new ArrayList<>();
-	}
 
 	public CourseDetails(Course course) {
 		this.info = "";
@@ -49,45 +50,6 @@ public class CourseDetails {
 		this.forum = new Forum();
 		this.files =  new ArrayList<>();
 	}
-	
-	public long getId() {
-		return id;
-	}
 
-	public void setId(long id) {
-		this.id = id;
-	}
-	
-	public String getInfo() {
-		return info;
-	}
-
-	public void setInfo(String info) {
-		this.info = info;
-	}
-
-	public Forum getForum() {
-		return forum;
-	}
-
-	public void setForum(Forum forum) {
-		this.forum = forum;
-	}
-
-	public List<FileGroup> getFiles() {
-		return files;
-	}
-
-	public void setFiles(List<FileGroup> files) {
-		this.files = files;
-	}
-
-	public Course getCourse() {
-		return course;
-	}
-
-	public void setCourse(Course course) {
-		this.course = course;
-	}
 	
 }

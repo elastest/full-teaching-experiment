@@ -5,9 +5,16 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import lombok.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Entity
+@Getter
+@Setter
+@EqualsAndHashCode
+@ToString
+@AllArgsConstructor
+@NoArgsConstructor
 public class File {
 
 	@Id
@@ -24,8 +31,7 @@ public class File {
 	
 	private int indexOrder;
 	
-	public File() {}
-	
+
 	public File(int type, String name) {
 		this.type = type; //0: web-link | 1: pdf | 2: video
 		this.name = name;
@@ -48,63 +54,6 @@ public class File {
 		this.indexOrder = indexOrder;
 	}
 
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public int getType() {
-		return type;
-	}
-
-	public void setType(int type) {
-		this.type = type;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-	
-	public String getNameIdent() {
-		return nameIdent;
-	}
-
-	public void setNameIdent(String nameIdent) {
-		this.nameIdent = nameIdent;
-	}
-
-	public String getLink() {
-		return link;
-	}
-
-	public void setLink(String link) {
-		this.link = link;
-	}
-
-	public int getIndexOrder() {
-		return indexOrder;
-	}
-
-	public void setIndexOrder(int indexOrder) {
-		this.indexOrder = indexOrder;
-	}
-	
-	@Override
-	public boolean equals(Object other){
-	    if (other == null) return false;
-	    if (other == this) return true;
-	    if (!(other instanceof File))return false;
-	    File otherFile = (File)other;
-	    return (otherFile.id == this.id);
-	}
-	
 	public String getFileExtension(){
 		return this.nameIdent.substring(this.nameIdent.lastIndexOf('.') + 1);
 	}
@@ -118,10 +67,4 @@ public class File {
 		if (i >= 0) s += originalName.substring(i);
 		return s;
 	}
-	
-	@Override
-	public String toString() {
-		return "File[name: \"" + this.name + "\", id: \"" + this.nameIdent + "\", link: \"" + this.link + ", indexOrder: " + this.indexOrder + "]";
-	}
-
 }

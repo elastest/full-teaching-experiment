@@ -16,8 +16,15 @@ import javax.persistence.ManyToOne;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fullteaching.backend.file.File;
+import lombok.*;
 
 @Entity
+@Getter
+@Setter
+@EqualsAndHashCode
+@ToString
+@AllArgsConstructor
+@NoArgsConstructor
 public class FileGroup {
 
 	@Id
@@ -38,9 +45,7 @@ public class FileGroup {
 	@ManyToOne
 	@JsonBackReference
 	private FileGroup fileGroupParent;
-	
-	public FileGroup() {}
-	
+
 	public FileGroup(String title) {
 		this.title = title;
 		this.files = new ArrayList<>();
@@ -55,56 +60,6 @@ public class FileGroup {
 		this.fileGroupParent = fileGroupParent;
 	}
 
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public String getTitle() {
-		return title;
-	}
-
-	public void setTitle(String title) {
-		this.title = title;
-	}
-
-	public List<File> getFiles() {
-		return files;
-	}
-
-	public void setFiles(List<File> files) {
-		this.files = files;
-	}
-
-	public List<FileGroup> getFileGroups() {
-		return fileGroups;
-	}
-
-	public void setFileGroups(List<FileGroup> fileGroups) {
-		this.fileGroups = fileGroups;
-	}
-	
-	public FileGroup getFileGroupParent() {
-		return fileGroupParent;
-	}
-
-	public void setFileGroupParent(FileGroup fileGroupParent) {
-		this.fileGroupParent = fileGroupParent;
-	}
-	
-	//To make 'courseDetails.getFiles().remove(file)' possible
-	@Override
-	public boolean equals(Object other){
-	    if (other == null) return false;
-	    if (other == this) return true;
-	    if (!(other instanceof FileGroup))return false;
-	    FileGroup otherFileGroup = (FileGroup)other;
-	    return (otherFileGroup.id == this.id);
-	}
-	
 	public void updateFileIndexOrder (){
 		int i = 0;
 		for (File f : this.getFiles()){
@@ -112,11 +67,4 @@ public class FileGroup {
 			i++;
 		}
 	}
-	
-	@Override
-	public String toString() {
-		String parent = this.fileGroupParent != null ? this.fileGroupParent.getTitle() : "null";
-		return "FileGroup[title: \"" + this.title + "\", parentFileGroup: \"" + parent + "\", #files: " + this.files.size() + ", #childrenFileGroups: " + this.fileGroups.size() + "]";
-	}
-	
 }

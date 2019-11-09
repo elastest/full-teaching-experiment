@@ -18,12 +18,18 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.fullteaching.backend.user.User;
 import com.fullteaching.backend.session.Session;
 import com.fullteaching.backend.coursedetails.CourseDetails;
+import lombok.*;
 
 @Entity
+@Getter
+@Setter
+@EqualsAndHashCode
+@AllArgsConstructor
+@NoArgsConstructor
 public class Course {
 	
 	public interface SimpleCourseList {}
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@JsonView(SimpleCourseList.class)
@@ -47,9 +53,7 @@ public class Course {
 	
 	@ManyToMany
 	private Set<User> attenders;
-	
-	public Course() {}
-	
+
 	public Course(String title, String image, User teacher) {
 		this.title = title;
 		this.image = image;
@@ -66,76 +70,5 @@ public class Course {
 		this.courseDetails = courseDetails;
 		this.sessions = new HashSet<>();
 		this.attenders = new HashSet<User>();
-	}
-	
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public String getTitle() {
-		return title;
-	}
-
-	public void setTitle(String title) {
-		this.title = title;
-	}
-	
-	public String getImage() {
-		return image;
-	}
-
-	public void setImage(String image) {
-		this.image = image;
-	}
-
-	public User getTeacher() {
-		return teacher;
-	}
-
-	public void setTeacher(User teacher) {
-		this.teacher = teacher;
-	}
-
-	public CourseDetails getCourseDetails() {
-		return courseDetails;
-	}
-
-	public void setCourseDetails(CourseDetails courseDetails) {
-		this.courseDetails = courseDetails;
-	}
-
-	public Set<User> getAttenders() {
-		return attenders;
-	}
-
-	public void setAttenders(Set<User> attenders) {
-		this.attenders = attenders;
-	}
-
-	public Set<Session> getSessions() {
-		return sessions;
-	}
-
-	public void setSessions(Set<Session> sessions) {
-		this.sessions = sessions;
-	}
-	
-	//To make 'user.getCourse().remove(course)' possible
-	@Override
-	public boolean equals(Object other){
-	    if (other == null) return false;
-	    if (other == this) return true;
-	    if (!(other instanceof Course))return false;
-	    Course otherCourse = (Course)other;
-	    return (otherCourse.id == this.id);
-	}
-	
-	@Override
-	public String toString() {
-		return "Course[title: \"" + this.title + "\", teacher: \"" + this.teacher.getNickName() + "\", #attenders: " + this.attenders.size() + ", #sessions: " + this.sessions.size() + "]";
 	}
 }

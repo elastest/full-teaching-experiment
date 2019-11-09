@@ -13,8 +13,15 @@ import javax.persistence.ManyToOne;
 
 import com.fullteaching.backend.comment.Comment;
 import com.fullteaching.backend.user.User;
+import lombok.*;
 
 @Entity
+@Getter
+@Setter
+@EqualsAndHashCode
+@ToString
+@AllArgsConstructor
+@NoArgsConstructor
 public class Entry {
 
 	@Id
@@ -30,9 +37,7 @@ public class Entry {
 	
 	@ManyToOne
 	private User user;
-	
-	public Entry() {}
-	
+
 	public Entry(String title, long date, User user) {
 		this.title = title;
 		this.date = date;
@@ -40,49 +45,5 @@ public class Entry {
 		this.comments = new ArrayList<>();
 	}
 
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public String getTitle() {
-		return title;
-	}
-
-	public void setTitle(String title) {
-		this.title = title;
-	}
-
-	public long getDate() {
-		return date;
-	}
-
-	public void setDate(long date) {
-		this.date = date;
-	}
-
-	public List<Comment> getComments() {
-		return comments;
-	}
-
-	public void setComments(List<Comment> comments) {
-		this.comments = comments;
-	}
-
-	public User getUser() {
-		return user;
-	}
-
-	public void setUser(User user) {
-		this.user = user;
-	}
-	
-	@Override
-	public String toString() {
-		return "Entry[title: \"" + this.title + "\", author: \"" + user.getNickName() + "\", date: " + this.date + ", #comments: " + this.comments.size() + "]";
-	}
 
 }
