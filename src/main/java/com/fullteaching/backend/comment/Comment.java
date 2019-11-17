@@ -24,8 +24,6 @@ import lombok.*;
 @EqualsAndHashCode
 @ToString
 public class Comment {
-	
-	public interface CommentNoParent {}
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

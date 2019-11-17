@@ -7,8 +7,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Getter
 @Slf4j
@@ -24,7 +26,7 @@ public class UserService implements FTService<User, Long> {
     }
 
     public Collection<User> findByCourses(Collection<Course> courses) {
-        return this.repo.findByCourses(courses);
+        return this.repo.findAllByCoursesIn(courses);
     }
 
     public Collection<User> findByNameIn(Set<String> attenderEmailsValid) {

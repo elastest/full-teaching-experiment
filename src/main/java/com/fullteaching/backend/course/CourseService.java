@@ -23,6 +23,6 @@ public class CourseService implements FTService<Course, Long> {
     }
 
     public Collection<Course> findByAttenders(Collection<User> users) {
-        return this.repo.findByAttenders(users);
+        return this.repo.findAllByAttendersIn(users);
     }
 }

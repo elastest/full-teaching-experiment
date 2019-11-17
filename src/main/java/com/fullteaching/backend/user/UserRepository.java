@@ -12,9 +12,9 @@ public interface UserRepository extends CrudRepository<User, Long> {
 
     Collection<User> findByNameIn(Collection<String> names);
 
-    Collection<User> findByCourses(Collection<Course> courses);
+    Collection<User> findAllByCoursesIn(Collection<Course> courses);
 
-    Collection<User> findAllById(Collection<Long> ids);
+    Collection<User> findAllByIdIn(Collection<Long> ids);
 
     User findById(long id);
 

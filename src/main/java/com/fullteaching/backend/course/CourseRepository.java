@@ -9,7 +9,7 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface CourseRepository extends CrudRepository<Course, Long> {
 	
-    public Collection<Course> findByAttenders(Collection<User> users);
+    Collection<Course> findAllByAttendersIn(Collection<User> users);
 
     Course findById(long id);
 }
