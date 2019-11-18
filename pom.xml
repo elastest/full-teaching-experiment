@@ -26,6 +26,9 @@
 		<selenium-jupiter.version>3.3.1</selenium-jupiter.version>
 		<slf4j.version>1.7.25</slf4j.version>
 		<maven-surefire-plugin.version>2.22.1</maven-surefire-plugin.version>
+		<angular.project.location>src/main/angular</angular.project.location>
+		<angular.project.nodeinstallation>src/main/angular/e2e</angular.project.nodeinstallation>
+
 	</properties>
 
 	<dependencies>
@@ -184,52 +187,132 @@
 		<plugins>
 
 
+			<!-- CLEAN THE DIST FOLDER TO APPLY ANGULAR CHANGES-->
+			<plugin>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>3.1.0</version>
+				<configuration>
+					<filesets>
+						<fileset>
+							<directory>${angular.project.location}/dist</directory>
+							<includes>
+								<include>*</include>
+							</includes>
+						</fileset>
+
+					</filesets>
+				</configuration>
+			</plugin>
+			<!-- CLEAN THE DIST FOLDER TO APPLY ANGULAR CHANGES-->
+
+
 			<plugin>
 				<groupId>com.github.eirslett</groupId>
 				<artifactId>frontend-maven-plugin</artifactId>
-				<!-- NB! Set <version> to the latest released version of frontend-maven-plugin, like in README.md -->
 				<version>1.8.0</version>
-
+				<configuration>
+					<workingDirectory>${angular.project.location}</workingDirectory>
+					<installDirectory>${angular.project.nodeinstallation}</installDirectory>
+				</configuration>
 				<executions>
-
+					<!-- It will install nodejs and npm -->
 					<execution>
 						<id>install node and npm</id>
 						<goals>
 							<goal>install-node-and-npm</goal>
 						</goals>
 						<configuration>
-							<!-- See https://nodejs.org/en/download/ for latest node and npm (lts) versions -->
 							<nodeVersion>v13.1.0</nodeVersion>
 							<npmVersion>6.12.1</npmVersion>
 						</configuration>
 					</execution>
 
+					<!-- INSTALL NPM -->
 					<execution>
 						<id>npm install</id>
 						<goals>
 							<goal>npm</goal>
 						</goals>
-						<!-- Optional configuration which provides for running any npm command -->
 						<configuration>
-							<workingDirectory>src/main/angular</workingDirectory>
-							<arguments>install</arguments>
+							<arguments>install --unsafe-perm</arguments>
 						</configuration>
 					</execution>
 
+
+					<!-- It will execute command "npm build" inside "/e2e-angular2" directory
+                        to clean and create "/dist" directory -->
 					<execution>
-						<id>npm run build</id>
+						<id>npm build</id>
 						<goals>
 							<goal>npm</goal>
 						</goals>
 						<configuration>
-							<workingDirectory>src/main/angular</workingDirectory>
 							<arguments>build</arguments>
 						</configuration>
 					</execution>
-
-
-			</executions>
+				</executions>
 			</plugin>
+
+
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>3.1.0</version>
+				<executions>
+					<execution>
+						<id>default-copy-resources</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<overwrite>true</overwrite>
+							<!-- This folder is the folder where your angular files
+                            will be copied to. It must match the resulting war-file name.
+                            So if you have customized the name of war-file for ex. as "app.war"
+                            then below value should be ${project.build.directory}/app/
+                            Value given below is as per default war-file name -->
+							<outputDirectory>${project.basedir}/src/main/webapp/WEB-INF/classes/static
+							</outputDirectory>
+
+							<resources>
+								<resource>
+									<directory>${project.basedir}/${angular.project.location}/dist/GeomniAuthWeb
+									</directory>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+
+					<!-- ONLY FOR DEV MODE-->
+					<execution>
+						<id>copy-to-resources</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<overwrite>true</overwrite>
+							<!-- This folder is the folder where your angular files
+                            will be copied to. It must match the resulting war-file name.
+                            So if you have customized the name of war-file for ex. as "app.war"
+                            then below value should be ${project.build.directory}/app/
+                            Value given below is as per default war-file name -->
+							<outputDirectory>${project.basedir}/src/main/resources/static
+							</outputDirectory>
+
+							<resources>
+								<resource>
+									<directory>${project.basedir}/${angular.project.location}/dist/GeomniAuthWeb
+									</directory>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
 
 
 			<plugin>
