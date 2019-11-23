@@ -1,15 +1,17 @@
 package com.fullteaching.backend.struct;
 
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 public interface FTService<T, ID> {
 
-    CrudRepository<T, ID> getRepo();
+    JpaRepository<T, ID> getRepo();
 
     /**
      * Retrieves an entity by calling to the repo method: findById(ID id)
@@ -44,18 +46,18 @@ public interface FTService<T, ID> {
      * @return The saved entity
      */
     default T save(T entity){
-        return this.getRepo().save(entity);
+        return this.getRepo().saveAndFlush(entity);
     }
 
 
     default Collection<T> saveAll(Collection<T> entities){
-        return StreamSupport.stream(this.getRepo().saveAll(entities).spliterator(), false)
-                .collect(Collectors.toList());
+        List<T> saved = new ArrayList<>(this.getRepo().saveAll(entities));
+        this.getRepo().flush();
+        return saved;
     }
 
     default Collection<T> getAllFromIds(Iterable<ID> ids){
-        return StreamSupport.stream(this.getRepo().findAllById(ids).spliterator(), false)
-                .collect(Collectors.toList());
+        return new ArrayList<>(this.getRepo().findAllById(ids));
     }
 
 

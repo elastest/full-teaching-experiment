@@ -1,13 +1,11 @@
 package com.fullteaching.backend.course;
 
-import java.util.Collection;
-
+import com.fullteaching.backend.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.fullteaching.backend.user.User;
-import org.springframework.data.repository.CrudRepository;
+import java.util.Collection;
 
-public interface CourseRepository extends CrudRepository<Course, Long> {
+public interface CourseRepository extends JpaRepository<Course, Long> {
 	
     Collection<Course> findAllByAttendersIn(Collection<User> users);
 
