@@ -167,6 +167,12 @@
 			<scope>test</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>io.honeycomb.beeline</groupId>
+			<artifactId>beeline-spring-boot-starter</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
