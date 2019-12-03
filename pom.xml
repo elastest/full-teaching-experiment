@@ -170,7 +170,7 @@
 		<dependency>
 			<groupId>io.honeycomb.beeline</groupId>
 			<artifactId>beeline-spring-boot-starter</artifactId>
-			<version>1.0.0</version>
+			<version>1.0.8</version>
 		</dependency>
 
 	</dependencies>
@@ -213,7 +213,7 @@
 				<configuration>
 					<imageName>codeurjc/${project.artifactId}</imageName>
 					<imageTags>
-						<imageTag>latest</imageTag>
+						<imageTag>honeycomb</imageTag>
 					</imageTags>
 					<serverId>docker-hub</serverId>
 					<dockerDirectory>src/main/docker</dockerDirectory>

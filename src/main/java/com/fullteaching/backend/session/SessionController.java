@@ -38,8 +38,7 @@ public class SessionController {
 	public ResponseEntity<Object> newSession(@RequestBody Session session, @PathVariable(value = "id") String id) {
 
 		log.info("CRUD operation: Adding new session");
-        this.beeline.getActiveSpan().addField("new_session", session);
-
+		this.beeline.getActiveSpan().addField("new_session", session);
 
 		ResponseEntity<Object> authorized = authorizationService.checkBackendLogged();
 		if (authorized != null) {
