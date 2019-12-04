@@ -96,7 +96,7 @@ public class FileController {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 
-		Course c = courseRepository.findOne(id_course);
+		Course c = courseRepository.findById(id_course).get();
 
 		ResponseEntity<Object> teacherAuthorized = authorizationService.checkAuthorization(c, c.getTeacher());
 		if (teacherAuthorized != null) { // If the user is not the teacher of the course
@@ -148,7 +148,7 @@ public class FileController {
 					customFile.setLink(uploadedFile.getPath());
 					// ONLY ON DEVELOPMENT
 				}
-				fg = fileGroupRepository.findOne(id_fileGroup);
+				fg = fileGroupRepository.findById(id_fileGroup).get();
 				fg.getFiles().add(customFile);
 				fg.updateFileIndexOrder();
 				log.info("File succesfully uploaded to path '{}'", uploadedFile.getPath());
@@ -182,7 +182,7 @@ public class FileController {
 			return;
 		}
 
-		Course c = courseRepository.findOne(id_course);
+		Course c = courseRepository.findById(id_course).get();
 
 		ResponseEntity<Object> userAuthorized = authorizationService.checkAuthorizationUsers(c, c.getAttenders());
 		if (userAuthorized != null) { // If the user is not an attender of the course
@@ -190,7 +190,7 @@ public class FileController {
 			return;
 		} else {
 
-			com.fullteaching.backend.file.File f = fileRepository.findOne(id_file);
+			com.fullteaching.backend.file.File f = fileRepository.findById(id_file).get();
 
 			if (f != null) {
 				
@@ -250,7 +250,7 @@ public class FileController {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 
-		User u = userRepository.findOne(id_user);
+		User u = userRepository.findById(id_user).get();
 
 		ResponseEntity<Object> userAuthorized = authorizationService.checkAuthorization(u, this.user.getLoggedUser());
 		if (userAuthorized != null) { // If the user is not the teacher of the course
@@ -339,8 +339,8 @@ public class FileController {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 
-		Course c = courseRepository.findOne(id_course);
-		Comment comment = commentRepository.findOne(id_comment);
+		Course c = courseRepository.findById(id_course).get();
+		Comment comment = commentRepository.findById(id_comment).get();
 
 		ResponseEntity<Object> userAuthorized = authorizationService.checkAuthorizationUsers(c, c.getAttenders());
 		if (userAuthorized != null) { // If the user is not an attender of the course

@@ -45,7 +45,7 @@ public class ForumController {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 
-		CourseDetails cd = courseDetailsRepository.findOne(id_i);
+		CourseDetails cd = courseDetailsRepository.findById(id_i).get();
 		
 		log.info("Updating forum. Previous value: {}", cd.getForum());
 		

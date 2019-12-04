@@ -12069,7 +12069,7 @@ module.exports = {
     };
     URL.revokeObjectURL = function(url) {
       nativeRevokeObjectURL(url);
-      streams.delete(url);
+      streams.deleteById(url);
     };
 
     var dsc = Object.getOwnPropertyDescriptor(window.HTMLMediaElement.prototype,
@@ -17844,7 +17844,7 @@ var CourseService = /** @class */ (function () {
         console.log("DELETE course " + courseId);
         var headers = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["a" /* Headers */]({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + this.authenticationService.token });
         var options = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["d" /* RequestOptions */]({ headers: headers });
-        return this.http.delete(this.url + "/delete/" + courseId, options)
+        return this.http.deleteById(this.url + "/delete/" + courseId, options)
             .map(function (response) {
             console.log("DELETE course SUCCESS");
             return response.json();
@@ -17953,7 +17953,7 @@ var FileService = /** @class */ (function () {
         console.log("DELETE filegroup " + fileGroupId);
         var headers = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["a" /* Headers */]({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + this.authenticationService.token });
         var options = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["d" /* RequestOptions */]({ headers: headers });
-        return this.http.delete(this.url + "/delete/file-group/" + fileGroupId + "/course/" + courseId, options)
+        return this.http.deleteById(this.url + "/delete/file-group/" + fileGroupId + "/course/" + courseId, options)
             .map(function (response) {
             console.log("DELETE filegroup SUCCESS");
             return response.json();
@@ -17967,7 +17967,7 @@ var FileService = /** @class */ (function () {
         console.log("DELETE file " + fileId);
         var headers = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["a" /* Headers */]({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + this.authenticationService.token });
         var options = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["d" /* RequestOptions */]({ headers: headers });
-        return this.http.delete(this.url + "/delete/file/" + fileId + "/file-group/" + fileGroupId + "/course/" + courseId, options)
+        return this.http.deleteById(this.url + "/delete/file/" + fileId + "/file-group/" + fileGroupId + "/course/" + courseId, options)
             .map(function (response) {
             console.log("DELETE file SUCCESS");
             return response.json();
@@ -18307,7 +18307,7 @@ var SessionService = /** @class */ (function () {
         console.log("DELETE session");
         var headers = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["a" /* Headers */]({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + this.authenticationService.token });
         var options = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["d" /* RequestOptions */]({ headers: headers });
-        return this.http.delete(this.urlSessions + "/delete/" + sessionId, options)
+        return this.http.deleteById(this.urlSessions + "/delete/" + sessionId, options)
             .map(function (response) {
             console.log("DELETE session SUCCESS. Response: ", response.json());
             return response.json();

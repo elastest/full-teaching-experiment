@@ -19695,7 +19695,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var lastOp = applied.ops[applied.ops.length - 1];
 	        if (lastOp != null && typeof lastOp.insert === 'string' && lastOp.insert[lastOp.insert.length - 1] === '\n') {
 	          _this10.editor.deleteText(_this10.getLength() - 1, 1);
-	          applied.delete(1);
+	          applied.deleteById(1);
 	        }
 	        var ret = deleted.compose(applied);
 	        return ret;
@@ -21529,7 +21529,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    key: 'deleteText',
 	    value: function deleteText(index, length) {
 	      this.scroll.deleteAt(index, length);
-	      return this.update(new _quillDelta2.default().retain(index).delete(length));
+	      return this.update(new _quillDelta2.default().retain(index).deleteById(length));
 	    }
 	  }, {
 	    key: 'formatLine',
@@ -24218,7 +24218,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var delta = traverse(this.container, elementMatchers, textMatchers);
 	      // Remove trailing newline
 	      if (deltaEndsWith(delta, '\n') && delta.ops[delta.ops.length - 1].attributes == null) {
-	        delta = delta.compose(new _quillDelta2.default().retain(delta.length() - 1).delete(1));
+	        delta = delta.compose(new _quillDelta2.default().retain(delta.length() - 1).deleteById(1));
 	      }
 	      debug.log('convert', this.container.innerHTML, delta);
 	      this.container.innerHTML = '';
@@ -24248,7 +24248,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      this.container.focus();
 	      setTimeout(function () {
 	        _this2.quill.selection.update(_quill2.default.sources.SILENT);
-	        delta = delta.concat(_this2.convert()).delete(range.length);
+	        delta = delta.concat(_this2.convert()).deleteById(range.length);
 	        _this2.quill.updateContents(delta, _quill2.default.sources.USER);
 	        // range.length contributes to delta.length()
 	        _this2.quill.setSelection(delta.length() - range.length, _quill2.default.sources.SILENT);
@@ -26739,7 +26739,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        } else if (_parchment2.default.query(format).prototype instanceof _parchment2.default.Embed) {
 	          value = prompt('Enter ' + format);
 	          if (!value) return;
-	          _this2.quill.updateContents(new _quillDelta2.default().retain(range.index).delete(range.length).insert(_defineProperty({}, format, value)), _quill2.default.sources.USER);
+	          _this2.quill.updateContents(new _quillDelta2.default().retain(range.index).deleteById(range.length).insert(_defineProperty({}, format, value)), _quill2.default.sources.USER);
 	        } else {
 	          _this2.quill.format(format, value, _quill2.default.sources.USER);
 	        }
@@ -27876,7 +27876,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                var reader = new FileReader();
 	                reader.onload = function (e) {
 	                  var range = _this3.quill.getSelection(true);
-	                  _this3.quill.updateContents(new _quillDelta2.default().retain(range.index).delete(range.length).insert({ image: e.target.result }), _emitter2.default.sources.USER);
+	                  _this3.quill.updateContents(new _quillDelta2.default().retain(range.index).deleteById(range.length).insert({ image: e.target.result }), _emitter2.default.sources.USER);
 	                  fileInput.value = "";
 	                };
 	                reader.readAsDataURL(fileInput.files[0]);

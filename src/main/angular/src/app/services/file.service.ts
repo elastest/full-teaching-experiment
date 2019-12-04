@@ -43,7 +43,7 @@ export class FileService {
 
     let headers = new Headers({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + this.authenticationService.token });
     let options = new RequestOptions({ headers });
-    return this.http.delete(this.url + "/delete/file-group/" + fileGroupId + "/course/" + courseId, options)
+    return this.http.deleteById(this.url + "/delete/file-group/" + fileGroupId + "/course/" + courseId, options)
       .map(response => {
         console.log("DELETE filegroup SUCCESS");
         return (response.json() as FileGroup);
@@ -58,7 +58,7 @@ export class FileService {
 
     let headers = new Headers({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + this.authenticationService.token });
     let options = new RequestOptions({ headers });
-    return this.http.delete(this.url + "/delete/file/" + fileId + "/file-group/" + fileGroupId + "/course/" + courseId, options)
+    return this.http.deleteById(this.url + "/delete/file/" + fileId + "/file-group/" + fileGroupId + "/course/" + courseId, options)
       .map(response => {
         console.log("DELETE file SUCCESS");
         return (response.json() as File);
