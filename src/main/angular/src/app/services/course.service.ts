@@ -81,7 +81,7 @@ export class CourseService {
 
     let headers = new Headers({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + this.authenticationService.token });
     let options = new RequestOptions({ headers });
-    return this.http.deleteById(this.url + "/delete/" + courseId, options)
+    return this.http.delete(this.url + "/delete/" + courseId, options)
       .map(response => {
         console.log("DELETE course SUCCESS");
         return (response.json() as Course);

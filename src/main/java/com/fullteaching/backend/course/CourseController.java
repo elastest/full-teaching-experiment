@@ -17,12 +17,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fullteaching.backend.user.UserComponent;
-import com.fullteaching.backend.user.UserRepository;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fullteaching.backend.course.Course.SimpleCourseList;
 import com.fullteaching.backend.security.AuthorizationService;
 import com.fullteaching.backend.user.User;
+import com.fullteaching.backend.user.UserComponent;
+import com.fullteaching.backend.user.UserRepository;
+
+import io.honeycomb.beeline.tracing.Beeline;
 
 @RestController
 @RequestMapping("/api-courses")
@@ -42,6 +44,9 @@ public class CourseController {
 	@Autowired
 	private AuthorizationService authorizationService;
 
+	@Autowired
+	private Beeline beeline;
+
 	private class AddAttendersResponse {
 		public Collection<User> attendersAdded;
 		public Collection<User> attendersAlreadyAdded;
@@ -54,6 +59,7 @@ public class CourseController {
 	public ResponseEntity<Object> getCourses(@PathVariable(value = "id") String id) {
 
 		log.info("CRUD operation: Getting all user courses");
+		this.beeline.getActiveSpan().addField("get_all_user_courses", id);
 
 		ResponseEntity<Object> authorized = authorizationService.checkBackendLogged();
 		if (authorized != null) {

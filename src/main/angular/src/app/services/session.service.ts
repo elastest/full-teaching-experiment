@@ -49,7 +49,7 @@ export class SessionService {
 
     let headers = new Headers({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + this.authenticationService.token });
     let options = new RequestOptions({ headers });
-    return this.http.deleteById(this.urlSessions + "/delete/" + sessionId, options)
+    return this.http.delete(this.urlSessions + "/delete/" + sessionId, options)
       .map(response => {
         console.log("DELETE session SUCCESS. Response: ", (response.json() as Session));
         return (response.json() as Session);
