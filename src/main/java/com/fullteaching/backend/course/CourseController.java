@@ -9,6 +9,7 @@ import org.apache.commons.validator.routines.EmailValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -47,6 +48,12 @@ public class CourseController {
 	@Autowired
 	private Beeline beeline;
 
+	@Value("${honeycomb.beeline.dataset}")
+	String honeycombDataset;
+
+	@Value("${honeycomb.beeline.write-key}")
+	String honeycombWriteKey;
+
 	private class AddAttendersResponse {
 		public Collection<User> attendersAdded;
 		public Collection<User> attendersAlreadyAdded;
@@ -59,6 +66,9 @@ public class CourseController {
 	public ResponseEntity<Object> getCourses(@PathVariable(value = "id") String id) {
 
 		log.info("CRUD operation: Getting all user courses");
+
+		log.info("Debug honeycomb. honeycombDataset: {} | honeycombWriteKey: {}", honeycombDataset, honeycombWriteKey);
+
 		this.beeline.getActiveSpan().addField("get_all_user_courses", id);
 
 		ResponseEntity<Object> authorized = authorizationService.checkBackendLogged();
