@@ -31,7 +31,7 @@ import { FileGroup } from '../../classes/file-group';
 import { File } from '../../classes/file';
 import { User } from '../../classes/user';
 
-import { OpenVidu, LocalRecorder, Publisher } from "openvidu-browser";
+import {OpenVidu, LocalRecorder, Publisher, VideoElementEvent} from "openvidu-browser";
 import { Forum } from '../../classes/forum';
 
 
@@ -888,15 +888,15 @@ export class CourseDetailsComponent implements OnInit {
         }
       }
     );
-    this.publisher.on('videoElementCreated', (e) => {
+    this.publisher.on('videoElementCreated', (e : VideoElementEvent) => {
       if (publisherOptions.audio && !publisherOptions.video) {
-        $(e.element).css({ 'background-color': '#4d4d4d', 'padding': '50px' });
-        $(e.element).attr('poster', 'assets/images/volume.png');
+        $(e.element as HTMLVideoElement).css({ 'background-color': '#4d4d4d', 'padding': '50px' });
+        $(e.element as HTMLVideoElement).attr('poster', 'assets/images/volume.png');
       }
     })
-    this.publisher.on('videoPlaying', (e) => {
+    this.publisher.on('videoPlaying', (e: VideoElementEvent) => {
       this.recordRadioEnabled = true;
-      this.addRecordingControls(e.element);
+      this.addRecordingControls(e.element as HTMLVideoElement);
     });
   }
 
@@ -941,7 +941,7 @@ export class CourseDetailsComponent implements OnInit {
 
   cleanRecording() {
     if (!!this.recorder) this.recorder.clean();
-    if (!!this.publisher) this.publisher.destroy();
+    // if (!!this.publisher) this.publisher.destroy();
     delete this.publisher;
     this.recordRadioEnabled = true;
     this.publisherErrorMessage = '';

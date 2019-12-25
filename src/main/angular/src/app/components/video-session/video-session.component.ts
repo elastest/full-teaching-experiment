@@ -2,7 +2,16 @@ import {Component, HostListener, OnInit} from '@angular/core';
 import {ActivatedRoute, Params, Router} from '@angular/router';
 import {Location} from '@angular/common';
 
-import {Connection, OpenVidu, Publisher, Session, Stream} from "openvidu-browser";
+import {
+  Connection,
+  ConnectionEvent,
+  OpenVidu,
+  Publisher,
+  Session,
+  SignalEvent,
+  Stream,
+  StreamEvent, VideoElementEvent
+} from "openvidu-browser";
 
 import {User} from '../../classes/user';
 import {Course} from '../../classes/course';
@@ -281,9 +290,10 @@ export class VideoSessionComponent implements OnInit {
 
   joinSession() {
     this.OV = new OpenVidu();
-    this.OVSession = this.OV.initSession(this.OVSessionId);
+    // this.OVSession = this.OV.initSession(this.OVSessionId);
+    this.OVSession = this.OV.initSession();
 
-    this.OVSession.on('streamCreated', (event) => {
+    this.OVSession.on('streamCreated', (event : StreamEvent) => {
       console.warn("OpenVidu stream created: ", event.stream);
 
       this.OVSession.subscribe(event.stream, 'nothing');
@@ -307,7 +317,7 @@ export class VideoSessionComponent implements OnInit {
       }
     });
 
-    this.OVSession.on('streamDestroyed', (event) => {
+    this.OVSession.on('streamDestroyed', (event:StreamEvent) => {
       console.warn("OpenVidu stream destroyed: ", event.stream);
 
       let stream: Stream = event.stream;
@@ -332,7 +342,7 @@ export class VideoSessionComponent implements OnInit {
       }
     });
 
-    this.OVSession.on('connectionCreated', (event) => {
+    this.OVSession.on('connectionCreated', (event : ConnectionEvent) => {
       console.warn("OpenVidu connection created: ", event.connection);
 
       if (event.connection === this.OVSession.connection) {
@@ -351,7 +361,7 @@ export class VideoSessionComponent implements OnInit {
       this.userData.push(uData);
     });
 
-    this.OVSession.on('connectionDestroyed', (event) => {
+    this.OVSession.on('connectionDestroyed', (event: ConnectionEvent) => {
       console.warn("OpenVidu connection destroyed: ", event.connection);
 
       // Remove Connection
@@ -362,7 +372,7 @@ export class VideoSessionComponent implements OnInit {
       }
 
       // Remove UserData
-      let i2 = this.userData.map((data) => {
+      let i2 = this.userData.map((data : UserData) => {
         return data.name;
       }).indexOf(JSON.parse(event.connection.data).name);
       if (i2 !== -1) {
@@ -371,14 +381,14 @@ export class VideoSessionComponent implements OnInit {
     });
 
     // Signals
-    this.OVSession.on('signal:chat', (msg) => {
+    this.OVSession.on('signal:chat', (msg : SignalEvent) => {
       let uData: UserData = this.userData.filter(d => d.name === JSON.parse(msg.from.data).name)[0];
       let classUserMsg = (uData.name === JSON.parse(this.OVSession.connection.data).name ? "own-msg" : "stranger-msg");
       this.chatLines.push(new Chatline(classUserMsg, uData.name, uData.picture, msg.data, uData.color));
       this.animationService.animateToBottom('#message_box', 500);
     });
     if (this.authenticationService.isStudent()) {
-      this.OVSession.on('signal:grantIntervention', (msg) => {
+      this.OVSession.on('signal:grantIntervention', (msg: SignalEvent) => {
         if (msg.data === 'true') {
           // Publish
           this.publish();
@@ -398,7 +408,7 @@ export class VideoSessionComponent implements OnInit {
       });
     }
     if (this.authenticationService.isTeacher()) {
-      this.OVSession.on('signal:askIntervention', (msg) => {
+      this.OVSession.on('signal:askIntervention', (msg: SignalEvent) => {
         let from: Connection = msg.from;
         let petition: boolean = JSON.parse(msg.data).interventionRequired;
 
@@ -466,7 +476,7 @@ export class VideoSessionComponent implements OnInit {
   }
 
   publish() {
-    this.OVPublisher.on('streamCreated', (event) => {
+    this.OVPublisher.on('streamCreated', (event : StreamEvent) => {
       console.warn("OpenVidu stream created by Publisher: ", event.stream);
 
       let stream: Stream = event.stream;
@@ -477,7 +487,7 @@ export class VideoSessionComponent implements OnInit {
       }
       this.bigStream = stream;
     });
-    this.OVPublisher.on('videoElementCreated', (event) => {
+    this.OVPublisher.on('videoElementCreated', (event: VideoElementEvent) => {
       console.warn("OpenVidu video element created by Publisher: ", event.element);
     });
     this.OVSession.publish(this.OVPublisher);

@@ -30,14 +30,14 @@ import {UserService} from './services/user.service';
 import {AnimationService} from './services/animation.service';
 import {VideoSessionService} from './services/video-session.service';
 
-import {CalendarModule} from 'angular-calendar';
 import {CalendarComponent} from './components/calendar/calendar.component';
-import {EditorModule} from 'primeng/components/editor/editor';
-import {BrowserModule} from "@angular/platform-browser";
-import {HttpClientModule} from "@angular/common/http";
-import {NgModule} from "@angular/core";
-import {FormsModule} from "@angular/forms";
-import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+import {BrowserModule} from '@angular/platform-browser';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {FormsModule} from '@angular/forms';
+import {HttpClientModule} from '@angular/common/http';
+import {CalendarModule} from 'angular-calendar';
+import {EditorModule} from 'primeng/primeng';
+import {NgModule} from '@angular/core';
 
 @NgModule({
   imports: [
