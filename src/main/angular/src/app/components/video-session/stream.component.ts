@@ -41,7 +41,7 @@ export class StreamComponent {
   ngDoCheck() { // Detect any change in 'stream' property (specifically in its 'srcObject' property)
     if (this.videoElement && this.stream &&
       ((this.videoElement.srcObject == null) ||
-        (!(this.stream.getMediaStream() == null) && (this.videoElement.srcObject.id !== this.stream.getMediaStream().id)))
+        (!(this.stream.getMediaStream() == null) && (this.videoElement.id !== this.stream.getMediaStream().id)))
     ) {
       this.videoElement.srcObject = this.stream.getMediaStream();
       console.warn("Stream updated");
@@ -49,6 +49,7 @@ export class StreamComponent {
   }
 
   getName() {
+    // @ts-ignore
     return ((JSON.parse(this.stream.connection.data))['name']);
   }
 

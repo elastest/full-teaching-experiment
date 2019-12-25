@@ -89,7 +89,7 @@ export class CourseService {
       'Authorization': 'Bearer ' + this.authenticationService.token
     });
     let options = {headers};
-    return this.http.put<Course>(this.url + "/edit/add-attenders/course/" + courseId, body, options);
+    return this.http.put<{attendersAdded}>(this.url + "/edit/add-attenders/course/" + courseId, body, options);
     //.catch(error => this.handleError("PUT existing course FAIL (add attenders). Response: ", error));
   }
 

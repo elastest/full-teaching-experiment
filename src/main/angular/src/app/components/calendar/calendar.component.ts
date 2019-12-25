@@ -1,23 +1,9 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { AuthenticationService }   from '../../services/authentication.service';
-import { Session } from '../../classes/session';
-import {
-  startOfDay,
-  subDays,
-  addDays,
-  endOfMonth,
-  isSameDay,
-  isSameMonth,
-  addWeeks,
-  subWeeks,
-  addMonths,
-  subMonths
-} from 'date-fns';
-import {
-  CalendarEvent,
-  CalendarEventAction
-} from 'angular-calendar';
+import {Component, OnInit} from '@angular/core';
+import {Router} from '@angular/router';
+import {AuthenticationService} from '../../services/authentication.service';
+import {Session} from '../../classes/session';
+import {addDays, addMonths, addWeeks, isSameDay, isSameMonth, subDays, subMonths, subWeeks} from 'date-fns';
+import {CalendarEvent, CalendarEventAction} from 'angular-calendar';
 
 const colors: any = {
   red: {
@@ -59,7 +45,8 @@ export class CalendarComponent implements OnInit {
 
   loadingSessions: boolean = true;
 
-  constructor(private authenticationService: AuthenticationService, private router: Router) { }
+  constructor(private authenticationService: AuthenticationService, private router: Router) {
+  }
 
   ngOnInit() {
     this.getAllSessions();
@@ -106,7 +93,7 @@ export class CalendarComponent implements OnInit {
 
   getAllSessions() {
     let userCourses = this.authenticationService.getCurrentUser().courses;
-    for (let c of userCourses){
+    for (let c of userCourses) {
       for (let s of c.sessions) {
 
         /*By default when selecting sessions from the database their field
@@ -117,7 +104,9 @@ export class CalendarComponent implements OnInit {
         d = new Date(s.date);
         let min = d.getMinutes();
         let minutesString = min.toString();
-        if (min < 10) { minutesString = "0" + minutesString; }
+        if (min < 10) {
+          minutesString = "0" + minutesString;
+        }
         this.events.push({
           start: d,
           title: s.title + '  |  ' + d.getHours() + ':' + minutesString,
@@ -129,11 +118,11 @@ export class CalendarComponent implements OnInit {
                 this.router.navigate(['/courses', s.course.id, 1]);
               }
             }],
-            session: s,
+          session: s,
         });
-          }
       }
-      this.loadingSessions = false;
+    }
+    this.loadingSessions = false;
   }
 
 }

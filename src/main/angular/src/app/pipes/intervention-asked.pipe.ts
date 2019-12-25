@@ -6,7 +6,7 @@ import {UserData} from '../classes/user-data';
   pure: false
 })
 export class InterventionAskedPipe implements PipeTransform {
-  transform(items: UserData[]): any {
+  transform(items: Array<UserData>): any {
     if (!items) {
       return items;
     }

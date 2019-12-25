@@ -52,5 +52,6 @@
   "defaults": {
     "styleExt": "css",
     "prefixInterfaces": false
-  }
+  },
+  "version": 0
 }
