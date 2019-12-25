@@ -47,10 +47,12 @@ import { TimeAgoPipe }            from 'time-ago-pipe';
 import { DragulaModule }          from 'ng2-dragula/ng2-dragula';
 import { EditorModule }           from 'primeng/components/editor/editor';
 import { ReCaptchaModule }        from 'angular2-recaptcha';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
     FormsModule,
     HttpModule,
     MaterializeModule,
