@@ -1,15 +1,14 @@
-import { Component, OnInit, Input, ViewChild, ElementRef, SimpleChanges, SimpleChange } from '@angular/core';
-import { Stream, Session } from 'openvidu-browser';
-import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import {Component, ElementRef, Input, SimpleChanges, ViewChild} from '@angular/core';
+import {Stream} from 'openvidu-browser';
 
 @Component({
   selector: 'stream',
   styleUrls: ['./stream.component.css'],
   template: `
-        <div class='participant' [class.participant-small]="this.small">
-          <div *ngIf="this.stream" class="name-div"><p class="name-p">{{this.getName()}}</p></div>
-          <video #videoElement autoplay="true" [muted]="this.muted" [attr.title]="getVideoNameFromStream()" ></video>
-        </div>`
+    <div class='participant' [class.participant-small]="this.small">
+      <div *ngIf="this.stream" class="name-div"><p class="name-p">{{this.getName()}}</p></div>
+      <video #videoElement autoplay="true" [muted]="this.muted" [attr.title]="getVideoNameFromStream()"></video>
+    </div>`
 })
 export class StreamComponent {
 
@@ -25,7 +24,8 @@ export class StreamComponent {
   @Input()
   muted: boolean;
 
-  constructor() { }
+  constructor() {
+  }
 
   ngAfterViewInit() { // Get HTMLVideoElement from the view
     this.videoElement = this.elementRef.nativeElement;
@@ -40,7 +40,7 @@ export class StreamComponent {
 
   ngDoCheck() { // Detect any change in 'stream' property (specifically in its 'srcObject' property)
     if (this.videoElement && this.stream &&
-        ((this.videoElement.srcObject == null) ||
+      ((this.videoElement.srcObject == null) ||
         (!(this.stream.getMediaStream() == null) && (this.videoElement.srcObject.id !== this.stream.getMediaStream().id)))
     ) {
       this.videoElement.srcObject = this.stream.getMediaStream();

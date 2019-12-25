@@ -1,10 +1,10 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 import { Constants } from '../../constants';
 
-import { FileUploader } from 'ng2-file-upload';
+// import { FileUploader } from 'ng2-file-upload';
 
 import { UploaderModalService } from '../../services/uploader-modal.service';
 
@@ -17,7 +17,7 @@ declare var Materialize: any;
 })
 export class FileUploaderComponent implements OnInit {
 
-  public uploader: FileUploader;
+  // public uploader: FileUploader;
   public hasBaseDropZoneOver: boolean = false;
 
   subscription: Subscription;
@@ -43,47 +43,47 @@ export class FileUploaderComponent implements OnInit {
   constructor(private uploaderModalService: UploaderModalService) {
 
     //Subscription for clearing the queue
-    this.subscription = this.uploaderModalService.uploaderClosedAnnounced$.subscribe(
-      objs => { this.uploader.clearQueue(); this.fileIncorrect = false; }
-    );
+    // this.subscription = this.uploaderModalService.uploaderClosedAnnounced$.subscribe(
+    //   objs => { this.uploader.clearQueue(); this.fileIncorrect = false; }
+    // );
 
   }
 
   ngOnInit() {
-    this.uploader = new FileUploader({ url: this.URLUPLOAD, maxFileSize: Constants.FILE_SIZE_LIMIT });
-    this.uploader.onBeforeUploadItem = (item: any) => {
-      this.onUploadStarted.emit(true);
-    }
-    this.uploader.onCompleteItem = (item: any, response: string, status: number, headers: any) => {
-      this.onCompleteFileUpload.emit(response);
-    }
-    this.uploader.onWhenAddingFileFailed = (fileItem, filter, options) => {
-      this.handleFileSizeError();
-    }
-    this.uploader.onCancelItem = (item, response, status, headers) => {
-      console.log("File upload canceled");
-    }
+    // this.uploader = new FileUploader({ url: this.URLUPLOAD, maxFileSize: Constants.FILE_SIZE_LIMIT });
+    // this.uploader.onBeforeUploadItem = (item: any) => {
+    //   this.onUploadStarted.emit(true);
+    // }
+    // this.uploader.onCompleteItem = (item: any, response: string, status: number, headers: any) => {
+    //   this.onCompleteFileUpload.emit(response);
+    // }
+    // this.uploader.onWhenAddingFileFailed = (fileItem, filter, options) => {
+    //   this.handleFileSizeError();
+    // }
+    // this.uploader.onCancelItem = (item, response, status, headers) => {
+    //   console.log("File upload canceled");
+    // }
   }
 
   ngOnChanges() {
-    if (this.uploader) {
-      this.uploader.destroy();
-      this.uploader = new FileUploader({ url: this.URLUPLOAD, maxFileSize: Constants.FILE_SIZE_LIMIT });
-      this.uploader.onCompleteItem = (item: any, response: string, status: number, headers: any) => {
-        this.onCompleteFileUpload.emit(response);
-      }
-      this.uploader.onWhenAddingFileFailed = (fileItem) => {
-        this.handleFileSizeError();
-      }
-    }
+    // if (this.uploader) {
+    //   this.uploader.destroy();
+    //   this.uploader = new FileUploader({ url: this.URLUPLOAD, maxFileSize: Constants.FILE_SIZE_LIMIT });
+    //   this.uploader.onCompleteItem = (item: any, response: string, status: number, headers: any) => {
+    //     this.onCompleteFileUpload.emit(response);
+    //   }
+    //   this.uploader.onWhenAddingFileFailed = (fileItem) => {
+    //     this.handleFileSizeError();
+    //   }
+    // }
   }
 
   ngOnDestroy() {
-    this.subscription.unsubscribe();
-    if (this.uploader) {
-      this.uploader.destroy();
-      this.uploader.clearQueue();
-    }
+    // this.subscription.unsubscribe();
+    // if (this.uploader) {
+    //   this.uploader.destroy();
+    //   this.uploader.clearQueue();
+    // }
   }
 
   fileOverBase(e: any): void {

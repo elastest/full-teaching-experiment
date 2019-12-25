@@ -1,3 +1,5 @@
+
+import {of as observableOf,  Observable } from 'rxjs';
 import { TestBed, async,ComponentFixture } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AppComponent } from '../app.component';
@@ -5,8 +7,6 @@ import { BrowserModule, By } from '@angular/platform-browser';
 import { NgModule, DebugElement }      from '@angular/core';
 import { FormsModule }   from '@angular/forms';
 import { HttpModule }    from '@angular/http';
-
-import { Observable }    from 'rxjs';
 import {} from 'jasmine';
 
 import { routing } from '../app.routing';
@@ -53,7 +53,7 @@ import { ReCaptchaModule }        from 'angular2-recaptcha';
 
 class MockAuthenticationService extends AuthenticationService {
   login(email, pass) {
-    return Observable.of(true);
+    return observableOf(true);
   }
 }
 

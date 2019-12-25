@@ -1,15 +1,16 @@
-import { Component, OnInit, OnChanges, Input, EventEmitter, trigger, state, animate, transition, style } from '@angular/core';
+import { Component, OnInit, OnChanges, Input, EventEmitter } from '@angular/core';
+import { trigger, state, animate, transition, style} from '@angular/animations'
 import { Location } from '@angular/common';
 import { ActivatedRoute, Router, Params } from '@angular/router';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs/Rx';
 import { environment } from '../../../environments/environment';
 
-import { MaterializeAction } from 'angular2-materialize';
-import { FileUploader } from 'ng2-file-upload';
-import { DragulaService } from 'ng2-dragula/ng2-dragula';
-import { EditorModule } from 'primeng/components/editor/editor';
-
-import { CommentComponent } from '../comment/comment.component';
+// import { MaterializeAction } from 'angular2-materialize';
+// import { FileUploader } from 'ng2-file-upload';
+// import { DragulaService } from 'ng2-dragula/ng2-dragula';
+// import { EditorModule } from 'primeng/components/editor/editor';
+//
+// import { CommentComponent } from '../comment/comment.component';
 
 import { CourseDetailsModalDataService } from '../../services/course-details-modal-data.service';
 import { UploaderModalService } from '../../services/uploader-modal.service';
@@ -130,8 +131,8 @@ export class CourseDetailsComponent implements OnInit {
   attendersEditionIcon: string = "mode_edit";
   arrayOfAttDels = [];
 
-  private actions2 = new EventEmitter<string | MaterializeAction>();
-  private actions3 = new EventEmitter<string | MaterializeAction>();
+  // private actions2 = new EventEmitter<string | MaterializeAction>();
+  // private actions3 = new EventEmitter<string | MaterializeAction>();
 
   subscription1: Subscription; //Subscription to service 'courseDetailsModalDataService' for receiving POST modal dialog changes
   subscription2: Subscription; //Subscription to service 'courseDetailsModalDataService' for receiving PUT/DELETE modal dialog changes
@@ -158,18 +159,19 @@ export class CourseDetailsComponent implements OnInit {
     private courseDetailsModalDataService: CourseDetailsModalDataService,
     private uploaderModalService: UploaderModalService,
     private filesEditionService: FilesEditionService,
-    private dragulaService: DragulaService) {
+    // private dragulaService: DragulaService
+  ) {
 
     //URL for uploading files changes between development stage and production stage
     this.URL_UPLOAD = environment.URL_UPLOAD;
     this.URL_FILE_READER_UPLOAD = environment.URL_EMAIL_FILE_UPLOAD;
 
-    //Activating handles for drag and drop files
-    this.dragulaService.setOptions('drag-bag', {
-      moves: function (el, container, handle) {
-        return handle.className === 'drag-handle material-icons action-file-icon';
-      }
-    });
+    // //Activating handles for drag and drop files
+    // this.dragulaService.setOptions('drag-bag', {
+    //   moves: function (el, container, handle) {
+    //     return handle.className === 'drag-handle material-icons action-file-icon';
+    //   }
+    // });
 
     //Subscription for receiving POST modal dialog changes
     this.subscription1 = this.courseDetailsModalDataService.postModeAnnounced$.subscribe(
@@ -214,9 +216,9 @@ export class CourseDetailsComponent implements OnInit {
         }
       });
 
-    this.subscription5 = this.dragulaService.dropModel.subscribe((value) => {
-      this.changeFilesOrder(value);
-    });
+    // this.subscription5 = this.dragulaService.dropModel.subscribe((value) => {
+    //   this.changeFilesOrder(value);
+    // });
   }
 
   ngOnInit() {
@@ -246,7 +248,7 @@ export class CourseDetailsComponent implements OnInit {
     this.subscription3.unsubscribe();
     this.subscription4.unsubscribe();
     this.subscription5.unsubscribe();
-    this.dragulaService.destroy('drag-bag');
+    // this.dragulaService.destroy('drag-bag');
   }
 
   goToSessionVideo(session: Session) {
@@ -355,7 +357,7 @@ export class CourseDetailsComponent implements OnInit {
         response => {
           this.course.courseDetails.forum.entries.push(response.entry as Entry); //Only on succesful post we update the modified forum
           this.processingPost = false;
-          this.actions2.emit({ action: "modal", params: ['close'] });
+          // this.actions2.emit({ action: "modal", params: ['close'] });
         },
         error => { this.processingPost = false; }
       );
@@ -373,7 +375,7 @@ export class CourseDetailsComponent implements OnInit {
           this.course = response;
 
           this.processingPost = false;
-          this.actions2.emit({ action: "modal", params: ['close'] });
+          // this.actions2.emit({ action: "modal", params: ['close'] });
         },
         error => { this.processingPost = false; }
       );
@@ -395,7 +397,7 @@ export class CourseDetailsComponent implements OnInit {
           }
 
           this.processingPost = false;
-          this.actions2.emit({ action: "modal", params: ['close'] });
+          // this.actions2.emit({ action: "modal", params: ['close'] });
         },
         error => { this.processingPost = false; }
       );
@@ -410,7 +412,7 @@ export class CourseDetailsComponent implements OnInit {
           this.course.courseDetails = response;
 
           this.processingPost = false; // Stop the loading animation
-          this.actions2.emit({ action: "modal", params: ['close'] }); // CLose the modal
+          // this.actions2.emit({ action: "modal", params: ['close'] }); // CLose the modal
           if (!this.allowFilesEdition) this.changeModeEdition(); // Activate file edition view if deactivated
         },
         error => { this.processingPost = false; }
@@ -434,7 +436,7 @@ export class CourseDetailsComponent implements OnInit {
               }
               this.course.courseDetails.forum.entries.push(entry); //Only on succesful post we update the modified forum
               this.processingPost = false;
-              this.actions2.emit({ action: "modal", params: ['close'] });
+              // this.actions2.emit({ action: "modal", params: ['close'] });
             })
             .catch((e) => { });
         },
@@ -465,7 +467,7 @@ export class CourseDetailsComponent implements OnInit {
               }
 
               this.processingPost = false;
-              this.actions2.emit({ action: "modal", params: ['close'] });
+              // this.actions2.emit({ action: "modal", params: ['close'] });
             })
             .catch((e) => { });
         },
@@ -495,7 +497,7 @@ export class CourseDetailsComponent implements OnInit {
             }
           }
           this.processingPut = false;
-          this.actions3.emit({ action: "modal", params: ['close'] });
+          // this.actions3.emit({ action: "modal", params: ['close'] });
         },
         error => { this.processingPut = false; }
       );
@@ -511,7 +513,7 @@ export class CourseDetailsComponent implements OnInit {
           this.updateCheckboxForumEdition(response);
 
           this.processingPut = false;
-          this.actions3.emit({ action: "modal", params: ['close'] });
+          // this.actions3.emit({ action: "modal", params: ['close'] });
         },
         error => { this.processingPut = false; }
       );
@@ -532,7 +534,7 @@ export class CourseDetailsComponent implements OnInit {
           }
 
           this.processingPut = false;
-          this.actions3.emit({ action: "modal", params: ['close'] });
+          // this.actions3.emit({ action: "modal", params: ['close'] });
         },
         error => { this.processingPut = false; }
       );
@@ -553,7 +555,7 @@ export class CourseDetailsComponent implements OnInit {
           }
 
           this.processingPut = false;
-          this.actions3.emit({ action: "modal", params: ['close'] });
+          // this.actions3.emit({ action: "modal", params: ['close'] });
         },
         error => { this.processingPut = false; }
       );
@@ -572,7 +574,7 @@ export class CourseDetailsComponent implements OnInit {
             this.handleAttendersMessage(response);
 
             this.processingPut = false;
-            this.actions3.emit({ action: "modal", params: ['close'] });
+            // this.actions3.emit({ action: "modal", params: ['close'] });
           },
           error => { this.processingPut = false; }
         );
@@ -596,7 +598,7 @@ export class CourseDetailsComponent implements OnInit {
             this.handleAttendersMessage(response);
 
             this.processingPut = false;
-            this.actions3.emit({ action: "modal", params: ['close'] });
+            // this.actions3.emit({ action: "modal", params: ['close'] });
           },
           error => { this.processingPut = false; }
         );
@@ -625,7 +627,7 @@ export class CourseDetailsComponent implements OnInit {
         }
 
         this.processingPut = false;
-        this.actions3.emit({ action: "modal", params: ['close'] });
+        // this.actions3.emit({ action: "modal", params: ['close'] });
       },
       error => { this.processingPut = false; }
     );
@@ -710,7 +712,7 @@ export class CourseDetailsComponent implements OnInit {
 
       this.processingPut = false; // Stop the loading animation
       this.uploaderModalService.announceUploaderClosed(true); // Clear the uploader file queue
-      this.actions3.emit({ action: "modal", params: ['close'] }); // Close the modal
+      // this.actions3.emit({ action: "modal", params: ['close'] }); // Close the modal
     } else {
       this.processingPut = false;
       console.log("There has been an error: " + response);

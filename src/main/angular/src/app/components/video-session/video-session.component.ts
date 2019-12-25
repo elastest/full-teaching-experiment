@@ -1,21 +1,19 @@
-import { Component, OnInit, HostListener } from '@angular/core';
-import { ActivatedRoute, Params, Router } from '@angular/router';
-import { Location } from '@angular/common';
+import {Component, HostListener, OnInit} from '@angular/core';
+import {ActivatedRoute, Params, Router} from '@angular/router';
+import {Location} from '@angular/common';
 
-import { OpenVidu, Session, Stream, Publisher, Connection } from "openvidu-browser";
+import {Connection, OpenVidu, Publisher, Session, Stream} from "openvidu-browser";
 
-import { environment } from '../../../environments/environment';
+import {User} from '../../classes/user';
+import {Course} from '../../classes/course';
+import {Chatline} from '../../classes/chatline';
+import {UserData} from '../../classes/user-data';
+import {Session as MySession} from '../../classes/session';
 
-import { User } from '../../classes/user';
-import { Course } from '../../classes/course';
-import { Chatline } from '../../classes/chatline';
-import { UserData } from '../../classes/user-data';
-import { Session as MySession } from '../../classes/session';
-
-import { AuthenticationService } from '../../services/authentication.service';
-import { VideoSessionService } from '../../services/video-session.service';
-import { AnimationService } from '../../services/animation.service';
-import { InterventionAskedPipe } from '../../pipes/intervention-asked.pipe';
+import {AuthenticationService} from '../../services/authentication.service';
+import {VideoSessionService} from '../../services/video-session.service';
+import {AnimationService} from '../../services/animation.service';
+import {InterventionAskedPipe} from '../../pipes/intervention-asked.pipe';
 
 @Component({
   selector: 'app-video-session',
@@ -70,11 +68,11 @@ export class VideoSessionComponent implements OnInit {
   smallStream: Stream;
 
   constructor(private authenticationService: AuthenticationService,
-    private videoSessionService: VideoSessionService,
-    private animationService: AnimationService,
-    private router: Router,
-    private route: ActivatedRoute,
-    private location: Location) {
+              private videoSessionService: VideoSessionService,
+              private animationService: AnimationService,
+              private router: Router,
+              private route: ActivatedRoute,
+              private location: Location) {
     this.user = this.authenticationService.getCurrentUser();
     this.mySession = this.videoSessionService.session;
     this.course = this.videoSessionService.course;
@@ -106,7 +104,8 @@ export class VideoSessionComponent implements OnInit {
           this.volumeLevel = 1;
         }
       })
-      .catch((e) => { });
+      .catch((e) => {
+      });
   }
 
   ngAfterViewInit() {
@@ -234,8 +233,7 @@ export class VideoSessionComponent implements OnInit {
       if (video.paused) {
         this.playPauseIcon = 'pause';
         video.play();
-      }
-      else {
+      } else {
         this.playPauseIcon = 'play_arrow';
         video.pause();
       }
@@ -249,8 +247,7 @@ export class VideoSessionComponent implements OnInit {
         video.volume = this.storedVolumeLevel;
         this.volumeLevel = this.storedVolumeLevel;
         this.changeVolumeIcon(video);
-      }
-      else {
+      } else {
         this.storedVolumeLevel = video.volume;
         video.volume = 0.0;
         this.volumeLevel = 0.0;
@@ -365,7 +362,9 @@ export class VideoSessionComponent implements OnInit {
       }
 
       // Remove UserData
-      let i2 = this.userData.map((data) => { return data.name; }).indexOf(JSON.parse(event.connection.data).name);
+      let i2 = this.userData.map((data) => {
+        return data.name;
+      }).indexOf(JSON.parse(event.connection.data).name);
       if (i2 !== -1) {
         this.userData.splice(i2, 1);
       }
@@ -385,8 +384,7 @@ export class VideoSessionComponent implements OnInit {
           this.publish();
           this.studentAccessGranted = true;
           this.myStudentAccessGranted = true;
-        }
-        else {
+        } else {
           // Unpublish
           this.unpublish();
           this.bigStream = this.teacherStream;

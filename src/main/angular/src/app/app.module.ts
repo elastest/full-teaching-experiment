@@ -1,15 +1,9 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule }      from '@angular/core';
 import { FormsModule }   from '@angular/forms';
-import { HttpModule }    from '@angular/http';
+import { HttpClientModule }    from '@angular/common/http';
 
 import { routing } from './app.routing';
-
-import { MaterializeModule }   from 'angular2-materialize';
-import { FileSelectDirective } from 'ng2-file-upload';
-import { FileDropDirective }   from 'ng2-file-upload';
-
-import { MaterialModule } from '@angular/material';
 
 import { InterventionAskedPipe }  from './pipes/intervention-asked.pipe';
 
@@ -44,24 +38,20 @@ import { VideoSessionService }    from './services/video-session.service';
 import { CalendarModule }         from 'angular-calendar';
 import { CalendarComponent }      from './components/calendar/calendar.component';
 import { TimeAgoPipe }            from 'time-ago-pipe';
-import { DragulaModule }          from 'ng2-dragula/ng2-dragula';
 import { EditorModule }           from 'primeng/components/editor/editor';
-import { ReCaptchaModule }        from 'angular2-recaptcha';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {MaterializeModule} from "ngx-materialize";
 
 @NgModule({
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
     FormsModule,
-    HttpModule,
+    HttpClientModule,
     MaterializeModule,
-    MaterialModule.forRoot(),
     routing,
-    CalendarModule.forRoot(),
-    DragulaModule,
+    CalendarModule,
     EditorModule,
-    ReCaptchaModule,
   ],
   declarations: [
     AppComponent,
@@ -76,9 +66,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     CommentComponent,
     FileGroupComponent,
     CalendarComponent,
-    TimeAgoPipe,
-    FileSelectDirective,
-    FileDropDirective,
     VideoSessionComponent,
     FileUploaderComponent,
     StreamComponent,

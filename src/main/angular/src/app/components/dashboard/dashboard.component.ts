@@ -1,7 +1,7 @@
 import { Component, OnInit, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { MaterializeAction } from 'angular2-materialize';
+// import { MaterializeAction } from 'angular2-materialize';
 
 import { Course } from '../../classes/course';
 import { CourseDetails } from '../../classes/course-details';
@@ -33,9 +33,9 @@ export class DashboardComponent implements OnInit {
   inputPutCourseImage: string;
   updatedCourse: Course;
   allowCourseDeletion: boolean = false;
-
-  actions1 = new EventEmitter<string | MaterializeAction>();
-  actions4 = new EventEmitter<string | MaterializeAction>();
+  //
+  // actions1 = new EventEmitter<string | MaterializeAction>();
+  // actions4 = new EventEmitter<string | MaterializeAction>();
 
   constructor(
     private courseService: CourseService,
@@ -91,7 +91,7 @@ export class DashboardComponent implements OnInit {
         this.courses.push(course);
 
         this.processingPost = false;
-        this.actions1.emit({ action: "modal", params: ['close'] });
+        // this.actions1.emit({ action: "modal", params: ['close'] });
       },
       error => { this.processingPost = false; }
     )
@@ -115,7 +115,7 @@ export class DashboardComponent implements OnInit {
         }
 
         this.processingPut = false;
-        this.actions4.emit({ action: "modal", params: ['close'] });
+        // this.actions4.emit({ action: "modal", params: ['close'] });
       },
       error => { this.processingPut = false; }
     )
@@ -133,7 +133,7 @@ export class DashboardComponent implements OnInit {
             break;
           }
         }
-        this.actions4.emit({ action: "modal", params: ['close'] });
+        // this.actions4.emit({ action: "modal", params: ['close'] });
       },
       error => { }
     );

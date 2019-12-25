@@ -1,13 +1,11 @@
-import { Component, OnInit } from '@angular/core';
-import { environment } from '../../../environments/environment';
+import {Component, OnInit} from '@angular/core';
+import {environment} from '../../../environments/environment';
 
-import { FileUploader } from 'ng2-file-upload';
-
-import { AuthenticationService } from '../../services/authentication.service';
-import { UserService } from '../../services/user.service';
-import { AnimationService } from '../../services/animation.service';
-import { User } from '../../classes/user';
-import { Constants } from '../../constants';
+import {AuthenticationService} from '../../services/authentication.service';
+import {UserService} from '../../services/user.service';
+import {AnimationService} from '../../services/animation.service';
+import {User} from '../../classes/user';
+import {Constants} from '../../constants';
 
 declare var Materialize: any;
 
@@ -49,8 +47,11 @@ export class SettingsComponent implements OnInit {
 
   ngOnInit() {
     this.authenticationService.checkCredentials()
-      .then(() => { this.user = this.authenticationService.getCurrentUser(); })
-      .catch((e) => { });
+      .then(() => {
+        this.user = this.authenticationService.getCurrentUser();
+      })
+      .catch((e) => {
+      });
   }
 
   pictureUploadStarted(started: boolean) {
@@ -74,8 +75,7 @@ export class SettingsComponent implements OnInit {
       this.customClass = 'fail';
       this.toastMessage = 'Your passwords don\'t match!';
       this.handleError();
-    }
-    else {
+    } else {
 
       let regex = new RegExp(Constants.PASS_REGEX);
 
@@ -86,8 +86,7 @@ export class SettingsComponent implements OnInit {
         this.customClass = 'fail';
         this.toastMessage = 'Your new password must be 8 characters long, one upperCase, one lowerCase and a number';
         this.handleError();
-      }
-      else {
+      } else {
         this.userService.changePassword(this.inputCurrentPassword, this.inputNewPassword).subscribe(
           result => {
             //Password changed succesfully
@@ -114,8 +113,7 @@ export class SettingsComponent implements OnInit {
               this.errorContent = 'It must be at least 8 characters long and include one uppercase, one lowercase and a number';
               this.customClass = 'fail';
               this.toastMessage = 'Your new password must be 8 characters long, one upperCase, one lowerCase and a number';
-            }
-            else if (error === 409) { //CONFLICT: Current password not valid
+            } else if (error === 409) { //CONFLICT: Current password not valid
               this.errorTitle = 'Invalid current password';
               this.errorContent = 'Our server has rejected that password';
               this.customClass = 'fail';

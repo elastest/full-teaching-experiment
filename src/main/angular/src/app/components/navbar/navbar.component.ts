@@ -1,8 +1,8 @@
-import { Component, EventEmitter, Output } from '@angular/core';
-import { Location }                        from '@angular/common';
+import {Component} from '@angular/core';
+import {Location} from '@angular/common';
 
-import { AuthenticationService } from '../../services/authentication.service';
-import { LoginModalService }     from '../../services/login-modal.service';
+import {AuthenticationService} from '../../services/authentication.service';
+import {LoginModalService} from '../../services/login-modal.service';
 
 @Component({
   selector: 'navbar',

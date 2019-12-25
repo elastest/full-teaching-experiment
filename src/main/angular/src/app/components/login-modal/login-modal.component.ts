@@ -1,16 +1,13 @@
-import { Component, EventEmitter } from '@angular/core';
-import { Router } from '@angular/router';
+import {Component, EventEmitter} from '@angular/core';
+import {Router} from '@angular/router';
 
-import { environment } from '../../../environments/environment';
+import {environment} from '../../../environments/environment';
+import {AuthenticationService} from '../../services/authentication.service';
+import {LoginModalService} from '../../services/login-modal.service';
+import {UserService} from '../../services/user.service';
+import {Constants} from '../../constants';
 
-import { MaterializeAction } from 'angular2-materialize';
-
-import { AuthenticationService } from '../../services/authentication.service';
-import { LoginModalService } from '../../services/login-modal.service';
-import { UserService } from '../../services/user.service';
-import { Constants } from '../../constants';
-
-import { User } from '../../classes/user';
+// import { MaterializeAction } from 'angular2-materialize';
 
 declare var Materialize: any;
 
@@ -30,7 +27,7 @@ export class LoginModalComponent {
   private loginView: boolean;
   private fieldsIncorrect: boolean;
   private submitProcessing: boolean;
-  private actions = new EventEmitter<string | MaterializeAction>();
+  // private actions = new EventEmitter<string | MaterializeAction>();
 
   private captchaValidated: boolean = false;
   private captchaPublicKey: string;
@@ -96,7 +93,7 @@ export class LoginModalComponent {
 
         // Login successful
         this.fieldsIncorrect = false;
-        this.actions.emit({ action: "modal", params: ['close'] });
+        // this.actions.emit({ action: "modal", params: ['close'] });
         this.router.navigate(['/courses']);
       },
       error => {
