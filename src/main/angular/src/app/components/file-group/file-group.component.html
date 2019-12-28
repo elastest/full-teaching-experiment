@@ -14,7 +14,7 @@
     </div>
   </div>
 
-  <div class="drag-bag-editable" [dragula]='"drag-bag"' [dragulaModel]="fileGroup?.files" [attr.data-id]="fileGroup.id">
+  <div class="drag-bag-editable" [attr.data-id]="fileGroup.id">
     <div *ngFor="let f of fileGroup?.files; let i = index" [attr.data-id]="f.id">
         <div class="chip chip-file truncate valign-wrapper disp-inline-flex" (click)="this.downloadFile(f)">
           <span class="file-extension" [style.background-color]="getColorByFile(f.link)">{{getFileExtension(f.link)}}</span><div class="file-name-div valign">{{f.name}}</div>

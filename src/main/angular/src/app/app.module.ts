@@ -36,7 +36,6 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {FormsModule} from '@angular/forms';
 import {HttpClientModule} from '@angular/common/http';
 import {CalendarModule} from 'angular-calendar';
-import {EditorModule} from 'primeng/primeng';
 import {NgModule} from '@angular/core';
 
 @NgModule({
@@ -46,9 +45,7 @@ import {NgModule} from '@angular/core';
     FormsModule,
     HttpClientModule,
     routing,
-    CalendarModule,
-    EditorModule
-  ],
+    CalendarModule],
   declarations: [
     AppComponent,
     PresentationComponent,

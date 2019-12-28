@@ -20,7 +20,6 @@ import { ChatLineComponent }      from '../components/chat-line/chat-line.compon
 
 import { CalendarComponent }      from '../components/calendar/calendar.component';
 import { TimeAgoPipe }            from 'time-ago-pipe';
-import { EditorModule }           from 'primeng/components/editor/editor';
 import {HttpClientModule} from '@angular/common/http';
 import {MaterializeModule} from 'ngx-materialize';
 
@@ -33,8 +32,7 @@ describe('App: Ejemplo', () => {
         FormsModule,
         HttpClientModule,
         MaterializeModule,
-        RouterTestingModule,
-        EditorModule,
+        RouterTestingModule
       ],
       declarations: [
         AppComponent,

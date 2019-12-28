@@ -11,7 +11,7 @@ import {LoginModalService} from '../../services/login-modal.service';
 })
 export class NavbarComponent {
 
-  constructor(private authenticationService: AuthenticationService, private loginModalService: LoginModalService, private location: Location) { }
+  constructor(public authenticationService: AuthenticationService, public loginModalService: LoginModalService, public location: Location) { }
 
   updateLoginModalView(b: boolean){
     this.loginModalService.activateLoginView(b);

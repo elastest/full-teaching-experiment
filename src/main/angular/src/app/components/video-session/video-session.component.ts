@@ -57,15 +57,15 @@ export class VideoSessionComponent implements OnInit {
   volumeMuteIcon: string = "volume_up";
 
   // OpenVidu params
-  private OV: OpenVidu;
-  private OVSessionId: string;
-  private OVToken: string;
-  private OVPublisher: Publisher;
-  private OVSession: Session;
-  private teacherConnection: Connection;
-  private OVConnections: Connection[] = [];
+  public OV: OpenVidu;
+  public OVSessionId: string;
+  public OVToken: string;
+  public OVPublisher: Publisher;
+  public OVSession: Session;
+  public teacherConnection: Connection;
+  public OVConnections: Connection[] = [];
 
-  private userData: UserData[] = [];
+  public userData: UserData[] = [];
 
   // Join form
   sessionName: string;
@@ -76,12 +76,12 @@ export class VideoSessionComponent implements OnInit {
   bigStream: Stream;
   smallStream: Stream;
 
-  constructor(private authenticationService: AuthenticationService,
-              private videoSessionService: VideoSessionService,
-              private animationService: AnimationService,
-              private router: Router,
-              private route: ActivatedRoute,
-              private location: Location) {
+  constructor(public authenticationService: AuthenticationService,
+              public videoSessionService: VideoSessionService,
+              public animationService: AnimationService,
+              public router: Router,
+              public route: ActivatedRoute,
+              public location: Location) {
     this.user = this.authenticationService.getCurrentUser();
     this.mySession = this.videoSessionService.session;
     this.course = this.videoSessionService.course;

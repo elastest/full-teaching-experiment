@@ -26,7 +26,6 @@ import {AuthenticationService} from '../services/authentication.service';
 import {LoginModalService} from '../services/login-modal.service';
 import {CalendarComponent} from '../components/calendar/calendar.component';
 import {TimeAgoPipe} from 'time-ago-pipe';
-import {EditorModule} from 'primeng/components/editor/editor';
 import {HttpClientModule} from "@angular/common/http";
 import {MaterializeModule} from "ngx-materialize";
 
@@ -72,7 +71,6 @@ describe('NavbarComponent Test', () => {
         HttpClientModule,
         MaterializeModule,
         RouterTestingModule,
-        EditorModule,
       ],
       declarations: [
         AppComponent,

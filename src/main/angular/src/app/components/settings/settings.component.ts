@@ -16,15 +16,15 @@ declare var Materialize: any;
 })
 export class SettingsComponent implements OnInit {
 
-  private user: User;
+  user: User;
 
-  private URL_UPLOAD: string;
+  URL_UPLOAD: string;
 
-  private processingPic: boolean = false;
-  private processingPass: boolean = false;
+  processingPic: boolean = false;
+  processingPass: boolean = false;
 
-  private submitProcessing: boolean;
-  private fieldsIncorrect: boolean = false;
+  submitProcessing: boolean;
+  fieldsIncorrect: boolean = false;
 
   inputCurrentPassword: string;
   inputNewPassword: string;
@@ -38,8 +38,7 @@ export class SettingsComponent implements OnInit {
 
   constructor(
     private authenticationService: AuthenticationService,
-    private userService: UserService,
-    private animationService: AnimationService) {
+    private userService: UserService, public animationService: AnimationService) {
 
     //URL for uploading files changes between development stage and production stage
     this.URL_UPLOAD = environment.URL_PIC_UPLOAD;
