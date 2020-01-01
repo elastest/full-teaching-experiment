@@ -21,7 +21,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import com.fullteaching.backend.course.Course;
 
-@Entity
+@Entity(name = "user_data")
 @Getter
 @Setter
 @EqualsAndHashCode
