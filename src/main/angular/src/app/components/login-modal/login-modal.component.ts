@@ -1,16 +1,13 @@
-import { Component, EventEmitter } from '@angular/core';
-import { Router } from '@angular/router';
+import {Component, EventEmitter} from '@angular/core';
+import {Router} from '@angular/router';
 
-import { environment } from '../../../environments/environment';
+import {environment} from '../../../environments/environment';
+import {AuthenticationService} from '../../services/authentication.service';
+import {LoginModalService} from '../../services/login-modal.service';
+import {UserService} from '../../services/user.service';
+import {Constants} from '../../constants';
 
-import { MaterializeAction } from 'angular2-materialize';
-
-import { AuthenticationService } from '../../services/authentication.service';
-import { LoginModalService } from '../../services/login-modal.service';
-import { UserService } from '../../services/user.service';
-import { Constants } from '../../constants';
-
-import { User } from '../../classes/user';
+// import { MaterializeAction } from 'angular2-materialize';
 
 declare var Materialize: any;
 
@@ -22,32 +19,30 @@ declare var Materialize: any;
 
 export class LoginModalComponent {
 
-  private email: string;
-  private password: string;
-  private confirmPassword: string;
-  private nickName: string;
+  public email: string;
+  public password: string;
+  public confirmPassword: string;
+  public nickName: string;
 
-  private loginView: boolean;
-  private fieldsIncorrect: boolean;
-  private submitProcessing: boolean;
-  private actions = new EventEmitter<string | MaterializeAction>();
+  public loginView: boolean;
+  public fieldsIncorrect: boolean;
+  public submitProcessing: boolean;
 
-  private captchaValidated: boolean = false;
-  private captchaPublicKey: string;
-  private captchaToken: string;
+  public captchaValidated: boolean = false;
+  public captchaPublicKey: string;
+  public captchaToken: string;
 
-  //Error message content
-  private errorTitle: string;
-  private errorContent: string;
-  private customClass: string;
-  private toastMessage: string;
+  public errorTitle: string;
+  public errorContent: string;
+  public customClass: string;
+  public toastMessage: string;
 
 
   constructor(
-    private authenticationService: AuthenticationService,
-    private userService: UserService,
-    private router: Router,
-    private loginModalService: LoginModalService) {
+    public authenticationService: AuthenticationService,
+    public userService: UserService,
+    public router: Router,
+    public loginModalService: LoginModalService) {
 
     this.loginView = true;
     this.fieldsIncorrect = false;
@@ -96,7 +91,7 @@ export class LoginModalComponent {
 
         // Login successful
         this.fieldsIncorrect = false;
-        this.actions.emit({ action: "modal", params: ['close'] });
+        // this.actions.emit({ action: "modal", params: ['close'] });
         this.router.navigate(['/courses']);
       },
       error => {

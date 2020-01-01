@@ -5,11 +5,11 @@ export class User {
   public id?: number;
   public name: string;
   public nickName: string;
-  public roles: string[];
+  public roles: Array<string>;
   public picture: string;
   public registrationDate: Date;
   public passwordHash?: string;
-  public courses: Course[];
+  public courses: Array<Course>;
 
   constructor(u: User){
     this.id = u.id;
@@ -18,7 +18,7 @@ export class User {
     this.roles = u.roles;
     this.picture = u.picture;
     this.registrationDate = u.registrationDate;
-    this.courses = [];
+    this.courses = new Array<Course>();
   }
 
 }

@@ -17,7 +17,7 @@ export class CommentComponent implements OnInit {
   @Input()
   public comment: Comment;
 
-  constructor(private courseDetailsModalDataService: CourseDetailsModalDataService, private animationService: AnimationService) {}
+  constructor(public courseDetailsModalDataService: CourseDetailsModalDataService, public animationService: AnimationService) {}
 
   ngOnInit() {}
 

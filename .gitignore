@@ -3,3 +3,12 @@
 /bin/
 /files/
 /pictures/
+/.idea/
+/.gradle/
+/build/
+/lib/
+/out/production/resources/
+/gradle/wrapper/
+/.vs/
+/.settings/
+/.scannerwork/

@@ -1,8 +1,8 @@
-import { Component, EventEmitter, Output } from '@angular/core';
-import { Location }                        from '@angular/common';
+import {Component} from '@angular/core';
+import {Location} from '@angular/common';
 
-import { AuthenticationService } from '../../services/authentication.service';
-import { LoginModalService }     from '../../services/login-modal.service';
+import {AuthenticationService} from '../../services/authentication.service';
+import {LoginModalService} from '../../services/login-modal.service';
 
 @Component({
   selector: 'navbar',
@@ -11,7 +11,7 @@ import { LoginModalService }     from '../../services/login-modal.service';
 })
 export class NavbarComponent {
 
-  constructor(private authenticationService: AuthenticationService, private loginModalService: LoginModalService, private location: Location) { }
+  constructor(public authenticationService: AuthenticationService, public loginModalService: LoginModalService, public location: Location) { }
 
   updateLoginModalView(b: boolean){
     this.loginModalService.activateLoginView(b);

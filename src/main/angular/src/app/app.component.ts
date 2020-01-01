@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import {Component} from '@angular/core';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app',
@@ -10,8 +10,8 @@ import { Router } from '@angular/router';
 export class AppComponent {
 
   constructor(private router: Router){}
-
   isVideoSessionUrl(){
+
     return (this.router.url.substring(0, '/session/'.length) === '/session/');
   }
 

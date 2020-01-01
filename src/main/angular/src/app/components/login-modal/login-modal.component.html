@@ -1,4 +1,4 @@
-<div id="login-modal" class="modal my-modal-class" materialize="modal" [materializeParams]="[{dismissible: false}]" [materializeActions]="actions">
+<div id="login-modal" class="modal my-modal-class">
 
   <div *ngIf="submitProcessing" class="loading"></div>
 
@@ -38,7 +38,7 @@
 
         <div class="recaptcha-div-outer" [class.hide]="loginView">
           <div class="recaptcha-div-inner">
-            <re-captcha (captchaResponse)="handleCorrectCaptcha($event)" site_key="{{this.captchaPublicKey}}"></re-captcha>
+<!--            <re-captcha (captchaResponse)="handleCorrectCaptcha($event)"></re-captcha>-->
           </div>
         </div>
 

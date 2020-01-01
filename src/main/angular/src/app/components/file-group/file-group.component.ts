@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 
-import { Subscription }             from 'rxjs/Subscription';
+import { Subscription }             from 'rxjs';
 
 import { File }      from '../../classes/file';
 import { FileGroup } from '../../classes/file-group';
@@ -38,11 +38,11 @@ export class FileGroupComponent implements OnInit {
   typeOfFile = ['language', 'picture_as_pdf', 'videocam'];
 
   constructor(
-    private fileService: FileService,
-    private filesEditionService: FilesEditionService,
-    private courseDetailsModalDataService: CourseDetailsModalDataService,
-    private authenticationService: AuthenticationService,
-    private animationService: AnimationService) {
+    public fileService: FileService,
+    public filesEditionService: FilesEditionService,
+    public courseDetailsModalDataService: CourseDetailsModalDataService,
+    public authenticationService: AuthenticationService,
+    public animationService: AnimationService) {
 
     this.subscription = filesEditionService.modeEditAnnounced$.subscribe(
       active => {

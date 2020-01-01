@@ -1,13 +1,11 @@
-import { Component, OnInit } from '@angular/core';
-import { environment } from '../../../environments/environment';
+import {Component, OnInit} from '@angular/core';
+import {environment} from '../../../environments/environment';
 
-import { FileUploader } from 'ng2-file-upload';
-
-import { AuthenticationService } from '../../services/authentication.service';
-import { UserService } from '../../services/user.service';
-import { AnimationService } from '../../services/animation.service';
-import { User } from '../../classes/user';
-import { Constants } from '../../constants';
+import {AuthenticationService} from '../../services/authentication.service';
+import {UserService} from '../../services/user.service';
+import {AnimationService} from '../../services/animation.service';
+import {User} from '../../classes/user';
+import {Constants} from '../../constants';
 
 declare var Materialize: any;
 
@@ -18,15 +16,15 @@ declare var Materialize: any;
 })
 export class SettingsComponent implements OnInit {
 
-  private user: User;
+  user: User;
 
-  private URL_UPLOAD: string;
+  URL_UPLOAD: string;
 
-  private processingPic: boolean = false;
-  private processingPass: boolean = false;
+  processingPic: boolean = false;
+  processingPass: boolean = false;
 
-  private submitProcessing: boolean;
-  private fieldsIncorrect: boolean = false;
+  submitProcessing: boolean;
+  fieldsIncorrect: boolean = false;
 
   inputCurrentPassword: string;
   inputNewPassword: string;
@@ -40,8 +38,7 @@ export class SettingsComponent implements OnInit {
 
   constructor(
     private authenticationService: AuthenticationService,
-    private userService: UserService,
-    private animationService: AnimationService) {
+    private userService: UserService, public animationService: AnimationService) {
 
     //URL for uploading files changes between development stage and production stage
     this.URL_UPLOAD = environment.URL_PIC_UPLOAD;
@@ -49,8 +46,11 @@ export class SettingsComponent implements OnInit {
 
   ngOnInit() {
     this.authenticationService.checkCredentials()
-      .then(() => { this.user = this.authenticationService.getCurrentUser(); })
-      .catch((e) => { });
+      .then(() => {
+        this.user = this.authenticationService.getCurrentUser();
+      })
+      .catch((e) => {
+      });
   }
 
   pictureUploadStarted(started: boolean) {
@@ -74,8 +74,7 @@ export class SettingsComponent implements OnInit {
       this.customClass = 'fail';
       this.toastMessage = 'Your passwords don\'t match!';
       this.handleError();
-    }
-    else {
+    } else {
 
       let regex = new RegExp(Constants.PASS_REGEX);
 
@@ -86,8 +85,7 @@ export class SettingsComponent implements OnInit {
         this.customClass = 'fail';
         this.toastMessage = 'Your new password must be 8 characters long, one upperCase, one lowerCase and a number';
         this.handleError();
-      }
-      else {
+      } else {
         this.userService.changePassword(this.inputCurrentPassword, this.inputNewPassword).subscribe(
           result => {
             //Password changed succesfully
@@ -114,8 +112,7 @@ export class SettingsComponent implements OnInit {
               this.errorContent = 'It must be at least 8 characters long and include one uppercase, one lowercase and a number';
               this.customClass = 'fail';
               this.toastMessage = 'Your new password must be 8 characters long, one upperCase, one lowerCase and a number';
-            }
-            else if (error === 409) { //CONFLICT: Current password not valid
+            } else if (error === 409) { //CONFLICT: Current password not valid
               this.errorTitle = 'Invalid current password';
               this.errorContent = 'Our server has rejected that password';
               this.customClass = 'fail';
