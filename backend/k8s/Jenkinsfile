@@ -1,0 +1,65 @@
+node {
+    elastest(tss: ['EUS'], surefireReportsPattern: '**/target/surefire-reports/TEST-*.xml', project: 'Jenkins Examples') {
+        withKubeConfig([credentialsId: 'k8s-api-token', serverUrl: env.K8S_URL]) {
+            try {
+                stage("Start SUT") {
+                    git(
+                        url: 'https://github.com/elastest/full-teaching-experiment.git'
+                        ) 
+                    sh "cd ./k8s; export BUG_TAG=demo;./addSutPrefix.sh;kubectl create -f ."
+                    checkPodStatus(5, "${ET_SUT_CONTAINER_NAME}-full-teaching")
+                }
+                
+                stage("Run tests") {
+                    mvnHome = tool 'M3.3.9'
+                    def sutIp = getPodIp('full-teaching')
+                    waitForService(5, "https://" + sutIp + ":5001")
+                    withEnv(['ET_SUT_HOST=' + sutIp]) {
+                        echo "Running test"
+                        sh "'${mvnHome}/bin/mvn' -Dapp.url=https://" + sutIp +":5001/ -Dtest=FullTeachingTestE2EREST,FullTeachingTestE2EVideoSession,FullTeachingTestE2EChat -B -DforkCount=0 test"
+                    }
+                }
+            
+            } finally {
+                sh "kubectl delete -f k8s/"
+            }
+        }
+    }
+}
+
+def getPodIp(podName) {
+    echo "Retrive pod ip"
+    def podIp = sh (
+        script: "kubectl get pod -o wide | grep " + podName + " | awk '{print \$6}'",
+        returnStdout: true
+    ).split( '\n' ).first()
+
+    echo podName+" IP = " + podIp;
+    return podIp;
+}
+
+def waitForService(time, serviceUrl) {
+    timeout(time) {
+        waitUntil {
+            echo "Waiting for the service " + serviceUrl + " is ready"
+            script {
+                def r = sh script: 'wget -q --no-check-certificate ' + serviceUrl + ' -O /dev/null', returnStatus: true
+                return (r == 0);
+           }
+        }
+    }
+}
+
+def checkPodStatus(time, podName) {
+    timeout(time) {
+        waitUntil {
+            echo "Waiting for the pod " + podName + " is created"
+            script {
+                def r = sh script: 'kubectl get pods -l io.elastest.service=' + podName.replace('_','-') + " | awk '{print \$3}'", returnStdout: true
+                def status = r.split("\n").last()
+                echo "Pod ${podName} current status: " + status
+                return ( status == 'Running');
+           }
+        }
+    }
+}

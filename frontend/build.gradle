@@ -1,0 +1,19 @@
+// 1
+plugins {
+  id 'java'
+  id "com.moowork.node" version "1.2.0"
+}
+
+// 2
+node {
+  version = '13.3.0'
+  npmVersion = '6.13.1'
+}
+
+// 3
+jar.dependsOn 'npm_run_build'
+
+// 4
+jar {
+  from 'dist/' into 'static'
+}
