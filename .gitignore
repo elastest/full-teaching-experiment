@@ -9,3 +9,6 @@
 /lib/
 /out/production/resources/
 /gradle/wrapper/
+/.vs/
+/.settings/
+/.scannerwork/
