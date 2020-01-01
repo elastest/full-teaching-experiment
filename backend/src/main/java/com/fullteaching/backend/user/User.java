@@ -24,7 +24,6 @@ import com.fullteaching.backend.course.Course;
 @Entity(name = "user_data")
 @Getter
 @Setter
-@EqualsAndHashCode
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
@@ -40,7 +39,7 @@ public class User {
 	private String passwordHash;
 
 	@ElementCollection(fetch = FetchType.EAGER)
-	private List<String> roles;
+	private List<String> roles = new ArrayList<>();
 	
 	private String nickName;
 	
@@ -52,7 +51,7 @@ public class User {
 	//This makes necessary another interaction with the database (after login to retrieve the courses of the user)
 	@JsonIgnore
 	@ManyToMany(mappedBy="attenders")
-	private Set<Course> courses;
+	private Set<Course> courses = new HashSet<>();
 
 	public User(String name, String password, String nickName, String picture, String... roles){
 		this.name = name;

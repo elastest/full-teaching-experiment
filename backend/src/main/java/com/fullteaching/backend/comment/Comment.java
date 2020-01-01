@@ -21,7 +21,6 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
 @ToString
 public class Comment {
 
@@ -37,7 +36,7 @@ public class Comment {
 	
 	@OneToMany(mappedBy="commentParent", cascade=CascadeType.ALL)
 	@JsonManagedReference
-	private List<Comment> replies;
+	private List<Comment> replies = new ArrayList<>();
 	
 	@ManyToOne
 	@JsonBackReference
@@ -50,7 +49,6 @@ public class Comment {
 		this.message = message;
 		this.date = date;
 		this.user = user;
-		this.replies = new ArrayList<Comment>();
 		this.commentParent = null;
 	}
 	
@@ -58,7 +56,8 @@ public class Comment {
 		this.message = message;
 		this.date = date;
 		this.user = user;
-		this.replies = new ArrayList<Comment>();
 		this.commentParent = commentParent;
 	}
+
+
 }

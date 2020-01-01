@@ -21,7 +21,6 @@ import lombok.*;
 @Entity
 @Getter
 @Setter
-@EqualsAndHashCode
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
@@ -38,7 +37,7 @@ public class CourseDetails {
 	private Forum forum;
 	
 	@OneToMany(cascade=CascadeType.ALL)
-	private List<FileGroup> files;
+	private List<FileGroup> files = new ArrayList<>();
 	
 	@JsonIgnore
 	@OneToOne(mappedBy="courseDetails")
@@ -48,7 +47,6 @@ public class CourseDetails {
 		this.info = "";
 		this.course = course;
 		this.forum = new Forum();
-		this.files =  new ArrayList<>();
 	}
 
 	

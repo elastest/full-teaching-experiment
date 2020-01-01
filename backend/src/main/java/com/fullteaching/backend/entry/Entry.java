@@ -18,7 +18,6 @@ import lombok.*;
 @Entity
 @Getter
 @Setter
-@EqualsAndHashCode
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
@@ -33,7 +32,7 @@ public class Entry {
 	private long date;
 	
 	@OneToMany(cascade=CascadeType.ALL)
-	private List<Comment> comments;
+	private List<Comment> comments = new ArrayList<>();
 	
 	@ManyToOne
 	private User user;
@@ -42,7 +41,6 @@ public class Entry {
 		this.title = title;
 		this.date = date;
 		this.user = user;
-		this.comments = new ArrayList<>();
 	}
 
 

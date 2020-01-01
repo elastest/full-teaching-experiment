@@ -21,7 +21,6 @@ import lombok.*;
 @Entity
 @Getter
 @Setter
-@EqualsAndHashCode
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
@@ -36,11 +35,11 @@ public class FileGroup {
 	@OneToMany(cascade=CascadeType.ALL, orphanRemoval=true)
 	@OrderBy("indexOrder ASC")
 	@JoinColumn
-	private List<File> files;
+	private List<File> files = new ArrayList<>();
 	
 	@OneToMany(mappedBy="fileGroupParent", cascade=CascadeType.ALL)
 	@JsonManagedReference
-	private List<FileGroup> fileGroups;
+	private List<FileGroup> fileGroups = new ArrayList<>();
 	
 	@ManyToOne
 	@JsonBackReference
@@ -48,15 +47,11 @@ public class FileGroup {
 
 	public FileGroup(String title) {
 		this.title = title;
-		this.files = new ArrayList<>();
-		this.fileGroups = new ArrayList<>();
 		this.fileGroupParent = null;
 	}
 	
 	public FileGroup(String title, FileGroup fileGroupParent) {
 		this.title = title;
-		this.files = new ArrayList<>();
-		this.fileGroups = new ArrayList<>();
 		this.fileGroupParent = fileGroupParent;
 	}
 

@@ -17,7 +17,6 @@ import lombok.*;
 @Entity
 @Getter
 @Setter
-@EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor
 public class Forum {
@@ -29,11 +28,10 @@ public class Forum {
 	private boolean activated;
 	
 	@OneToMany(cascade=CascadeType.ALL)
-	private List<Entry> entries;
+	private List<Entry> entries = new ArrayList<>();
 
 	public Forum(boolean activated) {
 		this.activated = activated;
-		this.entries = new ArrayList<>();
 	}
 
 	@Override

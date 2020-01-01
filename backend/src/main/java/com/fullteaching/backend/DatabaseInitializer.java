@@ -23,13 +23,13 @@ import com.fullteaching.backend.filegroup.FileGroup;
 import com.fullteaching.backend.forum.Forum;
 import com.fullteaching.backend.session.Session;
 
-//@Controller
+@Controller
 public class DatabaseInitializer implements CommandLineRunner {
 	
-//	@Autowired
+	@Autowired
 	private UserRepository userRepository;
 	
-//	@Autowired
+	@Autowired
 	private CourseRepository courseRepository;
 	
 	@Override

@@ -23,7 +23,6 @@ import lombok.*;
 @Entity
 @Getter
 @Setter
-@EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor
 public class Course {
@@ -49,18 +48,16 @@ public class Course {
 	
 	@JsonView(SimpleCourseList.class)
 	@OneToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL, mappedBy="course")
-	private Set<Session> sessions;
+	private Set<Session> sessions = new HashSet<>();
 	
 	@ManyToMany
-	private Set<User> attenders;
+	private Set<User> attenders = new HashSet<>();
 
 	public Course(String title, String image, User teacher) {
 		this.title = title;
 		this.image = image;
 		this.teacher = teacher;
 		this.courseDetails = null;
-		this.sessions = new HashSet<>();
-		this.attenders = new HashSet<>();
 	}
 
 	public Course(String title, String image, User teacher, CourseDetails courseDetails) {
@@ -68,7 +65,5 @@ public class Course {
 		this.image = image;
 		this.teacher = teacher;
 		this.courseDetails = courseDetails;
-		this.sessions = new HashSet<>();
-		this.attenders = new HashSet<User>();
 	}
 }
