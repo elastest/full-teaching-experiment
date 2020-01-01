@@ -2,6 +2,7 @@ package com.fullteaching.backend.security;
 
 import java.util.Collection;
 
+import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,13 +11,14 @@ import org.springframework.http.ResponseEntity;
 
 import com.fullteaching.backend.user.User;
 import com.fullteaching.backend.user.UserComponent;
+import org.springframework.stereotype.Component;
 
+@AllArgsConstructor
+@Component
 public class AuthorizationService {
 	
 	private static final Logger log = LoggerFactory.getLogger(AuthorizationService.class);
-	
-	@Autowired
-	private UserComponent user;
+	private final UserComponent user;
 	
 	// Checks if user logged
 	public ResponseEntity<Object> checkBackendLogged(){

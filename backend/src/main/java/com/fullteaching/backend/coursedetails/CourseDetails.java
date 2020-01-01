@@ -34,7 +34,7 @@ public class CourseDetails {
 	private String info;
 
 	@OneToOne(cascade=CascadeType.ALL)
-	private Forum forum;
+	private Forum forum = new Forum();
 	
 	@OneToMany(cascade=CascadeType.ALL)
 	private List<FileGroup> files = new ArrayList<>();

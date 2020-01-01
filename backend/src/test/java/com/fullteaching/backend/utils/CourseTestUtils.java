@@ -132,7 +132,7 @@ public class CourseTestUtils {
 	
 	public static Course json2Course(String json) throws JsonParseException, JsonMappingException, IOException {
 		ObjectMapper mapper = new ObjectMapper();
-		return mapper.readValue(json, Course.class);
+		return mapper.  readValue(json, Course.class);
 	}
 	
 	public static CourseDetails json2CourseDetails(String json) throws JsonParseException, JsonMappingException, IOException {

@@ -3,6 +3,7 @@ package com.fullteaching.backend.security;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -25,13 +26,11 @@ import com.fullteaching.backend.user.User;
  * NOTE: This class is not intended to be modified by app developer.
  */
 @Component
+@AllArgsConstructor
 public class UserRepositoryAuthProvider implements AuthenticationProvider {
 
-	@Autowired
-	private UserRepository userRepository;
-
-	@Autowired
-	private UserComponent userComponent;
+	private final UserRepository userRepository;
+	private final UserComponent userComponent;
 
 	@Override
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {

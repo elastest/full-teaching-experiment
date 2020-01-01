@@ -1,5 +1,6 @@
 package com.fullteaching.backend.security;
 
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -23,10 +24,10 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
  * decide what URLs are accessible by what user role.
  */
 @Configuration
+@AllArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-	@Autowired
-	public UserRepositoryAuthProvider userRepoAuthProvider;
+	public final UserRepositoryAuthProvider userRepoAuthProvider;
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
