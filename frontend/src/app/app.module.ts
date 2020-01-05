@@ -37,6 +37,24 @@ import {FormsModule} from '@angular/forms';
 import {HttpClientModule} from '@angular/common/http';
 import {CalendarModule} from 'angular-calendar';
 import {NgModule} from '@angular/core';
+import {MatDialogModule} from "@angular/material/dialog";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatInputModule} from "@angular/material/input";
+import {MatButtonModule} from "@angular/material/button";
+import { LoginComponent } from './components/login/login.component';
+import { IndexPageComponent } from './components/index-page/index-page.component';
+import {MatSidenavModule} from "@angular/material/sidenav";
+import {MatMenuModule} from "@angular/material/menu";
+import {MatToolbarModule} from "@angular/material/toolbar";
+import {MatCardModule} from "@angular/material/card";
+import { RegisterComponent } from './components/register/register.component';
+
+const matModules = [
+  MatFormFieldModule,
+  MatDialogModule,
+  MatInputModule,
+  MatButtonModule,
+];
 
 @NgModule({
   imports: [
@@ -45,7 +63,16 @@ import {NgModule} from '@angular/core';
     FormsModule,
     HttpClientModule,
     routing,
-    CalendarModule],
+    CalendarModule,
+    matModules,
+    MatSidenavModule,
+    MatMenuModule,
+    MatToolbarModule,
+    MatCardModule,
+  ],
+  exports: [
+    matModules
+  ],
   declarations: [
     AppComponent,
     PresentationComponent,
@@ -63,7 +90,10 @@ import {NgModule} from '@angular/core';
     FileUploaderComponent,
     StreamComponent,
     ChatLineComponent,
-    InterventionAskedPipe
+    InterventionAskedPipe,
+    LoginComponent,
+    IndexPageComponent,
+    RegisterComponent
   ],
   providers: [
     AuthenticationService,

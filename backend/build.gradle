@@ -52,7 +52,7 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok:1.18.10'
     compile "javax.xml.bind:jaxb-api:2.4.0-b180830.0359"
     compile "com.google.code.gson:gson:2.7"
-    implementation project(':frontend')
+    compile project(':frontend')
 }
 
 group = 'com.fullteaching'

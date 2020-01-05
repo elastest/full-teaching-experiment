@@ -6,10 +6,8 @@ import {AuthenticationService} from '../../services/authentication.service';
 import {LoginModalService} from '../../services/login-modal.service';
 import {UserService} from '../../services/user.service';
 import {Constants} from '../../constants';
+import {MatDialog} from "@angular/material/dialog";
 
-// import { MaterializeAction } from 'angular2-materialize';
-
-declare var Materialize: any;
 
 @Component({
   selector: 'login-modal',
@@ -39,6 +37,7 @@ export class LoginModalComponent {
 
 
   constructor(
+    public dialog : MatDialog,
     public authenticationService: AuthenticationService,
     public userService: UserService,
     public router: Router,
@@ -206,4 +205,10 @@ export class LoginModalComponent {
     }
   }
 
+
+  openDialog(): void {
+
+  }
+
 }
+
