@@ -3,3 +3,6 @@
  */
 
 rootProject.name = 'full-teaching-2019'
+include 'backend'
+include 'frontend'
+
