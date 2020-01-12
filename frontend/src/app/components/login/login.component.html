@@ -5,17 +5,23 @@
       <mat-card-title>Log in</mat-card-title>
     </mat-card-header>
 
-    <form class="login-form">
+    <form class="login-form" [formGroup]="this.loginFormGroup" (ngSubmit)="onSubmit(this.loginFormGroup.value)">
       <mat-card-content>
         <mat-form-field class="login-full-width">
-          <input matInput placeholder="Username">
+          <input matInput placeholder="Email" formControlName="email">
+          <mat-error *ngIf="!this.loginFormGroup.controls['email'].valid">
+            {{getError('email')}}
+          </mat-error>
         </mat-form-field>
 
         <mat-form-field class="login-full-width">
-          <input matInput placeholder="Password">
+          <input matInput placeholder="Password" formControlName="password" type="password">
+          <mat-error *ngIf="!this.loginFormGroup.controls['password'].valid">
+            {{getError('pass')}}
+          </mat-error>
         </mat-form-field>
       </mat-card-content>
-      <button mat-stroked-button color="primary" class="btn-block">Log in</button>
+      <button mat-raised-button color="primary" class="btn-block" type="submit" [disabled]="!this.loginFormGroup.valid">Log in</button>
     </form>
   </mat-card>
 

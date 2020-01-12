@@ -33,7 +33,7 @@ import {VideoSessionService} from './services/video-session.service';
 import {CalendarComponent} from './components/calendar/calendar.component';
 import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {FormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {HttpClientModule} from '@angular/common/http';
 import {CalendarModule} from 'angular-calendar';
 import {NgModule} from '@angular/core';
@@ -57,19 +57,20 @@ const matModules = [
 ];
 
 @NgModule({
-  imports: [
-    BrowserModule,
-    BrowserAnimationsModule,
-    FormsModule,
-    HttpClientModule,
-    routing,
-    CalendarModule,
-    matModules,
-    MatSidenavModule,
-    MatMenuModule,
-    MatToolbarModule,
-    MatCardModule,
-  ],
+    imports: [
+        BrowserModule,
+        BrowserAnimationsModule,
+        FormsModule,
+        HttpClientModule,
+        routing,
+        CalendarModule,
+        matModules,
+        MatSidenavModule,
+        MatMenuModule,
+        MatToolbarModule,
+        MatCardModule,
+        ReactiveFormsModule,
+    ],
   exports: [
     matModules
   ],
