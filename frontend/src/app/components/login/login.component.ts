@@ -33,9 +33,10 @@ export class LoginComponent implements OnInit {
     let email = post['email'];
     let password = post['password'];
 
+    console.log(`Calling login for user ${email}`);
+
     this.authenticationService.logIn(email, password).subscribe(
       (result: User) => {
-        this.authenticationService.setCurrentUser(result);
         console.log("Login succesful! LOGGED AS " + this.authenticationService.getCurrentUser().name);
         this.router.navigate(['/courses']);
       },

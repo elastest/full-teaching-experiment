@@ -23,12 +23,16 @@ export class AuthenticationService {
   logIn(user: string, pass: string) {
     let userPass = user + ":" + pass;
     let headers = new HttpHeaders({
-      'Authorization': 'Basic ' + utf8_to_b64(userPass),
+      Authorization: 'Basic ' + btoa(userPass),
       'X-Requested-With': 'XMLHttpRequest'
     });
     let options = { headers };
 
     return this.http.get(this.urlLogIn, options)
+      .map(resp => {
+        this.processLogInResponse(resp);
+        return this.user;
+      })
       .catch(error => Observable.throw(error));
   }
 
@@ -60,7 +64,7 @@ export class AuthenticationService {
     // Correctly logged in
     console.log("User is already logged");
 
-    this.user = (response.json() as User);
+    this.user = (response as User);
 
     localStorage.setItem("login", "FULLTEACHING");
     if (this.user.roles.indexOf("ROLE_ADMIN") !== -1) {

@@ -49,6 +49,7 @@ import {MatToolbarModule} from "@angular/material/toolbar";
 import {MatCardModule} from "@angular/material/card";
 import {RegisterComponent} from './components/register/register.component';
 import {InterceptorService} from "./services/interceptor.service";
+import {CookieService} from "ngx-cookie-service";
 
 const matModules = [
   MatFormFieldModule,
@@ -113,7 +114,8 @@ const matModules = [
       provide: HTTP_INTERCEPTORS,
       useClass: InterceptorService,
       multi: true
-    }
+    },
+    CookieService
   ],
   bootstrap: [AppComponent]
 })

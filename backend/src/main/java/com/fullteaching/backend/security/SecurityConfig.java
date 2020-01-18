@@ -45,7 +45,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
 	}
 
 	private void configureUrlAuthorization(HttpSecurity http) throws Exception {
-		
+
+		http.httpBasic();
+
 		http.csrf().disable();
 
 		// APP: This rules have to be changed by app developer
