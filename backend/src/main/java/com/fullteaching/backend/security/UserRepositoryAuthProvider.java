@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -27,6 +28,7 @@ import com.fullteaching.backend.user.User;
  */
 @Component
 @AllArgsConstructor
+@Slf4j
 public class UserRepositoryAuthProvider implements AuthenticationProvider {
 
 	private final UserRepository userRepository;
@@ -49,6 +51,7 @@ public class UserRepositoryAuthProvider implements AuthenticationProvider {
 			throw new BadCredentialsException("Wrong password");
 		} else {
 
+			log.info("User logged in successfully: {}", user.getNickName());
 			userComponent.setLoggedUser(user);
 
 			List<GrantedAuthority> roles = new ArrayList<>();

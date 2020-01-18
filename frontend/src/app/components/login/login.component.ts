@@ -3,6 +3,7 @@ import {AuthenticationService} from "../../services/authentication.service";
 import {UserService} from "../../services/user.service";
 import {Router} from "@angular/router";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {User} from "../../classes/user";
 
 @Component({
   selector: 'app-login',
@@ -33,7 +34,8 @@ export class LoginComponent implements OnInit {
     let password = post['password'];
 
     this.authenticationService.logIn(email, password).subscribe(
-      result => {
+      (result: User) => {
+        this.authenticationService.setCurrentUser(result);
         console.log("Login succesful! LOGGED AS " + this.authenticationService.getCurrentUser().name);
         this.router.navigate(['/courses']);
       },

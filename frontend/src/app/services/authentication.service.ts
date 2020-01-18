@@ -142,6 +142,10 @@ export class AuthenticationService {
   isAdmin() {
     return ((this.user.roles.indexOf("ROLE_ADMIN")) !== -1) && (localStorage.getItem('rol') === "ROLE_ADMIN");
   }
+
+  setCurrentUser(result: User) {
+    this.user = result;
+  }
 }
 
 function utf8_to_b64(str) {
