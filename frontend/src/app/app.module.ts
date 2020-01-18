@@ -34,20 +34,21 @@ import {CalendarComponent} from './components/calendar/calendar.component';
 import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {HttpClientModule} from '@angular/common/http';
+import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {CalendarModule} from 'angular-calendar';
 import {NgModule} from '@angular/core';
 import {MatDialogModule} from "@angular/material/dialog";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatInputModule} from "@angular/material/input";
 import {MatButtonModule} from "@angular/material/button";
-import { LoginComponent } from './components/login/login.component';
-import { IndexPageComponent } from './components/index-page/index-page.component';
+import {LoginComponent} from './components/login/login.component';
+import {IndexPageComponent} from './components/index-page/index-page.component';
 import {MatSidenavModule} from "@angular/material/sidenav";
 import {MatMenuModule} from "@angular/material/menu";
 import {MatToolbarModule} from "@angular/material/toolbar";
 import {MatCardModule} from "@angular/material/card";
-import { RegisterComponent } from './components/register/register.component';
+import {RegisterComponent} from './components/register/register.component';
+import {InterceptorService} from "./services/interceptor.service";
 
 const matModules = [
   MatFormFieldModule,
@@ -57,20 +58,20 @@ const matModules = [
 ];
 
 @NgModule({
-    imports: [
-        BrowserModule,
-        BrowserAnimationsModule,
-        FormsModule,
-        HttpClientModule,
-        routing,
-        CalendarModule,
-        matModules,
-        MatSidenavModule,
-        MatMenuModule,
-        MatToolbarModule,
-        MatCardModule,
-        ReactiveFormsModule,
-    ],
+  imports: [
+    BrowserModule,
+    BrowserAnimationsModule,
+    FormsModule,
+    HttpClientModule,
+    routing,
+    CalendarModule,
+    matModules,
+    MatSidenavModule,
+    MatMenuModule,
+    MatToolbarModule,
+    MatCardModule,
+    ReactiveFormsModule,
+  ],
   exports: [
     matModules
   ],
@@ -107,7 +108,12 @@ const matModules = [
     UploaderModalService,
     UserService,
     AnimationService,
-    VideoSessionService
+    VideoSessionService,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: InterceptorService,
+      multi: true
+    }
   ],
   bootstrap: [AppComponent]
 })

@@ -19,8 +19,15 @@ apply plugin: 'maven-publish'
 
 repositories {
     mavenLocal()
+    mavenCentral()
     maven {
         url = 'http://repo.maven.apache.org/maven2'
+    }
+}
+
+bootJar{
+    from ('../frontend/dist/') {
+        into 'public'
     }
 }
 
@@ -29,13 +36,16 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa:2.2.0.RELEASE'
     implementation 'org.springframework.boot:spring-boot-starter-security:2.2.0.RELEASE'
     implementation 'org.springframework.boot:spring-boot-devtools:2.2.0.RELEASE'
-    implementation('org.postgresql:postgresql:42.2.8.jre7')
-    implementation 'commons-validator:commons-validator:1.5.1'
     implementation 'org.springframework.boot:spring-boot-starter-websocket:2.2.0.RELEASE'
+
+    compile group: 'org.postgresql', name: 'postgresql', version: '42.1.4'
+    implementation 'commons-validator:commons-validator:1.5.1'
     implementation 'org.apache.tika:tika-core:1.14'
     implementation 'org.apache.tika:tika-parsers:1.14'
     implementation 'com.amazonaws:aws-java-sdk:1.11.60'
     implementation 'io.openvidu:openvidu-java-client:1.7.0'
+
+    //tests
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.springframework.boot:spring-boot-starter-test:2.2.0.RELEASE'
     testImplementation 'org.springframework.security:spring-security-test:5.2.0.RELEASE'
@@ -48,11 +58,13 @@ dependencies {
     testImplementation 'org.seleniumhq.selenium:selenium-remote-driver:3.4.0'
     testImplementation 'com.google.guava:guava:21.0'
     testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.5.2'
+
     compileOnly 'org.projectlombok:lombok:1.18.10'
     annotationProcessor 'org.projectlombok:lombok:1.18.10'
     compile "javax.xml.bind:jaxb-api:2.4.0-b180830.0359"
     compile "com.google.code.gson:gson:2.7"
-    compile project(':frontend')
+    implementation(project(':frontend'))
+
 }
 
 group = 'com.fullteaching'
