@@ -5,3 +5,7 @@
   width: 120px;
   transform: translateY(-50%);
 }
+
+.sidebar-wrapper {
+  width: 500px;
+}

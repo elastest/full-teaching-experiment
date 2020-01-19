@@ -16,9 +16,9 @@ export class SidebarComponent implements OnInit {
   ngOnInit() {
     this.menuItems.push(new Menuitem('My courses', '', 'book'));
     this.menuItems.push(new Menuitem('My calendar', '', 'calendar_today'));
-    if(this.authService.isTeacher()) {
+    //if(this.authService.isTeacher()) {
       this.menuItems.push(new Menuitem('My students', '', 'people'));
-    }
+    //}
 
   }
 

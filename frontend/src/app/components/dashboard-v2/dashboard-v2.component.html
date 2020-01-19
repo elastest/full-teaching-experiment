@@ -1,23 +1,65 @@
-<div class="main-content">
-  <div class="container-fluid">
+<!--<div class="main-content">-->
+<!--  <div class="container-fluid">-->
 
-    <!--  row 1  -->
-    <div class="row">
+<!--    <div class="row">-->
+<!--      <mat-divider></mat-divider>-->
+<!--    </div>-->
 
-      <!-- my courses column -->
-      <div class="col-md-6">
-        <div *ngFor="let course of userCourses" class="card card-purple flex-1 mx-3">
-          <p class="card-content">{{course.title}}</p>
-        </div>
-      </div>
+<!--    &lt;!&ndash;  courses content  &ndash;&gt;-->
+<!--    <div class="row">-->
 
-      <!-- my calendar column -->
-      <div class="col-md-6">
+<!--      &lt;!&ndash; my courses column &ndash;&gt;-->
+<!--      <div class="col-md-6">-->
+<!--        <div *ngFor="let course of userCourses" class="card card-purple flex-1 mx-3">-->
+<!--          <p class="card-content">{{course.title}}</p>-->
+<!--        </div>-->
+<!--      </div>-->
 
-      </div>
+<!--      &lt;!&ndash; my calendar column &ndash;&gt;-->
+<!--      <div class="col-md-6">-->
+
+<!--      </div>-->
 
 
+<!--    </div>-->
+
+<!--  </div>-->
+<!--</div>-->
+
+<div class="wrapper">
+
+  <header>
+    <h1>Dashboard</h1>
+  </header>
+
+  <section class="columns">
+
+    <div class="column">
+      <mat-card>
+        <mat-card-title>My courses</mat-card-title>
+        <mat-card-subtitle>Manage your courses</mat-card-subtitle>
+        <mat-card-content></mat-card-content>
+        <mat-card-actions></mat-card-actions>
+      </mat-card>
     </div>
 
-  </div>
+    <div class="column">
+      <mat-card>
+        <mat-card-title>My calendar</mat-card-title>
+        <mat-card-subtitle>Course calendar</mat-card-subtitle>
+        <mat-card-content></mat-card-content>
+        <mat-card-actions></mat-card-actions>
+      </mat-card>
+    </div>
+
+    <div class="column">
+      <mat-card>
+        <mat-card-title>My students</mat-card-title>
+        <mat-card-subtitle>Manage your students</mat-card-subtitle>
+        <mat-card-content></mat-card-content>
+        <mat-card-actions></mat-card-actions>
+      </mat-card>    </div>
+
+  </section>
+
 </div>
