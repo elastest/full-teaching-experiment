@@ -35,7 +35,6 @@ import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
-import {CalendarModule} from 'angular-calendar';
 import {NgModule} from '@angular/core';
 import {MatDialogModule} from "@angular/material/dialog";
 import {MatFormFieldModule} from "@angular/material/form-field";
@@ -50,6 +49,8 @@ import {MatCardModule} from "@angular/material/card";
 import {RegisterComponent} from './components/register/register.component';
 import {InterceptorService} from "./services/interceptor.service";
 import {CookieService} from "ngx-cookie-service";
+import {CalendarModule, DateAdapter} from "angular-calendar";
+import {adapterFactory} from "angular-calendar/date-adapters/moment";
 
 const matModules = [
   MatFormFieldModule,
@@ -65,8 +66,11 @@ const matModules = [
     FormsModule,
     HttpClientModule,
     routing,
-    CalendarModule,
     matModules,
+    CalendarModule.forRoot({
+      provide: DateAdapter,
+      useFactory: adapterFactory
+    }),
     MatSidenavModule,
     MatMenuModule,
     MatToolbarModule,

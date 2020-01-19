@@ -1,18 +1,14 @@
-import { Component, OnInit, EventEmitter } from '@angular/core';
-import { Router } from '@angular/router';
+import {Component, OnInit} from '@angular/core';
+import {Router} from '@angular/router';
+import {Course} from '../../classes/course';
+import {CourseDetails} from '../../classes/course-details';
+import {Forum} from '../../classes/forum';
+
+import {CourseService} from '../../services/course.service';
+import {AuthenticationService} from '../../services/authentication.service';
+import {AnimationService} from '../../services/animation.service';
 
 // import { MaterializeAction } from 'angular2-materialize';
-
-import { Course } from '../../classes/course';
-import { CourseDetails } from '../../classes/course-details';
-import { Session } from '../../classes/session';
-import { Forum } from '../../classes/forum';
-
-import { CalendarComponent } from '../calendar/calendar.component';
-
-import { CourseService } from '../../services/course.service';
-import { AuthenticationService } from '../../services/authentication.service';
-import { AnimationService } from '../../services/animation.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -42,12 +38,16 @@ export class DashboardComponent implements OnInit {
     private authenticationService: AuthenticationService,
     private animationService: AnimationService,
     private router: Router,
-  ) { }
+  ) {
+  }
 
   ngOnInit(): void {
     this.authenticationService.checkCredentials()
-      .then(() => { this.getCourses(); })
-      .catch((e) => { });
+      .then(() => {
+        this.getCourses();
+      })
+      .catch((e) => {
+      });
   }
 
   goToCourseDetail(id): void {
@@ -65,15 +65,15 @@ export class DashboardComponent implements OnInit {
         this.courses = courses;
         if (this.courses.length > 0) this.updatedCourse = this.courses[0];
       },
-      error => { });
+      error => {
+      });
   }
 
 
   getImage(c: Course) {
     if (c.image) {
       return c.image;
-    }
-    else {
+    } else {
       //return c.teacher.picture;
       return "/../assets/images/default_session_image.png";
     }
@@ -93,7 +93,9 @@ export class DashboardComponent implements OnInit {
         this.processingPost = false;
         // this.actions1.emit({ action: "modal", params: ['close'] });
       },
-      error => { this.processingPost = false; }
+      error => {
+        this.processingPost = false;
+      }
     )
   }
 
@@ -117,7 +119,9 @@ export class DashboardComponent implements OnInit {
         this.processingPut = false;
         // this.actions4.emit({ action: "modal", params: ['close'] });
       },
-      error => { this.processingPut = false; }
+      error => {
+        this.processingPut = false;
+      }
     )
   }
 
@@ -135,7 +139,8 @@ export class DashboardComponent implements OnInit {
         }
         // this.actions4.emit({ action: "modal", params: ['close'] });
       },
-      error => { }
+      error => {
+      }
     );
   }
 

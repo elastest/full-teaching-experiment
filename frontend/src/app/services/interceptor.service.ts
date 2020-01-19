@@ -16,7 +16,8 @@ export class InterceptorService implements HttpInterceptor {
 
     if (!environment.production) {
       req = req.clone({
-        url: environment.API_URL + req.url
+        url: environment.API_URL + req.url,
+        withCredentials: true
       });
     }
 
