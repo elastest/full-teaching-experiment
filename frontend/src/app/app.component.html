@@ -1,15 +1,47 @@
-<div id="sticky-footer-div">
+<!--<div id="sticky-footer-div">-->
 
-  <header *ngIf="!isVideoSessionUrl()">
-    <navbar></navbar>
-  </header>
+<!--  <header *ngIf="!isVideoSessionUrl()">-->
+<!--    <navbar></navbar>-->
+<!--  </header>-->
 
-  <main>
+<!--  <main>-->
+<!--    <app-sidebar></app-sidebar>-->
+<!--    <router-outlet></router-outlet>-->
+<!--  </main>-->
+
+<!--  <footer *ngIf="!isVideoSessionUrl()" class="page-footer secondaryColor-back">-->
+<!--    <app-footer></app-footer>-->
+<!--  </footer>-->
+
+<!--</div>-->
+<!--<mat-drawer-container class="example-container" autosize>-->
+<!--  &lt;!&ndash; navbar &ndash;&gt;-->
+
+
+<!--  &lt;!&ndash; main panel &ndash;&gt;-->
+<!--  &lt;!&ndash;  sidebar  &ndash;&gt;-->
+<!--  <app-sidebar></app-sidebar>-->
+<!--  <router-outlet></router-outlet>-->
+<!--  &lt;!&ndash; footer &ndash;&gt;-->
+<!--  &lt;!&ndash;    <app-footer></app-footer>&ndash;&gt;-->
+<!--</mat-drawer-container>-->
+
+<mat-drawer-container class="ft-container" hasBackdrop="true">
+
+  <!-- navbar -->
+
+
+  <!-- sidebar -->
+  <mat-drawer #drawer mode="side">
+    <app-sidebar></app-sidebar>
+  </mat-drawer>
+
+
+  <!-- page content -->
+  <mat-drawer-content>
+    <app-navigation [drawer]="drawer"></app-navigation>
     <router-outlet></router-outlet>
-  </main>
+  </mat-drawer-content>
 
-  <footer *ngIf="!isVideoSessionUrl()" class="page-footer secondaryColor-back">
-    <app-footer></app-footer>
-  </footer>
 
-</div>
+</mat-drawer-container>

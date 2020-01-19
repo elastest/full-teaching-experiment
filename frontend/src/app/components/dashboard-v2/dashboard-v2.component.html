@@ -1,0 +1,23 @@
+<div class="main-content">
+  <div class="container-fluid">
+
+    <!--  row 1  -->
+    <div class="row">
+
+      <!-- my courses column -->
+      <div class="col-md-6">
+        <div *ngFor="let course of userCourses" class="card card-purple flex-1 mx-3">
+          <p class="card-content">{{course.title}}</p>
+        </div>
+      </div>
+
+      <!-- my calendar column -->
+      <div class="col-md-6">
+
+      </div>
+
+
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,30 @@
+
+<!-- logged in navbar -->
+<mat-toolbar color="primary" *ngIf="authenticationService.isLoggedIn()">
+  <button *ngIf="authenticationService.isLoggedIn()" mat-raised-button (click)="drawer.toggle()" id="menu-button">
+    <mat-icon>menu</mat-icon>
+  </button>
+
+  <!-- This fills the remaining space of the current row -->
+  <span class="example-fill-remaining-space"></span>
+
+  <span>
+    <a id="logo-container-logged" href="/" class="brand-logo app-title-header white-text items-center">FullTeaching-2.0</a>
+  </span>
+</mat-toolbar>
+
+
+<!-- Not logged in navbar -->
+<mat-toolbar color="primary" *ngIf="!authenticationService.isLoggedIn()">
+  <span>
+    <a id="logo-container-not-logged" href="/" class="brand-logo app-title-header white-text items-center">FullTeaching-2.0</a>
+  </span>
+  <!-- This fills the remaining space of the current row -->
+  <span class="example-fill-remaining-space"></span>
+
+  <span class="nav-tool-items" *ngIf="!this.authenticationService.isLoggedIn()">
+    <a mat-raised-button routerLink="login" color="warn" routerLinkActive="active">Log in</a>
+    <a mat-raised-button routerLink="register" color="warn" routerLinkActive="active">Register</a>
+  </span>
+
+</mat-toolbar>

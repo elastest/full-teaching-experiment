@@ -1,0 +1,18 @@
+
+<div class="logo">
+</div>
+
+<mat-divider></mat-divider>
+
+
+<div class="sidebar-wrapper">
+  <ul class="nav">
+    <li routerLinkActive="active" *ngFor="let menuItem of this.menuItems" class="{{menuItem.class}} nav-item">
+      <a class="nav-link" [routerLink]="[menuItem.path]">
+        <i class="material-icons">{{menuItem.icon}}</i>
+        <p>{{menuItem.title}}</p>
+        <mat-divider></mat-divider>
+      </a>
+    </li>
+  </ul>
+</div>

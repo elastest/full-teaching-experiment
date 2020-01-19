@@ -3,7 +3,6 @@ import {TestBed} from '@angular/core/testing';
 import {AppComponent} from '../app.component';
 
 import {routing} from '../app.routing';
-import {NavbarComponent} from '../components/navbar/navbar.component';
 import {FooterComponent} from '../components/footer/footer.component';
 import {LoginModalComponent} from '../components/login-modal/login-modal.component';
 import {PresentationComponent} from '../components/presentation/presentation.component';
@@ -35,7 +34,6 @@ describe('Component: ErrorMessage', () => {
         PresentationComponent,
         DashboardComponent,
         CourseDetailsComponent,
-        NavbarComponent,
         FooterComponent,
         LoginModalComponent,
         SettingsComponent,

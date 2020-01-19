@@ -3,7 +3,6 @@ import {routing} from './app.routing';
 import {InterventionAskedPipe} from './pipes/intervention-asked.pipe';
 
 import {AppComponent} from './app.component';
-import {NavbarComponent} from './components/navbar/navbar.component';
 import {FooterComponent} from './components/footer/footer.component';
 import {LoginModalComponent} from './components/login-modal/login-modal.component';
 import {PresentationComponent} from './components/presentation/presentation.component';
@@ -51,6 +50,11 @@ import {InterceptorService} from "./services/interceptor.service";
 import {CookieService} from "ngx-cookie-service";
 import {CalendarModule, DateAdapter} from "angular-calendar";
 import {adapterFactory} from "angular-calendar/date-adapters/moment";
+import {DashboardV2Component} from './components/dashboard-v2/dashboard-v2.component';
+import {SidebarComponent} from "./components/sidebar/sidebar.component";
+import {NavigationComponent} from './components/navigation/navigation.component';
+import {MatIconModule} from "@angular/material/icon";
+import {MatDividerModule} from "@angular/material/divider";
 
 const matModules = [
   MatFormFieldModule,
@@ -76,6 +80,8 @@ const matModules = [
     MatToolbarModule,
     MatCardModule,
     ReactiveFormsModule,
+    MatIconModule,
+    MatDividerModule,
   ],
   exports: [
     matModules
@@ -85,7 +91,6 @@ const matModules = [
     PresentationComponent,
     DashboardComponent,
     CourseDetailsComponent,
-    NavbarComponent,
     FooterComponent,
     LoginModalComponent,
     SettingsComponent,
@@ -100,8 +105,10 @@ const matModules = [
     InterventionAskedPipe,
     LoginComponent,
     IndexPageComponent,
-    RegisterComponent
-  ],
+    RegisterComponent,
+    DashboardV2Component,
+    SidebarComponent,
+    NavigationComponent],
   providers: [
     AuthenticationService,
     CourseService,

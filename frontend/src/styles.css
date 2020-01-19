@@ -1,5 +1,60 @@
-@import "~@angular/material/prebuilt-themes/pink-bluegrey.css";
+@import "~@angular/material/prebuilt-themes/deeppurple-amber.css";
 
+
+/*NAV BAR*/
+#logo-container-logged #logo-container-not-logged{
+  padding-left: 5vh;
+}
+
+.example-fill-remaining-space {
+  /* This fills the remaining space, by using flexbox.
+     Every toolbar row uses a flexbox row layout. */
+  flex: 1 1 auto;
+}
+/*NAV BAR*/
+
+
+
+
+.items-center {
+  align-items: center;
+}
+
+* {
+  overflow-y: hidden !important;
+}
+
+.ft-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  overflow: auto;
+  z-index: 100;
+  width: 100%;
+  height: 100%;
+}
+
+/*remove scrolls*/
+.mat-drawer-inner-container mat-drawer-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  overflow-y: hidden !important;
+}
+
+
+.sidenav-content {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+.sidenav {
+  padding: 20px;
+}
 
 .bg-img-login
 {

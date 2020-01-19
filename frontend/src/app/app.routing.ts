@@ -9,6 +9,7 @@ import {ModuleWithProviders} from '@angular/core';
 import {LoginComponent} from "./components/login/login.component";
 import {IndexPageComponent} from "./components/index-page/index-page.component";
 import {RegisterComponent} from "./components/register/register.component";
+import {DashboardV2Component} from "./components/dashboard-v2/dashboard-v2.component";
 
 const appRoutes: Routes = [
   {
@@ -18,7 +19,7 @@ const appRoutes: Routes = [
 
   {
     path: 'courses',
-    component: DashboardComponent
+    component: DashboardV2Component
   },
   {
     path: 'courses/:id/:tabId',

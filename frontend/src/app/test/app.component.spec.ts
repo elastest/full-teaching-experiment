@@ -3,7 +3,6 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { AppComponent } from '../app.component';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule }   from '@angular/forms';
-import { NavbarComponent }        from '../components/navbar/navbar.component';
 import { FooterComponent }        from '../components/footer/footer.component';
 import { LoginModalComponent }    from '../components/login-modal/login-modal.component';
 import { PresentationComponent }  from '../components/presentation/presentation.component';
@@ -39,7 +38,6 @@ describe('App: Ejemplo', () => {
         PresentationComponent,
         DashboardComponent,
         CourseDetailsComponent,
-        NavbarComponent,
         FooterComponent,
         LoginModalComponent,
         SettingsComponent,

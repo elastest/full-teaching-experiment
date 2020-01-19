@@ -1,0 +1,7 @@
+#menu-button{
+  position: absolute;
+  top:50%;
+  right: 0;
+  width: 120px;
+  transform: translateY(-50%);
+}
