@@ -21,7 +21,7 @@ export class AuthenticationService {
   private role: string;
 
   constructor(private http: HttpClient, private router: Router) {
-    //this.reqIsLogged().catch((e) => { });
+    this.reqIsLogged().catch((e) => { });
   }
 
   logIn(user: string, pass: string) {
