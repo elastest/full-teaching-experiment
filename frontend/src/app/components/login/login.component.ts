@@ -4,6 +4,7 @@ import {UserService} from "../../services/user.service";
 import {Router} from "@angular/router";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {User} from "../../classes/user";
+import {ModalService} from "../../services/modal.service";
 
 @Component({
   selector: 'app-login',
@@ -19,8 +20,11 @@ export class LoginComponent implements OnInit {
   constructor(private authenticationService: AuthenticationService,
               private userService: UserService,
               private router: Router,
-              private formBuilder: FormBuilder) {
+              private formBuilder: FormBuilder,
+              private modalService: ModalService) {
   }
+
+
 
   createForm() {
     this.loginFormGroup = this.formBuilder.group({
@@ -37,16 +41,22 @@ export class LoginComponent implements OnInit {
 
     this.authenticationService.logIn(email, password).subscribe(
       (result: User) => {
-        console.log("Login succesful! LOGGED AS " + this.authenticationService.getCurrentUser().name);
+        console.log(`Login succesful! LOGGED AS ${this.authenticationService.getCurrentUser().name}`);
         this.router.navigate(['/courses']);
       },
       error => {
-        console.log("Login failed (error): " + error.toString());
+        let status = error.status;
+
+        console.log(`Login error with status ${status}`);
+
+        let title = 'Login error!';
+        let content = 'Please check your email or password';
+
+        this.modalService.newErrorModal(title, content, null);
       });
   }
 
   ngOnInit(): void {
-    document.body.classList.add('bg-img-login');
     this.createForm()
   }
 

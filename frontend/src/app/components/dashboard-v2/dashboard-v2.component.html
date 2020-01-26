@@ -52,7 +52,7 @@
       </mat-card>
     </div>
 
-    <div class="column">
+    <div class="column" *ngIf="authService.isTeacher()">
       <mat-card>
         <mat-card-title>My students</mat-card-title>
         <mat-card-subtitle>Manage your students</mat-card-subtitle>

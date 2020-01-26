@@ -14,7 +14,7 @@ export class DashboardV2Component implements OnInit {
   public userCourses: Array<Course> = new Array<Course>();
 
   constructor(private courseService: CourseService,
-              private authService: AuthenticationService) { }
+              public authService: AuthenticationService) { }
 
   ngOnInit() {
     let user = this.authService.getCurrentUser();

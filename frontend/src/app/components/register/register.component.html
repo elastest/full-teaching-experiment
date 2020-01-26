@@ -5,17 +5,27 @@
       <mat-card-title>Register</mat-card-title>
     </mat-card-header>
 
-    <form class="login-form">
+    <form class="login-form" [formGroup]="this.registerFormGroup" (ngSubmit)="this.onSubmit(this.registerFormGroup.value)">
       <mat-card-content>
         <mat-form-field class="login-full-width">
-          <input matInput placeholder="Username">
+          <input matInput placeholder="Email" formControlName="email">
+        </mat-form-field>
+
+
+        <mat-form-field class="login-full-width">
+          <input matInput placeholder="Name" formControlName="name">
         </mat-form-field>
 
         <mat-form-field class="login-full-width">
-          <input matInput placeholder="Password">
+          <input matInput placeholder="Password" type="password" formControlName="password">
         </mat-form-field>
+
+        <mat-form-field class="login-full-width">
+          <input matInput placeholder="Confirm password" type="password" formControlName="confirm-password">
+        </mat-form-field>
+
       </mat-card-content>
-      <button mat-stroked-button color="primary" class="btn-block">Register</button>
+      <button mat-stroked-button color="primary" class="btn-block" type="submit" [disabled]="!this.registerFormGroup.valid">Sing Up</button>
     </form>
   </mat-card>
 

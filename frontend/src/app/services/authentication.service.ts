@@ -6,12 +6,16 @@ import 'rxjs/add/operator/map';
 import { User } from '../classes/user';
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 
+
+
 @Injectable()
 export class AuthenticationService {
 
   private urlLogIn = '/api-logIn';
   private urlLogOut = '/api-logOut';
-
+  private TEACHER =  'ROLE_TEACHER';
+  private STUDENT =  'ROLE_STUDENT';
+  private ADMIN =  'ROLE_ADMIN';
   public token: string;
   private user: User;
   private role: string;
@@ -136,15 +140,15 @@ export class AuthenticationService {
   }
 
   isTeacher() {
-    return ((this.user.roles.indexOf("ROLE_TEACHER")) !== -1) && (localStorage.getItem('rol') === "ROLE_TEACHER");
+    return this.user.roles.includes(this.TEACHER) || this.role === this.TEACHER;
   }
 
   isStudent() {
-    return ((this.user.roles.indexOf("ROLE_STUDENT")) !== -1) && (localStorage.getItem('rol') === "ROLE_STUDENT");
+    return this.user.roles.includes(this.STUDENT) || this.role === this.STUDENT;
   }
 
   isAdmin() {
-    return ((this.user.roles.indexOf("ROLE_ADMIN")) !== -1) && (localStorage.getItem('rol') === "ROLE_ADMIN");
+    return this.user.roles.includes(this.ADMIN) || this.role === this.ADMIN;
   }
 
   setCurrentUser(result: User) {

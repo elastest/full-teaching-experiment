@@ -55,6 +55,7 @@ import {SidebarComponent} from "./components/sidebar/sidebar.component";
 import {NavigationComponent} from './components/navigation/navigation.component';
 import {MatIconModule} from "@angular/material/icon";
 import {MatDividerModule} from "@angular/material/divider";
+import {ModalService} from "./services/modal.service";
 
 const matModules = [
   MatFormFieldModule,
@@ -126,7 +127,8 @@ const matModules = [
       useClass: InterceptorService,
       multi: true
     },
-    CookieService
+    CookieService,
+    ModalService
   ],
   bootstrap: [AppComponent]
 })
