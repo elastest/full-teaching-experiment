@@ -10,5 +10,5 @@ export const environment = {
   URL_EMAIL_FILE_UPLOAD: '/api-file-reader/upload/course/',
   PUBLIC_RECAPTCHA_KEY: '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI',
   OPENVIDU_URL: 'wss://localhost:8443/',
-  API_URL: 'https://localhost:5001'
+  API_URL: 'http://localhost:5001'
 };

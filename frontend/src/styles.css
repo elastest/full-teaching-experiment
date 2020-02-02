@@ -1,13 +1,13 @@
 @import "~@angular/material/prebuilt-themes/deeppurple-amber.css";
 
-
-.mat-drawer-container, .mat-drawer-content {
-  background-color: transparent;
+.mat-tab-header{
+  background-color: white;
 }
 
-/*.mat-drawer-content {*/
-/*  background-color: transparent;*/
-/*}*/
+.course-card {
+  max-width: 400px;
+}
+
 
 canvas {
   position: absolute;
@@ -51,15 +51,6 @@ canvas {
   width: 100%;
   height: 100%;
 }
-
-/*remove scrolls*/
-.mat-drawer-inner-container mat-drawer-content {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  overflow-y: hidden !important;
-}
-
 
 .sidenav-content {
   display: flex;
@@ -742,7 +733,7 @@ input[type=range]::-ms-track {
   width: 110px;
   height: 4px;
   cursor: pointer;
-  background: transparent;
+  background: 1;
   border-color: transparent;
   color: transparent;
 }

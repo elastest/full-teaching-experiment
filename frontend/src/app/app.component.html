@@ -27,23 +27,27 @@
 <!--</mat-drawer-container>-->
 <!--<canvas id="c">-->
 
-  <mat-drawer-container class="ft-container" hasBackdrop="true" id="c">
+<!--  <mat-drawer-container class="ft-container" hasBackdrop="true" id="c">-->
 
-    <!-- navbar -->
-
-
-    <!-- sidebar -->
-    <mat-drawer #drawer mode="side">
-      <app-sidebar></app-sidebar>
-    </mat-drawer>
+<!-- navbar -->
 
 
-    <!-- page content -->
-    <mat-drawer-content>
-      <app-navigation [drawer]="drawer"></app-navigation>
-      <router-outlet></router-outlet>
-    </mat-drawer-content>
+<!--    &lt;!&ndash; sidebar &ndash;&gt;-->
+<!--    <mat-drawer #drawer mode="side">-->
+<!--      <app-sidebar></app-sidebar>-->
+<!--    </mat-drawer>-->
 
 
-  </mat-drawer-container>
+<!-- page content -->
+<!--    <mat-drawer-content>-->
+<div id="sticky-footer-div">
+  <main>
+    <app-navigation></app-navigation>
+    <router-outlet></router-outlet>
+  </main>
+</div>
+<!--    </mat-drawer-content>-->
+
+
+<!--  </mat-drawer-container>-->
 <!--</canvas>-->

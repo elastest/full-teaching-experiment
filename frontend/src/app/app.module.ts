@@ -56,6 +56,9 @@ import {NavigationComponent} from './components/navigation/navigation.component'
 import {MatIconModule} from "@angular/material/icon";
 import {MatDividerModule} from "@angular/material/divider";
 import {ModalService} from "./services/modal.service";
+import { CoursesListComponent } from './components/courses-list/courses-list.component';
+import {MatTableModule} from "@angular/material/table";
+import {MatTabsModule} from "@angular/material/tabs";
 
 const matModules = [
   MatFormFieldModule,
@@ -83,6 +86,8 @@ const matModules = [
     ReactiveFormsModule,
     MatIconModule,
     MatDividerModule,
+    MatTableModule,
+    MatTabsModule,
   ],
   exports: [
     matModules
@@ -109,7 +114,8 @@ const matModules = [
     RegisterComponent,
     DashboardV2Component,
     SidebarComponent,
-    NavigationComponent],
+    NavigationComponent,
+    CoursesListComponent],
   providers: [
     AuthenticationService,
     CourseService,

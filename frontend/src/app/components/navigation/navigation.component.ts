@@ -11,8 +11,8 @@ import {MatDrawer} from "@angular/material/sidenav";
 })
 export class NavigationComponent implements OnInit {
 
-  @Input('drawer')
-  public drawer: MatDrawer;
+  // @Input('drawer')
+  // public drawer: MatDrawer;
 
   constructor(public authenticationService: AuthenticationService, public loginModalService: LoginModalService, public location: Location) { }
 
