@@ -1,10 +1,6 @@
 package com.fullteaching.backend.user;
 
-import java.util.List;
-import java.util.Set;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
+import java.util.*;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -66,5 +62,19 @@ public class User {
 		}
 		this.registrationDate = System.currentTimeMillis();
 		this.courses = new HashSet<>();
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		User user = (User) o;
+		return id == user.id &&
+				registrationDate == user.registrationDate;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, registrationDate);
 	}
 }

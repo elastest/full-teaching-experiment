@@ -31,6 +31,10 @@ public class AuthorizationService {
 	
 	// Checks authorization of teacher
 	public ResponseEntity<Object> checkAuthorization(Object o, User u){
+
+		log.info(o.toString());
+		log.info(u.toString());
+
 		if(o == null){
 			// The object does not exist
 			log.error("Element not found");

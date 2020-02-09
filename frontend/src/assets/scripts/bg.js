@@ -2,12 +2,12 @@ var c = document.getElementById("c");
 var ctx = c.getContext("2d");
 var cH;
 var cW;
-var bgColor = "#FFBE53";
+var bgColor = "#FFFFFF";
 var animations = [];
 var circles = [];
 
 var colorPicker = (function() {
-  var colors = ["#FF6138", "#2980B9", "#282741", "#FFBE53"];
+  var colors = ["#FF6138", "#2980B9", "#282741", "#FFBE53", "#FFFFFF"];
   var index = 0;
   function next() {
     index = index++ < colors.length-1 ? index : 0;

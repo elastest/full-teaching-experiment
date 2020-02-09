@@ -59,6 +59,10 @@ import {ModalService} from "./services/modal.service";
 import { CoursesListComponent } from './components/courses-list/courses-list.component';
 import {MatTableModule} from "@angular/material/table";
 import {MatTabsModule} from "@angular/material/tabs";
+import { CourseDetailsV2Component } from './components/course-details-v2/course-details-v2.component';
+import {AngularEditorComponent, AngularEditorModule} from "@kolkov/angular-editor";
+import { CourseIndexComponent } from './components/course-index/course-index.component';
+import { CourseDetailsSessionsComponent } from './components/course-details-sessions/course-details-sessions.component';
 
 const matModules = [
   MatFormFieldModule,
@@ -88,6 +92,7 @@ const matModules = [
     MatDividerModule,
     MatTableModule,
     MatTabsModule,
+    AngularEditorModule
   ],
   exports: [
     matModules
@@ -115,7 +120,10 @@ const matModules = [
     DashboardV2Component,
     SidebarComponent,
     NavigationComponent,
-    CoursesListComponent],
+    CoursesListComponent,
+    CourseDetailsV2Component,
+    CourseIndexComponent,
+    CourseDetailsSessionsComponent],
   providers: [
     AuthenticationService,
     CourseService,

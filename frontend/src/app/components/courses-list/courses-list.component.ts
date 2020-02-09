@@ -35,7 +35,7 @@ export class CoursesListComponent implements OnInit {
 
   showEditModal(course) {
     Swal.fire({
-      title: 'Modify course',
+      title: 'Modify course name',
       input: 'text',
       showCancelButton: true,
       inputValidator: (value) => {

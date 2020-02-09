@@ -1,0 +1,43 @@
+<div id="course-index">
+
+  <div class="course-index-header" *ngIf="this.authenticationService.isTeacher() && !this.editingContent">
+    <button mat-raised-button (click)="this.editingContent = true">
+      <i class="material-icons">
+        edit
+      </i>
+    </button>
+  </div>
+
+  <div *ngIf="!this.editingContent" class="course-index-content">
+
+    <div *ngIf="course.courseDetails.info" [innerHTML]="course.courseDetails.info">
+      {{course?.courseDetails.info}}
+    </div>
+
+    <div *ngIf="!course.courseDetails.info">
+      <app-error-message [errorTitle]="'There is no info yet'" [errorContent]="''" [customClass]="'warning'"
+                         [closable]="false"></app-error-message>
+    </div>
+  </div>
+
+  <div *ngIf="this.editingContent" class="course-index-editor">
+    <mat-card>
+      <mat-card-content>
+        <form [formGroup]="this.editorForm">
+          <angular-editor formControlName="htmlContent"
+                          [config]="editorConfig"></angular-editor>
+        </form>
+      </mat-card-content>
+      <mat-card-footer align="right">
+        <button mat-raised-button color="warn" (click)="this.editingContent = false">Cancel</button>
+        <button mat-raised-button (click)="submit()">Save</button>
+      </mat-card-footer>
+    </mat-card>
+
+
+  </div>
+
+</div>
+
+
+

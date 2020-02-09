@@ -8,6 +8,16 @@
   max-width: 400px;
 }
 
+.course-index-content{
+  padding: 4vh;
+}
+
+.wrapper {
+  padding: 5px;
+  max-width: 960px;
+  width: 95%;
+  margin: 20px auto;
+}
 
 canvas {
   position: absolute;

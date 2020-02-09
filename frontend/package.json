@@ -32,6 +32,7 @@
     "@angular/platform-browser-dynamic": "^9.0.0-rc.7",
     "@angular/router": "^9.0.0-rc.7",
     "@fullcalendar/core": "^4.3.1",
+    "@kolkov/angular-editor": "^1.0.2",
     "@ng-bootstrap/ng-bootstrap": "^5.2.1",
     "angular-calendar": "^0.28.2",
     "angular-google-recaptcha": "^1.0.3",
