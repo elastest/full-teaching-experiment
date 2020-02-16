@@ -61,9 +61,9 @@ import {CourseDetailsV2Component} from './components/course-details-v2/course-de
 import {AngularEditorModule} from "@kolkov/angular-editor";
 import {CourseIndexComponent} from './components/course-index/course-index.component';
 import {CourseDetailsSessionsComponent} from './components/course-details-sessions/course-details-sessions.component';
-import {MDBBootstrapModule} from 'angular-bootstrap-md';
 import {MatDatepickerModule} from "@angular/material/datepicker";
 import {MatMomentDateModule} from "@angular/material-moment-adapter";
+import {SweetAlert2Module} from "@sweetalert2/ngx-sweetalert2";
 
 const matModules = [
   MatFormFieldModule,
@@ -82,7 +82,6 @@ const matModules = [
     HttpClientModule,
     routing,
     matModules,
-    MDBBootstrapModule.forRoot(),
     MatSidenavModule,
     MatMenuModule,
     MatToolbarModule,
@@ -93,7 +92,8 @@ const matModules = [
     MatTableModule,
     MatTabsModule,
     AngularEditorModule,
-    MatDatepickerModule
+    MatDatepickerModule,
+    SweetAlert2Module.forRoot()
   ],
   exports: [
     matModules
@@ -126,7 +126,7 @@ const matModules = [
     CourseIndexComponent,
     CourseDetailsSessionsComponent,
 
-    ],
+  ],
   providers: [
     AuthenticationService,
     CourseService,

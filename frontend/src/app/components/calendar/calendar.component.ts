@@ -1,9 +1,11 @@
-import {AfterViewInit, Component, OnInit, Renderer2, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {AuthenticationService} from '../../services/authentication.service';
 import {Session} from '../../classes/session';
 import {MatCalendar, MatCalendarCellCssClasses} from "@angular/material/datepicker";
 import {Moment} from "moment";
 import {CourseService} from "../../services/course.service";
+import {SwalComponent} from "@sweetalert2/ngx-sweetalert2";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'calendar-app',
@@ -15,12 +17,16 @@ export class CalendarComponent implements OnInit, AfterViewInit {
 
   @ViewChild(MatCalendar)
   private calendar: MatCalendar<Date>;
+
+  @ViewChild(SwalComponent)
+  private swal: SwalComponent;
+
   private sessions: Array<Session> = new Array<Session>();
   today: Date = new Date();
   selectedDate: Moment;
 
 
-  constructor(private authService: AuthenticationService, private courseService: CourseService) {
+  constructor(private authService: AuthenticationService, private courseService: CourseService, public router: Router) {
   }
 
 
@@ -28,13 +34,13 @@ export class CalendarComponent implements OnInit, AfterViewInit {
     this.loadAllSessions();
   }
 
-  loadAllSessions(){
-    this.courseService.getCourses(this.authService.getCurrentUser()).subscribe(resp =>{
+  loadAllSessions() {
+    this.courseService.getCourses(this.authService.getCurrentUser()).subscribe(resp => {
       resp.forEach(c => {
         c.sessions.forEach(s => {
           s.course = c;
           this.sessions.push(s);
-        })
+        });
 
         this.calendar.updateTodaysDate();
 
@@ -42,16 +48,25 @@ export class CalendarComponent implements OnInit, AfterViewInit {
     });
   }
 
-  getAllSessions(){
+  getAllSessions() {
     return this.sessions;
   }
 
-  monthSelected(event) {
-    console.log(event)
+  getSessionsInSelectedDay(selectedDate: Moment) {
+
+    let day = selectedDate.date();
+    let month = selectedDate.month();
+
+    return this.getAllSessions().filter(session => {
+      let sessionDate = new Date(session.date);
+      return sessionDate.getDay() === day && sessionDate.getMonth() === month;
+    });
   }
 
   clickedDay(event: Moment) {
-    this.isSessionDate(event)
+    if (this.isSessionDate(event)) {
+      this.swal.fire()
+    }
   }
 
   ngAfterViewInit(): void {
@@ -64,10 +79,7 @@ export class CalendarComponent implements OnInit, AfterViewInit {
 
     let sessions = this.getAllSessions();
 
-    return sessions.filter(session => {
-      let sessionDate = new Date(session.date);
-      return sessionDate.getDay() === day && sessionDate.getMonth() === month;
-    }).length > 0;
+    return this.getSessionsInSelectedDay(date).length > 0;
   }
 
   dateClass = (d: Moment): MatCalendarCellCssClasses => {

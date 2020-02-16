@@ -1,5 +1,4 @@
 <div *ngFor="let session of this.course.sessions">
-
   <mat-card class="course-card" style="margin: 1vh">
     <mat-card-header>
       <div mat-card-avatar class="course-header-image"[ngStyle]="{ 'background-image': 'url(' + course.image + ');' + 'background-size: cover;'}"></div>
@@ -8,7 +7,6 @@
     </mat-card-header>
     <img *ngIf="course.image.length > 0" mat-card-image [src]="course.image">
     <img *ngIf="course.image.length <= 0" mat-card-image src="assets/images/slider2.jpg">
-
     <mat-card-content>
       <p>
         {{session.description}}
@@ -19,6 +17,4 @@
       <button mat-raised-button (click)="this.router.navigate(['session/' + session.id])">OPEN</button>
     </mat-card-actions>
   </mat-card>
-
-
 </div>
