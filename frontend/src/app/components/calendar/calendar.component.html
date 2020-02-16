@@ -9,14 +9,17 @@
 </mat-calendar>
 
 
-<swal title="Sessions this day:">
+<swal
+  title="Sessions this day:"
+  icon="info">
   <div *swalPortal class="alert alert-info">
     <div *ngFor="let session of this.getSessionsInSelectedDay(this.selectedDate)">
       <mat-card>
         <mat-card-header>
           <mat-card-title>{{session.title}}</mat-card-title>
-          <mat-card-subtitle>{{session.description}}</mat-card-subtitle>
+          <mat-card-subtitle>{{this.numberToDate(session.date) | date:'short'}}</mat-card-subtitle>
         </mat-card-header>
+        <mat-card-content>{{session.description}}</mat-card-content>
         <mat-card-footer>
           <mat-card-actions>
             <button mat-raised-button (click)="this.router.navigate(['session/' + session.id])">OPEN</button>

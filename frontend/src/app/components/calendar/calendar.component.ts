@@ -91,5 +91,8 @@ export class CalendarComponent implements OnInit, AfterViewInit {
   }
 
 
+  numberToDate(date: number) {
+    return new Date(date);
+  }
 }
 
