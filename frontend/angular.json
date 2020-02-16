@@ -24,14 +24,22 @@
               "src/styles.css",
               "src/color-palette.css",
               "node_modules/quill/dist/quill.core.css",
-              "node_modules/quill/dist/quill.snow.css"
+              "node_modules/quill/dist/quill.snow.css",
+              "node_modules/@fortawesome/fontawesome-free/scss/fontawesome.scss",
+              "node_modules/@fortawesome/fontawesome-free/scss/solid.scss",
+              "node_modules/@fortawesome/fontawesome-free/scss/regular.scss",
+              "node_modules/@fortawesome/fontawesome-free/scss/brands.scss",
+              "node_modules/angular-bootstrap-md/assets/scss/bootstrap/bootstrap.scss",
+              "node_modules/angular-bootstrap-md/assets/scss/mdb.scss",
+              "node_modules/animate.css/animate.css"
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.js",
-              "node_modules/materialize-css/dist/js/materialize.js",
               "node_modules/quill/dist/quill.js",
               "src/assets/scripts/navbar-script.js",
-              "src/assets/scripts/init-welcome-page.js"
+              "src/assets/scripts/init-welcome-page.js",
+              "node_modules/chart.js/dist/Chart.js",
+              "node_modules/hammerjs/hammer.min.js"
             ]
           },
           "configurations": {

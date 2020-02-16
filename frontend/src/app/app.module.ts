@@ -48,27 +48,30 @@ import {MatCardModule} from "@angular/material/card";
 import {RegisterComponent} from './components/register/register.component';
 import {InterceptorService} from "./services/interceptor.service";
 import {CookieService} from "ngx-cookie-service";
-import {CalendarModule, DateAdapter} from "angular-calendar";
-import {adapterFactory} from "angular-calendar/date-adapters/moment";
 import {DashboardV2Component} from './components/dashboard-v2/dashboard-v2.component';
 import {SidebarComponent} from "./components/sidebar/sidebar.component";
 import {NavigationComponent} from './components/navigation/navigation.component';
 import {MatIconModule} from "@angular/material/icon";
 import {MatDividerModule} from "@angular/material/divider";
 import {ModalService} from "./services/modal.service";
-import { CoursesListComponent } from './components/courses-list/courses-list.component';
+import {CoursesListComponent} from './components/courses-list/courses-list.component';
 import {MatTableModule} from "@angular/material/table";
 import {MatTabsModule} from "@angular/material/tabs";
-import { CourseDetailsV2Component } from './components/course-details-v2/course-details-v2.component';
-import {AngularEditorComponent, AngularEditorModule} from "@kolkov/angular-editor";
-import { CourseIndexComponent } from './components/course-index/course-index.component';
-import { CourseDetailsSessionsComponent } from './components/course-details-sessions/course-details-sessions.component';
+import {CourseDetailsV2Component} from './components/course-details-v2/course-details-v2.component';
+import {AngularEditorModule} from "@kolkov/angular-editor";
+import {CourseIndexComponent} from './components/course-index/course-index.component';
+import {CourseDetailsSessionsComponent} from './components/course-details-sessions/course-details-sessions.component';
+import {MDBBootstrapModule} from 'angular-bootstrap-md';
+import {MatDatepickerModule} from "@angular/material/datepicker";
+import {MatMomentDateModule} from "@angular/material-moment-adapter";
 
 const matModules = [
   MatFormFieldModule,
   MatDialogModule,
   MatInputModule,
   MatButtonModule,
+  MatDatepickerModule,
+  MatMomentDateModule,
 ];
 
 @NgModule({
@@ -79,10 +82,7 @@ const matModules = [
     HttpClientModule,
     routing,
     matModules,
-    CalendarModule.forRoot({
-      provide: DateAdapter,
-      useFactory: adapterFactory
-    }),
+    MDBBootstrapModule.forRoot(),
     MatSidenavModule,
     MatMenuModule,
     MatToolbarModule,
@@ -92,7 +92,8 @@ const matModules = [
     MatDividerModule,
     MatTableModule,
     MatTabsModule,
-    AngularEditorModule
+    AngularEditorModule,
+    MatDatepickerModule
   ],
   exports: [
     matModules
@@ -123,7 +124,9 @@ const matModules = [
     CoursesListComponent,
     CourseDetailsV2Component,
     CourseIndexComponent,
-    CourseDetailsSessionsComponent],
+    CourseDetailsSessionsComponent,
+
+    ],
   providers: [
     AuthenticationService,
     CourseService,

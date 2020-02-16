@@ -2,11 +2,11 @@
 
   <mat-card class="course-card" style="margin: 1vh">
     <mat-card-header>
-      <div mat-card-avatar class="course-header-image"[ngStyle]="{ 'background-image': 'url(' + course.image + ');' + 'background-size: cover;'}"></div>
-      <mat-card-title>{{course.title}}</mat-card-title>
+      <div mat-card-avatar class="course-header-image"[ngStyle]="{ 'background-image': 'url(' + course?.image + ');' + 'background-size: cover;'}"></div>
+      <mat-card-title>{{course?.title}}</mat-card-title>
     </mat-card-header>
-    <img *ngIf="course.image.length > 0" mat-card-image [src]="course.image">
-    <img *ngIf="course.image.length <= 0" mat-card-image src="assets/images/slider1.jpg">
+    <img *ngIf="course?.image.length > 0" mat-card-image [src]="course?.image">
+    <img *ngIf="course?.image.length <= 0" mat-card-image src="assets/images/slider1.jpg">
 
     <mat-card-content>
       <p>
@@ -15,7 +15,7 @@
     </mat-card-content>
     <mat-card-actions>
       <button *ngIf="this.authenticationService.isTeacher()" mat-raised-button (click)="showEditModal(course)">EDIT</button>
-      <button mat-raised-button (click)="router.navigate(['courses/' + course.id + '/0'])">OPEN</button>
+      <button mat-raised-button (click)="router.navigate(['courses/' + course?.id + '/0'])">OPEN</button>
     </mat-card-actions>
   </mat-card>
 

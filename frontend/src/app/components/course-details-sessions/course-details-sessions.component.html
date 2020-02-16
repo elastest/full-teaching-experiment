@@ -16,7 +16,7 @@
     </mat-card-content>
     <mat-card-actions>
       <button *ngIf="this.authenticationService.isTeacher()" mat-raised-button (click)="showEditModal(session)">EDIT</button>
-      <button mat-raised-button (click)="router.navigate(['session/' + session.id])">OPEN</button>
+      <button mat-raised-button (click)="this.router.navigate(['session/' + session.id])">OPEN</button>
     </mat-card-actions>
   </mat-card>
 

@@ -1,128 +1,83 @@
-import {Component, OnInit} from '@angular/core';
-import {Router} from '@angular/router';
+import {AfterViewInit, Component, OnInit, Renderer2, ViewChild} from '@angular/core';
 import {AuthenticationService} from '../../services/authentication.service';
 import {Session} from '../../classes/session';
-import {addDays, addMonths, addWeeks, isSameDay, isSameMonth, subDays, subMonths, subWeeks} from 'date-fns';
-import {CalendarEvent, CalendarEventAction} from 'angular-calendar';
-
-const colors: any = {
-  red: {
-    primary: '#ad2121',
-    secondary: '#FAE3E3'
-  },
-  blue: {
-    primary: '#1e90ff',
-    secondary: '#D1E8FF'
-  },
-  yellow: {
-    primary: '#e3bc08',
-    secondary: '#FDF1BA'
-  }
-};
-
-class MyCalendarEvent implements CalendarEvent {
-  start: Date;
-  title: string;
-  color = colors.red;
-  actions: CalendarEventAction[];
-  session: Session;
-}
+import {MatCalendar, MatCalendarCellCssClasses} from "@angular/material/datepicker";
+import {Moment} from "moment";
+import {CourseService} from "../../services/course.service";
 
 @Component({
   selector: 'calendar-app',
   templateUrl: './calendar.component.html',
   styleUrls: ['./calendar.component.css'],
 })
-export class CalendarComponent implements OnInit {
+export class CalendarComponent implements OnInit, AfterViewInit {
 
-  view: string = 'month';
 
-  viewDate: Date = new Date();
+  @ViewChild(MatCalendar)
+  private calendar: MatCalendar<Date>;
+  private sessions: Array<Session> = new Array<Session>();
+  today: Date = new Date();
+  selectedDate: Moment;
 
-  events: MyCalendarEvent[] = [];
 
-  activeDayIsOpen: boolean = false;
-
-  loadingSessions: boolean = true;
-
-  constructor(private authenticationService: AuthenticationService, private router: Router) {
+  constructor(private authService: AuthenticationService, private courseService: CourseService) {
   }
 
-  ngOnInit() {
-    this.getAllSessions();
+
+  ngOnInit(): void {
+    this.loadAllSessions();
   }
 
-  increment(): void {
-    const addFn: any = {
-      day: addDays,
-      week: addWeeks,
-      month: addMonths
-    }[this.view];
-    this.viewDate = addFn(this.viewDate, 1);
-    this.activeDayIsOpen = false;
+  loadAllSessions(){
+    this.courseService.getCourses(this.authService.getCurrentUser()).subscribe(resp =>{
+      resp.forEach(c => {
+        c.sessions.forEach(s => {
+          s.course = c;
+          this.sessions.push(s);
+        })
+
+        this.calendar.updateTodaysDate();
+
+      })
+    });
   }
 
-  decrement(): void {
-    const subFn: any = {
-      day: subDays,
-      week: subWeeks,
-      month: subMonths
-    }[this.view];
-    this.viewDate = subFn(this.viewDate, 1);
-    this.activeDayIsOpen = false;
+  getAllSessions(){
+    return this.sessions;
   }
 
-  today(): void {
-    this.viewDate = new Date();
-    this.activeDayIsOpen = true;
+  monthSelected(event) {
+    console.log(event)
   }
 
-  dayClicked({date, events}: { date: Date, events: CalendarEvent[] }): void {
-    if (isSameMonth(date, this.viewDate)) {
-      if (
-        (isSameDay(this.viewDate, date) && this.activeDayIsOpen === true) ||
-        events.length === 0
-      ) {
-        this.activeDayIsOpen = false;
-      } else {
-        this.activeDayIsOpen = true;
-        this.viewDate = date;
-      }
+  clickedDay(event: Moment) {
+    this.isSessionDate(event)
+  }
+
+  ngAfterViewInit(): void {
+  }
+
+  isSessionDate(date: Moment): Boolean {
+
+    let day = date.date();
+    let month = date.get("month");
+
+    let sessions = this.getAllSessions();
+
+    return sessions.filter(session => {
+      let sessionDate = new Date(session.date);
+      return sessionDate.getDay() === day && sessionDate.getMonth() === month;
+    }).length > 0;
+  }
+
+  dateClass = (d: Moment): MatCalendarCellCssClasses => {
+    // Highlight the 1st and 20th day of each month.
+    if (this.isSessionDate(d)) {
+      return 'session-custom-date';
     }
+    return ''
   }
 
-  getAllSessions() {
-    let userCourses = this.authenticationService.getCurrentUser().courses;
-    for (let c of userCourses) {
-      for (let s of c.sessions) {
-
-        /*By default when selecting sessions from the database their field
-        "Course" is not retrieved in order to avoid inifinite recursiveness*/
-        s.course = c;
-
-        let d: Date;
-        d = new Date(s.date);
-        let min = d.getMinutes();
-        let minutesString = min.toString();
-        if (min < 10) {
-          minutesString = "0" + minutesString;
-        }
-        this.events.push({
-          start: d,
-          title: s.title + '  |  ' + d.getHours() + ':' + minutesString,
-          color: colors.red,
-          actions: [
-            {
-              label: '<i class="material-icons calendar-event-icon">forward</i>',
-              onClick: ({event}: { event: CalendarEvent }): void => {
-                this.router.navigate(['/courses', s.course.id, 1]);
-              }
-            }],
-          session: s,
-        });
-      }
-    }
-    this.loadingSessions = false;
-  }
 
 }
+

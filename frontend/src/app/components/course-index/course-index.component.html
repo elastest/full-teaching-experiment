@@ -10,11 +10,11 @@
 
   <div *ngIf="!this.editingContent" class="course-index-content">
 
-    <div *ngIf="course.courseDetails.info" [innerHTML]="course.courseDetails.info">
+    <div *ngIf="course?.courseDetails.info" [innerHTML]="course.courseDetails.info">
       {{course?.courseDetails.info}}
     </div>
 
-    <div *ngIf="!course.courseDetails.info">
+    <div *ngIf="!course?.courseDetails.info">
       <app-error-message [errorTitle]="'There is no info yet'" [errorContent]="''" [customClass]="'warning'"
                          [closable]="false"></app-error-message>
     </div>

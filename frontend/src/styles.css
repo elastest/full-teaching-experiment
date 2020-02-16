@@ -1,4 +1,16 @@
 @import "~@angular/material/prebuilt-themes/deeppurple-amber.css";
+@import "../node_modules/angular-calendar/css/angular-calendar.css";
+
+
+.session-custom-date {
+  background: orange;
+  border-radius: 100%;
+}
+
+mat-calendar {
+  background-color: white;
+
+}
 
 .mat-tab-header{
   background-color: white;

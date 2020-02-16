@@ -21,7 +21,6 @@ export class AuthenticationService {
   private role: string;
 
   constructor(private http: HttpClient, private router: Router) {
-    this.reqIsLogged().catch((e) => {});
   }
 
   logIn(user: string, pass: string) {
@@ -85,6 +84,7 @@ export class AuthenticationService {
     }
   }
 
+
   reqIsLogged(): Promise<any> {
 
     return new Promise((resolve, reject) => {
@@ -97,7 +97,10 @@ export class AuthenticationService {
       let options = { headers };
 
       this.http.get(this.urlLogIn, options).subscribe(
-        response => { this.processLogInResponse(response); resolve() },
+        response => {
+          console.log(response)
+          this.processLogInResponse(response); resolve()
+        },
         error => {
           let msg = '';
           if (error.status != 401) {
