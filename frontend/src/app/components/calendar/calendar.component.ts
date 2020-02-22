@@ -58,8 +58,10 @@ export class CalendarComponent implements OnInit, AfterViewInit {
     let month = selectedDate.month();
 
     return this.getAllSessions().filter(session => {
-      let sessionDate = new Date(session.date);
-      return sessionDate.getDay() === day && sessionDate.getMonth() === month;
+      let sessionDate = this.numberToDate(session.date);
+
+
+      return sessionDate.getDate() === day && sessionDate.getMonth() === month;
     });
   }
 
@@ -73,13 +75,8 @@ export class CalendarComponent implements OnInit, AfterViewInit {
   }
 
   isSessionDate(date: Moment): Boolean {
-
-    let day = date.date();
-    let month = date.get("month");
-
-    let sessions = this.getAllSessions();
-
-    return this.getSessionsInSelectedDay(date).length > 0;
+    let sessionsThisDay = this.getSessionsInSelectedDay(date);
+    return sessionsThisDay.length > 0;
   }
 
   dateClass = (d: Moment): MatCalendarCellCssClasses => {
