@@ -15,7 +15,6 @@
   </i></button>
   <mat-menu #menu="matMenu">
     <mat-card>{{this.authenticationService.getCurrentUser()?.name}}</mat-card>
-    <button mat-menu-item>Item 2</button>
     <mat-divider></mat-divider>
     <button mat-menu-item (click)="this.authenticationService.logOut()" ><i class="material-icons">
       input
@@ -34,8 +33,7 @@
   <span class="example-fill-remaining-space"></span>
 
   <span class="nav-tool-items" *ngIf="!this.authenticationService.isLoggedIn()">
-    <a mat-raised-button routerLink="login" color="warn" routerLinkActive="active">Log in</a>
-    <a mat-raised-button routerLink="register" color="warn" routerLinkActive="active">Register</a>
+    <a mat-raised-button routerLink="login" color="warn" routerLinkActive="active">Sing in</a>
   </span>
 
 </mat-toolbar>

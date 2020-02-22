@@ -1,6 +1,6 @@
 <div *ngFor="let course of this.dataSource">
 
-  <mat-card class="course-card" style="margin: 1vh">
+  <mat-card class="course-card mat-elevation-z24" style="margin: 1vh">
     <mat-card-header>
       <div mat-card-avatar class="course-header-image"[ngStyle]="{ 'background-image': 'url(' + course?.image + ');' + 'background-size: cover;'}"></div>
       <mat-card-title>{{course?.title}}</mat-card-title>
@@ -20,4 +20,9 @@
   </mat-card>
 
 
+</div>
+
+<div *ngIf="this.dataSource.length === 0" style="padding: 5vh">
+  <app-error-message [errorTitle]="'You dont have any course yet!'" [errorContent]="''" [customClass]="'warning'"
+                     [closable]="false"></app-error-message>
 </div>

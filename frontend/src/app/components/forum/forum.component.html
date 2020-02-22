@@ -2,7 +2,7 @@
      [class.tab-template-content-2]="!this.course?.courseDetails?.forum.activated || this.course?.courseDetails?.forum.entries.length === 0">
 
   <!--Forum view-->
-  <ul class="entries-side-view row no-margin" [class.hide]="this.fadeAnim === 'commentsShown'">
+  <ul class="entries-side-view" [class.hide]="this.fadeAnim === 'commentsShown'">
     <div *ngIf="this.course?.courseDetails?.forum.activated">
       <div *ngFor="let entry of this.course?.courseDetails?.forum.entries; let last2 = last">
         <li (mousedown)="this.fadeAnim = 'commentsHidden';"

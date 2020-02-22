@@ -1159,3 +1159,8 @@ a.cal-event-title {
   right: 0;
   bottom: 0;
 }
+
+.outline {
+  border-style: solid;
+  border-width: medium;
+}

@@ -5,6 +5,7 @@ import 'rxjs/add/operator/map';
 
 import { User } from '../classes/user';
 import {HttpClient, HttpHeaders} from "@angular/common/http";
+import {ModalService} from "./modal.service";
 
 
 
@@ -20,7 +21,7 @@ export class AuthenticationService {
   private user: User;
   private role: string;
 
-  constructor(private http: HttpClient, private router: Router) {
+  constructor(private http: HttpClient, private router: Router, private modalService: ModalService) {
   }
 
   logIn(user: string, pass: string) {
@@ -43,7 +44,7 @@ export class AuthenticationService {
 
     console.log("Logging out...");
 
-    return this.http.get(this.urlLogOut).map(
+    return this.http.get(this.urlLogOut).subscribe(
       response => {
 
         console.log("Logout succesful!");
@@ -56,10 +57,12 @@ export class AuthenticationService {
         localStorage.removeItem('login');
         localStorage.removeItem('rol');
         this.router.navigate(['']);
-
+        this.modalService.newLogoutModal();
         return response;
-      })
-      .catch(error => Observable.throw(error));
+      },
+      error => Observable.throw(error)
+    )
+
   }
 
   private processLogInResponse(response) {

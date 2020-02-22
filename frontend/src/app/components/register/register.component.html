@@ -1,32 +1,37 @@
-<div class="login-wrapper centered" fxLayout="row" fxLayoutAlign="center center">
+<div class="login-wrapper" fxLayout="row" fxLayoutAlign="center center">
 
-  <mat-card class="box accent">
+  <mat-card class="mat-elevation-z24">
     <mat-card-header>
       <mat-card-title>Register</mat-card-title>
     </mat-card-header>
-
-    <form class="login-form" [formGroup]="this.registerFormGroup" (ngSubmit)="this.onSubmit(this.registerFormGroup.value)">
-      <mat-card-content>
-        <mat-form-field class="login-full-width">
+    <mat-card-content>
+      <form class="login-form" [formGroup]="this.registerFormGroup"
+            (ngSubmit)="this.onSubmit(this.registerFormGroup.value)">
+        <mat-form-field>
           <input matInput placeholder="Email" formControlName="email">
         </mat-form-field>
 
 
-        <mat-form-field class="login-full-width">
+        <mat-form-field>
           <input matInput placeholder="Name" formControlName="name">
         </mat-form-field>
 
-        <mat-form-field class="login-full-width">
+        <mat-form-field>
           <input matInput placeholder="Password" type="password" formControlName="password">
         </mat-form-field>
 
-        <mat-form-field class="login-full-width">
+        <mat-form-field>
           <input matInput placeholder="Confirm password" type="password" formControlName="confirm-password">
         </mat-form-field>
 
-      </mat-card-content>
-      <button mat-stroked-button color="primary" class="btn-block" type="submit" [disabled]="!this.registerFormGroup.valid">Sing Up</button>
-    </form>
+        <button mat-raised-button type="submit"
+                [disabled]="!this.registerFormGroup.valid">Sing Up
+        </button>
+
+      </form>
+    </mat-card-content>
+    <mat-card-footer>
+    </mat-card-footer>
   </mat-card>
 
 </div>

@@ -1,5 +1,5 @@
 <div *ngFor="let session of this.course?.sessions">
-  <mat-card class="course-card" style="margin: 1vh">
+  <mat-card class="course-card mat-elevation-z24" style="margin: 1vh" >
     <mat-card-header>
       <div mat-card-avatar class="course-header-image"[ngStyle]="{ 'background-image': 'url(' + course.image + ');' + 'background-size: cover;'}"></div>
       <mat-card-title>{{session.title}}</mat-card-title>

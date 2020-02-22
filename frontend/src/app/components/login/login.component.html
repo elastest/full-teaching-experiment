@@ -1,12 +1,10 @@
-<div class="login-wrapper centered" fxLayout="row" fxLayoutAlign="center center">
-
-  <mat-card class="box accent">
+<div class="login-wrapper" fxLayout="row" fxLayoutAlign="center center">
+  <mat-card class="mat-elevation-z24">
     <mat-card-header>
-      <mat-card-title>Log in</mat-card-title>
+      <mat-card-title>Login</mat-card-title>
     </mat-card-header>
-
-    <form class="login-form" [formGroup]="this.loginFormGroup" (ngSubmit)="onSubmit(this.loginFormGroup.value)">
-      <mat-card-content>
+    <mat-card-content>
+      <form class="login-form" [formGroup]="this.loginFormGroup" (ngSubmit)="onSubmit(this.loginFormGroup.value)">
         <mat-form-field class="login-full-width">
           <input matInput placeholder="Email" formControlName="email">
           <mat-error *ngIf="!this.loginFormGroup.controls['email'].valid">
@@ -20,9 +18,15 @@
             {{getError('pass')}}
           </mat-error>
         </mat-form-field>
-      </mat-card-content>
-      <button mat-raised-button color="primary" class="btn-block" type="submit" [disabled]="!this.loginFormGroup.valid">Log in</button>
-    </form>
-  </mat-card>
 
+        <div class="button">
+          <button type="submit" mat-raised-button>Login</button>
+        </div>
+
+      </form>
+    </mat-card-content>
+    <mat-card-footer>
+      You dont have an account? <a [routerLink]="['/register']">Register here</a>
+    </mat-card-footer>
+  </mat-card>
 </div>

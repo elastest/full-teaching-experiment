@@ -39,4 +39,14 @@ export class ModalService {
     });
   }
 
+  public newLogoutModal(){
+    Swal.fire({
+      position: 'top-end',
+      icon: 'success',
+      title: 'You logged out!',
+      showConfirmButton: false,
+      timer: 1500
+    })
+  }
+
 }
