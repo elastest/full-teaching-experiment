@@ -56,12 +56,11 @@ export class CalendarComponent implements OnInit, AfterViewInit {
 
     let day = selectedDate.date();
     let month = selectedDate.month();
+    let year = selectedDate.year();
 
     return this.getAllSessions().filter(session => {
       let sessionDate = this.numberToDate(session.date);
-
-
-      return sessionDate.getDate() === day && sessionDate.getMonth() === month;
+      return sessionDate.getDate() === day && sessionDate.getMonth() === month && sessionDate.getFullYear() === year;
     });
   }
 

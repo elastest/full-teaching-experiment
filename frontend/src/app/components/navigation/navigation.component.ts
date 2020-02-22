@@ -34,10 +34,7 @@ export class NavigationComponent implements OnInit {
   }
 
   logout(){
-    this.authenticationService.logOut().subscribe(
-      response => { $("div.drag-target").remove(); }, //This deletes the draggable element for the side menu (external to the menu itself in the DOM)
-      error => console.log("Error when trying to log out: " + error)
-    );
+    this.authenticationService.logOut();
   }
 
   ngOnInit(): void {
