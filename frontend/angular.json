@@ -39,7 +39,11 @@
               "src/assets/scripts/navbar-script.js",
               "src/assets/scripts/init-welcome-page.js",
               "node_modules/chart.js/dist/Chart.js",
-              "node_modules/hammerjs/hammer.min.js"
+              "node_modules/hammerjs/hammer.min.js",
+              "src/assets/three/three.min.js",
+              "src/assets/vanta/vanta.net.min.js",
+              "src/assets/vanta/vanta.globe.min.js"
+
             ]
           },
           "configurations": {
