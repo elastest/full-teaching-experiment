@@ -22,7 +22,7 @@ export class ForumComponent implements OnInit {
 
   constructor(public animationService: AnimationService,
               private courseDetailsModalDataService: CourseDetailsModalDataService,
-              private authenticationService: AuthenticationService) {
+              public authenticationService: AuthenticationService) {
   }
 
   ngOnInit() {

@@ -263,16 +263,17 @@ body {
   background-color: #FFFFFF !important;
 }
 
-#sticky-footer-div {
+main {
+  flex: 1 0 auto;
+  position: relative;
+  /*WARNING! maybe unexpected behaviours*/
   display: flex;
   min-height: 100vh;
   flex-direction: column;
 }
 
-main {
-  flex: 1 0 auto;
-  position: relative;
-  /*WARNING! maybe unexpected behaviours*/
+.footer{
+  background-color: #9e9e9e;
 }
 
 a {
@@ -1140,4 +1141,21 @@ a.cal-event-title {
 #post-video video {
   width: 50%;
   max-height: 270px;
+}
+
+#sticky-footer-div {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
+#site-footer {
+  padding: 25px 0;
+  font-size: 85%;
+  background-color: #2A2A2A;
+  position: fixed;
+  z-index: -1;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }

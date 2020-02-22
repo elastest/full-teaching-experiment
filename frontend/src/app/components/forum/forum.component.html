@@ -1,5 +1,5 @@
 <div class="tab-template-content row no-margin"
-     [class.tab-template-content-2]="!this.course?.courseDetails?.forum.activated || !this.course?.courseDetails?.forum.entries.length > 0">
+     [class.tab-template-content-2]="!this.course?.courseDetails?.forum.activated || this.course?.courseDetails?.forum.entries.length === 0">
 
   <!--Forum view-->
   <ul class="entries-side-view row no-margin" [class.hide]="this.fadeAnim === 'commentsShown'">
