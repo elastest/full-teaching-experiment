@@ -12,7 +12,23 @@
       account_box
     </i>
   </button>
-  <mat-menu #menu="matMenu">
+  <button *ngIf="!isAnimatedBackgroundEnabled()"
+    (click)="toggleVanta()"
+    matTooltip="Enable animated background"
+    mat-raised-button>
+    <i class="material-icons">
+      blur_on
+    </i>
+  </button>
+  <button *ngIf="isAnimatedBackgroundEnabled()"
+    (click)="toggleVanta()"
+    matTooltip="Disable animated background"
+    mat-raised-button>
+    <i class="material-icons">
+      blur_off
+    </i>
+  </button>
+  <mat-menu #menu="matMenu" style="padding-right: 3vh">
     <mat-card>{{this.authenticationService.getCurrentUser()?.name}}</mat-card>
     <mat-divider></mat-divider>
     <button mat-menu-item (click)="this.authenticationService.logOut()" >
@@ -23,6 +39,7 @@
   </mat-menu>
 
 </mat-toolbar>
+
 
 
 <!-- Not logged in navbar -->
