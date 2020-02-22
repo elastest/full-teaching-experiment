@@ -1,8 +1,7 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {AuthenticationService} from "../../services/authentication.service";
 import {LoginModalService} from "../../services/login-modal.service";
 import {Location} from "@angular/common";
-import {MatDrawer} from "@angular/material/sidenav";
 
 @Component({
   selector: 'app-navigation',
@@ -11,29 +10,10 @@ import {MatDrawer} from "@angular/material/sidenav";
 })
 export class NavigationComponent implements OnInit {
 
-  // @Input('drawer')
-  // public drawer: MatDrawer;
-
-  constructor(public authenticationService: AuthenticationService, public loginModalService: LoginModalService, public location: Location) { }
-
-  updateLoginModalView(b: boolean){
-    this.loginModalService.activateLoginView(b);
+  constructor(public authenticationService: AuthenticationService, public loginModalService: LoginModalService, public location: Location) {
   }
 
-  //Checks if the route is "/courses".
-  showFiller: any;
-  isLogin: boolean = false;
-  isRegister: boolean = false;
-
-
-
-  public addSessionHidden() {
-    let list = ["/courses"],
-      route = this.location.path();
-    return (list.indexOf(route) > -1);
-  }
-
-  logout(){
+  logout() {
     this.authenticationService.logOut();
   }
 

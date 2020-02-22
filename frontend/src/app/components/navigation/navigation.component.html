@@ -1,8 +1,5 @@
 <!-- logged in navbar -->
 <mat-toolbar color="primary" *ngIf="authenticationService.isLoggedIn()">
-  <!--  <button *ngIf="authenticationService.isLoggedIn()" mat-raised-button (click)="drawer.toggle()" id="menu-button">-->
-  <!--    <mat-icon>menu</mat-icon>-->
-  <!--  </button>-->
 
   <span>
     <a id="logo-container-logged" routerLink="/" class="brand-logo app-title-header white-text ">FullTeaching-2.0</a>
@@ -10,15 +7,19 @@
   <span class="example-fill-remaining-space"></span>
 
 
-  <button mat-raised-button [matMenuTriggerFor]="menu"><i class="material-icons">
-    account_box
-  </i></button>
+  <button mat-raised-button [matMenuTriggerFor]="menu">
+    <i class="material-icons">
+      account_box
+    </i>
+  </button>
   <mat-menu #menu="matMenu">
     <mat-card>{{this.authenticationService.getCurrentUser()?.name}}</mat-card>
     <mat-divider></mat-divider>
-    <button mat-menu-item (click)="this.authenticationService.logOut()" ><i class="material-icons">
-      input
-    </i></button>
+    <button mat-menu-item (click)="this.authenticationService.logOut()" >
+      <i class="material-icons">
+        input
+      </i>
+    </button>
   </mat-menu>
 
 </mat-toolbar>
