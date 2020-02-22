@@ -1,14 +1,5 @@
 
 
-
-body {
-  font-family: 'Varela Round', sans-serif;
-  font-size: 16px;
-  line-height: 1.6;
-  overflow-x: hidden;
-  color: #868F9B;
-}
-
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Montserrat', sans-serif;
   font-weight: 700;
@@ -151,7 +142,7 @@ ul, ol {
 }
 
 .text-center .title:after {
-  margin: 20px auto 0px;
+  margin: 20px auto 0;
 }
 
 /* --  Input  -- */
@@ -1711,4 +1702,8 @@ header {
     -webkit-transform:scale(0);
     transform:scale(0);
   }
+}
+
+.spaced{
+  padding-left: 3vh;
 }
