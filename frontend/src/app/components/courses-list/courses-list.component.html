@@ -22,7 +22,7 @@
 
 </div>
 
-<div *ngIf="this.dataSource.length === 0" style="padding: 5vh">
+<div *ngIf="this.dataSource?.length === 0" style="padding: 5vh">
   <app-error-message [errorTitle]="'You dont have any course yet!'" [errorContent]="''" [customClass]="'warning'"
                      [closable]="false"></app-error-message>
 </div>
