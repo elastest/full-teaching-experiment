@@ -31,7 +31,7 @@ import {VideoSessionService} from './services/video-session.service';
 
 import {CalendarComponent} from './components/calendar/calendar.component';
 import {BrowserModule} from '@angular/platform-browser';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {BrowserAnimationsModule, NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {NgModule} from '@angular/core';
@@ -64,6 +64,7 @@ import {CourseDetailsSessionsComponent} from './components/course-details-sessio
 import {MatDatepickerModule} from "@angular/material/datepicker";
 import {MatMomentDateModule} from "@angular/material-moment-adapter";
 import {SweetAlert2Module} from "@sweetalert2/ngx-sweetalert2";
+import { ForumComponent } from './components/forum/forum.component';
 
 const matModules = [
   MatFormFieldModule,
@@ -125,7 +126,7 @@ const matModules = [
     CourseDetailsV2Component,
     CourseIndexComponent,
     CourseDetailsSessionsComponent,
-
+    ForumComponent,
   ],
   providers: [
     AuthenticationService,
