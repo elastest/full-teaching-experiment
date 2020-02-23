@@ -66,6 +66,8 @@ import {MatMomentDateModule} from "@angular/material-moment-adapter";
 import {SweetAlert2Module} from "@sweetalert2/ngx-sweetalert2";
 import { ForumComponent } from './components/forum/forum.component';
 import {MatTooltipModule} from "@angular/material/tooltip";
+import {MatGridListModule} from "@angular/material/grid-list";
+import {MatExpansionModule} from "@angular/material/expansion";
 
 const matModules = [
   MatFormFieldModule,
@@ -77,27 +79,29 @@ const matModules = [
 ];
 
 @NgModule({
-    imports: [
-        BrowserModule,
-        BrowserAnimationsModule,
-        FormsModule,
-        HttpClientModule,
-        routing,
-        matModules,
-        MatSidenavModule,
-        MatMenuModule,
-        MatToolbarModule,
-        MatCardModule,
-        ReactiveFormsModule,
-        MatIconModule,
-        MatDividerModule,
-        MatTableModule,
-        MatTabsModule,
-        AngularEditorModule,
-        MatDatepickerModule,
-        SweetAlert2Module.forRoot(),
-        MatTooltipModule
-    ],
+  imports: [
+    BrowserModule,
+    BrowserAnimationsModule,
+    FormsModule,
+    HttpClientModule,
+    routing,
+    matModules,
+    MatSidenavModule,
+    MatMenuModule,
+    MatToolbarModule,
+    MatCardModule,
+    ReactiveFormsModule,
+    MatIconModule,
+    MatDividerModule,
+    MatTableModule,
+    MatTabsModule,
+    AngularEditorModule,
+    MatDatepickerModule,
+    SweetAlert2Module.forRoot(),
+    MatTooltipModule,
+    MatGridListModule,
+    MatExpansionModule
+  ],
   exports: [
     matModules
   ],

@@ -1,12 +1,6 @@
-<div id="course-index">
+<div id="course-index" class="bg-white">
 
-  <div class="course-index-header" *ngIf="this.authenticationService.isTeacher() && !this.editingContent">
-    <button mat-raised-button (click)="this.editingContent = true">
-      <i class="material-icons">
-        edit
-      </i>
-    </button>
-  </div>
+
 
   <div *ngIf="!this.editingContent" class="course-index-content">
 
@@ -35,6 +29,14 @@
     </mat-card>
 
 
+  </div>
+
+  <div class="course-index-header" *ngIf="this.authenticationService.isTeacher() && !this.editingContent">
+    <button mat-raised-button class="mat-elevation-z24" (click)="this.editingContent = true">
+      <i class="material-icons">
+        edit
+      </i>
+    </button>
   </div>
 
 </div>
