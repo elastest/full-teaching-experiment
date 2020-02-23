@@ -1,5 +1,7 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {Router} from "@angular/router";
+import {Comment} from "../classes/comment";
+
 const Swal = require('sweetalert2');
 
 
@@ -8,17 +10,17 @@ const Swal = require('sweetalert2');
 })
 export class ModalService {
 
-  constructor(private router: Router) { }
+  constructor(private router: Router) {
+  }
 
 
-
-  public newSuccessModal(title: string, text: string, redirect: string){
+  public newSuccessModal(title: string, text: string, redirect: string) {
     Swal.fire({
       title: title,
       text: text,
       icon: 'success',
       onClose: () => {
-        if(redirect){
+        if (redirect) {
           this.router.navigate([redirect]);
         }
       }
@@ -26,20 +28,20 @@ export class ModalService {
   }
 
 
-  public newErrorModal(title: string, text: string, redirect: string){
+  public newErrorModal(title: string, text: string, redirect: string) {
     Swal.fire({
       title: title,
       text: text,
       icon: 'error',
       onClose: () => {
-        if(redirect){
+        if (redirect) {
           this.router.navigate([redirect]);
         }
       }
     });
   }
 
-  public newLogoutModal(){
+  public newLogoutModal() {
     Swal.fire({
       position: 'top-end',
       icon: 'success',
@@ -49,4 +51,39 @@ export class ModalService {
     })
   }
 
+
+  public newReplyModal(comment: Comment, onAccept: Function) {
+    Swal.fire({
+      title: 'Your response:',
+      input: 'text',
+      showCancelButton: true,
+      inputValidator: (value) => {
+        if (!value) {
+          return 'You need to write something!'
+        }
+      },
+    })
+      .then(result => {
+        onAccept(result);
+      })
+  }
+
+  newToastModal(title: string) {
+    let Toast = Swal.mixin({
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true,
+      onOpen: (toast) => {
+        toast.addEventListener('mouseenter', Swal.stopTimer);
+        toast.addEventListener('mouseleave', Swal.resumeTimer);
+      }
+    });
+
+    Toast.fire({
+      icon: 'success',
+      title: title
+    })
+  }
 }

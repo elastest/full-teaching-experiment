@@ -1,11 +1,15 @@
-import { Component, OnInit, Input } from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 
-import { Comment }    from '../../classes/comment';
-import { Entry }      from '../../classes/entry';
-import { FileGroup }  from '../../classes/file-group';
+import {Comment} from '../../classes/comment';
+import {Entry} from '../../classes/entry';
+import {FileGroup} from '../../classes/file-group';
 
-import { CourseDetailsModalDataService } from '../../services/course-details-modal-data.service';
-import { AnimationService }      from '../../services/animation.service';
+import {CourseDetailsModalDataService} from '../../services/course-details-modal-data.service';
+import {AnimationService} from '../../services/animation.service';
+import {ModalService} from "../../services/modal.service";
+import {Course} from "../../classes/course";
+import {ForumService} from "../../services/forum.service";
+import {CourseDetails} from "../../classes/course-details";
 
 @Component({
   selector: 'app-comment',
@@ -17,16 +21,25 @@ export class CommentComponent implements OnInit {
   @Input()
   public comment: Comment;
 
-  constructor(public courseDetailsModalDataService: CourseDetailsModalDataService, public animationService: AnimationService) {}
+  @Input()
+  public courseDetailsId: number;
 
-  ngOnInit() {}
+  @Input()
+  public entryId: number;
 
-  updatePostModalMode(mode: number, title: string, header: Entry, commentReplay: Comment, fileGroup: FileGroup){
+
+  constructor(public courseDetailsModalDataService: CourseDetailsModalDataService, public animationService: AnimationService, private modalService: ModalService, private forumService: ForumService) {
+  }
+
+  ngOnInit() {
+  }
+
+  updatePostModalMode(mode: number, title: string, header: Entry, commentReplay: Comment, fileGroup: FileGroup) {
     let objs = [mode, title, header, commentReplay, fileGroup];
     this.courseDetailsModalDataService.announcePostMode(objs);
   }
 
-  isCommentTeacher(comment: Comment){
+  isCommentTeacher(comment: Comment) {
     return (comment.user.roles.indexOf('ROLE_TEACHER') > -1);
   }
 
@@ -38,4 +51,33 @@ export class CommentComponent implements OnInit {
     $(event.target).removeAttr("controls");
   }
 
+  showReplyModal() {
+    let service = this.forumService;
+    let entry = this.entryId;
+    let details = this.courseDetailsId;
+    let comment = this.comment;
+    let modalService = this.modalService;
+
+    this.modalService.newReplyModal(comment, function (resp) {
+      if (resp) {
+        let value = resp['value'];
+        if (value) {
+
+          console.log(details, entry)
+
+          service.newComment(new Comment(value, '', false, comment), entry, details).subscribe(
+            data => {
+              comment.replies.push(data.comment);
+              modalService.newToastModal('Comment added successfully!');
+            },
+            error => {
+              console.log(error);
+              modalService.newErrorModal("Ooops... something went wrong", "There was an unexpected error while trying to write your comment!", null);
+            }
+          );
+        }
+      }
+
+    })
+  }
 }

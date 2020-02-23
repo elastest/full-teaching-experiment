@@ -116,7 +116,7 @@
         </mat-expansion-panel-header>
         <div *ngFor="let comment of entry?.comments; let last3 = last" class="comment-block"
              [class.comment-divider]="!last3">
-          <app-comment [comment]="comment"></app-comment>
+          <app-comment [courseDetailsId]="this.course?.courseDetails?.id" [entryId]="entry?.id" [comment]="comment"></app-comment>
           <mat-divider [vertical]="true"></mat-divider>
         </div>
       </mat-expansion-panel>
@@ -133,6 +133,7 @@
                        [errorContent]="'Be the first one! Just click on the icon above'" [customClass]="'warning'"
                        [closable]="false"></app-error-message>
   </div>
+
 </mat-grid-list>
 
 
