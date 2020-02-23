@@ -134,6 +134,10 @@
                        [closable]="false"></app-error-message>
   </div>
 
+  <button (click)="this.showNewEntryModal()" mat-raised-button color="primary" *ngIf="this.course?.courseDetails?.forum.activated" matTooltip="New entry" class="mat-elevation-z2">
+    <mat-icon>add</mat-icon>
+  </button>
+
 </mat-grid-list>
 
 

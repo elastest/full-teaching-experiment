@@ -1,6 +1,8 @@
 import {Injectable} from '@angular/core';
 import {Router} from "@angular/router";
 import {Comment} from "../classes/comment";
+import {Course} from "../classes/course";
+import {User} from "../classes/user";
 
 const Swal = require('sweetalert2');
 
@@ -52,9 +54,9 @@ export class ModalService {
   }
 
 
-  public newReplyModal(comment: Comment, onAccept: Function) {
+  public newCallbackedModal(title, onAccept: Function){
     Swal.fire({
-      title: 'Your response:',
+      title: title,
       input: 'text',
       showCancelButton: true,
       inputValidator: (value) => {
@@ -66,6 +68,30 @@ export class ModalService {
       .then(result => {
         onAccept(result);
       })
+  }
+
+  public newMultiStageModalWithCallback(titles: Array<string>, progressSteps: Array<string>, callback: Function, confirmTitle: string){
+    Swal.mixin({
+      input: 'text',
+      confirmButtonText: 'Next &rarr;',
+      showCancelButton: true,
+      progressSteps: progressSteps
+    }).queue(titles).then((result) => {
+      if (result.value) {
+        callback(result);
+        // const answers = JSON.stringify(result.value);
+        // Swal.fire({
+        //   title: confirmTitle,
+        //   showConfirmButton: true,
+        //   confirmButtonText: 'Confirm',
+        //   showCancelButton: true
+        // })
+        //   .then(isConfirm => {
+        //     if(isConfirm){
+        //     }
+        //   })
+      }
+    })
   }
 
   newToastModal(title: string) {

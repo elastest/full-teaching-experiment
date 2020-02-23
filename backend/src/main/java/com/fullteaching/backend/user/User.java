@@ -20,7 +20,6 @@ import com.fullteaching.backend.course.Course;
 @Entity(name = "user_data")
 @Getter
 @Setter
-@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 public class User {

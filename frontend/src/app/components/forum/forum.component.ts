@@ -6,6 +6,8 @@ import {AnimationService} from "../../services/animation.service";
 import {CourseDetailsModalDataService} from "../../services/course-details-modal-data.service";
 import {FileGroup} from "../../classes/file-group";
 import {AuthenticationService} from "../../services/authentication.service";
+import {ForumService} from "../../services/forum.service";
+import {ModalService} from "../../services/modal.service";
 
 @Component({
   selector: 'app-forum',
@@ -21,8 +23,10 @@ export class ForumComponent implements OnInit {
   postModalCommentReplay: Comment;
 
   constructor(public animationService: AnimationService,
+              private forumService: ForumService,
               private courseDetailsModalDataService: CourseDetailsModalDataService,
-              public authenticationService: AuthenticationService) {
+              public authenticationService: AuthenticationService,
+              private modalService: ModalService) {
   }
 
   ngOnInit() {
@@ -58,5 +62,29 @@ export class ForumComponent implements OnInit {
   updatePutDeleteModalMode(mode: number, title: string) {
     let objs = [mode, title];
     this.courseDetailsModalDataService.announcePutdeleteMode(objs);
+  }
+
+  showNewEntryModal() {
+    let course = this.course;
+    let service = this.forumService;
+    let modalService = this.modalService;
+    this.modalService.newMultiStageModalWithCallback(['Entry title:', 'Firs comment:'], ['1', '2'], function (resp) {
+      if (resp) {
+        let value = resp.value;
+        if (value) {
+          let entry = new Entry(value[0], [new Comment(value[1], '', false, null)]);
+          console.log(entry)
+          service.newEntry(entry, course.courseDetails.id).subscribe(data => {
+              let entry = data.entry;
+              course.courseDetails.forum.entries.push(entry);
+              modalService.newToastModal('Successfully created entry!');
+            },
+            error => {
+              modalService.newErrorModal('Ooops... there was an unexpected error!', 'There was an error creating your new entry!', null);
+            });
+        }
+      }
+
+    } , 'Confirm entry creation')
   }
 }

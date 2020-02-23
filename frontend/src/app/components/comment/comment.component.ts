@@ -58,13 +58,10 @@ export class CommentComponent implements OnInit {
     let comment = this.comment;
     let modalService = this.modalService;
 
-    this.modalService.newReplyModal(comment, function (resp) {
+    this.modalService.newCallbackedModal('New entry: ',function (resp) {
       if (resp) {
         let value = resp['value'];
         if (value) {
-
-          console.log(details, entry)
-
           service.newComment(new Comment(value, '', false, comment), entry, details).subscribe(
             data => {
               comment.replies.push(data.comment);

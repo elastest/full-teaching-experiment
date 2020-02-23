@@ -12,11 +12,11 @@
       <div class="user-name">{{comment.date | date}} - {{comment.date | date:'H:mm' }}</div>
     </div>
     <div class="col l1 m1 s1 no-padding-left right-align">
-      <a [title]="'Send reply'" (click)="this.showReplyModal();updatePostModalMode(1, 'New reply', null, this.comment, null); this.animationService.animateIfSmall()">
-        <i class="material-icons replay-icon">feedback</i>
+      <a matTooltip="Send reply" (click)="this.showReplyModal();updatePostModalMode(1, 'New reply', null, this.comment, null); this.animationService.animateIfSmall()">
+        <mat-icon class="replay-icon" color="primary">feedback</mat-icon>
       </a>
-      <a href="#course-details-modal" [title]="'Send video reply'" (click)="updatePostModalMode(6, 'New video reply', null, this.comment, null); this.animationService.animateIfSmall()">
-        <i class="material-icons replay-icon">videocam</i>
+      <a href="#course-details-modal" matTooltip="Send video reply" (click)="updatePostModalMode(6, 'New video reply', null, this.comment, null); this.animationService.animateIfSmall()">
+        <mat-icon class="replay-icon" color="primary">videocam</mat-icon>
       </a>
     </div>
   </div>
