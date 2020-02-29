@@ -16,7 +16,10 @@ export class CourseAttachmentsComponent implements OnInit {
   @Input('file-groups')
   public fileGroups: FileGroup[];
 
-  constructor(private authService: AuthenticationService) { }
+  @Input('is-editing')
+  isEditing: boolean;
+
+  constructor(public authService: AuthenticationService) { }
 
   ngOnInit(): void {
   }
@@ -35,5 +38,10 @@ export class CourseAttachmentsComponent implements OnInit {
 
   isVideo(f: File){
     return FileType.VIDEO === f.type;
+  }
+
+  openLink(link: string) {
+    console.log(`Redirecting to ${link}`)
+    window.open(link, "_blank");
   }
 }

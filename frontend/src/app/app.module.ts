@@ -71,6 +71,7 @@ import {MatExpansionModule} from "@angular/material/expansion";
 import { CourseAttachmentsComponent } from './components/course-attachments/course-attachments.component';
 import {DragDropModule} from "@angular/cdk/drag-drop";
 import {MatListModule} from "@angular/material/list";
+import {MatSlideToggleModule} from "@angular/material/slide-toggle";
 
 const matModules = [
   MatFormFieldModule,
@@ -105,7 +106,8 @@ const matModules = [
     MatGridListModule,
     MatExpansionModule,
     DragDropModule,
-    MatListModule
+    MatListModule,
+    MatSlideToggleModule
   ],
   exports: [
     matModules

@@ -40,7 +40,13 @@
           attachment
         </mat-icon>
       </ng-template>
-      <app-course-attachments [file-groups]="course?.courseDetails?.files"></app-course-attachments>
+<!--      <button>-->
+<!--        <mat-icon matTooltip="Edit attachments" (click)="this.toggleEditionMode()">edit</mat-icon>-->
+<!--      </button>-->
+
+      <mat-slide-toggle  *ngIf="this.authService.isTeacher()" color="primary" (change)="toggleEditionMode()">Edition mode</mat-slide-toggle>
+
+      <app-course-attachments [file-groups]="course?.courseDetails?.files" [is-editing]="this.isEditing"></app-course-attachments>
     </mat-tab>
     <mat-tab>
       <ng-template mat-tab-label>

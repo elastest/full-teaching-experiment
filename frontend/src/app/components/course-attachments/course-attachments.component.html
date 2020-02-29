@@ -10,7 +10,7 @@
         </mat-panel-description>
       </mat-expansion-panel-header>
 
-      <div *ngIf="this.authService.isStudent()" cdkDropList class="files-list" (cdkDropListDropped)="drop(fg.files, $event)">
+      <div *ngIf="this.authService.isTeacher() && this.isEditing" cdkDropList class="files-list" (cdkDropListDropped)="drop(fg.files, $event)">
         <div class="files-box" *ngFor="let f of fg.files" cdkDrag>
           <div class="files-custom-placeholder" *cdkDragPlaceholder></div>
           {{f.name}}
@@ -24,31 +24,34 @@
       </div>
 
 
-      <mat-list *ngIf="authService.isTeacher()">
+      <mat-list *ngIf="authService.isTeacher() && !this.isEditing">
         <mat-card *ngFor="let f of fg.files" class="mat-elevation-z6 spaced">
           {{f.name}}
           <mat-card-actions>
             <button *ngIf="this.isFile(f)" mat-button matTooltip="Download attachment"><mat-icon>cloud_download</mat-icon></button>
-            <button *ngIf="this.isLink(f)" mat-button matTooltip="Redirect to link"><mat-icon>link</mat-icon></button>
+            <button *ngIf="this.isLink(f)" mat-button matTooltip="Redirect to link" (click)="openLink(f.link)"><mat-icon>link</mat-icon></button>
             <button *ngIf="this.isVideo(f)" mat-button matTooltip="Play video"><mat-icon>ondemand_video</mat-icon></button>
           </mat-card-actions>
         </mat-card>
       </mat-list>
 
 
-      <app-course-attachments *ngIf="fg.fileGroups.length > 0" [file-groups]="fg.fileGroups"></app-course-attachments>
+      <app-course-attachments *ngIf="fg.fileGroups.length > 0" [file-groups]="fg.fileGroups" [is-editing]="this.isEditing"></app-course-attachments>
 
       <mat-action-row>
         <button *ngIf="this.authService.isTeacher()" mat-button>
           <mat-icon matTooltip="Delete file group">delete</mat-icon>
         </button>
-        <button *ngIf="this.authService.isTeacher()" mat-button>
-          <mat-icon matTooltip="Edit file group">edit</mat-icon>
-        </button>
       </mat-action-row>
     </mat-expansion-panel>
     <mat-divider></mat-divider>
   </div>
+
+
+  <div *ngIf="authService.isTeacher()">
+    <button mat-raised-button color="primary" class="mat-elevation-z5" matTooltip="Add new file group"><mat-icon>add</mat-icon></button>
+  </div>
+
 </mat-accordion>
 
 
