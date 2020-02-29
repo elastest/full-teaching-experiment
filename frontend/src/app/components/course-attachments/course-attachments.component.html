@@ -1,0 +1,52 @@
+<mat-accordion class="bg-transparent files-group mat-elevation-z24">
+  <div class="course-files files-group" *ngFor="let fg of this.fileGroups; let last2 = last">
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          {{fg.title}}
+        </mat-panel-title>
+        <mat-panel-description>
+          <p>Nice description</p>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <div *ngIf="this.authService.isStudent()" cdkDropList class="files-list" (cdkDropListDropped)="drop(fg.files, $event)">
+        <div class="files-box" *ngFor="let f of fg.files" cdkDrag>
+          <div class="files-custom-placeholder" *cdkDragPlaceholder></div>
+          {{f.name}}
+          <div class="example-handle" cdkDragHandle>
+            <svg width="24px" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z"></path>
+              <path d="M0 0h24v24H0z" fill="none"></path>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+
+      <mat-list *ngIf="authService.isTeacher()">
+        <mat-card *ngFor="let f of fg.files" class="mat-elevation-z6 spaced">
+          {{f.name}}
+          <mat-card-actions>
+            <button mat-button matTooltip="Download attachment"><mat-icon>cloud_download</mat-icon></button>
+          </mat-card-actions>
+        </mat-card>
+      </mat-list>
+
+
+      <app-course-attachments *ngIf="fg.fileGroups.length > 0" [file-groups]="fg.fileGroups"></app-course-attachments>
+
+      <mat-action-row>
+        <button *ngIf="this.authService.isTeacher()" mat-button>
+          <mat-icon matTooltip="Delete file group">delete</mat-icon>
+        </button>
+        <button *ngIf="this.authService.isTeacher()" mat-button>
+          <mat-icon matTooltip="Edit file group">edit</mat-icon>
+        </button>
+      </mat-action-row>
+    </mat-expansion-panel>
+    <mat-divider></mat-divider>
+  </div>
+</mat-accordion>
+
+

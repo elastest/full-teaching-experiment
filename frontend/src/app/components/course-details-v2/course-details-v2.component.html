@@ -24,7 +24,7 @@
           school
         </mat-icon>
       </ng-template>
-      <app-course-details-sessions [course] = "this.course"></app-course-details-sessions>
+      <app-course-details-sessions [course]="this.course"></app-course-details-sessions>
     </mat-tab>
     <mat-tab>
       <ng-template mat-tab-label>
@@ -40,8 +40,8 @@
           attachment
         </mat-icon>
       </ng-template>
-
-      Content 3 </mat-tab>
+      <app-course-attachments [file-groups]="course?.courseDetails?.files"></app-course-attachments>
+    </mat-tab>
     <mat-tab>
       <ng-template mat-tab-label>
         <mat-icon matTooltip="Students">
@@ -49,7 +49,8 @@
         </mat-icon>
       </ng-template>
 
-      Content 3 </mat-tab>
+      Content 3
+    </mat-tab>
 
   </mat-tab-group>
 

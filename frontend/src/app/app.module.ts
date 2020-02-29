@@ -68,6 +68,9 @@ import { ForumComponent } from './components/forum/forum.component';
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {MatGridListModule} from "@angular/material/grid-list";
 import {MatExpansionModule} from "@angular/material/expansion";
+import { CourseAttachmentsComponent } from './components/course-attachments/course-attachments.component';
+import {DragDropModule} from "@angular/cdk/drag-drop";
+import {MatListModule} from "@angular/material/list";
 
 const matModules = [
   MatFormFieldModule,
@@ -100,7 +103,9 @@ const matModules = [
     SweetAlert2Module.forRoot(),
     MatTooltipModule,
     MatGridListModule,
-    MatExpansionModule
+    MatExpansionModule,
+    DragDropModule,
+    MatListModule
   ],
   exports: [
     matModules
@@ -133,6 +138,7 @@ const matModules = [
     CourseIndexComponent,
     CourseDetailsSessionsComponent,
     ForumComponent,
+    CourseAttachmentsComponent,
   ],
   providers: [
     AuthenticationService,

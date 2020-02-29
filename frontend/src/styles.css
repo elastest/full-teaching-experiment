@@ -2,6 +2,11 @@
 @import "../node_modules/angular-calendar/css/angular-calendar.css";
 
 
+.forum-thread, .files-group, .spaced{
+  padding-bottom: 1vh;
+  padding-top: 3vh
+}
+
 .session-custom-date {
   background: mediumpurple;
   border-radius: 100%;
