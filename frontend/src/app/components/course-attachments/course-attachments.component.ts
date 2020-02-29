@@ -4,6 +4,7 @@ import {Course} from "../../classes/course";
 import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
 import {File} from "../../classes/file";
 import {FileGroup} from "../../classes/file-group";
+import {FileType} from "../../enum/file-type.enum";
 
 @Component({
   selector: 'app-course-attachments',
@@ -15,7 +16,6 @@ export class CourseAttachmentsComponent implements OnInit {
   @Input('file-groups')
   public fileGroups: FileGroup[];
 
-
   constructor(private authService: AuthenticationService) { }
 
   ngOnInit(): void {
@@ -23,5 +23,17 @@ export class CourseAttachmentsComponent implements OnInit {
 
   drop(files: File[], event: CdkDragDrop<{title: string, poster: string}[]>) {
     moveItemInArray(files, event.previousIndex, event.currentIndex);
+  }
+
+  isFile(f: File){
+    return FileType.FILE === f.type;
+  }
+
+  isLink(f: File){
+    return FileType.LINK === f.type;
+  }
+
+  isVideo(f: File){
+    return FileType.VIDEO === f.type;
   }
 }

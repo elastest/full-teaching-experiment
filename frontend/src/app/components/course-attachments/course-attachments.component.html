@@ -28,7 +28,9 @@
         <mat-card *ngFor="let f of fg.files" class="mat-elevation-z6 spaced">
           {{f.name}}
           <mat-card-actions>
-            <button mat-button matTooltip="Download attachment"><mat-icon>cloud_download</mat-icon></button>
+            <button *ngIf="this.isFile(f)" mat-button matTooltip="Download attachment"><mat-icon>cloud_download</mat-icon></button>
+            <button *ngIf="this.isLink(f)" mat-button matTooltip="Redirect to link"><mat-icon>link</mat-icon></button>
+            <button *ngIf="this.isVideo(f)" mat-button matTooltip="Play video"><mat-icon>ondemand_video</mat-icon></button>
           </mat-card-actions>
         </mat-card>
       </mat-list>
