@@ -46,7 +46,7 @@
 
       <mat-slide-toggle  *ngIf="this.authService.isTeacher()" color="primary" (change)="toggleEditionMode()">Edition mode</mat-slide-toggle>
 
-      <app-course-attachments [file-groups]="course?.courseDetails?.files" [is-editing]="this.isEditing"></app-course-attachments>
+      <app-course-attachments [file-groups]="course?.courseDetails?.files" [is-editing]="this.isEditing" [course]="this.course"></app-course-attachments>
     </mat-tab>
     <mat-tab>
       <ng-template mat-tab-label>
