@@ -3,6 +3,7 @@ import {Course} from "../../classes/course";
 import {CourseService} from "../../services/course.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {AuthenticationService} from "../../services/authentication.service";
+import {ModalService} from "../../services/modal.service";
 
 const Swal = require('sweetalert2');
 
@@ -19,7 +20,8 @@ export class CoursesListComponent implements OnInit {
   constructor(private courseService: CourseService,
               private authenticationService: AuthenticationService,
               private router: Router,
-              private route: ActivatedRoute
+              private route: ActivatedRoute,
+              private modalService: ModalService
   ) {
     this.authenticationService.reqIsLogged();
   }
@@ -27,13 +29,12 @@ export class CoursesListComponent implements OnInit {
   ngOnInit() {
     this.courseService.getCourses(this.authenticationService.getCurrentUser())
       .subscribe((data) => {
-        console.log(data)
         this.dataSource = data;
       })
   }
 
 
-  showEditModal(course) {
+  showEditModal(course: Course) {
     Swal.fire({
       title: 'Modify course name',
       input: 'text',
@@ -49,10 +50,14 @@ export class CoursesListComponent implements OnInit {
 
           let value = result['value'];
 
+          course.title = value;
+
           this.courseService.editCourse(course, value).subscribe(
             data => {
-              console.log(data)
-            }
+
+              this.modalService.newToastModal(`Successfully changed name of the course to: ${value}`)
+
+            }, error => this.modalService.newErrorModal('An error ocured while updating the name of the course!', error, null)
           );
 
         }
