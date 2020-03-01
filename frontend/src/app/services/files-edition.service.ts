@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
+import {FileGroup} from "../classes/file-group";
 
 @Injectable()
 export class FilesEditionService {
@@ -28,5 +29,6 @@ export class FilesEditionService {
   announceFileFilegroupUpdated(objs){
     this.fileFilegroupUpdatedAnnounced$.next(objs);
   }
+
 
 }

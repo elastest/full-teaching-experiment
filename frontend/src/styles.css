@@ -2,7 +2,11 @@
 @import "../node_modules/angular-calendar/css/angular-calendar.css";
 
 
-.forum-thread, .files-group, .spaced{
+.swal-wide {
+
+}
+
+.forum-thread, .files-group, .spaced {
   padding-bottom: 1vh;
   padding-top: 3vh
 }
@@ -17,7 +21,7 @@ mat-calendar {
 
 }
 
-.mat-tab-header{
+.mat-tab-header {
   background-color: white;
 }
 
@@ -25,7 +29,7 @@ mat-calendar {
   max-width: 400px;
 }
 
-.course-index-content{
+.course-index-content {
   padding: 4vh;
 }
 
@@ -277,7 +281,7 @@ main {
   flex-direction: column;
 }
 
-.footer{
+.footer {
   background-color: #9e9e9e;
 }
 

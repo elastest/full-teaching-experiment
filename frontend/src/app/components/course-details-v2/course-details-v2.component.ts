@@ -33,6 +33,19 @@ export class CourseDetailsV2Component implements OnInit {
       if (this.recursiveFileGroupDeletion(this.course.courseDetails.files, fileGroupId)) {
         if (this.course.courseDetails.files.length == 0) this.isEditing = false; //If there are no fileGroups, mode edit is closed
       }
+    });
+
+
+    filesEditionService.fileFilegroupUpdatedAnnounced$.subscribe(objs => {
+
+      let fg = objs[0];
+      let file = objs[1];
+
+      if(fg){
+        console.log(`File group updated ${fg.id}`)
+      }
+
+
     })
 
   }

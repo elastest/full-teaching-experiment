@@ -73,10 +73,15 @@ export class ModalService {
   public newCallbackedModal(title: string, onAccept: Function){
     Swal.fire({
       title: title,
+      icon: 'warning',
+      text: "You won't be able to revert this!",
+      confirmButtonText: 'Yes, delete it!',
       showCancelButton: true
     })
-      .then(() => {
-        onAccept();
+      .then((accepted) => {
+        if(accepted.value) {
+          onAccept();
+        }
       })
   }
 
@@ -111,6 +116,7 @@ export class ModalService {
       showConfirmButton: false,
       timer: 3000,
       timerProgressBar: true,
+      customClass: 'swal-wide',
       onOpen: (toast) => {
         toast.addEventListener('mouseenter', Swal.stopTimer);
         toast.addEventListener('mouseleave', Swal.resumeTimer);

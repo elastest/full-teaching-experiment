@@ -25,24 +25,25 @@ export class CourseAttachmentsComponent implements OnInit {
   @Input('course')
   public course: Course;
 
-  constructor(public authService: AuthenticationService, private fileService: FileService, private modalService: ModalService, private filesEditionService: FilesEditionService) { }
+  constructor(public authService: AuthenticationService, private fileService: FileService, private modalService: ModalService, private filesEditionService: FilesEditionService) {
+  }
 
   ngOnInit(): void {
   }
 
-  drop(files: File[], event: CdkDragDrop<{title: string, poster: string}[]>) {
+  drop(files: File[], event: CdkDragDrop<{ title: string, poster: string }[]>) {
     moveItemInArray(files, event.previousIndex, event.currentIndex);
   }
 
-  isFile(f: File){
+  isFile(f: File) {
     return FileType.FILE === f.type;
   }
 
-  isLink(f: File){
+  isLink(f: File) {
     return FileType.LINK === f.type;
   }
 
-  isVideo(f: File){
+  isVideo(f: File) {
     return FileType.VIDEO === f.type;
   }
 
@@ -51,7 +52,7 @@ export class CourseAttachmentsComponent implements OnInit {
     window.open(link, "_blank");
   }
 
-  removeFromList(fg: FileGroup){
+  removeFromList(fg: FileGroup) {
   }
 
   deleteFileGroup(fileGroup: FileGroup) {
@@ -61,17 +62,45 @@ export class CourseAttachmentsComponent implements OnInit {
     let modalService = this.modalService;
     let filesEditionService = this.filesEditionService;
 
-    this.modalService.newCallbackedModal('Are you sure about removing this file group?', function (resp) {
+    this.modalService.newCallbackedModal('Are you sure about removing this file group?', function () {
+
+
       fileService.deleteFileGroup(fileGroup.id, course.id).subscribe(
         () => {
           //announce deletion so the parent component knows it
           filesEditionService.announceFileGroupDeleted(fileGroup.id);
+          modalService.newToastModal('File group successfully deleted!')
         },
         error => {
           console.log(error);
           modalService.newErrorModal('Error removing file group!', error, null);
         }
       );
+
     });
+  }
+
+  editFileGroupName(fg: FileGroup) {
+
+    let course = this.course;
+    let fileService = this.fileService;
+    let modalService = this.modalService;
+    let filesEditionService = this.filesEditionService;
+
+    this.modalService.newInputCallbackedModal('Change file group title: ', function (resp) {
+      let newName = resp['value'];
+      if (newName) {
+        fg.title = newName;
+        fileService.editFileGroup(fg, course.id).subscribe((data) => {
+            filesEditionService.announceFileFilegroupUpdated([fg]);
+            modalService.newToastModal(`File group title changed to: ${fg.title}`)
+          },
+          error => {
+            modalService.newErrorModal('An error ocurred while updating the title of the file group!', error, null)
+          });
+      }
+    })
+
+
   }
 }

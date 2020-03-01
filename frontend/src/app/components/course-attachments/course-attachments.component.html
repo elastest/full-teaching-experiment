@@ -38,9 +38,13 @@
 
       <app-course-attachments *ngIf="fg.fileGroups.length > 0" [file-groups]="fg.fileGroups" [is-editing]="this.isEditing" [course]="this.course"></app-course-attachments>
 
-      <mat-action-row>
-        <button *ngIf="this.authService.isTeacher()" mat-button (click)="this.deleteFileGroup(fg)">
+      <mat-action-row *ngIf="this.authService.isTeacher() && this.isEditing">
+        <button mat-button (click)="this.deleteFileGroup(fg)">
           <mat-icon matTooltip="Delete file group">delete</mat-icon>
+        </button>
+
+        <button mat-button>
+          <mat-icon matTooltip="Edit file group" (click)="this.editFileGroupName(fg)">edit</mat-icon>
         </button>
       </mat-action-row>
     </mat-expansion-panel>
