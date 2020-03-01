@@ -25,6 +25,9 @@ export class CourseAttachmentsComponent implements OnInit {
   @Input('course')
   public course: Course;
 
+  @Input('recursive-index')
+  public recursiveIndex: number;
+
   constructor(public authService: AuthenticationService, private fileService: FileService, private modalService: ModalService, private filesEditionService: FilesEditionService) {
   }
 
@@ -115,5 +118,9 @@ export class CourseAttachmentsComponent implements OnInit {
 
   }
 
+
+  getBgColorClass(){
+    return `bg-recursive-${this.recursiveIndex}`;
+  }
 
 }

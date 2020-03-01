@@ -3,8 +3,37 @@
 
 
 .bg-grey{
-  background-color: #d0d9e5;
+  background-color: #d0d9e9;
 }
+
+
+.bg-recursive-0 {
+  background-color: #d0d9e9;
+}
+
+.bg-recursive-1 {
+
+  background-color: #9da6b6;
+
+
+}
+
+.bg-recursive-2 {
+  background-color: #888c9a;
+
+}
+
+
+.bg-recursive-3 {
+  background-color: #9dd0ff;
+}
+
+
+.bg-recursive-4 {
+  background-color: #81daeb;
+}
+
+
 
 .sides-spaced{
   padding-left: 3vh;
