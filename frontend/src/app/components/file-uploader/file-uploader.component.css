@@ -1,31 +1,37 @@
-input[type="file"] {
-  display: none;
+.uploadfilecontainer {
+  background-size: 100px;
+  background-position: center;
+  height: 200px;
+  width: 80%;
+  margin: 20px auto;
+  border: 2px dashed #1C8ADB;
+  border-radius: 10px;
 }
 
-.queue-progress {
-  margin-top: 12px !important;
-  text-align: center;
+.uploadfilecontainer:hover {
+  cursor: pointer;
+  background-color: #9ecbec !important;
+  opacity: 0.8;
 }
 
-.error-div {
-  margin-top: 2em;
+.files-list {
+  display: flex;
+  justify-content: space-between;
+  width: 80%;
+  margin: 10px auto;
+  background: #ffffff;
+  border: 1px dashed;
+  border-radius: 12px;
+  padding: 5px;
+  color: #1c8adb;
 }
 
+.files-list .delete-file {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
 
-/*Mobile phones*/
-@media only screen and (max-width: 600px) and (orientation: portrait), screen and (max-width: 992px) and (orientation: landscape) {
-  .file-name-td {
-    max-width: 8em;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .btn-uploader {
-    padding-left: 8px !important;
-    padding-right: 8px !important;
-    font-size: 10px !important;
-  }
-  .mobile-file-td {
-    padding-top: 7px !important;
-    padding-bottom: 7px !important;
-  }
+.files-list .delete-file img {
+  width: 30px;
 }

@@ -32,16 +32,23 @@ export class CourseDetailsSessionsComponent implements OnInit {
 
     this.modalService.newInputCallbackedModal('New session title:', (newName) => {
 
-      session.title = newName.value;
+      let value = newName.value;
 
-      this.sessionService.editSession(session).subscribe(resp => {
+      if (value) {
 
-        this.modalService.newToastModal(`Session name successfully changed to: ${newName.value}`)
+        session.title = value;
 
-        },
-        error => this.modalService.newErrorModal('Error ocured changing session title!', error, null));
+        this.sessionService.editSession(session).subscribe(resp => {
 
-    })
+            this.modalService.newToastModal(`Session name successfully changed to: ${newName.value}`)
+
+          },
+          error => this.modalService.newErrorModal('Error ocured changing session title!', error, null));
+
+      }
+
+    });
+
 
   }
 

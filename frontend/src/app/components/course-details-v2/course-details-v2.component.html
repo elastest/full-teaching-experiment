@@ -40,12 +40,8 @@
           attachment
         </mat-icon>
       </ng-template>
-<!--      <button>-->
-<!--        <mat-icon matTooltip="Edit attachments" (click)="this.toggleEditionMode()">edit</mat-icon>-->
-<!--      </button>-->
 
       <mat-slide-toggle  *ngIf="this.authService.isTeacher()" color="primary" (change)="toggleEditionMode()">Edition mode</mat-slide-toggle>
-
 
       <app-course-attachments [file-groups]="course?.courseDetails?.files" [is-editing]="this.isEditing" [course]="this.course" [recursive-index]="0"></app-course-attachments>
 
@@ -60,7 +56,7 @@
         </mat-icon>
       </ng-template>
 
-      Content 3
+      <app-file-uploader></app-file-uploader>
     </mat-tab>
 
   </mat-tab-group>

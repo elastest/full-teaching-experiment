@@ -73,6 +73,7 @@ import {DragDropModule} from "@angular/cdk/drag-drop";
 import {MatListModule} from "@angular/material/list";
 import {MatSlideToggleModule} from "@angular/material/slide-toggle";
 import {FilesEditionService} from "./services/files-edition.service";
+import { DragDropDirective } from './directives/drag-drop.directive';
 
 const matModules = [
   MatFormFieldModule,
@@ -142,6 +143,7 @@ const matModules = [
     CourseDetailsSessionsComponent,
     ForumComponent,
     CourseAttachmentsComponent,
+    DragDropDirective,
   ],
   providers: [
     AuthenticationService,

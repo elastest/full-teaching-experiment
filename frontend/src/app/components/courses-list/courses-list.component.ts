@@ -50,16 +50,19 @@ export class CoursesListComponent implements OnInit {
 
           let value = result['value'];
 
-          course.title = value;
+          if (value) {
 
-          this.courseService.editCourse(course, value).subscribe(
-            data => {
+            course.title = value;
 
-              this.modalService.newToastModal(`Successfully changed name of the course to: ${value}`)
+            this.courseService.editCourse(course, value).subscribe(
+              data => {
 
-            }, error => this.modalService.newErrorModal('An error ocured while updating the name of the course!', error, null)
-          );
+                this.modalService.newToastModal(`Successfully changed name of the course to: ${value}`)
 
+              }, error => this.modalService.newErrorModal('An error ocured while updating the name of the course!', error, null)
+            );
+
+          }
         }
       })
   }
