@@ -2,8 +2,13 @@
 @import "../node_modules/angular-calendar/css/angular-calendar.css";
 
 
-.swal-wide {
+.bg-grey{
+  background-color: #d0d9e5;
+}
 
+.sides-spaced{
+  padding-left: 3vh;
+  padding-right: 3vh;
 }
 
 .forum-thread, .files-group, .spaced {

@@ -7,6 +7,7 @@ import {AuthenticationService} from './authentication.service';
 import 'rxjs/Rx';
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {Observable} from "rxjs";
+import {CourseDetails} from "../classes/course-details";
 
 @Injectable()
 export class ForumService {
@@ -65,5 +66,14 @@ export class ForumService {
   private handleError(message: string, error: any) {
     console.error(message, error);
     return Observable.throw("Server error (" + error.status + "): " + error.text())
+  }
+
+  removeEntry(entry: Entry, cd: CourseDetails) {
+    let headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + this.authenticationService.token
+    });
+    let options = ({headers});
+    return this.http.post<boolean>(`${this.urlNewEntry}/remove/${entry.id}/${cd.id}`, null, options)
   }
 }

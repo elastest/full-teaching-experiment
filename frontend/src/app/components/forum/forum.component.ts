@@ -53,16 +53,6 @@ export class ForumComponent implements OnInit {
     return c;
   }
 
-  updatePostModalMode(mode: number, title: string, header: Entry, commentReplay: Comment, fileGroup: FileGroup) {
-    // mode[0: "New Entry", 1: "New comment", 2: "New session", 3: "New VideoEntry", 4: "New FileGroup", 5: "Add files"]
-    let objs = [mode, title, header, commentReplay, fileGroup];
-    this.courseDetailsModalDataService.announcePostMode(objs);
-  }
-
-  updatePutDeleteModalMode(mode: number, title: string) {
-    let objs = [mode, title];
-    this.courseDetailsModalDataService.announcePutdeleteMode(objs);
-  }
 
   showNewEntryModal() {
     let course = this.course;
@@ -86,5 +76,16 @@ export class ForumComponent implements OnInit {
       }
 
     } , 'Confirm entry creation')
+  }
+
+  removeEntry(entry: Entry) {
+    this.modalService.newCallbackedModal('Confirm the entry removal', () => {
+      console.log('Removing entry');
+      this.forumService.removeEntry(entry, this.course.courseDetails).subscribe(data => {
+        this.course.courseDetails.forum.entries = this.course.courseDetails.forum.entries.filter(e => e.id !== entry.id);
+      }, error => {
+        this.modalService.newErrorModal('Error removing entry!', error, null);
+      });
+    });
   }
 }

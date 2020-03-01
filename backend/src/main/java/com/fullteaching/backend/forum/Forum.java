@@ -27,7 +27,7 @@ public class Forum {
 	
 	private boolean activated;
 	
-	@OneToMany(cascade=CascadeType.ALL)
+	@OneToMany(cascade=CascadeType.ALL, orphanRemoval = true)
 	private List<Entry> entries = new ArrayList<>();
 
 	public Forum(boolean activated) {

@@ -1,6 +1,6 @@
-<mat-accordion class="bg-transparent files-group mat-elevation-z24">
+<mat-accordion class="bg-transparent files-group mat-elevation-z24" multi="true">
   <div class="course-files files-group" *ngFor="let fg of this.fileGroups; let last2 = last">
-    <mat-expansion-panel>
+    <mat-expansion-panel [expanded]="true" class="bg-grey">
       <mat-expansion-panel-header>
         <mat-panel-title>
           {{fg.title}}
@@ -48,15 +48,15 @@
                               [is-editing]="this.isEditing" [course]="this.course"></app-course-attachments>
 
       <mat-action-row *ngIf="this.authService.isTeacher() && this.isEditing">
-        <button mat-button (click)="this.deleteFileGroup(fg)">
+        <button mat-raised-button color="warn" (click)="this.deleteFileGroup(fg)">
           <mat-icon matTooltip="Delete file group {{fg.title}}">delete</mat-icon>
         </button>
 
-        <button mat-button>
+        <button mat-raised-button color="accent">
           <mat-icon matTooltip="Edit file group {{fg.title}}" (click)="this.editFileGroupName(fg)">edit</mat-icon>
         </button>
 
-        <button (click)="newFileGroup(fg)" mat-button
+        <button (click)="newFileGroup(fg)" mat-raised-button color="primary"
                 matTooltip="Add new sub group into {{fg.title}}">
           <mat-icon>add</mat-icon>
         </button>

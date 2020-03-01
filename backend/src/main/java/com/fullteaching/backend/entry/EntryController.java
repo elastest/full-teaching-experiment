@@ -45,13 +45,13 @@ public class EntryController {
 
         log.info("CRUD operation: Adding new entry");
 
-        ResponseEntity<Object> authorized = authorizationService.checkBackendLogged();
-        if (authorized != null) {
-            return authorized;
+        ResponseEntity<Object> unAuthorized = authorizationService.checkBackendLogged();
+        if (unAuthorized != null) {
+            return unAuthorized;
         }
-        ;
 
-        long id_i = -1;
+
+        long id_i;
         try {
             id_i = Long.parseLong(courseDetailsId);
         } catch (NumberFormatException e) {
@@ -91,6 +91,41 @@ public class EntryController {
 			/*Entire forum is returned in order to have the new entry ID available just
 			in case the author wants to add to it a new comment without refreshing the page*/
             return new ResponseEntity<>(new NewEntryCommentResponse(entry, comment), HttpStatus.CREATED);
+        }
+    }
+
+
+    @RequestMapping(value = "/remove/{id}/{cd-id}", method = RequestMethod.POST)
+    public ResponseEntity<?> removeEntry(@PathVariable Long id, @PathVariable("cd-id") Long courseDetailsId){
+
+
+        log.info("Performing entry deletion!");
+        CourseDetails cd = courseDetailsService.getFromId(courseDetailsId);
+        Entry entry = this.entryService.getFromId(id);
+
+        //check if is logged in
+        ResponseEntity<Object> unAuthorized = authorizationService.checkBackendLogged();
+        if (unAuthorized != null) {
+            log.info("The user is not logged in!");
+            return unAuthorized;
+        }
+
+        else{
+
+            // Authorize teacher
+            ResponseEntity<Object> teacherUnAuthorized = authorizationService.checkAuthorization(entry, cd.getCourse().getTeacher());
+            if (teacherUnAuthorized != null) {
+                log.info("The user is not a teacher of this course!");
+                return teacherUnAuthorized;
+            }
+
+
+            //delete the entry
+            log.info("Removing entry {} with course details id: {}", id, courseDetailsId);
+            this.forumService.removeEntry(entry, cd.getForum());
+            this.entryService.delete(entry);
+            log.info("Entry removed successfully!");
+            return ResponseEntity.ok(true);
         }
     }
 

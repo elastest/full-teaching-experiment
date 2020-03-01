@@ -1,7 +1,7 @@
 <mat-grid-list [cols]="1" rowHeight="1:1" class="bg-transparent forum-thread">
   <mat-accordion *ngIf="this.course?.courseDetails?.forum?.activated">
     <div class="forum-thread" *ngFor="let entry of this.course?.courseDetails?.forum.entries; let last2 = last">
-      <mat-expansion-panel>
+      <mat-expansion-panel class="bg-grey">
         <mat-expansion-panel-header>
           <mat-panel-title>
             {{entry.title}}
@@ -15,6 +15,9 @@
           <app-comment [courseDetailsId]="this.course?.courseDetails?.id" [entryId]="entry?.id" [comment]="comment"></app-comment>
           <mat-divider [vertical]="true"></mat-divider>
         </div>
+        <mat-action-row *ngIf="this.authenticationService.isTeacher()">
+          <button mat-raised-button color="warn" matTooltip="Remove entry" (click)="this.removeEntry(entry)"><mat-icon>delete</mat-icon></button>
+        </mat-action-row>
       </mat-expansion-panel>
       <mat-divider></mat-divider>
     </div>

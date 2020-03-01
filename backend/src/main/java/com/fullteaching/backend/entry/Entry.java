@@ -2,6 +2,7 @@ package com.fullteaching.backend.entry;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -11,7 +12,9 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.ManyToOne;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fullteaching.backend.comment.Comment;
+import com.fullteaching.backend.forum.Forum;
 import com.fullteaching.backend.user.User;
 import lombok.*;
 
@@ -33,7 +36,11 @@ public class Entry {
 	
 	@OneToMany(cascade=CascadeType.ALL)
 	private List<Comment> comments = new ArrayList<>();
-	
+
+	@JsonIgnoreProperties("entries")
+	@ManyToOne
+	private Forum forum;
+
 	@ManyToOne
 	private User user;
 
@@ -44,4 +51,16 @@ public class Entry {
 	}
 
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Entry entry = (Entry) o;
+		return id == entry.id;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
 }

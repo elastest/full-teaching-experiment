@@ -57,23 +57,20 @@ export class CourseAttachmentsComponent implements OnInit {
 
   deleteFileGroup(fileGroup: FileGroup) {
 
-    let course = this.course;
-    let fileService = this.fileService;
-    let modalService = this.modalService;
-    let filesEditionService = this.filesEditionService;
-
-    this.modalService.newCallbackedModal('Are you sure about removing this file group?', function () {
 
 
-      fileService.deleteFileGroup(fileGroup.id, course.id).subscribe(
+    this.modalService.newCallbackedModal('Are you sure about removing this file group?',  () => {
+
+
+      this.fileService.deleteFileGroup(fileGroup.id, this.course.id).subscribe(
         () => {
           //announce deletion so the parent component knows it
-          filesEditionService.announceFileGroupDeleted(fileGroup.id);
-          modalService.newToastModal('File group successfully deleted!')
+          this.filesEditionService.announceFileGroupDeleted(fileGroup.id);
+          this.modalService.newToastModal('File group successfully deleted!')
         },
         error => {
           console.log(error);
-          modalService.newErrorModal('Error removing file group!', error, null);
+          this.modalService.newErrorModal('Error removing file group!', error, null);
         }
       );
 
@@ -81,21 +78,17 @@ export class CourseAttachmentsComponent implements OnInit {
   }
 
   editFileGroupName(fg: FileGroup) {
-    let course = this.course;
-    let fileService = this.fileService;
-    let modalService = this.modalService;
-    let filesEditionService = this.filesEditionService;
 
-    this.modalService.newInputCallbackedModal('Change file group title: ', function (resp) {
+    this.modalService.newInputCallbackedModal('Change file group title: ',  (resp) => {
       let newName = resp['value'];
       if (newName) {
         fg.title = newName;
-        fileService.editFileGroup(fg, course.id).subscribe((data) => {
-            filesEditionService.announceFileFilegroupUpdated([fg]);
-            modalService.newToastModal(`File group title changed to: ${fg.title}`)
+        this.fileService.editFileGroup(fg, this.course.id).subscribe((data) => {
+            this.filesEditionService.announceFileFilegroupUpdated([fg]);
+            this.modalService.newToastModal(`File group title changed to: ${fg.title}`)
           },
           error => {
-            modalService.newErrorModal('An error ocurred while updating the title of the file group!', error, null)
+            this.modalService.newErrorModal('An error ocurred while updating the title of the file group!', error, null)
           });
       }
     })
@@ -105,12 +98,6 @@ export class CourseAttachmentsComponent implements OnInit {
 
   newFileGroup(fgParent: FileGroup){
 
-    let course = this.course;
-    let fileService = this.fileService;
-    let modalService = this.modalService;
-    let filesEditionService = this.filesEditionService;
-    let fileGroups = this.fileGroups;
-
     this.modalService.newInputCallbackedModal('New file group name:', (resp) => {
 
       let name = resp.value;
@@ -118,9 +105,9 @@ export class CourseAttachmentsComponent implements OnInit {
       if(name) {
         let newFileGroup = new FileGroup(name, fgParent);
 
-        fileService.newFileGroup(newFileGroup, course.courseDetails.id).subscribe(resp => {
-          filesEditionService.announceNewFileGroup(newFileGroup);
-        }, error => modalService.newErrorModal('Error creating a new file group!', error, null))
+        this.fileService.newFileGroup(newFileGroup, this.course.courseDetails.id).subscribe(resp => {
+          this.filesEditionService.announceNewFileGroup(newFileGroup);
+        }, error => this.modalService.newErrorModal('Error creating a new file group!', error, null))
       }
 
     })

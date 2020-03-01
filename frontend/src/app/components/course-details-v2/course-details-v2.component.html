@@ -46,7 +46,12 @@
 
       <mat-slide-toggle  *ngIf="this.authService.isTeacher()" color="primary" (change)="toggleEditionMode()">Edition mode</mat-slide-toggle>
 
+
       <app-course-attachments [file-groups]="course?.courseDetails?.files" [is-editing]="this.isEditing" [course]="this.course"></app-course-attachments>
+
+      <button mat-raised-button matTooltip="New file group" *ngIf="this.isEditing && this.authService.isTeacher()" color="primary"><mat-icon>add</mat-icon></button>
+
+
     </mat-tab>
     <mat-tab>
       <ng-template mat-tab-label>
