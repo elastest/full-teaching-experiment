@@ -49,15 +49,15 @@
 
       <mat-action-row *ngIf="this.authService.isTeacher() && this.isEditing">
         <button mat-button (click)="this.deleteFileGroup(fg)">
-          <mat-icon matTooltip="Delete file group">delete</mat-icon>
+          <mat-icon matTooltip="Delete file group {{fg.title}}">delete</mat-icon>
         </button>
 
         <button mat-button>
-          <mat-icon matTooltip="Edit file group" (click)="this.editFileGroupName(fg)">edit</mat-icon>
+          <mat-icon matTooltip="Edit file group {{fg.title}}" (click)="this.editFileGroupName(fg)">edit</mat-icon>
         </button>
 
         <button (click)="newFileGroup(fg)" mat-button
-                matTooltip="Add new sub group">
+                matTooltip="Add new sub group into {{fg.title}}">
           <mat-icon>add</mat-icon>
         </button>
 
