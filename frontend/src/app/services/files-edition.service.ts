@@ -8,6 +8,7 @@ export class FilesEditionService {
   modeEditAnnounced$: Subject<boolean>;
   fileGroupDeletedAnnounced$: Subject<number>;
   fileFilegroupUpdatedAnnounced$: Subject<number>;
+  newFilegroupAnnounced$: Subject<FileGroup>;
 
   currentModeEdit: boolean = false;
 
@@ -15,6 +16,7 @@ export class FilesEditionService {
     this.modeEditAnnounced$ = new Subject<boolean>();
     this.fileGroupDeletedAnnounced$ = new Subject<number>();
     this.fileFilegroupUpdatedAnnounced$ = new Subject<any>();
+    this.newFilegroupAnnounced$ = new Subject<FileGroup>();
   }
 
   announceModeEdit(objs){
@@ -31,4 +33,7 @@ export class FilesEditionService {
   }
 
 
+  announceNewFileGroup(newFileGroup: FileGroup) {
+    this.newFilegroupAnnounced$.next(newFileGroup);
+  }
 }

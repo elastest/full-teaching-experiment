@@ -81,7 +81,6 @@ export class CourseAttachmentsComponent implements OnInit {
   }
 
   editFileGroupName(fg: FileGroup) {
-
     let course = this.course;
     let fileService = this.fileService;
     let modalService = this.modalService;
@@ -100,7 +99,34 @@ export class CourseAttachmentsComponent implements OnInit {
           });
       }
     })
+  }
+
+
+
+  newFileGroup(fgParent: FileGroup){
+
+    let course = this.course;
+    let fileService = this.fileService;
+    let modalService = this.modalService;
+    let filesEditionService = this.filesEditionService;
+    let fileGroups = this.fileGroups;
+
+    this.modalService.newInputCallbackedModal('New file group name:', (resp) => {
+
+      let name = resp.value;
+
+      if(name) {
+        let newFileGroup = new FileGroup(name, fgParent);
+
+        fileService.newFileGroup(newFileGroup, course.courseDetails.id).subscribe(resp => {
+          filesEditionService.announceNewFileGroup(newFileGroup);
+        }, error => modalService.newErrorModal('Error creating a new file group!', error, null))
+      }
+
+    })
 
 
   }
+
+
 }

@@ -37,16 +37,18 @@ export class CourseDetailsV2Component implements OnInit {
 
 
     filesEditionService.fileFilegroupUpdatedAnnounced$.subscribe(objs => {
-
       let fg = objs[0];
       let file = objs[1];
-
       if(fg){
         console.log(`File group updated ${fg.id}`)
       }
+    });
 
 
-    })
+    filesEditionService.newFilegroupAnnounced$.subscribe(newFg => {
+      this.recursiveFileGroupAdd(this.course.courseDetails.files, newFg)
+    });
+
 
   }
 
@@ -65,6 +67,21 @@ export class CourseDetailsV2Component implements OnInit {
     }
   }
 
+
+  //Deletes a fileGroup from this.course.courseDetails.files recursively, given a fileGroup id
+  recursiveFileGroupAdd(fileGroupLevel: FileGroup[], newFileGroup: FileGroup): boolean {
+    if (fileGroupLevel) {
+      for (let i = 0; i < fileGroupLevel.length; i++) {
+        if (fileGroupLevel[i].id == newFileGroup.fileGroupParent.id) {
+          console.log(fileGroupLevel[i])
+          fileGroupLevel[i].fileGroups.push(newFileGroup);
+          return true;
+        }
+        let added = this.recursiveFileGroupAdd(fileGroupLevel[i].fileGroups, newFileGroup);
+        if (added) return added;
+      }
+    }
+  }
 
 
   ngOnInit() {
