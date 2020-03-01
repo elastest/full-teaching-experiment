@@ -7,6 +7,7 @@ import {FileGroup} from "../../classes/file-group";
 import {FileType} from "../../enum/file-type.enum";
 import {FileService} from "../../services/file.service";
 import {ModalService} from "../../services/modal.service";
+import {FilesEditionService} from "../../services/files-edition.service";
 
 @Component({
   selector: 'app-course-attachments',
@@ -24,7 +25,7 @@ export class CourseAttachmentsComponent implements OnInit {
   @Input('course')
   public course: Course;
 
-  constructor(public authService: AuthenticationService, private fileService: FileService, private modalService: ModalService) { }
+  constructor(public authService: AuthenticationService, private fileService: FileService, private modalService: ModalService, private filesEditionService: FilesEditionService) { }
 
   ngOnInit(): void {
   }
@@ -51,21 +52,20 @@ export class CourseAttachmentsComponent implements OnInit {
   }
 
   removeFromList(fg: FileGroup){
-    this.fileGroups = this.fileGroups.filter(fGroup => fGroup.id !== fg.id);
   }
 
   deleteFileGroup(fileGroup: FileGroup) {
 
     let course = this.course;
     let fileService = this.fileService;
-    let fileGroups = this.fileGroups;
     let modalService = this.modalService;
-    let removeFunction = this.removeFromList;
+    let filesEditionService = this.filesEditionService;
 
     this.modalService.newCallbackedModal('Are you sure about removing this file group?', function (resp) {
       fileService.deleteFileGroup(fileGroup.id, course.id).subscribe(
-        response => {
-          removeFunction(fileGroup);
+        () => {
+          //announce deletion so the parent component knows it
+          filesEditionService.announceFileGroupDeleted(fileGroup.id);
         },
         error => {
           console.log(error);

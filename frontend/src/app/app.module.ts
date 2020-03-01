@@ -72,6 +72,7 @@ import { CourseAttachmentsComponent } from './components/course-attachments/cour
 import {DragDropModule} from "@angular/cdk/drag-drop";
 import {MatListModule} from "@angular/material/list";
 import {MatSlideToggleModule} from "@angular/material/slide-toggle";
+import {FilesEditionService} from "./services/files-edition.service";
 
 const matModules = [
   MatFormFieldModule,
@@ -160,7 +161,8 @@ const matModules = [
       multi: true
     },
     CookieService,
-    ModalService
+    ModalService,
+    FilesEditionService
   ],
   bootstrap: [AppComponent]
 })

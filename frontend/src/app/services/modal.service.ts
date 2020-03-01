@@ -54,7 +54,7 @@ export class ModalService {
   }
 
 
-  public newCallbackedModal(title, onAccept: Function){
+  public newInputCallbackedModal(title, onAccept: Function){
     Swal.fire({
       title: title,
       input: 'text',
@@ -67,6 +67,16 @@ export class ModalService {
     })
       .then(result => {
         onAccept(result);
+      })
+  }
+
+  public newCallbackedModal(title: string, onAccept: Function){
+    Swal.fire({
+      title: title,
+      showCancelButton: true
+    })
+      .then(() => {
+        onAccept();
       })
   }
 
