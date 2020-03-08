@@ -50,6 +50,38 @@ export class CourseDetailsV2Component implements OnInit {
     });
 
 
+    this.filesEditionService.fileUploadedAnnouncer.subscribe(data => {
+
+      let fg = data.fg;
+      let course = data.course;
+
+      if(this.course.id === course.id){
+        for(let parent of this.course.courseDetails.files){
+          let updated = this.updateFilesInFileGroup(parent, fg);
+          if(updated){
+            break;
+          }
+        }
+      }
+    });
+
+  }
+
+
+  updateFilesInFileGroup(parent: FileGroup, fileGroup: FileGroup){
+    if(parent.id === fileGroup.id){
+      parent.files = fileGroup.files;
+      return true;
+    }
+    else{
+      for(let child of parent.fileGroups){
+        let updated = this.updateFilesInFileGroup(child, fileGroup);
+        if(updated){
+          console.log(child, fileGroup)
+          return updated;
+        }
+      }
+    }
   }
 
 

@@ -1,14 +1,22 @@
-<div class="row no-margin">
 
-  <div class="uploadfilecontainer" (click)="fileInput.click()" appDragDrop (onFileDropped)="uploadFile($event)">
-    <input hidden type="file" #fileInput (change)="uploadFile($event.target.files)">
+<h1 mat-dialog-title>
+  Drop here your files
+</h1>
+
+<div class="upload-dialog">
+  <div class="row no-margin">
+    <div class="uploadfilecontainer" (click)="fileInput.click()" appDragDrop (onFileDropped)="handleFileInput($event.target.files)">
+      <input hidden type="file" multiple="multiple" #fileInput (change)="handleFileInput($event.target.files)">
+    </div>
+    <div class="files-list" *ngIf="this.fileToUpload">
+      <p> {{ this.fileToUpload?.name }} </p>
+    </div>
   </div>
-  <div  class="files-list" *ngFor="let file of files;let i= index">
-    <p> {{ file }} </p>
-    <button class="delete-file" (click)="deleteAttachment(i)">
-      delete
-    </button>
-  </div>
-
-
 </div>
+
+<div mat-dialog-actions>
+  <button mat-raised-button [mat-dialog-close] class="mat-elevation-z24">Cancel</button>
+  <button mat-raised-button [mat-dialog-close] cdkFocusInitial  class="mat-elevation-z24" (click)="submit()">Submit</button>
+</div>
+
+

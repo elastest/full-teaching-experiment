@@ -1,4 +1,12 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Inject, OnInit} from '@angular/core';
+import {MAT_DIALOG_DATA} from "@angular/material/dialog";
+import {FileGroup} from "../../classes/file-group";
+import {Course} from "../../classes/course";
+import {FormGroup} from "@angular/forms";
+import {DialogData} from "../course-attachments/course-attachments.component";
+import {FileService} from "../../services/file.service";
+import {FilesEditionService} from "../../services/files-edition.service";
+import {Observable} from "rxjs";
 
 @Component({
   selector: 'app-file-uploader',
@@ -11,17 +19,32 @@ export class FileUploaderComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  public formData: FormData = new FormData();
+  fileToUpload: File = null;
 
-  files: any = [];
-
-  uploadFile(event) {
-    for (let index = 0; index < event.length; index++) {
-      const element = event[index];
-      this.files.push(element.name)
-    }
-  }
-  deleteAttachment(index) {
-    this.files.splice(index, 1)
+  constructor(public fileService: FileService, private filesEditionService: FilesEditionService) {
   }
 
+
+  handleFileInput(files: FileList) {
+    this.fileToUpload = files.item(0);
+  }
+
+
+  private postFile(fileToUpload: File) {
+    const formData: FormData = new FormData();
+    formData.set('file', fileToUpload, fileToUpload.name);
+    let course = this.filesEditionService.courseForUpload;
+    let fg = this.filesEditionService.fileGroupForUpload;
+    this.fileService.uploadFile(course.id, fg.id, formData).subscribe(data => {
+        this.filesEditionService.announceFileSuccessfullyUploaded(course, fg);
+      },
+      error => {
+        console.log(error)
+      });
+  }
+
+  submit() {
+    this.postFile(this.fileToUpload)
+  }
 }

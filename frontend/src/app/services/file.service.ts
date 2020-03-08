@@ -140,6 +140,16 @@ export class FileService {
     xhr.send();
   }
 
+
+  public uploadFile(courseId: number, fileGroupId: number, formData: FormData){
+    console.log(`Uploading a file for course ${courseId} and file group ${fileGroupId}`)
+    let headers = new HttpHeaders({
+      'Authorization': 'Bearer ' + this.authenticationService.token
+    });
+    let options = ({headers});
+    return this.http.post<FileGroup>(`/api-load-files/upload/course/${courseId}/file-group/${fileGroupId}`, formData, options);
+}
+
   private openFile(response) {
     var blob = new Blob([response._body], {type: 'text/plain'});
     var url = window.URL.createObjectURL(blob);

@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {AuthenticationService} from "../../services/authentication.service";
 import {Course} from "../../classes/course";
 import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
@@ -8,6 +8,17 @@ import {FileType} from "../../enum/file-type.enum";
 import {FileService} from "../../services/file.service";
 import {ModalService} from "../../services/modal.service";
 import {FilesEditionService} from "../../services/files-edition.service";
+import {SwalComponent} from "@sweetalert2/ngx-sweetalert2";
+import {MatDialog} from "@angular/material/dialog";
+import {FileUploaderComponent} from "../file-uploader/file-uploader.component";
+import {FormGroup} from "@angular/forms";
+
+
+export interface DialogData {
+  course: Course,
+  fileGroup: FileGroup
+}
+
 
 @Component({
   selector: 'app-course-attachments',
@@ -28,11 +39,16 @@ export class CourseAttachmentsComponent implements OnInit {
   @Input('recursive-index')
   public recursiveIndex: number;
 
-  constructor(public authService: AuthenticationService, private fileService: FileService, private modalService: ModalService, private filesEditionService: FilesEditionService) {
+  @ViewChild(SwalComponent)
+  private swal: SwalComponent;
+
+  constructor(private dialog: MatDialog, public authService: AuthenticationService, private fileService: FileService, private modalService: ModalService, private filesEditionService: FilesEditionService) {
   }
 
   ngOnInit(): void {
   }
+
+
 
   drop(files: File[], event: CdkDragDrop<{ title: string, poster: string }[]>) {
     moveItemInArray(files, event.previousIndex, event.currentIndex);
@@ -61,8 +77,7 @@ export class CourseAttachmentsComponent implements OnInit {
   deleteFileGroup(fileGroup: FileGroup) {
 
 
-
-    this.modalService.newCallbackedModal('Are you sure about removing this file group?',  () => {
+    this.modalService.newCallbackedModal('Are you sure about removing this file group?', () => {
 
 
       this.fileService.deleteFileGroup(fileGroup.id, this.course.id).subscribe(
@@ -82,7 +97,7 @@ export class CourseAttachmentsComponent implements OnInit {
 
   editFileGroupName(fg: FileGroup) {
 
-    this.modalService.newInputCallbackedModal('Change file group title: ',  (resp) => {
+    this.modalService.newInputCallbackedModal('Change file group title: ', (resp) => {
       let newName = resp['value'];
       if (newName) {
         fg.title = newName;
@@ -98,14 +113,13 @@ export class CourseAttachmentsComponent implements OnInit {
   }
 
 
-
-  newFileGroup(fgParent: FileGroup){
+  newFileGroup(fgParent: FileGroup) {
 
     this.modalService.newInputCallbackedModal('New file group name:', (resp) => {
 
       let name = resp.value;
 
-      if(name) {
+      if (name) {
         let newFileGroup = new FileGroup(name, fgParent);
 
         this.fileService.newFileGroup(newFileGroup, this.course.courseDetails.id).subscribe(resp => {
@@ -119,8 +133,18 @@ export class CourseAttachmentsComponent implements OnInit {
   }
 
 
-  getBgColorClass(){
+  getBgColorClass() {
     return `bg-recursive-${this.recursiveIndex}`;
+  }
+
+  newAttachment(fg: FileGroup) {
+    this.filesEditionService.announceFileUploadModal(this.course, fg);
+    this.dialog.open(FileUploaderComponent, {
+      data: {
+        course: this.course,
+        fileGroup: fg
+      }
+    })
   }
 
 }
