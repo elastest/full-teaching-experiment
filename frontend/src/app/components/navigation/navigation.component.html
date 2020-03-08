@@ -29,7 +29,7 @@
     </i>
   </button>
   <mat-menu #menu="matMenu" style="padding-right: 3vh">
-    <mat-card>{{this.authenticationService.getCurrentUser()?.name}}</mat-card>
+    <button mat-menu-item routerLink="/settings">{{this.authenticationService.getCurrentUser()?.name}}</button>
     <mat-divider></mat-divider>
     <button mat-menu-item (click)="this.authenticationService.logOut()" >
       <i class="material-icons">
