@@ -4,10 +4,7 @@ import { AppComponent } from '../app.component';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule }   from '@angular/forms';
 import { FooterComponent }        from '../components/footer/footer.component';
-import { LoginModalComponent }    from '../components/login-modal/login-modal.component';
 import { PresentationComponent }  from '../components/presentation/presentation.component';
-import { DashboardComponent }     from '../components/dashboard/dashboard.component';
-import { CourseDetailsComponent } from '../components/course-details/course-details.component'
 import { SettingsComponent }      from '../components/settings/settings.component';
 import { ErrorMessageComponent }  from '../components/error-message/error-message.component';
 import { CommentComponent }       from '../components/comment/comment.component';
@@ -36,10 +33,7 @@ describe('App: Ejemplo', () => {
       declarations: [
         AppComponent,
         PresentationComponent,
-        DashboardComponent,
-        CourseDetailsComponent,
         FooterComponent,
-        LoginModalComponent,
         SettingsComponent,
         ErrorMessageComponent,
         CommentComponent,

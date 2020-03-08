@@ -1,7 +1,5 @@
 
 import { PresentationComponent } from './components/presentation/presentation.component';
-import { DashboardComponent } from './components/dashboard/dashboard.component';
-import { CourseDetailsComponent } from './components/course-details/course-details.component';
 import { SettingsComponent } from './components/settings/settings.component';
 import { VideoSessionComponent } from './components/video-session/video-session.component';
 import {RouterModule, Routes} from '@angular/router';

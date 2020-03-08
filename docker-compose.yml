@@ -1,0 +1,39 @@
+version: '3'
+
+services:
+
+  full-teaching-postgresql:
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DATABASE=full-teaching
+      - POSTGRES_USER=postgres
+
+  full-teaching-openvidu-server-kms:
+    image: openvidu/openvidu-server-kms:1.7.0
+    ports:
+      - 8443:8443
+    environment:
+      - KMS_STUN_IP=stun.l.google.com
+      - KMS_STUN_PORT=19302
+      - openvidu.secret=MY_SECRET
+      - openvidu.publicurl=docker
+
+  full-teaching:
+    image: ft
+    depends_on:
+      - full-teaching-postgresql
+      - full-teaching-openvidu-server-kms
+    ports:
+      - 5001:5001
+    environment:
+      - WAIT_HOSTS=full-teaching-postgresql:5432
+      - WAIT_HOSTS_TIMEOUT=120
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DATABASE=full-teaching
+      - POSTGRES_USER=postgres
+      - server.port=5001
+      - openvidu.url=https://full-teaching-openvidu-server-kms:8443
+      - openvidu.secret=MY_SECRET
