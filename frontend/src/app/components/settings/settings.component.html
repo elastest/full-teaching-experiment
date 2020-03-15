@@ -174,7 +174,7 @@
       <mat-card-title>Profile</mat-card-title>
     </mat-card-header>
 
-    <img mat-card-image src="assets/images/default_session_image.png" alt="Profile picture">
+    <img mat-card-image class="profile-img" src="assets/images/default_session_image.png" alt="Profile picture">
 
 
     <mat-card-content class="spaced">
@@ -207,7 +207,7 @@
     </mat-card-footer>
 
     <mat-card-actions>
-      <button mat-raised-button color="primary" class="mat-elevation-z5">Change password</button>
+      <button mat-raised-button color="primary" class="mat-elevation-z5" (click)="openChangePasswordDialog()">Change password</button>
       <button mat-raised-button color="primary" class="mat-elevation-z5">Change profile picture</button>
     </mat-card-actions>
   </mat-card>

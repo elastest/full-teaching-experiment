@@ -46,7 +46,9 @@ public interface FTService<T, ID> {
      * @return The saved entity
      */
     default T save(T entity){
-        return this.getRepo().saveAndFlush(entity);
+        T saved = this.getRepo().save(entity);
+        this.getRepo().flush();
+        return saved;
     }
 
 

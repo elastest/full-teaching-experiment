@@ -6,6 +6,8 @@ import {UserService} from '../../services/user.service';
 import {AnimationService} from '../../services/animation.service';
 import {User} from '../../classes/user';
 import {Constants} from '../../constants';
+import {MatDialog} from "@angular/material/dialog";
+import {ChangePasswordComponent} from "../change-password/change-password.component";
 
 declare var Materialize: any;
 
@@ -37,11 +39,19 @@ export class SettingsComponent implements OnInit {
   toastMessage: string;
 
   constructor(
-    private authenticationService: AuthenticationService,
-    private userService: UserService, public animationService: AnimationService) {
+    public matDialog: MatDialog,
+    public authenticationService: AuthenticationService,
+    public userService: UserService,
+    public animationService: AnimationService) {
 
     //URL for uploading files changes between development stage and production stage
     this.URL_UPLOAD = environment.URL_PIC_UPLOAD;
+  }
+
+  openChangePasswordDialog(){
+    this.matDialog.open(ChangePasswordComponent,{
+      width: '75vh',
+    });
   }
 
   ngOnInit() {
