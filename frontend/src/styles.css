@@ -1,6 +1,10 @@
 @import "~@angular/material/prebuilt-themes/deeppurple-amber.css";
 @import "../node_modules/angular-calendar/css/angular-calendar.css";
 
+table.mat-table {
+  width: 100%;
+}
+
 .upload-dialog{
   height: 50vh;
   width: 60vh;

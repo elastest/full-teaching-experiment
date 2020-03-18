@@ -1,0 +1,43 @@
+<mat-grid-list [cols]="1" rowHeight="1:1" class="bg-transparent forum-thread wrapper attenders-list">
+
+  <mat-form-field>
+    <mat-label>Filter</mat-label>
+    <input matInput (keyup)="applyFilter($event)" placeholder="Ex. ium">
+  </mat-form-field>
+
+  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+    <!-- Position Column -->
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef> Email</th>
+      <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+    </ng-container>
+
+    <!-- Name Column -->
+    <ng-container matColumnDef="nickname">
+      <th mat-header-cell *matHeaderCellDef> Nickame</th>
+      <td mat-cell *matCellDef="let element"> {{element.nickName}} </td>
+    </ng-container>
+
+    <!-- Weight Column -->
+    <ng-container matColumnDef="registrationdate">
+      <th mat-header-cell *matHeaderCellDef> Registration date</th>
+      <td mat-cell *matCellDef="let element"> {{element.registrationDate | date}} </td>
+    </ng-container>
+
+    <!-- Weight Column -->
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef> Actions</th>
+      <td mat-cell *matCellDef="let element">
+        <button mat-raised-button color="warn" matTooltip="Remove attender"
+                *ngIf="element.id !== this.course?.teacher.id && this.authenticationService.isTeacher()">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+</mat-grid-list>
+

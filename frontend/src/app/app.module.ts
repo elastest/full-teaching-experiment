@@ -72,6 +72,7 @@ import {MatSlideToggleModule} from "@angular/material/slide-toggle";
 import {FilesEditionService} from "./services/files-edition.service";
 import { DragDropDirective } from './directives/drag-drop.directive';
 import { ChangePasswordComponent } from './components/change-password/change-password.component';
+import { AttendersListComponent } from './components/attenders-list/attenders-list.component';
 
 const matModules = [
   MatFormFieldModule,
@@ -140,6 +141,7 @@ const matModules = [
     CourseAttachmentsComponent,
     DragDropDirective,
     ChangePasswordComponent,
+    AttendersListComponent,
   ],
   providers: [
     AuthenticationService,
