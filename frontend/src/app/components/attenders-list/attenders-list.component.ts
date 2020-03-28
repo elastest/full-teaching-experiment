@@ -2,6 +2,13 @@ import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core'
 import {Course} from "../../classes/course";
 import {MatTableDataSource} from "@angular/material/table";
 import {AuthenticationService} from "../../services/authentication.service";
+import {MatDialog} from "@angular/material/dialog";
+import {ChangePasswordComponent} from "../change-password/change-password.component";
+import {AddAttendersModalComponent} from "../add-attenders-modal/add-attenders-modal.component";
+import {EditionService} from "../../services/edition.service";
+import {CourseService} from "../../services/course.service";
+import {User} from "../../classes/user";
+import {ModalService} from "../../services/modal.service";
 
 @Component({
   selector: 'app-attenders-list',
@@ -14,11 +21,24 @@ export class AttendersListComponent implements OnInit, OnChanges {
   course: Course;
 
 
-  constructor(public authenticationService: AuthenticationService) { }
+  constructor(public authenticationService: AuthenticationService,
+              private courseService: CourseService,
+              public matDialog: MatDialog,
+              private editionService: EditionService,
+              private modalService: ModalService) { }
 
   ngOnInit(): void {
   }
 
+  openAddModal(){
+
+    this.matDialog.open(AddAttendersModalComponent,{
+      width: '75vh',
+      height: '55vh'
+    });
+
+    this.editionService.startAddingUsers(this.course);
+  }
 
   displayedColumns: string[] = ['name', 'nickname', 'registrationdate', 'actions'];
   dataSource;
@@ -32,5 +52,12 @@ export class AttendersListComponent implements OnInit, OnChanges {
     if(this.course){
       this.dataSource = new MatTableDataSource(this.course.attenders);
     }
+  }
+
+  deleteAttender(attender: User) {
+    this.modalService.newCallbackedModal('Confirm attender removal', () => {
+      this.course.attenders = this.course.attenders.filter(a => a.id !== attender.id);
+      this.courseService.deleteCourseAttenders(this.course);
+    });
   }
 }

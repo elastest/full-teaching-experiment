@@ -50,4 +50,8 @@ export class UserService {
     return Observable.throw("Server error (" + error.status + "): " + error.text())
   }
 
+  public existsUserByEmail(email: string){
+    return this.http.get(this.url + `/isRegistered/${email}`);
+  }
+
 }

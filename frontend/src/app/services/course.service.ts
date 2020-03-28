@@ -99,16 +99,10 @@ export class CourseService {
 
     let body = JSON.stringify(course);
     let headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + this.authenticationService.token
+      'Content-Type': 'application/json'
     });
     let options = {headers};
     return this.http.put<User[]>(this.url + "/edit/delete-attenders", body, options);
-    // .subscribe((response : Response) => {
-    //   console.log("PUT existing course SUCCESS (remove attender). Response: ", (response.json() as unknown as User[]));
-    //   return (response.json() as unknown as User[]);
-    // });
-    // //.catch(error => this.handleError("PUT existing course FAIL (remove attender). Response: ", error));
   }
 
   private handleError(message: string, error: any) {

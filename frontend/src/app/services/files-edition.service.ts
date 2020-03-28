@@ -1,9 +1,7 @@
-import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import {Injectable} from '@angular/core';
+import {Subject} from 'rxjs';
 import {FileGroup} from "../classes/file-group";
 import {Course} from "../classes/course";
-import {File} from "../classes/file";
-import {FormGroup} from "@angular/forms";
 
 @Injectable()
 export class FilesEditionService {
@@ -18,26 +16,26 @@ export class FilesEditionService {
   fileGroupForUpload: FileGroup;
   courseForUpload: Course;
 
-  fileUploadedAnnouncer: Subject<{fg: FileGroup, course: Course}>;
+  fileUploadedAnnouncer: Subject<{ fg: FileGroup, course: Course }>;
 
-  constructor(){
+  constructor() {
     this.modeEditAnnounced$ = new Subject<boolean>();
     this.fileGroupDeletedAnnounced$ = new Subject<number>();
     this.fileFilegroupUpdatedAnnounced$ = new Subject<any>();
     this.newFilegroupAnnounced$ = new Subject<FileGroup>();
-    this.fileUploadedAnnouncer = new Subject<{fg: FileGroup, course: Course}>();
+    this.fileUploadedAnnouncer = new Subject<{ fg: FileGroup, course: Course }>();
   }
 
-  announceModeEdit(objs){
+  announceModeEdit(objs) {
     this.currentModeEdit = objs;
     this.modeEditAnnounced$.next(objs);
   }
 
-  announceFileGroupDeleted(fileGroupDeletedId: number){
+  announceFileGroupDeleted(fileGroupDeletedId: number) {
     this.fileGroupDeletedAnnounced$.next(fileGroupDeletedId);
   }
 
-  announceFileFilegroupUpdated(objs){
+  announceFileFilegroupUpdated(objs) {
     this.fileFilegroupUpdatedAnnounced$.next(objs);
   }
 
@@ -46,13 +44,13 @@ export class FilesEditionService {
     this.newFilegroupAnnounced$.next(newFileGroup);
   }
 
-  announceFileUploadModal(course: Course,  fg: FileGroup){
+  announceFileUploadModal(course: Course, fg: FileGroup) {
     this.fileGroupForUpload = fg;
     this.courseForUpload = course;
   }
 
-  announceFileSuccessfullyUploaded(course: Course, fg: FileGroup){
-    this.fileUploadedAnnouncer.next({fg: fg, course:course});
+  announceFileSuccessfullyUploaded(course: Course, fg: FileGroup) {
+    this.fileUploadedAnnouncer.next({fg: fg, course: course});
   }
 
 }

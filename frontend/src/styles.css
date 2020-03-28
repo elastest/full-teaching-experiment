@@ -1,6 +1,11 @@
 @import "~@angular/material/prebuilt-themes/deeppurple-amber.css";
 @import "../node_modules/angular-calendar/css/angular-calendar.css";
 
+
+.email-tabs{
+  width: 100%;
+}
+
 table.mat-table {
   width: 100%;
 }

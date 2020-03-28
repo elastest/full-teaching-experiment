@@ -37,7 +37,7 @@ public class UserService implements FTService<User, Long> {
         return this.repo.existsByName(userDatum);
     }
 
-    public User getByName(String name){
+    public User getByEmail(String name){
         return this.repo.findByName(name);
     }
 
