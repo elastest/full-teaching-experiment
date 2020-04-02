@@ -94,15 +94,16 @@ export class CourseService {
   }
 
   //PUT existing course, modifying its attenders (deleting them). On success returns the updated course.attenders array
-  public deleteCourseAttenders(course: Course) {
+  public deleteCourseAttenders(course: Course, attender: User) {
     console.log("PUT exsiting course (remove attender)");
 
     let body = JSON.stringify(course);
     let headers = new HttpHeaders({
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + this.authenticationService.token
     });
     let options = {headers};
-    return this.http.put<User[]>(this.url + "/edit/delete-attenders", body, options);
+    return this.http.put<User[]>(`${this.url}/edit/remove-attender?attender_id=${attender.id}&course_id=${course.id}`, options);
   }
 
   private handleError(message: string, error: any) {

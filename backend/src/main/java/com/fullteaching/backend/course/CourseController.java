@@ -287,48 +287,36 @@ public class CourseController {
 			return new ResponseEntity<>(customResponse, HttpStatus.OK);
 		}
 	}
-	
-	
-	
-	@RequestMapping(value = "/edit/delete-attenders", method = RequestMethod.PUT)
-	public ResponseEntity<Object> deleteAttenders(@RequestBody Course course) {
-		
-		log.info("CRUD operation: Deleting attender from course");
-		
+
+
+
+	@RequestMapping(value = "/edit/remove-attender", method = RequestMethod.PUT)
+	public ResponseEntity<?> removeAttenders(@RequestParam(value = "course_id") long course_id, @RequestParam(value = "attender_id") long attender_id){
+
+
+		log.info("Removing attender {} from course {}", attender_id, course_id);
+
+
 		ResponseEntity<Object> authorized = authorizationService.checkBackendLogged();
 		if (authorized != null){
 			return authorized;
-		};
+		}
 
-		Course c = courseService.getFromId(course.getId());
-		
+		Course c = this.courseService.getFromId(course_id);
+
+
 		ResponseEntity<Object> teacherAuthorized = authorizationService.checkAuthorization(c, c.getTeacher());
 		if (teacherAuthorized != null) { // If the user is not the teacher of the course
 			return teacherAuthorized;
-		} else {
-			
-			log.info("Deleting attender from course {}", c);
-		
-			Set<Course> setCourse = new HashSet<>();
-			setCourse.add(c);
-			Collection<User> courseAttenders = userService.findByCourses(setCourse);
-			
-			for (User attender : courseAttenders){
-				if (!course.getAttenders().contains(attender)){
-					attender.getCourses().remove(c);
-					log.info("Attender '{}' succesfully deleted from course", attender.getNickName());
-				}
-			}
-			
-			userService.saveAll(courseAttenders);
-			
-			//Modifying the course attenders
-			c.setAttenders(course.getAttenders());
-			//Saving the modified course
-			courseService.save(c);
-			return new ResponseEntity<>(c.getAttenders(), HttpStatus.OK);
+		}
+		else{
+			User attender = this.userService.getFromId(attender_id);
+			Collection attenders = this.courseService.removeAttender(attender, c);
+			log.info("Attender {} successfully removed from course {}", attender_id, course_id);
+			return new ResponseEntity<>(attenders, HttpStatus.OK);
 		}
 	}
+
 	
 	//Checks if a User collection contains a user with certain email
 	private boolean userListContainsEmail(Collection<User> users, String email){

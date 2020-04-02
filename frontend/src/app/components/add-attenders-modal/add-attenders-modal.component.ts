@@ -51,6 +51,9 @@ export class AddAttendersModalComponent implements OnInit {
           if (attendersAlreadyAdded.length > 0) {
             this.modalService.newErrorModal('The user is already in this course!', 'You tried to add a user that is already an attender of this course!', null);
           }
+          else{
+            this.modalService.newSuccessModal('Attender added successfully!', `The attender: ${email} was added to this course`, null);
+          }
         },
         error => {
           console.log(error);

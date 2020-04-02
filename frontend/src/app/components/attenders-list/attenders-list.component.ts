@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {Course} from "../../classes/course";
 import {MatTableDataSource} from "@angular/material/table";
 import {AuthenticationService} from "../../services/authentication.service";
@@ -19,7 +19,6 @@ export class AttendersListComponent implements OnInit, OnChanges {
 
   @Input('course')
   course: Course;
-
 
   constructor(public authenticationService: AuthenticationService,
               private courseService: CourseService,
@@ -54,10 +53,17 @@ export class AttendersListComponent implements OnInit, OnChanges {
     }
   }
 
+  updateDataSource(){
+    this.dataSource = new MatTableDataSource(this.course.attenders);
+  }
+
   deleteAttender(attender: User) {
     this.modalService.newCallbackedModal('Confirm attender removal', () => {
-      this.course.attenders = this.course.attenders.filter(a => a.id !== attender.id);
-      this.courseService.deleteCourseAttenders(this.course);
+      this.courseService.deleteCourseAttenders(this.course, attender).subscribe(data => {
+        this.course.attenders = data;
+        this.updateDataSource();
+        this.modalService.newSuccessModal('Attender successfully removed!', `The attender ${attender.name} was successfully removed from course!`, null);
+      });
     });
   }
 }
