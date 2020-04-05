@@ -32,8 +32,8 @@ export class AttendersListComponent implements OnInit, OnChanges {
   openAddModal(){
 
     this.matDialog.open(AddAttendersModalComponent,{
-      width: '75vh',
-      height: '55vh'
+      // width: '75vh',
+      // height: '55vh'
     });
 
     this.editionService.startAddingUsers(this.course);

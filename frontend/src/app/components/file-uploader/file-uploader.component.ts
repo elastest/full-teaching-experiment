@@ -98,7 +98,7 @@ export class FileUploaderComponent implements OnInit {
     if(this.isLink()){
       return this.linkFg.valid;
     }
-    
+
     else{
       return this.uploadFg.valid && !!this.fileToUpload;
     }

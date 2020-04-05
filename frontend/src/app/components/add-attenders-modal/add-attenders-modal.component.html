@@ -1,9 +1,6 @@
 <mat-dialog-content class="mat-typography">
-
   <h1>Add new attenders</h1>
-
   <mat-tab-group>
-
     <mat-tab label="Single">
       <mat-grid-list [cols]="1" rowHeight="1:1" class="bg-transparent forum-thread wrapper attenders-list email-tabs">
         <form class="login-form" [formGroup]="this.singleAddFg"
@@ -15,7 +12,6 @@
       </mat-grid-list>
       <button [disabled]="!this.singleAddFg.valid" mat-raised-button color="primary" (click)="this.singleSubmit()">Submit</button>
     </mat-tab>
-
     <mat-tab label="Bulk">
       <mat-grid-list [cols]="1" rowHeight="1:1" class="bg-transparent forum-thread wrapper attenders-list email-tabs">
         <form class="login-form" [formGroup]="this.bulkAddFg"
@@ -31,13 +27,6 @@
       </mat-grid-list>
       <button [disabled]="!this.bulkAddFg.valid" mat-raised-button color="primary" (click)="this.bulkSubmit()">Submit</button>
     </mat-tab>
-
-
-<!--    <mat-tab label="File">-->
-
-<!--    </mat-tab>-->
-
   </mat-tab-group>
-
-
 </mat-dialog-content>
+
