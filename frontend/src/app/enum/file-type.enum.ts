@@ -1,5 +1,5 @@
 export enum FileType {
-  FILE = 0,
-  LINK = 1,
+  PDF = 1,
+  LINK = 0,
   VIDEO = 2
 }

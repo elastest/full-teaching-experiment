@@ -70,8 +70,8 @@ public class FileController {
         this.fileOperationsService = fileOperationsService;
     }
 
-    @RequestMapping(value = "/upload/course/{courseId}/file-group/{fileGroupId}", method = RequestMethod.POST)
-    public ResponseEntity<Object> handleFileUpload(@PathVariable(value = "courseId") String courseId, @PathVariable(value = "fileGroupId") String fileGroupId, @RequestParam("file") MultipartFile file)
+    @RequestMapping(value = "/upload/course/{courseId}/file-group/{fileGroupId}/type/{file_type}", method = RequestMethod.POST)
+    public ResponseEntity<Object> handleFileUpload(@PathVariable(value = "courseId") String courseId, @PathVariable(value = "fileGroupId") String fileGroupId, @RequestParam("file") MultipartFile file, @PathVariable("file_type") int fileType)
             throws IOException {
 
         log.info("Uploading file...");
@@ -118,7 +118,7 @@ public class FileController {
                 Files.createDirectories(FILES_FOLDER);
             }
 
-            com.fullteaching.backend.file.File customFile = new com.fullteaching.backend.file.File(1, fileName);
+            com.fullteaching.backend.file.File customFile = new com.fullteaching.backend.file.File(fileType, fileName);
             File uploadedFile = new File(FILES_FOLDER.toFile(), customFile.getNameIdent());
 
             file.transferTo(uploadedFile);

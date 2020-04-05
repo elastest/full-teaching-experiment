@@ -13,7 +13,7 @@
           </mat-form-field>
         </form>
       </mat-grid-list>
-      <button mat-raised-button color="primary" (click)="this.singleSubmit()">Submit</button>
+      <button [disabled]="!this.singleAddFg.valid" mat-raised-button color="primary" (click)="this.singleSubmit()">Submit</button>
     </mat-tab>
 
     <mat-tab label="Bulk">
@@ -29,18 +29,15 @@
           </mat-form-field>
         </form>
       </mat-grid-list>
-      <button mat-raised-button color="primary" (click)="this.bulkSubmit()">Submit</button>
+      <button [disabled]="!this.bulkAddFg.valid" mat-raised-button color="primary" (click)="this.bulkSubmit()">Submit</button>
     </mat-tab>
 
 
-    <mat-tab label="File">
+<!--    <mat-tab label="File">-->
 
-    </mat-tab>
+<!--    </mat-tab>-->
 
   </mat-tab-group>
 
 
 </mat-dialog-content>
-<mat-dialog-actions align="end">
-
-</mat-dialog-actions>

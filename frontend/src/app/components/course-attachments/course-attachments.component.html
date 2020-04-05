@@ -11,7 +11,7 @@
       </mat-expansion-panel-header>
 
       <div *ngIf="this.authService.isTeacher() && this.isEditing" cdkDropList class="files-list"
-           (cdkDropListDropped)="drop(fg.files, $event)">
+           (cdkDropListDropped)="drop(fg.id, fg.files, $event)">
         <div class="files-box" *ngFor="let f of fg.files" cdkDrag>
           <div class="files-custom-placeholder" *cdkDragPlaceholder></div>
           {{f.name}}
@@ -22,6 +22,7 @@
               <path d="M0 0h24v24H0z" fill="none"></path>
             </svg>
           </div>
+          <button mat-button (click)="deleteAttachment(f, fg)"><mat-icon>delete</mat-icon></button>
         </div>
       </div>
 

@@ -47,7 +47,6 @@ export class AddAttendersModalComponent implements OnInit {
 
           let attendersAdded = resp.attendersAdded;
           let attendersAlreadyAdded = resp['attendersAlreadyAdded'];
-
           if (attendersAlreadyAdded.length > 0) {
             this.modalService.newErrorModal('The user is already in this course!', 'You tried to add a user that is already an attender of this course!', null);
           }

@@ -1,22 +1,86 @@
+<!--<div class="upload-dialog">-->
+
+<!--  <div class="row no-margin">-->
+<!--    <div class="uploadfilecontainer" (click)="fileInput.click()" appDragDrop-->
+<!--         (onFileDropped)="handleFileInput($event.target.files)">-->
+<!--      <input hidden type="file" multiple="multiple" #fileInput (change)="handleFileInput($event.target.files)">-->
+<!--    </div>-->
+<!--    <div class="files-list" *ngIf="this.fileToUpload">-->
+<!--      <p> {{ this.fileToUpload?.name }} </p>-->
+<!--    </div>-->
+<!--  </div>-->
+
+<!--  <div class="row no-margin">-->
+<!--    <h2>Attachment name</h2>-->
+<!--  </div>-->
+
+<!--  <div class="row no-margin">-->
+<!--    <form [formGroup]="this.nameFg">-->
+<!--      <mat-form-field>-->
+<!--        <input matInput placeholder="Attachment name" formControlName="nameCtrl">-->
+<!--      </mat-form-field>-->
+<!--    </form>-->
+<!--  </div>-->
+
+<!--</div>-->
+
+
+<!--<div mat-dialog-actions>-->
+<!--  <button mat-raised-button [mat-dialog-close] color="warn">Cancel</button>-->
+<!--  <button mat-raised-button [mat-dialog-close] cdkFocusInitial color="primary" (click)="submit()">Submit</button>-->
+<!--</div>-->
 
 <h1 mat-dialog-title>
-  Drop here your files
+  Add new attachment
 </h1>
 
-<div class="upload-dialog">
-  <div class="row no-margin">
-    <div class="uploadfilecontainer" (click)="fileInput.click()" appDragDrop (onFileDropped)="handleFileInput($event.target.files)">
-      <input hidden type="file" multiple="multiple" #fileInput (change)="handleFileInput($event.target.files)">
-    </div>
-    <div class="files-list" *ngIf="this.fileToUpload">
-      <p> {{ this.fileToUpload?.name }} </p>
-    </div>
-  </div>
+<div class="wrapper" fxLayout="row" fxLayoutAlign="center center">
+  <mat-card>
+    <mat-card-content>
+      <form class="attachments-form" [formGroup]="this.uploadFg">
+        <div class="wrapper">
+          <div class="row">
+            <mat-form-field class="login-full-width">
+              <input matInput placeholder="Attachment name" formControlName="nameCtrl">
+            </mat-form-field>
+          </div>
+          <div class="row">
+            <mat-form-field appearance="fill">
+              <mat-label>Attachment type</mat-label>
+              <mat-select formControlName="typeCtrl">
+                <mat-option *ngFor="let type of attachmentTypes" [value]="type">{{type.name}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+      </form>
+
+      <div class="row no-margin" *ngIf="this.showFileUploader()">
+          <div class="uploadfilecontainer" (click)="fileInput.click()" appDragDrop
+               (onFileDropped)="handleFileInput($event.target.files)">
+            <input hidden type="file" multiple="multiple" #fileInput (change)="handleFileInput($event.target.files)">
+          </div>
+          <div class="files-list" *ngIf="this.fileToUpload">
+            <p> {{ this.fileToUpload?.name }} </p>
+          </div>
+      </div>
+
+      <div class="row no-margin" *ngIf="this.showLinkInput()">
+        <form [formGroup]="this.linkFg">
+          <mat-form-field>
+            <input matInput formControlName="linkCtrl" placeholder="Link">
+          </mat-form-field>
+        </form>
+      </div>
+
+
+    </mat-card-content>
+  </mat-card>
 </div>
 
 <div mat-dialog-actions>
-  <button mat-raised-button [mat-dialog-close] class="mat-elevation-z24">Cancel</button>
-  <button mat-raised-button [mat-dialog-close] cdkFocusInitial  class="mat-elevation-z24" (click)="submit()">Submit</button>
+  <button mat-raised-button [mat-dialog-close] color="warn">Cancel</button>
+  <button mat-raised-button [mat-dialog-close] cdkFocusInitial color="primary" [disabled]="!this.uploadButtonEnabled()"
+          (click)="submit()">Upload
+  </button>
 </div>
-
-

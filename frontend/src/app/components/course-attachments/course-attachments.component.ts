@@ -11,7 +11,6 @@ import {FilesEditionService} from "../../services/files-edition.service";
 import {SwalComponent} from "@sweetalert2/ngx-sweetalert2";
 import {MatDialog} from "@angular/material/dialog";
 import {FileUploaderComponent} from "../file-uploader/file-uploader.component";
-import {FormGroup} from "@angular/forms";
 
 
 export interface DialogData {
@@ -46,16 +45,27 @@ export class CourseAttachmentsComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.filesEditionService.fileUploadedAnnouncer.subscribe(uploaded => {
+
+      this.course = uploaded.course;
+
+    })
   }
 
 
-
-  drop(files: File[], event: CdkDragDrop<{ title: string, poster: string }[]>) {
+  drop(fgId: number, files: File[], event: CdkDragDrop<{ title: string, poster: string }[]>) {
     moveItemInArray(files, event.previousIndex, event.currentIndex);
+    let newPos = event.currentIndex;
+    let fileMoved = files[newPos];
+    this.fileService.editFileOrder(fileMoved.id, fgId, fgId, newPos, this.course.id).subscribe(resp => {
+      this.modalService.newToastModal(`File order changed successfully!`);
+    }, error => {
+      this.modalService.newErrorModal(`Error moving file!`, `An error ocured while moving this file!`, null);
+    });
   }
 
   isFile(f: File) {
-    return FileType.FILE === f.type;
+    return FileType.PDF === f.type;
   }
 
   isLink(f: File) {
@@ -143,8 +153,20 @@ export class CourseAttachmentsComponent implements OnInit {
       data: {
         course: this.course,
         fileGroup: fg
-      }
+      },
+      width: "60vh"
     })
   }
 
+  deleteAttachment(f: File, fileGroup: FileGroup) {
+    this.modalService.newCallbackedModal(`Confirm attachment removal`, () => {
+      this.fileService.deleteFile(f.id, fileGroup.id, this.course.id).subscribe(data => {
+          fileGroup.files = fileGroup.files.filter(file => f.id !== file.id);
+          this.modalService.newToastModal(`Attachment removed successfully!`);
+        },
+        error => {
+          this.modalService.newErrorModal(`Error deleting file attachment!`, `Error: ${error}`, null);
+        });
+    });
+  }
 }

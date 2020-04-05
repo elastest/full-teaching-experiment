@@ -141,13 +141,13 @@ export class FileService {
   }
 
 
-  public uploadFile(courseId: number, fileGroupId: number, formData: FormData){
-    console.log(`Uploading a file for course ${courseId} and file group ${fileGroupId}`)
+  public uploadFile(courseId: number, fileGroupId: number, formData: FormData, type: number){
+    console.log(`Uploading a file for course ${courseId} and file group ${fileGroupId}`);
     let headers = new HttpHeaders({
       'Authorization': 'Bearer ' + this.authenticationService.token
     });
     let options = ({headers});
-    return this.http.post<FileGroup>(`/api-load-files/upload/course/${courseId}/file-group/${fileGroupId}`, formData, options);
+    return this.http.post<FileGroup>(`/api-load-files/upload/course/${courseId}/file-group/${fileGroupId}/type/${type}`, formData, options);
 }
 
   private openFile(response) {
