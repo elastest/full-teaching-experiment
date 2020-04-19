@@ -9,8 +9,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
-    - name: Maven build
-      run: mvn clean install -DskipTests -T 1C -nsu
+    - name: Gradle build
+      run: gradle clean build -x test
 #     - name: Run a multi-line script
 #       run: |
 #         echo Add other actions to build,
