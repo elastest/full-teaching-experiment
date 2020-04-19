@@ -34,7 +34,6 @@ export class FileUploaderComponent implements OnInit {
 
     // form controls for name and type
     this.uploadFg = this.formBuilder.group({
-      nameCtrl: ['', [Validators.required]],
       typeCtrl: ['', [Validators.required]]
     });
 
@@ -52,7 +51,7 @@ export class FileUploaderComponent implements OnInit {
 
   private postFile(fileToUpload: File) {
     const formData: FormData = new FormData();
-    formData.set('file', fileToUpload, this.uploadFg.get('nameCtrl').value);
+    formData.set('file', fileToUpload, fileToUpload.name);
     let course = this.filesEditionService.courseForUpload;
     let fg = this.filesEditionService.fileGroupForUpload;
     this.fileService.uploadFile(course.id, fg.id, formData, this.uploadFg.get('typeCtrl').value.typeId).subscribe(data => {

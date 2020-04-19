@@ -31,7 +31,7 @@
         <mat-card *ngFor="let f of fg.files" class="mat-elevation-z6 spaced">
           {{f.name}}
           <mat-card-actions>
-            <button *ngIf="this.isFile(f)" mat-button matTooltip="Download attachment">
+            <button *ngIf="this.isFile(f)" mat-button matTooltip="Download attachment" (click)="this.downloadAttachment(f)">
               <mat-icon>cloud_download</mat-icon>
             </button>
             <button *ngIf="this.isLink(f)" mat-button matTooltip="Redirect to link" (click)="openLink(f.link)">

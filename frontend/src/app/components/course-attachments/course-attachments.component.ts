@@ -169,4 +169,8 @@ export class CourseAttachmentsComponent implements OnInit {
         });
     });
   }
+
+  downloadAttachment(f: File) {
+    this.fileService.downloadFile(this.course.id, f);
+  }
 }

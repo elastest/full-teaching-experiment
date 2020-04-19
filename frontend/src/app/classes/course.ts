@@ -1,7 +1,6 @@
-import { Session }        from './session';
-import { Forum }          from './forum';
-import { User }           from './user';
-import { CourseDetails }  from './course-details';
+import {FTSession} from './FTSession';
+import {User} from './user';
+import {CourseDetails} from './course-details';
 
 export class Course {
 
@@ -10,10 +9,10 @@ export class Course {
   public image: string;
   public teacher: User;
   public courseDetails: CourseDetails;
-  public sessions: Session[];
+  public sessions: FTSession[];
   public attenders: User[];
 
-  constructor(title: string, image: string, courseDetails: CourseDetails){
+  constructor(title: string, image: string, courseDetails: CourseDetails) {
     this.title = title;
     this.teacher = null; //Backend will take care of it
     this.image = image;

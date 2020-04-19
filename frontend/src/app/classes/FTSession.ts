@@ -1,6 +1,6 @@
-import { Course } from './course';
+import {Course} from './course';
 
-export class Session {
+export class FTSession {
 
   public id?: number;
   public title: string;

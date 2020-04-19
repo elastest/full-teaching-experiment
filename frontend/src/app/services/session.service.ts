@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Session } from '../classes/session';
+import { FTSession } from '../classes/FTSession';
 import { Course } from '../classes/course';
 import { AuthenticationService } from './authentication.service';
 import {HttpClient, HttpHeaders} from "@angular/common/http";
@@ -13,7 +13,7 @@ export class SessionService {
   constructor(private http: HttpClient, private authenticationService: AuthenticationService) { }
 
   //POST new session. On success returns the updated Course that owns the posted session
-  public newSession(session: Session, courseId: number) {
+  public newSession(session: FTSession, courseId: number) {
     console.log("POST new session");
 
     let body = JSON.stringify(session);
@@ -24,13 +24,13 @@ export class SessionService {
   }
 
   //PUT existing session. On success returns the updated session
-  public editSession(session: Session) {
+  public editSession(session: FTSession) {
     console.log("PUT existing session");
 
     let body = JSON.stringify(session);
     let headers = new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + this.authenticationService.token });
     let options = ({ headers });
-    return this.http.put<Session>(this.urlSessions + "/edit", body, options);
+    return this.http.put<FTSession>(this.urlSessions + "/edit", body, options);
   }
 
   //DELETE existing session. On success returns the deleted session
@@ -39,7 +39,7 @@ export class SessionService {
 
     let headers = new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + this.authenticationService.token });
     let options = ({ headers });
-    return this.http.delete<Session>(this.urlSessions + "/delete/" + sessionId, options);
+    return this.http.delete<FTSession>(this.urlSessions + "/delete/" + sessionId, options);
   }
 
   private handleError(message: string, error: any) {

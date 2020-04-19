@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {AuthenticationService} from '../../services/authentication.service';
-import {Session} from '../../classes/session';
+import {FTSession} from '../../classes/FTSession';
 import {MatCalendar, MatCalendarCellCssClasses} from "@angular/material/datepicker";
 import {Moment} from "moment";
 import {CourseService} from "../../services/course.service";
@@ -21,7 +21,7 @@ export class CalendarComponent implements OnInit, AfterViewInit {
   @ViewChild(SwalComponent)
   private swal: SwalComponent;
 
-  private sessions: Array<Session> = new Array<Session>();
+  private sessions: Array<FTSession> = new Array<FTSession>();
   today: Date = new Date();
   selectedDate: Moment;
 

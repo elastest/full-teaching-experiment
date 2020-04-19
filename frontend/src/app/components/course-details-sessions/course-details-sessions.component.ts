@@ -2,7 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {Course} from "../../classes/course";
 import {CourseService} from "../../services/course.service";
 import {AuthenticationService} from "../../services/authentication.service";
-import {Session} from "../../classes/session";
+import {FTSession} from "../../classes/FTSession";
 import {Router} from "@angular/router";
 import {ModalService} from "../../services/modal.service";
 import {SessionService} from "../../services/session.service";
@@ -28,7 +28,7 @@ export class CourseDetailsSessionsComponent implements OnInit {
   ngOnInit() {
   }
 
-  showEditModal(session: Session) {
+  showEditModal(session: FTSession) {
 
     this.modalService.newInputCallbackedModal('New session title:', (newName) => {
 

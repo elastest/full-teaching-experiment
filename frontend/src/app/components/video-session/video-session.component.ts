@@ -17,7 +17,7 @@ import {User} from '../../classes/user';
 import {Course} from '../../classes/course';
 import {Chatline} from '../../classes/chatline';
 import {UserData} from '../../classes/user-data';
-import {Session as MySession} from '../../classes/session';
+import {FTSession as MySession} from '../../classes/FTSession';
 
 import {AuthenticationService} from '../../services/authentication.service';
 import {VideoSessionService} from '../../services/video-session.service';

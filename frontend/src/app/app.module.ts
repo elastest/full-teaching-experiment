@@ -46,7 +46,6 @@ import {RegisterComponent} from './components/register/register.component';
 import {InterceptorService} from "./services/interceptor.service";
 import {CookieService} from "ngx-cookie-service";
 import {DashboardV2Component} from './components/dashboard-v2/dashboard-v2.component';
-import {SidebarComponent} from "./components/sidebar/sidebar.component";
 import {NavigationComponent} from './components/navigation/navigation.component';
 import {MatIconModule} from "@angular/material/icon";
 import {MatDividerModule} from "@angular/material/divider";
@@ -75,6 +74,9 @@ import { ChangePasswordComponent } from './components/change-password/change-pas
 import { AttendersListComponent } from './components/attenders-list/attenders-list.component';
 import { AddAttendersModalComponent } from './components/add-attenders-modal/add-attenders-modal.component';
 import {MatSelectModule} from "@angular/material/select";
+import { CourseSessionComponent } from './components/course-session/course-session.component';
+import { UserVideoComponent } from './components/user-video/user-video.component';
+import { OpenviduSessionModule } from 'openvidu-angular';
 
 const matModules = [
   MatFormFieldModule,
@@ -111,7 +113,8 @@ const matModules = [
         DragDropModule,
         MatListModule,
         MatSlideToggleModule,
-        MatSelectModule
+        MatSelectModule,
+        // OpenviduSessionModule
     ],
   exports: [
     matModules
@@ -134,7 +137,6 @@ const matModules = [
     IndexPageComponent,
     RegisterComponent,
     DashboardV2Component,
-    SidebarComponent,
     NavigationComponent,
     CoursesListComponent,
     CourseDetailsV2Component,
@@ -146,6 +148,8 @@ const matModules = [
     ChangePasswordComponent,
     AttendersListComponent,
     AddAttendersModalComponent,
+    CourseSessionComponent,
+    UserVideoComponent,
   ],
   providers: [
     AuthenticationService,
