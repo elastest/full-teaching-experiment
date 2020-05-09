@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {Subject} from 'rxjs';
 import {FileGroup} from '../classes/file-group';
 import {Course} from '../classes/course';
+import {DialogSize} from '../enum/dialog-size.enum';
 
 @Injectable()
 export class AnnouncerService {
@@ -24,7 +25,14 @@ export class AnnouncerService {
   private prepareFileUploadAnnouncerSubject: Subject<{ fg: FileGroup, course: Course }> = new Subject<{ fg: FileGroup, course: Course }>();
   public prepareFileUploadAnnouncer$ = this.prepareFileUploadAnnouncerSubject.asObservable();
 
+  private dialogSizeChangedAnnouncerSubject: Subject<DialogSize> = new Subject<DialogSize>();
+  public dialogSizeChangedAnnouncer$ = this.dialogSizeChangedAnnouncerSubject.asObservable();
+
   constructor() {
+  }
+
+  announceDialogChanged(size: DialogSize){
+    this.dialogSizeChangedAnnouncerSubject.next(size);
   }
 
   announceModeEdit(objs) {

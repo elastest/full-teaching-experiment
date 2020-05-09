@@ -1,0 +1,5 @@
+<mat-action-row>
+  <button mat-button (click)="this.ref.close()"><mat-icon>close</mat-icon></button>
+  <button *ngIf="this.isBig()" mat-button (click)="this.toggleDialogSize()"><mat-icon>picture_in_picture_alt</mat-icon></button>
+  <button *ngIf="this.isSmall()" mat-button (click)="this.toggleDialogSize()"><mat-icon>aspect_ratio</mat-icon></button>
+</mat-action-row>

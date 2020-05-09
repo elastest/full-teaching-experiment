@@ -1,0 +1,49 @@
+button {
+  width: 90px;
+  height: 36px;
+  font-weight: 100;
+}
+.buttons {
+  grid-template-columns: auto auto ;
+  display: grid;
+  font-size: 14px;
+  color: #fff;
+  justify-content: center;
+  margin: 10px;
+  .save {
+    background-color: #E37B00;
+    margin-left: 2px;
+  }
+  .close {
+    background-color: #747578;
+    margin-right: 2px
+  }
+
+}
+::ng-deep.mat-dialog-container {
+  //  border-radius: 13px !important;
+  resize: both !important; //Not working
+  overflow: auto;
+  background: #fff;
+
+}
+
+::ng-deep.cdk-overlay-pane{
+  min-width: 256px;
+  min-height: 555px;
+
+}
+
+.mat-dialog-container {
+  padding: 0px !important;
+}
+
+.progress {
+  background-color: transparent;
+}
+
+:host {
+  position: fixed;
+  top: 0;
+  left: 0
+}

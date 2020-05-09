@@ -75,6 +75,7 @@ import {CourseSessionComponent} from './components/course-session/course-session
 import {UserVideoComponent} from './components/user-video/user-video.component';
 import {VideoPlayerComponent} from './components/video-player/video-player.component';
 import {MatVideoModule} from 'mat-video';
+import { VideoDialogToolsComponent } from './components/video-dialog-tools/video-dialog-tools.component';
 
 const matModules = [
   MatFormFieldModule,
@@ -147,7 +148,8 @@ const matModules = [
     AddAttendersModalComponent,
     CourseSessionComponent,
     UserVideoComponent,
-    VideoPlayerComponent
+    VideoPlayerComponent,
+    VideoDialogToolsComponent
   ],
   providers: [
     AuthenticationService,
