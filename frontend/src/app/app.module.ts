@@ -65,7 +65,7 @@ import {CourseAttachmentsComponent} from './components/course-attachments/course
 import {DragDropModule} from '@angular/cdk/drag-drop';
 import {MatListModule} from '@angular/material/list';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
-import {FilesEditionService} from './services/files-edition.service';
+import {AnnouncerService} from './services/announcer.service';
 import {DragDropDirective} from './directives/drag-drop.directive';
 import {ChangePasswordComponent} from './components/change-password/change-password.component';
 import {AttendersListComponent} from './components/attenders-list/attenders-list.component';
@@ -168,7 +168,7 @@ const matModules = [
     },
     CookieService,
     ModalService,
-    FilesEditionService
+    AnnouncerService
   ],
   bootstrap: [AppComponent]
 })

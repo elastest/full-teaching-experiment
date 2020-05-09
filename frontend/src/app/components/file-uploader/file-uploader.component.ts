@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {FileService} from '../../services/file.service';
-import {FilesEditionService} from '../../services/files-edition.service';
+import {AnnouncerService} from '../../services/announcer.service';
 import {AttachmentType} from '../../classes/attachment-type';
 import {FileType} from '../../enum/file-type.enum';
 import {ModalService} from '../../services/modal.service';
@@ -26,6 +26,7 @@ export class FileUploaderComponent implements OnInit {
 
   formData: FormData = new FormData();
   fileToUpload: File = null;
+
   uploadFg: FormGroup;
   linkFg: FormGroup;
 
@@ -33,7 +34,7 @@ export class FileUploaderComponent implements OnInit {
   private course: Course;
 
   constructor(public fileService: FileService,
-              private filesEditionService: FilesEditionService,
+              private announcerService: AnnouncerService,
               private modalService: ModalService,
               private formBuilder: FormBuilder) {
 
@@ -47,7 +48,7 @@ export class FileUploaderComponent implements OnInit {
       linkCtrl: ['', [Validators.required]]
     })
 
-    this.filesEditionService.prepareFileUploadAnnouncer$.subscribe(upload => {
+    this.announcerService.prepareFileUploadAnnouncer$.subscribe(upload => {
       this.course = upload.course;
       this.fileGroup = upload.fg;
     })
@@ -65,7 +66,7 @@ export class FileUploaderComponent implements OnInit {
 
     this.fileService.uploadFile(this.course.id, this.fileGroup.id, formData, this.uploadFg.get('typeCtrl').value.typeId).subscribe(data => {
         this.fileGroup = data;
-        this.filesEditionService.announceFileSuccessfullyUploaded(this.course, this.fileGroup);
+        this.announcerService.announceFileSuccessfullyUploaded(this.course, this.fileGroup);
       },
       error => {
         console.log(error)

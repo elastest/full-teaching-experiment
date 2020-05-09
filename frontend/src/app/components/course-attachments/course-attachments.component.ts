@@ -7,7 +7,7 @@ import {FileGroup} from '../../classes/file-group';
 import {FileType} from '../../enum/file-type.enum';
 import {FileService} from '../../services/file.service';
 import {ModalService} from '../../services/modal.service';
-import {FilesEditionService} from '../../services/files-edition.service';
+import {AnnouncerService} from '../../services/announcer.service';
 import {SwalComponent} from '@sweetalert2/ngx-sweetalert2';
 import {MatDialog} from '@angular/material/dialog';
 import {FileUploaderComponent} from '../file-uploader/file-uploader.component';
@@ -42,13 +42,17 @@ export class CourseAttachmentsComponent implements OnInit {
   @ViewChild(SwalComponent)
   private swal: SwalComponent;
 
-  constructor(private dialog: MatDialog, private videoPlayerService: VideoPlayerService, public authService: AuthenticationService, private fileService: FileService, private modalService: ModalService, private filesEditionService: FilesEditionService) {
+  constructor(private dialog: MatDialog,
+              private videoPlayerService: VideoPlayerService,
+              public authService: AuthenticationService,
+              private fileService: FileService,
+              private modalService: ModalService,
+              private announcerService: AnnouncerService) {
   }
 
   ngOnInit(): void {
-    this.filesEditionService.fileUploadedAnnouncer.subscribe(uploaded => {
+    this.announcerService.fileUploadedAnnouncer.subscribe(uploaded => {
       this.course = uploaded.course;
-      console.log('Announced' + uploaded)
     })
   }
 
@@ -82,15 +86,11 @@ export class CourseAttachmentsComponent implements OnInit {
   }
 
   deleteFileGroup(fileGroup: FileGroup) {
-
-
     this.modalService.newCallbackedModal('Are you sure about removing this file group?', () => {
-
-
       this.fileService.deleteFileGroup(fileGroup.id, this.course.id).subscribe(
         () => {
           //announce deletion so the parent component knows it
-          this.filesEditionService.announceFileGroupDeleted(fileGroup.id);
+          this.announcerService.announceFileGroupDeleted(fileGroup.id);
           this.modalService.newToastModal('File group successfully deleted!')
         },
         error => {
@@ -109,7 +109,7 @@ export class CourseAttachmentsComponent implements OnInit {
       if (newName) {
         fg.title = newName;
         this.fileService.editFileGroup(fg, this.course.id).subscribe((data) => {
-            this.filesEditionService.announceFileFilegroupUpdated([fg]);
+            this.announcerService.announceFileFilegroupUpdated([fg]);
             this.modalService.newToastModal(`File group title changed to: ${fg.title}`)
           },
           error => {
@@ -130,7 +130,7 @@ export class CourseAttachmentsComponent implements OnInit {
         let newFileGroup = new FileGroup(name, fgParent);
 
         this.fileService.newFileGroup(newFileGroup, this.course.courseDetails.id).subscribe(resp => {
-          this.filesEditionService.announceNewFileGroup(newFileGroup);
+          this.announcerService.announceNewFileGroup(newFileGroup);
         }, error => this.modalService.newErrorModal('Error creating a new file group!', error, null))
       }
 
@@ -152,7 +152,7 @@ export class CourseAttachmentsComponent implements OnInit {
       },
       width: '60vh'
     })
-    this.filesEditionService.announcePrepareFileUpload(this.course, fg);
+    this.announcerService.announcePrepareFileUpload(this.course, fg);
   }
 
   deleteAttachment(f: File, fileGroup: FileGroup) {

@@ -1,11 +1,10 @@
 import {Component, OnInit} from '@angular/core';
-import {AngularEditorConfig} from '@kolkov/angular-editor';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {FormBuilder} from '@angular/forms';
 import {ActivatedRoute} from '@angular/router';
 import {Course} from '../../classes/course';
 import {CourseService} from '../../services/course.service';
 import {AuthenticationService} from '../../services/authentication.service';
-import {FilesEditionService} from '../../services/files-edition.service';
+import {AnnouncerService} from '../../services/announcer.service';
 import {FileGroup} from '../../classes/file-group';
 import {User} from '../../classes/user';
 
@@ -24,7 +23,7 @@ export class CourseDetailsV2Component implements OnInit {
               private route: ActivatedRoute,
               private courseService: CourseService,
               public authService: AuthenticationService,
-              private filesEditionService: FilesEditionService) {
+              private announcerService: AnnouncerService) {
   }
 
   ngOnInit() {
@@ -38,36 +37,38 @@ export class CourseDetailsV2Component implements OnInit {
           this.course = data;
         });
 
-        this.filesEditionService.fileGroupDeletedAnnouncer$.subscribe(fileGroupId => {
+        this.announcerService.fileGroupDeletedAnnouncer$.subscribe(fileGroupId => {
           if (this.recursiveFileGroupDeletion(this.course.courseDetails.files, fileGroupId)) {
-            if (this.course.courseDetails.files.length == 0) this.isEditing = false; //If there are no fileGroups, mode edit is closed
+            if (this.course.courseDetails.files.length == 0) {
+              this.isEditing = false;
+            } //If there are no fileGroups, mode edit is closed
           }
         });
 
 
-        this.filesEditionService.fileInFileGroupUpdatedAnnouncer.subscribe(objs => {
+        this.announcerService.fileInFileGroupUpdatedAnnouncer.subscribe(objs => {
           let fg = objs[0];
           let file = objs[1];
-          if(fg){
+          if (fg) {
             console.log(`File group updated ${fg.id}`)
           }
         });
 
 
-        this.filesEditionService.fileGroupAddedAnnouncer.subscribe(newFg => {
+        this.announcerService.fileGroupAddedAnnouncer.subscribe(newFg => {
           this.recursiveFileGroupAdd(this.course.courseDetails.files, newFg)
         });
 
 
-        this.filesEditionService.fileUploadedAnnouncer.subscribe(data => {
+        this.announcerService.fileUploadedAnnouncer.subscribe(data => {
 
           let fg = data.fg;
           let course = data.course;
 
-          if(this.course.id === course.id){
-            for(let parent of this.course.courseDetails.files){
+          if (this.course.id === course.id) {
+            for (let parent of this.course.courseDetails.files) {
               let updated = this.updateFilesInFileGroup(parent, fg);
-              if(updated){
+              if (updated) {
                 break;
               }
             }

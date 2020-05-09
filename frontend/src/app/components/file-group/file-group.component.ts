@@ -6,7 +6,7 @@ import {File} from '../../classes/file';
 import {FileGroup} from '../../classes/file-group';
 
 import {FileService} from '../../services/file.service';
-import {FilesEditionService} from '../../services/files-edition.service';
+import {AnnouncerService} from '../../services/announcer.service';
 import {CourseDetailsModalDataService} from '../../services/course-details-modal-data.service';
 import {AuthenticationService} from '../../services/authentication.service';
 import {AnimationService} from '../../services/animation.service';
@@ -37,19 +37,19 @@ export class FileGroupComponent implements OnInit {
 
   constructor(
     public fileService: FileService,
-    public filesEditionService: FilesEditionService,
+    public announcerService: AnnouncerService,
     public courseDetailsModalDataService: CourseDetailsModalDataService,
     public authenticationService: AuthenticationService,
     public animationService: AnimationService) {
 
-    this.subscription = filesEditionService.editModeAnnouncer$.subscribe(
+    this.subscription = announcerService.editModeAnnouncer$.subscribe(
       active => {
         this.modeEditActive = active;
       });
   }
 
   ngOnInit() {
-    this.filesEditionService.editModeAnnouncer$.subscribe(mode => {
+    this.announcerService.editModeAnnouncer$.subscribe(mode => {
       this.modeEditActive = mode;
     });
   }
@@ -66,12 +66,12 @@ export class FileGroupComponent implements OnInit {
 
   changeUpdatedFileGroup() {
     let objs = [this.fileGroup, null];
-    this.filesEditionService.announceFileFilegroupUpdated(objs);
+    this.announcerService.announceFileFilegroupUpdated(objs);
   }
 
   changeUpdatedFile(file: File) {
     let objs = [this.fileGroup, file];
-    this.filesEditionService.announceFileFilegroupUpdated(objs);
+    this.announcerService.announceFileFilegroupUpdated(objs);
   }
 
   deleteFileGroup() {
@@ -79,7 +79,7 @@ export class FileGroupComponent implements OnInit {
     this.fileService.deleteFileGroup(this.fileGroup.id, this.courseId).subscribe(
       response => {
         //Only on succesful DELETE we locally delete the fileGroup sending an event to the suscribed parent component (CourseDetailsComponent)
-        this.filesEditionService.announceFileGroupDeleted(response.id);
+        this.announcerService.announceFileGroupDeleted(response.id);
         this.fileGroupDeletion = false;
       },
       error => {

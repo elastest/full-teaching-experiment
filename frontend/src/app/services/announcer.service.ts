@@ -4,7 +4,7 @@ import {FileGroup} from '../classes/file-group';
 import {Course} from '../classes/course';
 
 @Injectable()
-export class FilesEditionService {
+export class AnnouncerService {
 
   private editModeAnnouncerSubject: Subject<boolean> = new Subject<boolean>();
   public editModeAnnouncer$ = this.editModeAnnouncerSubject.asObservable();
