@@ -1,16 +1,17 @@
 import {Component, Input, OnInit, ViewChild} from '@angular/core';
-import {AuthenticationService} from "../../services/authentication.service";
-import {Course} from "../../classes/course";
-import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
-import {File} from "../../classes/file";
-import {FileGroup} from "../../classes/file-group";
-import {FileType} from "../../enum/file-type.enum";
-import {FileService} from "../../services/file.service";
-import {ModalService} from "../../services/modal.service";
-import {FilesEditionService} from "../../services/files-edition.service";
-import {SwalComponent} from "@sweetalert2/ngx-sweetalert2";
-import {MatDialog} from "@angular/material/dialog";
-import {FileUploaderComponent} from "../file-uploader/file-uploader.component";
+import {AuthenticationService} from '../../services/authentication.service';
+import {Course} from '../../classes/course';
+import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
+import {File} from '../../classes/file';
+import {FileGroup} from '../../classes/file-group';
+import {FileType} from '../../enum/file-type.enum';
+import {FileService} from '../../services/file.service';
+import {ModalService} from '../../services/modal.service';
+import {FilesEditionService} from '../../services/files-edition.service';
+import {SwalComponent} from '@sweetalert2/ngx-sweetalert2';
+import {MatDialog} from '@angular/material/dialog';
+import {FileUploaderComponent} from '../file-uploader/file-uploader.component';
+import {VideoPlayerService} from '../../services/video-player.service';
 
 
 export interface DialogData {
@@ -41,14 +42,13 @@ export class CourseAttachmentsComponent implements OnInit {
   @ViewChild(SwalComponent)
   private swal: SwalComponent;
 
-  constructor(private dialog: MatDialog, public authService: AuthenticationService, private fileService: FileService, private modalService: ModalService, private filesEditionService: FilesEditionService) {
+  constructor(private dialog: MatDialog, private videoPlayerService: VideoPlayerService, public authService: AuthenticationService, private fileService: FileService, private modalService: ModalService, private filesEditionService: FilesEditionService) {
   }
 
   ngOnInit(): void {
     this.filesEditionService.fileUploadedAnnouncer.subscribe(uploaded => {
-
       this.course = uploaded.course;
-
+      console.log('Announced' + uploaded)
     })
   }
 
@@ -78,10 +78,7 @@ export class CourseAttachmentsComponent implements OnInit {
 
   openLink(link: string) {
     console.log(`Redirecting to ${link}`)
-    window.open(link, "_blank");
-  }
-
-  removeFromList(fg: FileGroup) {
+    window.open(link, '_blank');
   }
 
   deleteFileGroup(fileGroup: FileGroup) {
@@ -148,14 +145,14 @@ export class CourseAttachmentsComponent implements OnInit {
   }
 
   newAttachment(fg: FileGroup) {
-    this.filesEditionService.announceFileUploadModal(this.course, fg);
     this.dialog.open(FileUploaderComponent, {
       data: {
         course: this.course,
         fileGroup: fg
       },
-      width: "60vh"
+      width: '60vh'
     })
+    this.filesEditionService.announcePrepareFileUpload(this.course, fg);
   }
 
   deleteAttachment(f: File, fileGroup: FileGroup) {
@@ -172,5 +169,9 @@ export class CourseAttachmentsComponent implements OnInit {
 
   downloadAttachment(f: File) {
     this.fileService.downloadFile(this.course.id, f);
+  }
+
+  playVideo(f: File) {
+    this.videoPlayerService.startPlayingVideo(f);
   }
 }

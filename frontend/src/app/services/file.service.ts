@@ -9,17 +9,17 @@ import {AuthenticationService} from './authentication.service';
 
 import 'rxjs/Rx';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {Observable} from 'rxjs';
 import {environment} from '../../environments/environment';
+import {VideoPlayerService} from './video-player.service';
+import {Subject} from 'rxjs';
 
 @Injectable()
 export class FileService {
 
-  constructor(private http: HttpClient, private authenticationService: AuthenticationService) {
+  constructor(private http: HttpClient, private authenticationService: AuthenticationService, private videoPlayerService: VideoPlayerService) {
   }
 
   private url = '/api-files';
-
   private pendingDownload: boolean = false;
 
   //POST new FileGroup. Requires the FileGroup and the courseDetails id that owns it
@@ -89,24 +89,8 @@ export class FileService {
     return this.http.put<FileGroup[]>(this.url + '/edit/file-order/course/' + courseId + '/file/' + fileMovedId + '/from/' + fileGroupSourceId + '/to/' + fileGroupTargetId + '/pos/' + filePosition, options)
   }
 
-  //PUT existing File. Requires the modified File and the course id
-  //On success returns the updated root FileGroup
-  public editFile(file: File, fileGroupId: number, courseId: number) {
-    console.log('PUT existing file ' + file.name);
-
-    let body = JSON.stringify(file);
-    let headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + this.authenticationService.token
-    });
-    let options = ({headers});
-    return this.http.put<FileGroup>(this.url + '/edit/file/file-group/' + fileGroupId + '/course/' + courseId, body, options);
-    //.catch(error => this.handleError("PUT existing filegroup FAIL. Response: ", error));
-  }
 
   public downloadFile(courseId: number, file: File) {
-
-    console.log('Downloading file ' + file.name);
 
     // Xhr creates new context so we need to create reference to this
     let self = this;
@@ -134,8 +118,7 @@ export class FileService {
 
       // If we get an HTTP status OK (200), save the file using fileSaver
       if (xhr.readyState === 4 && xhr.status === 200) {
-        console.log('File download SUCCESS. Response: ', this.response);
-        var blob = new Blob([this.response], {type: this.response.type});
+        const blob = new Blob([this.response], {type: this.response.type});
         FileSaver.saveAs(blob, file.name);
       }
     };
@@ -152,16 +135,5 @@ export class FileService {
     });
     let options = ({headers});
     return this.http.post<FileGroup>(`/api-load-files/upload/course/${courseId}/file-group/${fileGroupId}/type/${type}`, formData, options);
-  }
-
-  private openFile(response) {
-    var blob = new Blob([response._body], {type: 'text/plain'});
-    var url = window.URL.createObjectURL(blob);
-    window.open(url)
-  }
-
-  private handleError(message: string, error: any) {
-    console.error(message, error);
-    return Observable.throw('Server error (' + error.status + '): ' + error.text())
   }
 }

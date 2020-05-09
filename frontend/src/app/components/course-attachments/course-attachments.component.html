@@ -34,10 +34,10 @@
             <button *ngIf="this.isFile(f)" mat-button matTooltip="Download attachment" (click)="this.downloadAttachment(f)">
               <mat-icon>cloud_download</mat-icon>
             </button>
-            <button *ngIf="this.isLink(f)" mat-button matTooltip="Redirect to link" (click)="openLink(f.link)">
+            <button *ngIf="this.isLink(f)" mat-button matTooltip="Redirect to link" (click)="this.openLink(f.link)">
               <mat-icon>link</mat-icon>
             </button>
-            <button *ngIf="this.isVideo(f)" mat-button matTooltip="Play video">
+            <button *ngIf="this.isVideo(f)" mat-button matTooltip="Play video" (click)="this.playVideo(f)">
               <mat-icon>ondemand_video</mat-icon>
             </button>
           </mat-card-actions>

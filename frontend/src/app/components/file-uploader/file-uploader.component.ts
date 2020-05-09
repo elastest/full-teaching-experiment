@@ -1,10 +1,12 @@
 import {Component, OnInit} from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {FileService} from "../../services/file.service";
-import {FilesEditionService} from "../../services/files-edition.service";
-import {AttachmentType} from "../../classes/attachment-type";
-import {FileType} from "../../enum/file-type.enum";
-import {ModalService} from "../../services/modal.service";
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {FileService} from '../../services/file.service';
+import {FilesEditionService} from '../../services/files-edition.service';
+import {AttachmentType} from '../../classes/attachment-type';
+import {FileType} from '../../enum/file-type.enum';
+import {ModalService} from '../../services/modal.service';
+import {FileGroup} from '../../classes/file-group';
+import {Course} from '../../classes/course';
 
 @Component({
   selector: 'app-file-uploader',
@@ -27,6 +29,9 @@ export class FileUploaderComponent implements OnInit {
   uploadFg: FormGroup;
   linkFg: FormGroup;
 
+  private fileGroup: FileGroup;
+  private course: Course;
+
   constructor(public fileService: FileService,
               private filesEditionService: FilesEditionService,
               private modalService: ModalService,
@@ -41,6 +46,11 @@ export class FileUploaderComponent implements OnInit {
     this.linkFg = this.formBuilder.group({
       linkCtrl: ['', [Validators.required]]
     })
+
+    this.filesEditionService.prepareFileUploadAnnouncer$.subscribe(upload => {
+      this.course = upload.course;
+      this.fileGroup = upload.fg;
+    })
   }
 
 
@@ -52,12 +62,10 @@ export class FileUploaderComponent implements OnInit {
   private postFile(fileToUpload: File) {
     const formData: FormData = new FormData();
     formData.set('file', fileToUpload, fileToUpload.name);
-    let course = this.filesEditionService.courseForUpload;
-    let fg = this.filesEditionService.fileGroupForUpload;
-    this.fileService.uploadFile(course.id, fg.id, formData, this.uploadFg.get('typeCtrl').value.typeId).subscribe(data => {
-        this.filesEditionService.announceFileSuccessfullyUploaded(course, fg);
-        console.log(data);
-        this.modalService.newToastModal('Attachment successfully uploaded!');
+
+    this.fileService.uploadFile(this.course.id, this.fileGroup.id, formData, this.uploadFg.get('typeCtrl').value.typeId).subscribe(data => {
+        this.fileGroup = data;
+        this.filesEditionService.announceFileSuccessfullyUploaded(this.course, this.fileGroup);
       },
       error => {
         console.log(error)
@@ -74,16 +82,15 @@ export class FileUploaderComponent implements OnInit {
 
   isLink(): boolean {
     let type = this.getAttachmentTypeSelected();
-    if(type){
+    if (type) {
       return type.typeId === FileType.LINK;
-    }
-    else{
+    } else {
       return false;
     }
   }
 
   isFile(): boolean {
-    if(this.uploadFg.valid){
+    if (this.uploadFg.valid) {
       return !this.isLink();
     }
     return false;
@@ -94,11 +101,9 @@ export class FileUploaderComponent implements OnInit {
       return false;
     }
 
-    if(this.isLink()){
+    if (this.isLink()) {
       return this.linkFg.valid;
-    }
-
-    else{
+    } else {
       return this.uploadFg.valid && !!this.fileToUpload;
     }
   }

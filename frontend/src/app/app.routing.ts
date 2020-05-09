@@ -1,6 +1,5 @@
 import {PresentationComponent} from './components/presentation/presentation.component';
 import {SettingsComponent} from './components/settings/settings.component';
-import {VideoSessionComponent} from './components/video-session/video-session.component';
 import {RouterModule, Routes} from '@angular/router';
 import {ModuleWithProviders} from '@angular/core';
 import {LoginComponent} from './components/login/login.component';
@@ -26,10 +25,6 @@ const appRoutes: Routes = [
   {
     path: 'settings',
     component: SettingsComponent
-  },
-  {
-    path: 'session/:id',
-    component: VideoSessionComponent
   },
   {
     path: 'login',

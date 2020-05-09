@@ -1,15 +1,15 @@
-import { Component, OnInit, Input } from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 
-import { Subscription }             from 'rxjs';
+import {Subscription} from 'rxjs';
 
-import { File }      from '../../classes/file';
-import { FileGroup } from '../../classes/file-group';
+import {File} from '../../classes/file';
+import {FileGroup} from '../../classes/file-group';
 
-import { FileService }           from '../../services/file.service';
-import { FilesEditionService }   from '../../services/files-edition.service';
-import { CourseDetailsModalDataService } from '../../services/course-details-modal-data.service';
-import { AuthenticationService } from '../../services/authentication.service';
-import { AnimationService }      from '../../services/animation.service';
+import {FileService} from '../../services/file.service';
+import {FilesEditionService} from '../../services/files-edition.service';
+import {CourseDetailsModalDataService} from '../../services/course-details-modal-data.service';
+import {AuthenticationService} from '../../services/authentication.service';
+import {AnimationService} from '../../services/animation.service';
 
 
 @Component({
@@ -35,8 +35,6 @@ export class FileGroupComponent implements OnInit {
 
   subscription: Subscription;
 
-  typeOfFile = ['language', 'picture_as_pdf', 'videocam'];
-
   constructor(
     public fileService: FileService,
     public filesEditionService: FilesEditionService,
@@ -44,18 +42,16 @@ export class FileGroupComponent implements OnInit {
     public authenticationService: AuthenticationService,
     public animationService: AnimationService) {
 
-    this.subscription = filesEditionService.modeEditAnnounced$.subscribe(
+    this.subscription = filesEditionService.editModeAnnouncer$.subscribe(
       active => {
         this.modeEditActive = active;
       });
   }
 
   ngOnInit() {
-    this.modeEditActive = this.filesEditionService.currentModeEdit;
-  }
-
-  ngOnDestroy() {
-    this.subscription.unsubscribe();
+    this.filesEditionService.editModeAnnouncer$.subscribe(mode => {
+      this.modeEditActive = mode;
+    });
   }
 
   updatePostModalMode(mode: number, title: string) {
@@ -86,7 +82,9 @@ export class FileGroupComponent implements OnInit {
         this.filesEditionService.announceFileGroupDeleted(response.id);
         this.fileGroupDeletion = false;
       },
-      error => { this.fileGroupDeletion = false; }
+      error => {
+        this.fileGroupDeletion = false;
+      }
     );
   }
 
@@ -103,7 +101,9 @@ export class FileGroupComponent implements OnInit {
         }
         this.arrayOfDeletions[i] = false;
       },
-      error => { this.arrayOfDeletions[i] = false; }
+      error => {
+        this.arrayOfDeletions[i] = false;
+      }
     );
   }
 
@@ -112,8 +112,10 @@ export class FileGroupComponent implements OnInit {
   }
 
   getFileExtension(fileLink: string) {
-    let lastIndex = fileLink.lastIndexOf(".");
-    if (lastIndex < 1) return "";
+    let lastIndex = fileLink.lastIndexOf('.');
+    if (lastIndex < 1) {
+      return '';
+    }
     return fileLink.substr(lastIndex + 1);
   }
 
@@ -144,7 +146,8 @@ export class FileGroupComponent implements OnInit {
         return 'rgba(116, 0, 109, 0.46)';
       case 'txt':
         return 'rgba(136, 136, 136, 0.46)';
-      default: '#ffffff';
+      default:
+        '#ffffff';
     }
   }
 

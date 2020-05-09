@@ -1,9 +1,9 @@
 import {Component, OnInit} from '@angular/core';
-import {Course} from "../../classes/course";
-import {CourseService} from "../../services/course.service";
-import {ActivatedRoute, Router} from "@angular/router";
-import {AuthenticationService} from "../../services/authentication.service";
-import {ModalService} from "../../services/modal.service";
+import {Course} from '../../classes/course';
+import {CourseService} from '../../services/course.service';
+import {ActivatedRoute, Router} from '@angular/router';
+import {AuthenticationService} from '../../services/authentication.service';
+import {ModalService} from '../../services/modal.service';
 
 const Swal = require('sweetalert2');
 
@@ -23,13 +23,17 @@ export class CoursesListComponent implements OnInit {
               private route: ActivatedRoute,
               private modalService: ModalService
   ) {
-    this.authenticationService.reqIsLogged();
   }
 
   ngOnInit() {
-    this.courseService.getCourses(this.authenticationService.getCurrentUser())
-      .subscribe((data) => {
-        this.dataSource = data;
+    this.authenticationService.reqIsLogged().then(() => {
+      this.courseService.getCourses(this.authenticationService.getCurrentUser())
+        .subscribe((data) => {
+          this.dataSource = data;
+        })
+    })
+      .catch((err) => {
+        console.log(err);
       })
   }
 

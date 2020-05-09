@@ -1,12 +1,13 @@
-import { Component, OnInit } from '@angular/core';
-import {AngularEditorConfig} from "@kolkov/angular-editor";
-import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {ActivatedRoute} from "@angular/router";
-import {Course} from "../../classes/course";
-import {CourseService} from "../../services/course.service";
-import {AuthenticationService} from "../../services/authentication.service";
-import {FilesEditionService} from "../../services/files-edition.service";
-import {FileGroup} from "../../classes/file-group";
+import {Component, OnInit} from '@angular/core';
+import {AngularEditorConfig} from '@kolkov/angular-editor';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {ActivatedRoute} from '@angular/router';
+import {Course} from '../../classes/course';
+import {CourseService} from '../../services/course.service';
+import {AuthenticationService} from '../../services/authentication.service';
+import {FilesEditionService} from '../../services/files-edition.service';
+import {FileGroup} from '../../classes/file-group';
+import {User} from '../../classes/user';
 
 @Component({
   selector: 'app-course-details-v2',
@@ -17,66 +18,75 @@ export class CourseDetailsV2Component implements OnInit {
 
   public course: Course;
   public isEditing = false;
+  public user: User;
 
   constructor(private builder: FormBuilder,
               private route: ActivatedRoute,
               private courseService: CourseService,
               public authService: AuthenticationService,
               private filesEditionService: FilesEditionService) {
-
-    let courseId = this.route.snapshot.paramMap.get('id');
-    this.courseService.getCourse(Number(courseId)).subscribe(data => {
-      this.course = data;
-    });
-
-    filesEditionService.fileGroupDeletedAnnounced$.subscribe(fileGroupId => {
-      if (this.recursiveFileGroupDeletion(this.course.courseDetails.files, fileGroupId)) {
-        if (this.course.courseDetails.files.length == 0) this.isEditing = false; //If there are no fileGroups, mode edit is closed
-      }
-    });
-
-
-    filesEditionService.fileFilegroupUpdatedAnnounced$.subscribe(objs => {
-      let fg = objs[0];
-      let file = objs[1];
-      if(fg){
-        console.log(`File group updated ${fg.id}`)
-      }
-    });
-
-
-    filesEditionService.newFilegroupAnnounced$.subscribe(newFg => {
-      this.recursiveFileGroupAdd(this.course.courseDetails.files, newFg)
-    });
-
-
-    this.filesEditionService.fileUploadedAnnouncer.subscribe(data => {
-
-      let fg = data.fg;
-      let course = data.course;
-
-      if(this.course.id === course.id){
-        for(let parent of this.course.courseDetails.files){
-          let updated = this.updateFilesInFileGroup(parent, fg);
-          if(updated){
-            break;
-          }
-        }
-      }
-    });
-
   }
 
+  ngOnInit() {
+    this.authService.reqIsLogged()
+      .then(() => {
 
-  updateFilesInFileGroup(parent: FileGroup, fileGroup: FileGroup){
-    if(parent.id === fileGroup.id){
+        this.user = this.authService.getCurrentUser();
+
+        let courseId = this.route.snapshot.paramMap.get('id');
+        this.courseService.getCourse(Number(courseId)).subscribe(data => {
+          this.course = data;
+        });
+
+        this.filesEditionService.fileGroupDeletedAnnouncer$.subscribe(fileGroupId => {
+          if (this.recursiveFileGroupDeletion(this.course.courseDetails.files, fileGroupId)) {
+            if (this.course.courseDetails.files.length == 0) this.isEditing = false; //If there are no fileGroups, mode edit is closed
+          }
+        });
+
+
+        this.filesEditionService.fileInFileGroupUpdatedAnnouncer.subscribe(objs => {
+          let fg = objs[0];
+          let file = objs[1];
+          if(fg){
+            console.log(`File group updated ${fg.id}`)
+          }
+        });
+
+
+        this.filesEditionService.fileGroupAddedAnnouncer.subscribe(newFg => {
+          this.recursiveFileGroupAdd(this.course.courseDetails.files, newFg)
+        });
+
+
+        this.filesEditionService.fileUploadedAnnouncer.subscribe(data => {
+
+          let fg = data.fg;
+          let course = data.course;
+
+          if(this.course.id === course.id){
+            for(let parent of this.course.courseDetails.files){
+              let updated = this.updateFilesInFileGroup(parent, fg);
+              if(updated){
+                break;
+              }
+            }
+          }
+        });
+      })
+      .catch(err => {
+        console.log(err);
+      })
+  }
+
+  updateFilesInFileGroup(parent: FileGroup, fileGroup: FileGroup) {
+    if (parent.id === fileGroup.id) {
       parent.files = fileGroup.files;
       return true;
-    }
-    else{
-      for(let child of parent.fileGroups){
+    } else {
+      for (let child of parent.fileGroups) {
         let updated = this.updateFilesInFileGroup(child, fileGroup);
-        if(updated){
+        if (updated) {
           console.log(child, fileGroup)
           return updated;
         }
@@ -94,7 +104,9 @@ export class CourseDetailsV2Component implements OnInit {
           return true;
         }
         let deleted = this.recursiveFileGroupDeletion(fileGroupLevel[i].fileGroups, fileGroupDeletedId);
-        if (deleted) return deleted;
+        if (deleted) {
+          return deleted;
+        }
       }
     }
   }
@@ -110,14 +122,11 @@ export class CourseDetailsV2Component implements OnInit {
           return true;
         }
         let added = this.recursiveFileGroupAdd(fileGroupLevel[i].fileGroups, newFileGroup);
-        if (added) return added;
+        if (added) {
+          return added;
+        }
       }
     }
-  }
-
-
-  ngOnInit() {
-
   }
 
   toggleEditionMode() {

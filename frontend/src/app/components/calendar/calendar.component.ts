@@ -1,11 +1,11 @@
 import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {AuthenticationService} from '../../services/authentication.service';
 import {FTSession} from '../../classes/FTSession';
-import {MatCalendar, MatCalendarCellCssClasses} from "@angular/material/datepicker";
-import {Moment} from "moment";
-import {CourseService} from "../../services/course.service";
-import {SwalComponent} from "@sweetalert2/ngx-sweetalert2";
-import {Router} from "@angular/router";
+import {MatCalendar, MatCalendarCellCssClasses} from '@angular/material/datepicker';
+import {Moment} from 'moment';
+import {CourseService} from '../../services/course.service';
+import {SwalComponent} from '@sweetalert2/ngx-sweetalert2';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'calendar-app',
@@ -31,7 +31,13 @@ export class CalendarComponent implements OnInit, AfterViewInit {
 
 
   ngOnInit(): void {
-    this.loadAllSessions();
+    this.authService.reqIsLogged()
+      .then(() => {
+        this.loadAllSessions();
+      })
+      .catch((err) => {
+        console.log(err);
+      })
   }
 
   loadAllSessions() {
