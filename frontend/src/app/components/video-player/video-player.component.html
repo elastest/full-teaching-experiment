@@ -3,6 +3,6 @@
 <!--</h1>-->
 <app-video-dialog-tools [ref]="this.dialogRef"></app-video-dialog-tools>
 <mat-video [title]="this.file?.name" [autoplay]="true" [preload]="true" [fullscreen]="true" [download]="true"
-           color="accent" spinner="spin" [src]="this.url + '/streaming/video/play/81'">
+           color="accent" spinner="spin" [src]="this.url + '/streaming/video/play/' + this.data.file.id">
 </mat-video>
 
