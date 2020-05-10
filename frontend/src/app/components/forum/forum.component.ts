@@ -32,27 +32,6 @@ export class ForumComponent implements OnInit {
   ngOnInit() {
   }
 
-  isEntryTeacher(entry: Entry) {
-    return (entry.user.roles.indexOf('ROLE_TEACHER') > -1);
-  }
-
-  getLastEntryComment(entry: Entry) {
-    let comment = entry.comments[0];
-    for (let c of entry.comments) {
-      if (c.date > comment.date) comment = c;
-      comment = this.recursiveReplyDateCheck(comment);
-    }
-    return comment;
-  }
-
-  private recursiveReplyDateCheck(c: Comment) {
-    for (let r of c.replies) {
-      if (r.date > c.date) c = r;
-      c = this.recursiveReplyDateCheck(r);
-    }
-    return c;
-  }
-
 
   showNewEntryModal() {
     let course = this.course;
@@ -83,6 +62,7 @@ export class ForumComponent implements OnInit {
       console.log('Removing entry');
       this.forumService.removeEntry(entry, this.course.courseDetails).subscribe(data => {
         this.course.courseDetails.forum.entries = this.course.courseDetails.forum.entries.filter(e => e.id !== entry.id);
+        this.modalService.newToastModal(`Entry "${entry.title}" removed successfully!`)
       }, error => {
         this.modalService.newErrorModal('Error removing entry!', error, null);
       });

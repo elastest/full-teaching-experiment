@@ -14,15 +14,20 @@ export class VideoDialogToolsComponent implements OnInit {
   ref: MatDialogRef<any>;
 
   private dialogSize: DialogSize = DialogSize.BIG;
-  public mouseOverToolbar = false;
+  public mouseOverToolbar = true;
+  private readonly TOOLBAR_SHOW_TIME = 3000;
 
   constructor(private announcerService: AnnouncerService) {}
 
   ngOnInit(): void {
   }
 
+  // shows the toolbar during the configured time
   mouseOver(){
     this.mouseOverToolbar = true;
+    setTimeout(() => {
+      this.mouseOut();
+    }, this.TOOLBAR_SHOW_TIME);
   }
 
   mouseOut(){
