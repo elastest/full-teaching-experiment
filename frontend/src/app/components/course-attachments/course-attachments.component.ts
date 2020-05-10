@@ -172,6 +172,6 @@ export class CourseAttachmentsComponent implements OnInit {
   }
 
   playVideo(f: File) {
-    this.videoPlayerService.startPlayingVideo(f);
+    this.videoPlayerService.startPlayingVideo(f, this.course);
   }
 }

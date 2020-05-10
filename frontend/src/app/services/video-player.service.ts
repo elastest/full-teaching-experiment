@@ -5,6 +5,7 @@ import {VideoPlayerComponent} from '../components/video-player/video-player.comp
 import {HttpClient} from '@angular/common/http';
 import {AnnouncerService} from './announcer.service';
 import {NoopScrollStrategy} from '@angular/cdk/overlay';
+import {Course} from '../classes/course';
 
 @Injectable({
   providedIn: 'root'
@@ -14,11 +15,12 @@ export class VideoPlayerService {
   constructor(private dialog: MatDialog) {
   }
 
-  startPlayingVideo(file: File) {
+  startPlayingVideo(file: File, course: Course) {
     const ref = this.dialog.open(VideoPlayerComponent, {
       width: '500vh',
       data: {
-        file: file
+        file: file,
+        course: course
       },
       closeOnNavigation: false,
       hasBackdrop: false,
