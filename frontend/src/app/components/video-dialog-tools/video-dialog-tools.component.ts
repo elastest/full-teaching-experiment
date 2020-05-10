@@ -14,10 +14,19 @@ export class VideoDialogToolsComponent implements OnInit {
   ref: MatDialogRef<any>;
 
   private dialogSize: DialogSize = DialogSize.BIG;
+  public mouseOverToolbar = false;
 
-  constructor(private announcerService: AnnouncerService) { }
+  constructor(private announcerService: AnnouncerService) {}
 
   ngOnInit(): void {
+  }
+
+  mouseOver(){
+    this.mouseOverToolbar = true;
+  }
+
+  mouseOut(){
+    this.mouseOverToolbar = false;
   }
 
   toggleDialogSize() {

@@ -2,7 +2,11 @@
 @import "../node_modules/angular-calendar/css/angular-calendar.css";
 
 
-.email-tabs{
+.white {
+  color: white;
+}
+
+.email-tabs {
   width: 100%;
 }
 
@@ -10,12 +14,12 @@ table.mat-table {
   width: 100%;
 }
 
-.upload-dialog{
+.upload-dialog {
   height: 50vh;
   width: 60vh;
 }
 
-.bg-grey{
+.bg-grey {
   background-color: #d0d9e9;
 }
 
@@ -47,8 +51,7 @@ table.mat-table {
 }
 
 
-
-.sides-spaced{
+.sides-spaced {
   padding-left: 3vh;
   padding-right: 3vh;
 }

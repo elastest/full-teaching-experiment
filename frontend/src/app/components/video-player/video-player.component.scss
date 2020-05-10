@@ -34,8 +34,9 @@ button {
 
 }
 
-.mat-dialog-container {
+.video-dialog .mat-dialog-container{
   padding: 0px !important;
+  overflow: hidden !important;
 }
 
 .progress {
@@ -46,4 +47,8 @@ button {
   position: fixed;
   top: 0;
   left: 0
+}
+
+.mat-slider-horizontal{
+  position: absolute !important;
 }
