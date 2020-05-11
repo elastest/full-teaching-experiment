@@ -1,4 +1,7 @@
-<mat-action-row  (mouseenter)="this.mouseOver()" class="example-fill-remaining-space">
+<mat-action-row  (mouseenter)="this.mouseOver()" class="example-fill-remaining-space"
+                 cdkDrag
+                 cdkDragRootElement=".cdk-overlay-pane"
+                 cdkDragHandle>
   <button mat-button (click)="this.ref.close()">
     <mat-icon [ngStyle]="mouseOverToolbar ? {'color':'white'} : {'color': 'transparent'}">close</mat-icon>
   </button>
