@@ -6,6 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
+
 @Service
 @Getter
 @Slf4j
@@ -15,5 +17,9 @@ public class CommentService implements FTService<Comment, Long> {
     @Autowired
     public CommentService(CommentRepository repo) {
         this.repo = repo;
+    }
+
+    public Collection<Comment> getChildren(Comment comment){
+        return this.repo.getAllByCommentParent(comment);
     }
 }

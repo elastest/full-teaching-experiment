@@ -12,11 +12,14 @@
         </mat-expansion-panel-header>
         <div *ngFor="let comment of entry?.comments; let last3 = last" class="comment-block"
              [class.comment-divider]="!last3">
-          <app-comment [courseDetailsId]="this.course?.courseDetails?.id" [entryId]="entry?.id" [comment]="comment"></app-comment>
+          <app-comment [courseDetailsId]="this.course?.courseDetails?.id" [entryId]="entry?.id"
+                       [comment]="comment" [course]="this.course"></app-comment>
           <mat-divider [vertical]="true"></mat-divider>
         </div>
         <mat-action-row *ngIf="this.authenticationService.isTeacher()">
-          <button mat-raised-button color="warn" matTooltip="Remove entry" (click)="this.removeEntry(entry)"><mat-icon>delete</mat-icon></button>
+          <button mat-raised-button color="warn" matTooltip="Remove entry" (click)="this.removeEntry(entry)">
+            <mat-icon>delete</mat-icon>
+          </button>
         </mat-action-row>
       </mat-expansion-panel>
       <mat-divider></mat-divider>
@@ -33,7 +36,8 @@
                        [closable]="false"></app-error-message>
   </div>
 
-  <button (click)="this.showNewEntryModal()" mat-raised-button color="primary" *ngIf="this.course?.courseDetails?.forum.activated" matTooltip="New entry" class="mat-elevation-z2">
+  <button (click)="this.showNewEntryModal()" mat-raised-button color="primary"
+          *ngIf="this.course?.courseDetails?.forum.activated" matTooltip="New entry" class="mat-elevation-z2">
     <mat-icon>add</mat-icon>
   </button>
 

@@ -76,4 +76,13 @@ export class ForumService {
     let options = ({headers});
     return this.http.post<boolean>(`${this.urlNewEntry}/remove/${entry.id}/${cd.id}`, null, options)
   }
+
+  removeComment(commentId: number, courseId: number, entryId: number) {
+    let headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + this.authenticationService.token
+    });
+    let options = ({headers});
+    return this.http.post<Entry>(`${this.urlNewComment}/comment/${commentId}/${courseId}/${entryId}`, options);
+  }
 }

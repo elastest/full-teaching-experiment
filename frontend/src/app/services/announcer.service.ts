@@ -3,6 +3,8 @@ import {Subject} from 'rxjs';
 import {FileGroup} from '../classes/file-group';
 import {Course} from '../classes/course';
 import {DialogSize} from '../enum/dialog-size.enum';
+import {Comment} from '../classes/comment';
+import {Entry} from '../classes/entry';
 
 @Injectable()
 export class AnnouncerService {
@@ -27,6 +29,9 @@ export class AnnouncerService {
 
   private dialogSizeChangedAnnouncerSubject: Subject<DialogSize> = new Subject<DialogSize>();
   public dialogSizeChangedAnnouncer$ = this.dialogSizeChangedAnnouncerSubject.asObservable();
+
+  private commentRemovedAnnouncerSubject: Subject<{entry: Entry}> = new Subject<{entry: Entry}>();
+  public commentRemovedAnnouncer$ = this.commentRemovedAnnouncerSubject.asObservable();
 
   constructor() {
   }
@@ -64,6 +69,10 @@ export class AnnouncerService {
 
   announcePrepareFileUpload(course: Course, fg: FileGroup) {
     this.prepareFileUploadAnnouncerSubject.next({course: course, fg: fg});
+  }
+
+  announceCommentRemoved(entry: Entry): void {
+    this.commentRemovedAnnouncerSubject.next({entry: entry});
   }
 
 }

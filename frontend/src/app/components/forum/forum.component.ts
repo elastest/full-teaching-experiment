@@ -8,6 +8,7 @@ import {FileGroup} from "../../classes/file-group";
 import {AuthenticationService} from "../../services/authentication.service";
 import {ForumService} from "../../services/forum.service";
 import {ModalService} from "../../services/modal.service";
+import {AnnouncerService} from '../../services/announcer.service';
 
 @Component({
   selector: 'app-forum',
@@ -18,18 +19,20 @@ export class ForumComponent implements OnInit {
 
   @Input('course')
   course: Course;
-  fadeAnim: string = 'commentsHidden';
-  selectedEntry: Entry;
-  postModalCommentReplay: Comment;
 
   constructor(public animationService: AnimationService,
               private forumService: ForumService,
               private courseDetailsModalDataService: CourseDetailsModalDataService,
               public authenticationService: AuthenticationService,
+              private announcerService: AnnouncerService,
               private modalService: ModalService) {
   }
 
   ngOnInit() {
+    this.announcerService.commentRemovedAnnouncer$.subscribe(data => {
+      // replace old comments with new comments, removing the deleted comment
+      this.course.courseDetails.forum.entries.find(e => e.id === data.entry.id).comments = data.entry.comments;
+    });
   }
 
 

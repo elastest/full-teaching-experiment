@@ -34,7 +34,7 @@ public class Entry {
 	
 	private long date;
 	
-	@OneToMany(cascade=CascadeType.ALL)
+	@OneToMany(cascade=CascadeType.ALL, orphanRemoval=true)
 	private List<Comment> comments = new ArrayList<>();
 
 	@JsonIgnoreProperties("entries")

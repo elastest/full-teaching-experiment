@@ -1,5 +1,8 @@
 package com.fullteaching.backend.comment;
 
+import com.fullteaching.backend.controller.SecureController;
+import com.fullteaching.backend.course.Course;
+import com.fullteaching.backend.course.CourseService;
 import com.fullteaching.backend.coursedetails.CourseDetails;
 import com.fullteaching.backend.coursedetails.CourseDetailsService;
 import com.fullteaching.backend.entry.Entry;
@@ -14,25 +17,55 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Objects;
+
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api-comments")
 @Slf4j
-public class CommentController {
+public final class CommentController extends SecureController {
 
     private final UserComponent user;
     private final AuthorizationService authorizationService;
     private final CourseDetailsService courseDetailsService;
     private final EntryService entryService;
     private final CommentService commentService;
+    private final CourseService courseService;
 
     @Autowired
-    public CommentController(UserComponent user, AuthorizationService authorizationService, CourseDetailsService courseDetailsService, EntryService entryService, CommentService commentService) {
+    public CommentController(UserComponent user, AuthorizationService authorizationService, CourseDetailsService courseDetailsService, EntryService entryService, CommentService commentService, CourseService courseService) {
+        super(user, authorizationService);
         this.user = user;
         this.authorizationService = authorizationService;
         this.courseDetailsService = courseDetailsService;
         this.entryService = entryService;
         this.commentService = commentService;
+        this.courseService = courseService;
+    }
+
+
+    @PostMapping(value = "/comment/{commentId}/{courseId}/{entryId}")
+    public ResponseEntity<?> removeComment(@PathVariable long commentId, @PathVariable long courseId, @PathVariable() long entryId) {
+
+        Course course = this.courseService.getFromId(courseId);
+        Entry entry = this.entryService.getFromId(entryId);
+        ResponseEntity<?> unAuthorized = this.authorize(course);
+
+        if (Objects.isNull(unAuthorized)) {
+            ResponseEntity<?> responseEntity;
+            Comment comment = this.commentService.getFromId(commentId);
+
+            if (Objects.nonNull(comment) && Objects.nonNull(entry)) {
+                Entry response = this.entryService.removeCommentAndChildren(entry, comment);
+                responseEntity = ResponseEntity.ok(response);
+            } else {
+                responseEntity = new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+
+            return responseEntity;
+        } else {
+            return unAuthorized;
+        }
     }
 
     @RequestMapping(value = "/entry/{entryId}/forum/{courseDetailsId}", method = RequestMethod.POST)
@@ -48,7 +81,7 @@ public class CommentController {
         if (authorized != null) {
             return authorized;
         }
-        ;
+
 
         long id_entry = -1;
         long id_courseDetails = -1;

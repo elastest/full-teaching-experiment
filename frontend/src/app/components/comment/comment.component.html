@@ -3,25 +3,30 @@
     <div class="col l11 m11 s11" [class.teacher-forum]="isCommentTeacher(this.comment)">
       <div *ngIf="!!comment.message" class="message-itself">{{comment.message}}</div>
       <div *ngIf="!!comment.videourl" class="video-itself">
-        <video [attr.id]="comment.videourl" [src]="comment.videourl" (mouseenter)="onHovering($event)" (mouseleave)="onUnhovering($event)"
-          [attr.poster]="comment.audioonly ? 'assets/images/volume.png' : ''" [style.background-color]="comment.audioonly ? 'rgb(77,77,77)' : ''"
-          [style.max-height]="comment.audioonly ? '375px' : ''"></video>
+        <video [attr.id]="comment.videourl" [src]="comment.videourl" (mouseenter)="onHovering($event)"
+               (mouseleave)="onUnhovering($event)"
+               [attr.poster]="comment.audioonly ? 'assets/images/volume.png' : ''"
+               [style.background-color]="comment.audioonly ? 'rgb(77,77,77)' : ''"
+               [style.max-height]="comment.audioonly ? '375px' : ''"></video>
       </div>
-      <div class="user-name forum-comment-author" [class.teacher-name]="isCommentTeacher(comment)">{{comment.user.nickName}}</div>
+      <div class="user-name forum-comment-author"
+           [class.teacher-name]="isCommentTeacher(comment)">{{comment.user.nickName}}</div>
       <div class="user-date-separator">-</div>
       <div class="user-name">{{comment.date | date}} - {{comment.date | date:'H:mm' }}</div>
     </div>
     <div class="col l1 m1 s1 no-padding-left right-align">
-      <a matTooltip="Send reply" (click)="this.showReplyModal();updatePostModalMode(1, 'New reply', null, this.comment, null); this.animationService.animateIfSmall()">
+      <a matTooltip="Send reply"
+         (click)="this.showReplyModal();updatePostModalMode(1, 'New reply', null, this.comment, null); this.animationService.animateIfSmall()">
         <mat-icon class="replay-icon" color="primary">feedback</mat-icon>
       </a>
-      <a href="#course-details-modal" matTooltip="Send video reply" (click)="updatePostModalMode(6, 'New video reply', null, this.comment, null); this.animationService.animateIfSmall()">
-        <mat-icon class="replay-icon" color="primary">videocam</mat-icon>
+      <a *ngIf="this.authService.isTeacher()" matTooltip="Remove comment" (click)="this.removeComment(comment)">
+        <mat-icon class="replay-icon" color="primary">delete</mat-icon>
       </a>
     </div>
   </div>
 
   <div *ngFor="let reply of comment.replies; let i = index">
-    <app-comment [comment]="reply" [courseDetailsId]="courseDetailsId" [entryId]="entryId"></app-comment>
+    <app-comment [comment]="reply" [courseDetailsId]="courseDetailsId" [entryId]="entryId"
+                 [course]="this.course"></app-comment>
   </div>
 </div>

@@ -72,10 +72,10 @@ import {AttendersListComponent} from './components/attenders-list/attenders-list
 import {AddAttendersModalComponent} from './components/add-attenders-modal/add-attenders-modal.component';
 import {MatSelectModule} from '@angular/material/select';
 import {CourseSessionComponent} from './components/course-session/course-session.component';
-import {UserVideoComponent} from './components/user-video/user-video.component';
 import {VideoPlayerComponent} from './components/video-player/video-player.component';
 import {MatVideoModule} from 'mat-video';
-import { VideoDialogToolsComponent } from './components/video-dialog-tools/video-dialog-tools.component';
+import {VideoDialogToolsComponent} from './components/video-dialog-tools/video-dialog-tools.component';
+import {VideoRecorderComponent} from './components/video-recorder/video-recorder.component';
 
 const matModules = [
   MatFormFieldModule,
@@ -147,9 +147,9 @@ const matModules = [
     AttendersListComponent,
     AddAttendersModalComponent,
     CourseSessionComponent,
-    UserVideoComponent,
     VideoPlayerComponent,
-    VideoDialogToolsComponent
+    VideoDialogToolsComponent,
+    VideoRecorderComponent
   ],
   providers: [
     AuthenticationService,
