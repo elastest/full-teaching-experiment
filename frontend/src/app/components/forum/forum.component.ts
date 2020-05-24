@@ -1,13 +1,12 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {Course} from "../../classes/course";
-import {Entry} from "../../classes/entry";
-import {Comment} from "../../classes/comment";
-import {AnimationService} from "../../services/animation.service";
-import {CourseDetailsModalDataService} from "../../services/course-details-modal-data.service";
-import {FileGroup} from "../../classes/file-group";
-import {AuthenticationService} from "../../services/authentication.service";
-import {ForumService} from "../../services/forum.service";
-import {ModalService} from "../../services/modal.service";
+import {Course} from '../../classes/course';
+import {Entry} from '../../classes/entry';
+import {Comment} from '../../classes/comment';
+import {AnimationService} from '../../services/animation.service';
+import {CourseDetailsModalDataService} from '../../services/course-details-modal-data.service';
+import {AuthenticationService} from '../../services/authentication.service';
+import {ForumService} from '../../services/forum.service';
+import {ModalService} from '../../services/modal.service';
 import {AnnouncerService} from '../../services/announcer.service';
 
 @Component({
@@ -31,6 +30,7 @@ export class ForumComponent implements OnInit {
   ngOnInit() {
     this.announcerService.commentRemovedAnnouncer$.subscribe(data => {
       // replace old comments with new comments, removing the deleted comment
+      console.log(data)
       this.course.courseDetails.forum.entries.find(e => e.id === data.entry.id).comments = data.entry.comments;
     });
   }
@@ -57,7 +57,7 @@ export class ForumComponent implements OnInit {
         }
       }
 
-    } , 'Confirm entry creation')
+    }, 'Confirm entry creation')
   }
 
   removeEntry(entry: Entry) {

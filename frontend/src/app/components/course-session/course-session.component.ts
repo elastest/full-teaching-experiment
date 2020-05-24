@@ -1,8 +1,24 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {OpenViduLayout, OpenViduLayoutOptions, OpenviduSessionComponent, Session, UserModel} from 'openvidu-angular';
-import {Publisher} from 'openvidu-browser';
-import {VideoSessionService} from '../../services/video-session.service';
+import {throwError as observableThrowError} from 'rxjs';
+import {catchError} from 'rxjs/operators';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {
+  OpenviduSessionComponent,
+  StreamEvent,
+  Session,
+  UserModel,
+  OpenViduLayout,
+  OvSettings,
+  OpenViduLayoutOptions,
+  SessionDisconnectedEvent,
+  Publisher
+} from 'openvidu-angular';
+import {ActivatedRoute, Route} from '@angular/router';
 import {FTSession} from '../../classes/FTSession';
+import {SessionService} from '../../services/session.service';
+import {Course} from '../../classes/course';
+import {CourseService} from '../../services/course.service';
+import {VideoSessionService} from '../../services/video-session.service';
 
 @Component({
   selector: 'app-course-session',
@@ -11,13 +27,17 @@ import {FTSession} from '../../classes/FTSession';
 })
 export class CourseSessionComponent implements OnInit {
 
-  private ftSession: FTSession;
+  OPENVIDU_SERVER_URL = 'https://' + location.hostname + ':4443';
+  OPENVIDU_SERVER_SECRET = 'MY_SECRET';
 
   // Join form
   mySessionId = 'SessionA';
   myUserName = 'Participant' + Math.floor(Math.random() * 100);
   tokens: string[] = [];
   session = false;
+
+  ftSession: FTSession;
+  course: Course;
 
   ovSession: Session;
   ovLocalUsers: UserModel[];
@@ -27,33 +47,30 @@ export class CourseSessionComponent implements OnInit {
   @ViewChild('ovSessionComponent')
   public ovSessionComponent: OpenviduSessionComponent;
 
-
-  constructor(private videoSessionService: VideoSessionService) {
+  constructor(private httpClient: HttpClient,
+              private route: ActivatedRoute,
+              private videoSessionService: VideoSessionService,
+              private courseService: CourseService) {
   }
 
-  ngOnInit(): void {
-  }
-
-  async joinSession() {
-
+  joinSession() {
     this.videoSessionService.getSessionIdAndToken(this.ftSession.id).subscribe(token => {
-      this.tokens.push(token);
+      this.tokens.push(token[1]);
       this.session = true;
-    })
+    });
   }
 
   handlerSessionCreatedEvent(session: Session): void {
-
-
     console.log('SESSION CREATED EVENT', session);
-
-    session.on('streamCreated', (event) => {
+    session.on('streamCreated', (event: StreamEvent) => {
+      // Do something
     });
 
-    session.on('streamDestroyed', (event) => {
+    session.on('streamDestroyed', (event: StreamEvent) => {
+      // Do something
     });
 
-    session.on('sessionDisconnected', (event) => {
+    session.on('sessionDisconnected', (event: SessionDisconnectedEvent) => {
       this.session = false;
       this.tokens = [];
     });
@@ -66,7 +83,6 @@ export class CourseSessionComponent implements OnInit {
     publisher.on('streamCreated', (e) => {
       console.log('Publisher streamCreated', e);
     });
-
   }
 
   handlerErrorEvent(event): void {
@@ -79,5 +95,16 @@ export class CourseSessionComponent implements OnInit {
     this.ovLayoutOptions = this.ovSessionComponent.getOpenviduLayoutOptions();
   }
 
-
+  ngOnInit(): void {
+    let sessionId: number = Number(this.route.snapshot.paramMap.get('id'));
+    let courseId: number = Number(this.route.snapshot.paramMap.get('courseId'));
+    this.courseService.getCourse(courseId).subscribe(data => {
+        this.course = data;
+        this.ftSession = this.course.sessions.find(s => s.id === sessionId);
+        this.joinSession();
+      },
+      error => {
+        console.log(error);
+      })
+  }
 }

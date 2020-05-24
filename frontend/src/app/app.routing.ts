@@ -7,6 +7,7 @@ import {IndexPageComponent} from './components/index-page/index-page.component';
 import {RegisterComponent} from './components/register/register.component';
 import {DashboardV2Component} from './components/dashboard-v2/dashboard-v2.component';
 import {CourseDetailsV2Component} from './components/course-details-v2/course-details-v2.component';
+import {CourseSessionComponent} from './components/course-session/course-session.component';
 
 const appRoutes: Routes = [
   {
@@ -37,6 +38,10 @@ const appRoutes: Routes = [
   {
     path: 'register',
     component: RegisterComponent
+  },
+  {
+    path: 'session/:courseId/:id',
+    component: CourseSessionComponent
   }
 ];
 

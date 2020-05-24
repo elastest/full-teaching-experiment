@@ -21,7 +21,7 @@
         <mat-card-content>{{session.description}}</mat-card-content>
         <mat-card-footer>
           <mat-card-actions>
-            <button mat-raised-button matTooltip="Open session" color="primary" class="mat-elevation-z10" (click)="this.router.navigate(['session/' + session.id])">OPEN</button>
+            <button mat-raised-button matTooltip="Open session" color="primary" class="mat-elevation-z10" (click)="this.router.navigate(['session/' + session.course.id + '/' + session.id])">OPEN</button>
           </mat-card-actions>
         </mat-card-footer>
       </mat-card>

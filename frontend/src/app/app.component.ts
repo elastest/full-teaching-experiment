@@ -10,8 +10,8 @@ import {Router} from '@angular/router';
 export class AppComponent implements OnInit{
 
   constructor(private router: Router){}
-  isVideoSessionUrl(){
 
+  isVideoSessionUrl(){
     return (this.router.url.substring(0, '/session/'.length) === '/session/');
   }
 

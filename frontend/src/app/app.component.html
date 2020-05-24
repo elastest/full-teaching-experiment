@@ -1,7 +1,7 @@
 <div id="sticky-footer-div">
-  <app-navigation></app-navigation>
+  <app-navigation *ngIf="!isVideoSessionUrl()"></app-navigation>
   <main>
     <router-outlet></router-outlet>
   </main>
-  <app-footer></app-footer>
+  <app-footer *ngIf="!isVideoSessionUrl()"></app-footer>
 </div>

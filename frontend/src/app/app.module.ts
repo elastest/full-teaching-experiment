@@ -76,6 +76,7 @@ import {VideoPlayerComponent} from './components/video-player/video-player.compo
 import {MatVideoModule} from 'mat-video';
 import {VideoDialogToolsComponent} from './components/video-dialog-tools/video-dialog-tools.component';
 import {VideoRecorderComponent} from './components/video-recorder/video-recorder.component';
+import {OpenviduSessionModule} from 'openvidu-angular';
 
 const matModules = [
   MatFormFieldModule,
@@ -87,35 +88,36 @@ const matModules = [
 ];
 
 @NgModule({
-  imports: [
-    BrowserModule,
-    BrowserAnimationsModule,
-    FormsModule,
-    HttpClientModule,
-    routing,
-    matModules,
-    MatSidenavModule,
-    MatMenuModule,
-    MatToolbarModule,
-    MatCardModule,
-    ReactiveFormsModule,
-    MatIconModule,
-    MatDividerModule,
-    MatTableModule,
-    MatTabsModule,
-    AngularEditorModule,
-    MatDatepickerModule,
-    SweetAlert2Module.forRoot(),
-    MatTooltipModule,
-    MatGridListModule,
-    MatExpansionModule,
-    DragDropModule,
-    MatListModule,
-    MatSlideToggleModule,
-    MatSelectModule,
-    MatVideoModule,
-    // OpenviduSessionModule
-  ],
+    imports: [
+        BrowserModule,
+        BrowserAnimationsModule,
+        FormsModule,
+        HttpClientModule,
+        routing,
+        matModules,
+        MatSidenavModule,
+        MatMenuModule,
+        MatToolbarModule,
+        MatCardModule,
+        ReactiveFormsModule,
+        MatIconModule,
+        MatDividerModule,
+        MatTableModule,
+        MatTabsModule,
+        AngularEditorModule,
+        MatDatepickerModule,
+        SweetAlert2Module.forRoot(),
+        MatTooltipModule,
+        MatGridListModule,
+        MatExpansionModule,
+        DragDropModule,
+        MatListModule,
+        MatSlideToggleModule,
+        MatSelectModule,
+        MatVideoModule,
+        OpenviduSessionModule,
+        // OpenviduSessionModule
+    ],
   exports: [
     matModules
   ],
