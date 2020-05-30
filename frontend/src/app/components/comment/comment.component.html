@@ -17,15 +17,20 @@
     <div class="col l1 m1 s1 no-padding-left right-align">
       <a matTooltip="Send reply"
          (click)="this.showReplyModal();updatePostModalMode(1, 'New reply', null, this.comment, null); this.animationService.animateIfSmall()">
-        <mat-icon class="replay-icon" color="primary">feedback</mat-icon>
+        <mat-icon class="reply-icon" color="primary">feedback</mat-icon>
       </a>
       <a *ngIf="this.authService.isTeacher()" matTooltip="Remove comment" (click)="this.removeComment(comment)">
-        <mat-icon class="replay-icon" color="primary">delete</mat-icon>
+        <mat-icon class="reply-icon" color="primary">delete</mat-icon>
+      </a>
+      <a matTooltip="New audio response" (click)="this.openAudioRecordDialog()">
+        <mat-icon class="reply-icon" color="primary">
+          volume_up
+        </mat-icon>
       </a>
     </div>
   </div>
 
-  <div *ngFor="let reply of comment.replies; let i = index">
+  <div *ngFor=" let reply of comment.replies; let i = index">
     <app-comment [comment]="reply" [courseDetailsId]="courseDetailsId" [entryId]="entryId"
                  [course]="this.course"></app-comment>
   </div>

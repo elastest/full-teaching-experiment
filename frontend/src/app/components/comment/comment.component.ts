@@ -9,9 +9,12 @@ import {AnimationService} from '../../services/animation.service';
 import {ModalService} from '../../services/modal.service';
 import {Course} from '../../classes/course';
 import {ForumService} from '../../services/forum.service';
-import {CourseDetails} from '../../classes/course-details';
 import {AuthenticationService} from '../../services/authentication.service';
 import {AnnouncerService} from '../../services/announcer.service';
+import {AudioRecorderService} from '../../services/audio-recorder.service';
+import {MatDialog} from '@angular/material/dialog';
+import {AudioRecorderComponent} from '../audio-recorder/audio-recorder.component';
+import {NoopScrollStrategy} from '@angular/cdk/overlay';
 
 @Component({
   selector: 'app-comment',
@@ -38,10 +41,27 @@ export class CommentComponent implements OnInit {
               public animationService: AnimationService,
               private modalService: ModalService,
               private forumService: ForumService,
+              private audioService: AudioRecorderService,
+              private dialog: MatDialog,
               public authService: AuthenticationService) {
   }
 
   ngOnInit() {
+  }
+
+  openAudioRecordDialog(): void {
+    this.dialog.open(AudioRecorderComponent, {
+      width: '50vh',
+      data: {
+        course: this.course,
+        entryId: this.entryId,
+        comment: this.comment
+      },
+      closeOnNavigation: true,
+      hasBackdrop: true,
+      autoFocus: true,
+      scrollStrategy: new NoopScrollStrategy(),
+    });
   }
 
   updatePostModalMode(mode: number, title: string, header: Entry, commentReplay: Comment, fileGroup: FileGroup) {
@@ -88,10 +108,10 @@ export class CommentComponent implements OnInit {
     })
   }
 
-  removeComment(comment: Comment): void{
+  removeComment(comment: Comment): void {
     this.modalService.newCallbackedModal('Are you sure about removing that comment?', () => {
       this.forumService.removeComment(comment.id, this.course.id, this.entryId)
-        .subscribe( resp => {
+        .subscribe(resp => {
             this.modalService.newToastModal('Comment successfully removed!');
             this.announcerService.announceCommentRemoved(resp);
           },

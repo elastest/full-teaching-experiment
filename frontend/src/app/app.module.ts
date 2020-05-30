@@ -77,6 +77,7 @@ import {MatVideoModule} from 'mat-video';
 import {VideoDialogToolsComponent} from './components/video-dialog-tools/video-dialog-tools.component';
 import {VideoRecorderComponent} from './components/video-recorder/video-recorder.component';
 import {OpenviduSessionModule} from 'openvidu-angular';
+import { AudioRecorderComponent } from './components/audio-recorder/audio-recorder.component';
 
 const matModules = [
   MatFormFieldModule,
@@ -153,6 +154,7 @@ const matModules = [
     VideoPlayerComponent,
     VideoDialogToolsComponent,
     VideoRecorderComponent,
+    AudioRecorderComponent,
 
   ],
   providers: [
