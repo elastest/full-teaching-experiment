@@ -16,7 +16,10 @@
                        [comment]="comment" [course]="this.course"></app-comment>
           <mat-divider [vertical]="true"></mat-divider>
         </div>
-        <mat-action-row *ngIf="this.authenticationService.isTeacher()">
+        <mat-action-row>
+          <button mat-raised-button matTooltip="New comment" (click)="this.newComment(entry)">
+            <mat-icon>add</mat-icon>
+          </button>
           <button mat-raised-button color="warn" matTooltip="Remove entry" (click)="this.removeEntry(entry)">
             <mat-icon>delete</mat-icon>
           </button>

@@ -41,6 +41,7 @@
     "angular-bootstrap-md": "^8.10.0",
     "angular-calendar": "^0.28.2",
     "angular-google-recaptcha": "^1.0.3",
+    "angular-google-signin": "^0.1.5",
     "angular-material-event-calendar-new": "^0.1.1",
     "angular-material-fileupload": "^2.0.0",
     "animate.css": "^3.7.2",

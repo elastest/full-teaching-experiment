@@ -116,6 +116,7 @@ const matModules = [
         MatSelectModule,
         MatVideoModule,
         OpenviduSessionModule,
+
         // OpenviduSessionModule
     ],
   exports: [
@@ -151,7 +152,8 @@ const matModules = [
     CourseSessionComponent,
     VideoPlayerComponent,
     VideoDialogToolsComponent,
-    VideoRecorderComponent
+    VideoRecorderComponent,
+
   ],
   providers: [
     AuthenticationService,

@@ -71,4 +71,20 @@ export class ForumComponent implements OnInit {
       });
     });
   }
+
+  newComment(entry: Entry) {
+    this.modalService.newInputCallbackedModal('New comment', (resp) => {
+      const value = resp.value;
+      if (value) {
+        const comment = new Comment(value, '', false, null);
+        this.forumService.newComment(comment, entry.id, this.course.courseDetails.id).subscribe(resp => {
+          entry.comments.push(resp.comment);
+          this.modalService.newSuccessModal(`Successfully added comment!`, `New comment added!`, null);
+        }, error => {
+          console.log(error);
+          this.modalService.newErrorModal(`Error creating new comment!`, `Error: ${JSON.stringify(error)}`, null);
+        });
+      }
+    })
+  }
 }
