@@ -13,8 +13,8 @@ import org.springframework.http.ResponseEntity;
 
 import com.fullteaching.backend.AbstractUnitTest;
 import com.fullteaching.backend.security.AuthorizationService;
-import com.fullteaching.backend.user.User;
-import com.fullteaching.backend.user.UserComponent;
+import com.fullteaching.backend.model.User;
+import com.fullteaching.backend.security.user.UserComponent;
 
 public class AutorizationServiceUnitaryTest extends AbstractUnitTest {
 

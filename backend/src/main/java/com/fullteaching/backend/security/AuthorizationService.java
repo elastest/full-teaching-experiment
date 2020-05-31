@@ -5,12 +5,11 @@ import java.util.Collection;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import com.fullteaching.backend.user.User;
-import com.fullteaching.backend.user.UserComponent;
+import com.fullteaching.backend.model.User;
+import com.fullteaching.backend.security.user.UserComponent;
 import org.springframework.stereotype.Component;
 
 @AllArgsConstructor

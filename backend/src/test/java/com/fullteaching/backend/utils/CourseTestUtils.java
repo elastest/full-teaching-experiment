@@ -21,9 +21,9 @@ import org.springframework.test.web.servlet.MvcResult;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fullteaching.backend.course.Course;
-import com.fullteaching.backend.coursedetails.CourseDetails;
-import com.fullteaching.backend.user.User;
+import com.fullteaching.backend.model.Course;
+import com.fullteaching.backend.model.CourseDetails;
+import com.fullteaching.backend.model.User;
 import com.google.gson.Gson;
 
 public class CourseTestUtils {

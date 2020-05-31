@@ -6,7 +6,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -14,13 +13,11 @@ import org.springframework.mock.web.MockHttpSession;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import com.fullteaching.backend.AbstractControllerUnitTest;
 import com.fullteaching.backend.AbstractLoggedControllerUnitTest;
-import com.fullteaching.backend.course.Course;
+import com.fullteaching.backend.model.Course;
 import com.fullteaching.backend.file.MimeTypes;
-import com.fullteaching.backend.filegroup.FileGroup;
+import com.fullteaching.backend.model.FileGroup;
 import com.fullteaching.backend.utils.CourseTestUtils;
 import com.fullteaching.backend.utils.FileTestUtils;
 

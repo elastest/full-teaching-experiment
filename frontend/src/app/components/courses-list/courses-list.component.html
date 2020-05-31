@@ -31,6 +31,6 @@
   <app-error-message [errorTitle]="'You dont have any course yet!'" [errorContent]="''" [customClass]="'warning'"
                      [closable]="false"></app-error-message>
 </div>
-<button mat-raised-button color="primary" (click)="this.createCourse()">
+<button *ngIf="this.authenticationService.isTeacher()" mat-raised-button color="primary" (click)="this.createCourse()">
   <mat-icon>add</mat-icon>
 </button>

@@ -7,8 +7,8 @@ import org.junit.Test;
 import org.springframework.util.Assert;
 
 import com.fullteaching.backend.AbstractUnitTest;
-import com.fullteaching.backend.entry.Entry;
-import com.fullteaching.backend.forum.Forum;
+import com.fullteaching.backend.model.Entry;
+import com.fullteaching.backend.model.Forum;
 
 public class ForumUnitaryTest extends AbstractUnitTest {
 

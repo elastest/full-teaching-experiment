@@ -10,7 +10,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.util.Assert;
 
 import com.fullteaching.backend.AbstractUnitTest;
-import com.fullteaching.backend.user.User;
+import com.fullteaching.backend.model.User;
 
 /**
  * @author gtunon
@@ -29,8 +29,8 @@ public class UserUnitaryTest extends AbstractUnitTest {
 	
 	
 	/**
-	 * Test method for {@link com.fullteaching.backend.user.User#User(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String[])}
-	 * and {@link com.fullteaching.backend.user.User#User()}.
+	 * Test method for {@link User#User(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String[])}
+	 * and {@link User#User()}.
 	 */
 	@Test
 	public void newUserTest() {
@@ -59,8 +59,8 @@ public class UserUnitaryTest extends AbstractUnitTest {
 	}
 
 	/**
-	 * Test method for {@link com.fullteaching.backend.user.User#getName()}.
-	 * and {@link com.fullteaching.backend.user.User#setName(java.lang.String)}.
+	 * Test method for {@link User#getName()}.
+	 * and {@link User#setName(java.lang.String)}.
 	 */
 	@Test
 	public void setAndGetUserNameTest() {
@@ -71,8 +71,8 @@ public class UserUnitaryTest extends AbstractUnitTest {
 
 
 	/**
-	 * Test method for {@link com.fullteaching.backend.user.User#setPasswordHash(java.lang.String)}
-	 * and {@link com.fullteaching.backend.user.User#getPasswordHash()}.
+	 * Test method for {@link User#setPasswordHash(java.lang.String)}
+	 * and {@link User#getPasswordHash()}.
 	 */
 	@Test
 	public void setAndGetHashPasswordTest() {
@@ -83,8 +83,8 @@ public class UserUnitaryTest extends AbstractUnitTest {
 	}
 	
 	/**
-	 * Test method for {@link com.fullteaching.backend.user.User#getRoles()}
-	 * and  {@link com.fullteaching.backend.user.User#setRoles(java.util.List)}.
+	 * Test method for {@link User#getRoles()}
+	 * and  {@link User#setRoles(java.util.List)}.
 	 */
 	@Test
 	public void setAndGetUserRolesTest() {
@@ -94,8 +94,8 @@ public class UserUnitaryTest extends AbstractUnitTest {
 	}
 
 	/**
-	 * Test method for {@link com.fullteaching.backend.user.User#getNickName()} 
-	 * and {@link com.fullteaching.backend.user.User#setNickName(java.lang.String)}.
+	 * Test method for {@link User#getNickName()}
+	 * and {@link User#setNickName(java.lang.String)}.
 	 */
 	@Test
 	public void setAndGetUserNickNameTest() {
@@ -105,8 +105,8 @@ public class UserUnitaryTest extends AbstractUnitTest {
 	}
 
 	/**
-	 * Test method for {@link com.fullteaching.backend.user.User#getPicture()} 
-	 * and {@link com.fullteaching.backend.user.User#setPicture(java.lang.String)}.
+	 * Test method for {@link User#getPicture()}
+	 * and {@link User#setPicture(java.lang.String)}.
 	 */
 	@Test
 	public void setAndGetUserPictureTest() {
@@ -116,8 +116,8 @@ public class UserUnitaryTest extends AbstractUnitTest {
 	}
 
 	/**
-	 * Test method for {@link com.fullteaching.backend.user.User#getRegistrationDate()} 
-	 * and {@link com.fullteaching.backend.user.User#setRegistrationDate(long)}.
+	 * Test method for {@link User#getRegistrationDate()}
+	 * and {@link User#setRegistrationDate(long)}.
 	 */
 	@Test
 	public void setAndGetUserRegistrationDateTest() {
@@ -129,7 +129,7 @@ public class UserUnitaryTest extends AbstractUnitTest {
 
 
 	/**
-	 * Test method for {@link com.fullteaching.backend.user.User#equals(java.lang.Object)}.
+	 * Test method for {@link User#equals(java.lang.Object)}.
 	 */
 	@Test
 	public void equalUserTest() {

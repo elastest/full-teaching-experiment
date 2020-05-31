@@ -12,7 +12,7 @@ import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MvcResult;
 
 import com.fullteaching.backend.AbstractLoggedControllerUnitTest;
-import com.fullteaching.backend.course.Course;
+import com.fullteaching.backend.model.Course;
 import com.fullteaching.backend.utils.CourseTestUtils;
 
 public class ForumControllerTest extends AbstractLoggedControllerUnitTest {

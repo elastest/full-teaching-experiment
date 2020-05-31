@@ -11,7 +11,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fullteaching.backend.utils.LoginTestUtils;
-import com.fullteaching.backend.user.User;
+import com.fullteaching.backend.model.User;
 
 @WebAppConfiguration
 public abstract class AbstractLoggedControllerUnitTest extends AbstractControllerUnitTest {

@@ -1,7 +1,7 @@
 
 
 <mat-grid-list [cols]="1" rowHeight="1:1" class="bg-transparent forum-thread wrapper attenders-list">
-  <button (click)="this.openAddModal()" mat-raised-button class="mat-elevation-z5" color="primary" matTooltip="Add new attenders">
+  <button *ngIf="this.authenticationService.isTeacher()" (click)="this.openAddModal()" mat-raised-button class="mat-elevation-z5" color="primary" matTooltip="Add new attenders">
     <mat-icon>add</mat-icon>
   </button>
 

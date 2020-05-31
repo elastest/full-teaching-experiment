@@ -1,7 +1,7 @@
 package com.fullteaching.backend.entry;
 
-import com.fullteaching.backend.comment.Comment;
-import com.fullteaching.backend.entry.Entry;
+import com.fullteaching.backend.model.Comment;
+import com.fullteaching.backend.model.Entry;
 
 public class NewEntryCommentResponse {
 	

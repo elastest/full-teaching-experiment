@@ -8,11 +8,11 @@ import org.junit.Test;
 import org.springframework.util.Assert;
 
 import com.fullteaching.backend.AbstractUnitTest;
-import com.fullteaching.backend.course.Course;
-import com.fullteaching.backend.coursedetails.CourseDetails;
-import com.fullteaching.backend.filegroup.FileGroup;
-import com.fullteaching.backend.forum.Forum;
-import com.fullteaching.backend.user.User;
+import com.fullteaching.backend.model.Course;
+import com.fullteaching.backend.model.CourseDetails;
+import com.fullteaching.backend.model.FileGroup;
+import com.fullteaching.backend.model.Forum;
+import com.fullteaching.backend.model.User;
 
 public class CourseDetailsUnitaryTests extends AbstractUnitTest {
 

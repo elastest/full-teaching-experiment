@@ -1,0 +1,44 @@
+package com.fullteaching.backend.service;
+
+import com.fullteaching.backend.model.Course;
+import com.fullteaching.backend.model.User;
+import com.fullteaching.backend.repo.UserRepository;
+import com.fullteaching.backend.struct.FTService;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.Collection;
+import java.util.Set;
+
+@Getter
+@Slf4j
+@Service
+public class UserService implements FTService<User, Long> {
+
+    private final UserRepository repo;
+
+
+    @Autowired
+    public UserService(UserRepository repo) {
+        this.repo = repo;
+    }
+
+    public Collection<User> findByCourses(Collection<Course> courses) {
+        return this.repo.findAllByCoursesIn(courses);
+    }
+
+    public Collection<User> findByNameIn(Set<String> attenderEmailsValid) {
+        return this.repo.findByNameIn(attenderEmailsValid);
+    }
+
+    public boolean existsByName(String userDatum) {
+        return this.repo.existsByName(userDatum);
+    }
+
+    public User getByEmail(String name){
+        return this.repo.findByName(name);
+    }
+
+}

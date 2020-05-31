@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 import javax.servlet.http.HttpSession;
 
+import com.fullteaching.backend.controller.UserController;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -54,7 +55,7 @@ public class UserControllerTest extends AbstractControllerUnitTest {
 	}
 	
 	/**
-	 * Test method for {@link com.fullteaching.backend.user.UserController#newUser(java.lang.String[])}.
+	 * Test method for {@link UserController#newUser(java.lang.String[])}.
 	 */
 	@Test
 	public void controllerNewUserTest() {
@@ -136,7 +137,7 @@ public class UserControllerTest extends AbstractControllerUnitTest {
 	}
 
 	/**
-	 * Test method for {@link com.fullteaching.backend.user.UserController#changePassword(java.lang.String[])}.
+	 * Test method for {@link UserController#changePassword(java.lang.String[])}.
 	 * @throws Exception 
 	 */
 	@Test

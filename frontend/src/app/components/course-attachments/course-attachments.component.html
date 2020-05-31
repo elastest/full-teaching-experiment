@@ -27,7 +27,7 @@
       </div>
 
 
-      <mat-list *ngIf="authService.isTeacher() && !this.isEditing">
+      <mat-list *ngIf="!this.isEditing">
         <mat-card *ngFor="let f of fg.files" class="mat-elevation-z6 spaced">
           {{f.name}}
           <mat-card-actions>

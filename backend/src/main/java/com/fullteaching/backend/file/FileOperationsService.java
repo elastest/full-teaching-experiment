@@ -12,6 +12,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.fullteaching.backend.controller.FileController;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +29,7 @@ import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.transfer.TransferManager;
 import com.amazonaws.services.s3.transfer.Upload;
-import com.fullteaching.backend.filegroup.FileGroup;
+import com.fullteaching.backend.model.FileGroup;
 
 @Service
 public class FileOperationsService {
@@ -82,7 +83,7 @@ public class FileOperationsService {
 		log.info("Recursive deletion of all files in children filegroups");
 		if (fileGroup != null) {
 			for (FileGroup fg : fileGroup) {
-				for (com.fullteaching.backend.file.File f : fg.getFiles()) {
+				for (com.fullteaching.backend.model.File f : fg.getFiles()) {
 					this.deleteLocalFile(f.getNameIdent(), FileController.FILES_FOLDER);
 				}
 				this.recursiveLocallyStoredFileDeletion(fg.getFileGroups());
@@ -95,7 +96,7 @@ public class FileOperationsService {
 	public void recursiveS3StoredFileDeletion(List<FileGroup> fileGroup) {
 		if (fileGroup != null) {
 			for (FileGroup fg : fileGroup) {
-				for (com.fullteaching.backend.file.File f : fg.getFiles()) {
+				for (com.fullteaching.backend.model.File f : fg.getFiles()) {
 					this.deleteRemoteFile(f.getNameIdent(), "/files");
 				}
 				this.recursiveS3StoredFileDeletion(fg.getFileGroups());

@@ -9,9 +9,9 @@ import org.junit.Test;
 import org.springframework.util.Assert;
 
 import com.fullteaching.backend.AbstractUnitTest;
-import com.fullteaching.backend.comment.Comment;
-import com.fullteaching.backend.entry.Entry;
-import com.fullteaching.backend.user.User;
+import com.fullteaching.backend.model.Comment;
+import com.fullteaching.backend.model.Entry;
+import com.fullteaching.backend.model.User;
 
 public class EntryUnitaryTest extends AbstractUnitTest {
 

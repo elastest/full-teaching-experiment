@@ -15,6 +15,7 @@ import {FTSession} from '../../classes/FTSession';
 import {Course} from '../../classes/course';
 import {CourseService} from '../../services/course.service';
 import {VideoSessionService} from '../../services/video-session.service';
+import {ModalService} from '../../services/modal.service';
 
 @Component({
   selector: 'app-course-session',
@@ -45,15 +46,19 @@ export class CourseSessionComponent implements OnInit {
 
   constructor(private httpClient: HttpClient,
               private route: ActivatedRoute,
+              private modalService: ModalService,
               private videoSessionService: VideoSessionService,
               private courseService: CourseService) {
   }
 
   joinSession() {
     this.videoSessionService.getSessionIdAndToken(this.ftSession.id).subscribe(token => {
-      this.tokens.push(token[1]);
-      this.session = true;
-    });
+        this.session = true;
+        this.tokens.push(token[1]);
+      },
+      error => {
+        this.modalService.newErrorModal(`Error getting session!`, `There was an error getting the openvidu session!`, '/')
+      });
   }
 
   handlerSessionCreatedEvent(session: Session): void {

@@ -5,6 +5,7 @@ import java.io.File;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.fullteaching.backend.controller.FileController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fullteaching.backend.course.Course;
-import com.fullteaching.backend.course.CourseRepository;
+import com.fullteaching.backend.model.Course;
+import com.fullteaching.backend.repo.CourseRepository;
 import com.fullteaching.backend.security.AuthorizationService;
 
 @RestController

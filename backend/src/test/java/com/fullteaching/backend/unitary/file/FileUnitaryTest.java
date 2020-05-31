@@ -5,7 +5,7 @@ import org.junit.Test;
 import org.springframework.util.Assert;
 
 import com.fullteaching.backend.AbstractUnitTest;
-import com.fullteaching.backend.file.File;
+import com.fullteaching.backend.model.File;
 
 public class FileUnitaryTest extends AbstractUnitTest {
 

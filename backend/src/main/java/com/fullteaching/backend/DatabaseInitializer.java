@@ -11,17 +11,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Controller;
 
-import com.fullteaching.backend.user.UserRepository;
-import com.fullteaching.backend.user.User;
-import com.fullteaching.backend.course.CourseRepository;
-import com.fullteaching.backend.course.Course;
-import com.fullteaching.backend.coursedetails.CourseDetails;
-import com.fullteaching.backend.comment.Comment;
-import com.fullteaching.backend.entry.Entry;
-import com.fullteaching.backend.file.File;
-import com.fullteaching.backend.filegroup.FileGroup;
-import com.fullteaching.backend.forum.Forum;
-import com.fullteaching.backend.session.Session;
+import com.fullteaching.backend.repo.UserRepository;
+import com.fullteaching.backend.model.User;
+import com.fullteaching.backend.repo.CourseRepository;
+import com.fullteaching.backend.model.Course;
+import com.fullteaching.backend.model.CourseDetails;
+import com.fullteaching.backend.model.Comment;
+import com.fullteaching.backend.model.Entry;
+import com.fullteaching.backend.model.File;
+import com.fullteaching.backend.model.FileGroup;
+import com.fullteaching.backend.model.Forum;
+import com.fullteaching.backend.model.Session;
 
 @Controller
 public class DatabaseInitializer implements CommandLineRunner {

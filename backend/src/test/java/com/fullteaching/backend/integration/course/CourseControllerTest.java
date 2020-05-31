@@ -18,10 +18,10 @@ import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MvcResult;
 
 import com.fullteaching.backend.AbstractLoggedControllerUnitTest;
-import com.fullteaching.backend.course.Course;
+import com.fullteaching.backend.model.Course;
 import com.fullteaching.backend.utils.CourseTestUtils;
 import com.fullteaching.backend.utils.LoginTestUtils;
-import com.fullteaching.backend.user.User;
+import com.fullteaching.backend.model.User;
 
 public class CourseControllerTest extends AbstractLoggedControllerUnitTest {
 

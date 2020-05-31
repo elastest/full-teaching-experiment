@@ -18,7 +18,7 @@
   </mat-card>
 </div>
 <mat-action-row>
-  <button mat-raised-button matTooltip="Create new session" (click)="this.createSession()">
+  <button *ngIf="this.authenticationService.isTeacher()" mat-raised-button matTooltip="Create new session" (click)="this.createSession()">
     <mat-icon>
       add
     </mat-icon>

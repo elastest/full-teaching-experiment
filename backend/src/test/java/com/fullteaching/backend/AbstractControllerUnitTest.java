@@ -15,17 +15,15 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fullteaching.backend.course.CourseRepository;
-import com.fullteaching.backend.coursedetails.CourseDetailsRepository;
-import com.fullteaching.backend.file.FileRepository;
-import com.fullteaching.backend.filegroup.FileGroupRepository;
-import com.fullteaching.backend.forum.ForumRepository;
+import com.fullteaching.backend.repo.CourseRepository;
+import com.fullteaching.backend.repo.CourseDetailsRepository;
+import com.fullteaching.backend.repo.FileRepository;
+import com.fullteaching.backend.repo.FileGroupRepository;
+import com.fullteaching.backend.repo.ForumRepository;
 import com.fullteaching.backend.security.AuthorizationService;
-import com.fullteaching.backend.session.SessionRepository;
-import com.fullteaching.backend.user.UserComponent;
-import com.fullteaching.backend.user.UserRepository;
-
-import io.openvidu.java.client.OpenVidu;
+import com.fullteaching.backend.repo.SessionRepository;
+import com.fullteaching.backend.security.user.UserComponent;
+import com.fullteaching.backend.repo.UserRepository;
 
 @WebAppConfiguration
 public abstract class AbstractControllerUnitTest extends AbstractUnitTest {

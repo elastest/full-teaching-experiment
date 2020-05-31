@@ -5,7 +5,6 @@ import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -16,9 +15,9 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import com.fullteaching.backend.user.UserRepository;
-import com.fullteaching.backend.user.UserComponent;
-import com.fullteaching.backend.user.User;
+import com.fullteaching.backend.repo.UserRepository;
+import com.fullteaching.backend.security.user.UserComponent;
+import com.fullteaching.backend.model.User;
 /**
  * This class is used to check http credentials against database data. Also it
  * is responsible to set database user info into userComponent, a session scoped

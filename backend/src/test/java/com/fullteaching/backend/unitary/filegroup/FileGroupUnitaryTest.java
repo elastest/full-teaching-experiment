@@ -9,8 +9,8 @@ import org.junit.Test;
 import org.springframework.util.Assert;
 
 import com.fullteaching.backend.AbstractUnitTest;
-import com.fullteaching.backend.file.File;
-import com.fullteaching.backend.filegroup.FileGroup;
+import com.fullteaching.backend.model.File;
+import com.fullteaching.backend.model.FileGroup;
 
 public class FileGroupUnitaryTest extends AbstractUnitTest {
 

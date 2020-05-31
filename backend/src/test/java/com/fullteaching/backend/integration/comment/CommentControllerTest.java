@@ -15,9 +15,9 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.web.servlet.MvcResult;
 
 import com.fullteaching.backend.AbstractLoggedControllerUnitTest;
-import com.fullteaching.backend.comment.Comment;
-import com.fullteaching.backend.course.Course;
-import com.fullteaching.backend.entry.Entry;
+import com.fullteaching.backend.model.Comment;
+import com.fullteaching.backend.model.Course;
+import com.fullteaching.backend.model.Entry;
 import com.fullteaching.backend.utils.CourseTestUtils;
 import com.fullteaching.backend.utils.ForumTestUtils;
 import com.google.gson.Gson;

@@ -1,5 +1,6 @@
 package com.fullteaching.backend.file;
 
+import com.fullteaching.backend.controller.FileController;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;

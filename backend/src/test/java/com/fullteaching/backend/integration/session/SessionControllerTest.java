@@ -14,8 +14,8 @@ import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MvcResult;
 
 import com.fullteaching.backend.AbstractLoggedControllerUnitTest;
-import com.fullteaching.backend.course.Course;
-import com.fullteaching.backend.session.Session;
+import com.fullteaching.backend.model.Course;
+import com.fullteaching.backend.model.Session;
 import com.fullteaching.backend.utils.CourseTestUtils;
 import com.fullteaching.backend.utils.SessionTestUtils;
 import com.google.gson.Gson;
