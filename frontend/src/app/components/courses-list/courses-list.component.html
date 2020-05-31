@@ -21,6 +21,11 @@
 
 
 </div>
+<mat-action-row>
+  <button mat-raised-button (click)="this.createCourse()">
+    <mat-icon>add</mat-icon>
+  </button>
+</mat-action-row>
 
 <div *ngIf="this.dataSource?.length === 0" style="padding: 5vh">
   <app-error-message [errorTitle]="'You dont have any course yet!'" [errorContent]="''" [customClass]="'warning'"

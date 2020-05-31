@@ -14,7 +14,7 @@
     </mat-card-content>
     <mat-card-actions>
       <button *ngIf="this.authenticationService.isTeacher()" mat-raised-button (click)="showEditModal(session)"  matTooltip="Edit session title" color="primary" class="mat-elevation-z10">EDIT</button>
-      <button mat-raised-button (click)="this.router.navigate(['session/' + course.id + '/' + session.id])" matTooltip="Open session" color="primary" class="mat-elevation-z10">OPEN</button>
+      <button mat-raised-button (click)="this.router.navigate(['session/details/' + course.id + '/' + session.id])" matTooltip="Open session" color="primary" class="mat-elevation-z10">OPEN</button>
     </mat-card-actions>
   </mat-card>
 </div>

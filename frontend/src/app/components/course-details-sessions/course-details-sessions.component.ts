@@ -28,6 +28,19 @@ export class CourseDetailsSessionsComponent implements OnInit {
   ngOnInit() {
   }
 
+  createSession(){
+
+    const titles = [
+      'Enter session title',
+      'Enter session description',
+    ];
+
+    // new FTSession()
+    //
+    //
+    // this.modalService.newMultiStageModalWithCallback()
+  }
+
   showEditModal(session: FTSession) {
 
     this.modalService.newInputCallbackedModal('New session title:', (newName) => {

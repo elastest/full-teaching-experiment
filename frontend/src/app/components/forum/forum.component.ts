@@ -57,7 +57,7 @@ export class ForumComponent implements OnInit {
         }
       }
 
-    }, 'Confirm entry creation')
+    })
   }
 
   removeEntry(entry: Entry) {

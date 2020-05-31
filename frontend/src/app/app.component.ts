@@ -12,7 +12,7 @@ export class AppComponent implements OnInit{
   constructor(private router: Router){}
 
   isVideoSessionUrl(){
-    return (this.router.url.substring(0, '/session/'.length) === '/session/');
+    return (this.router.url.substring(0, '/session/'.length) === '/session/') && !this.router.url.includes('details');
   }
 
   ngOnInit(): void {

@@ -85,7 +85,7 @@ export class ModalService {
       })
   }
 
-  public newMultiStageModalWithCallback(titles: Array<string>, progressSteps: Array<string>, callback: Function, confirmTitle: string){
+  public newMultiStageModalWithCallback(titles: Array<string>, progressSteps: Array<string>, callback: Function){
     Swal.mixin({
       input: 'text',
       confirmButtonText: 'Next &rarr;',
@@ -94,17 +94,6 @@ export class ModalService {
     }).queue(titles).then((result) => {
       if (result.value) {
         callback(result);
-        // const answers = JSON.stringify(result.value);
-        // Swal.fire({
-        //   title: confirmTitle,
-        //   showConfirmButton: true,
-        //   confirmButtonText: 'Confirm',
-        //   showCancelButton: true
-        // })
-        //   .then(isConfirm => {
-        //     if(isConfirm){
-        //     }
-        //   })
       }
     })
   }

@@ -1,0 +1,64 @@
+<div class="wrapper">
+
+  <mat-card class="mat-elevation-z10">
+    <mat-card-header>
+      <mat-card-title>{{this.session?.title}}</mat-card-title>
+      <button mat-button matTooltip="Update session title" *ngIf="this.authenticationService.isTeacher()"
+              (click)="this.updateTitle()">
+        <mat-icon>edit</mat-icon>
+      </button>
+    </mat-card-header>
+
+    <mat-card-content class="spaced">
+
+      <mat-expansion-panel [hideToggle]="true" class="mat-elevation-z10">
+        <mat-expansion-panel-header>
+          <mat-panel-title>Description:</mat-panel-title>
+          <mat-panel-description>{{this.session?.description}}</mat-panel-description>
+          <mat-panel-action *ngIf="this.authenticationService.isTeacher()">
+            <button mat-button matTooltip="Update session description" (click)="updateDesc()">
+              <mat-icon>edit</mat-icon>
+            </button>
+          </mat-panel-action>
+        </mat-expansion-panel-header>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel [hideToggle]="true" class="mat-elevation-z10">
+        <mat-expansion-panel-header>
+          <mat-panel-title>Date:</mat-panel-title>
+          <mat-panel-description>{{this.session?.date | date}}</mat-panel-description>
+        </mat-expansion-panel-header>
+        <mat-form-field>
+          <mat-label>Choose a date</mat-label>
+          <input matInput readonly (dateChange)="this.changeDate($event)" [matDatepicker]="picker" [matDatepickerFilter]="myFilter">
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker [startAt]="today()" #picker></mat-datepicker>
+        </mat-form-field>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel class="mat-elevation-z10" [hideToggle]="true">
+        <mat-expansion-panel-header>
+          <mat-panel-title>Course:</mat-panel-title>
+          <mat-panel-description>{{this.course?.title}}</mat-panel-description>
+        </mat-expansion-panel-header>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel class="mat-elevation-z10" [hideToggle]="true">
+        <mat-expansion-panel-header>
+          <mat-panel-title>Teacher:</mat-panel-title>
+          <mat-panel-description>{{this.course?.teacher.nickName}}</mat-panel-description>
+        </mat-expansion-panel-header>
+      </mat-expansion-panel>
+    </mat-card-content>
+    <mat-card-actions>
+      <button matTooltip="Delete session" mat-raised-button color="warn" class="mat-elevation-z5"
+              *ngIf="this.authenticationService.isTeacher()" (click)="delete()">
+        <mat-icon>delete</mat-icon>
+      </button>
+      <button matTooltip="Join to session" mat-raised-button color="primary" class="mat-elevation-z5"
+              [routerLink]="'/session/' + this.course?.id + '/' + this.session?.id ">
+        Join
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div>

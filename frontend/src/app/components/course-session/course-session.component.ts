@@ -1,21 +1,17 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {throwError as observableThrowError} from 'rxjs';
-import {catchError} from 'rxjs/operators';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
 import {
-  OpenviduSessionComponent,
-  StreamEvent,
-  Session,
-  UserModel,
   OpenViduLayout,
-  OvSettings,
   OpenViduLayoutOptions,
+  OpenviduSessionComponent,
+  Publisher,
+  Session,
   SessionDisconnectedEvent,
-  Publisher
+  StreamEvent,
+  UserModel
 } from 'openvidu-angular';
-import {ActivatedRoute, Route} from '@angular/router';
+import {ActivatedRoute} from '@angular/router';
 import {FTSession} from '../../classes/FTSession';
-import {SessionService} from '../../services/session.service';
 import {Course} from '../../classes/course';
 import {CourseService} from '../../services/course.service';
 import {VideoSessionService} from '../../services/video-session.service';

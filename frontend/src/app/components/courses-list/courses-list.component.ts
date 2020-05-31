@@ -4,6 +4,8 @@ import {CourseService} from '../../services/course.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {AuthenticationService} from '../../services/authentication.service';
 import {ModalService} from '../../services/modal.service';
+import {CourseDetails} from '../../classes/course-details';
+import {Forum} from '../../classes/forum';
 
 const Swal = require('sweetalert2');
 
@@ -14,8 +16,6 @@ const Swal = require('sweetalert2');
 })
 export class CoursesListComponent implements OnInit {
   dataSource: Array<Course>;
-  displayedColumns: string[] = ['title', 'details'];
-
 
   constructor(private courseService: CourseService,
               private authenticationService: AuthenticationService,
@@ -37,10 +37,24 @@ export class CoursesListComponent implements OnInit {
       })
   }
 
+  createCourse() {
+
+    this.modalService.newInputCallbackedModal('Enter course title', (courseName) => {
+      const name = courseName.value;
+      const course = new Course(name, '', new CourseDetails(new Forum(true), []));
+      this.courseService.newCourse(course).subscribe(resp => {
+        this.dataSource.push(resp);
+      }, error => {
+        console.log(error);
+      });
+    })
+
+  }
+
 
   showEditModal(course: Course) {
     Swal.fire({
-      title: 'Modify course name',
+      title: 'Modify course title',
       input: 'text',
       showCancelButton: true,
       inputValidator: (value) => {
