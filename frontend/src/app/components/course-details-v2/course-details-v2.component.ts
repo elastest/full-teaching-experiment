@@ -7,6 +7,9 @@ import {AuthenticationService} from '../../services/authentication.service';
 import {AnnouncerService} from '../../services/announcer.service';
 import {FileGroup} from '../../classes/file-group';
 import {User} from '../../classes/user';
+import {ModalService} from '../../services/modal.service';
+import Swal from 'sweetalert2';
+import {FileService} from '../../services/file.service';
 
 @Component({
   selector: 'app-course-details-v2',
@@ -22,7 +25,9 @@ export class CourseDetailsV2Component implements OnInit {
   constructor(private builder: FormBuilder,
               private route: ActivatedRoute,
               private courseService: CourseService,
+              private modalService: ModalService,
               public authService: AuthenticationService,
+              private fileService: FileService,
               private announcerService: AnnouncerService) {
   }
 
@@ -132,5 +137,51 @@ export class CourseDetailsV2Component implements OnInit {
 
   toggleEditionMode() {
     this.isEditing = !this.isEditing;
+  }
+
+  editCourseTitle() {
+    Swal.fire({
+      title: 'Modify course title',
+      input: 'text',
+      showCancelButton: true,
+      inputValidator: (value) => {
+        if (!value) {
+          return 'You need to write something!'
+        }
+      },
+    })
+      .then(result => {
+        if (result) {
+
+          let value = result['value'];
+
+          if (value) {
+
+            this.course.title = value;
+
+            this.courseService.editCourse(this.course, value).subscribe(
+              data => {
+
+                this.modalService.newToastModal(`Successfully changed name of the course to: ${value}`)
+
+              }, error => this.modalService.newErrorModal('An error ocured while updating the name of the course!', error, null)
+            );
+
+          }
+        }
+      })
+  }
+
+  createFileGroup() {
+    this.modalService.newInputCallbackedModal('Enter file group name:', (resp) => {
+      const name = resp.value;
+      const fg = new FileGroup(name, null);
+      this.fileService.newFileGroup(fg, this.course.courseDetails.id)
+        .subscribe(data => {
+
+          this.course.courseDetails.files = data.files;
+          this.modalService.newToastModal('Added new file group!');
+        })
+    })
   }
 }

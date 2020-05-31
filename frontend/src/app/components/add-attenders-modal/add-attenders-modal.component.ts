@@ -1,10 +1,9 @@
 import {Component, OnInit} from '@angular/core';
-import {AuthenticationService} from "../../services/authentication.service";
-import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {UserService} from "../../services/user.service";
-import {ModalService} from "../../services/modal.service";
-import {CourseService} from "../../services/course.service";
-import {EditionService} from "../../services/edition.service";
+import {AuthenticationService} from '../../services/authentication.service';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {ModalService} from '../../services/modal.service';
+import {CourseService} from '../../services/course.service';
+import {EditionService} from '../../services/edition.service';
 
 @Component({
   selector: 'app-add-attenders-modal',
@@ -20,7 +19,6 @@ export class AddAttendersModalComponent implements OnInit {
 
   constructor(public authenticationService: AuthenticationService,
               public formBuilder: FormBuilder,
-              public userService: UserService,
               private modalService: ModalService,
               private courseService: CourseService,
               private editionService: EditionService) {
@@ -49,8 +47,7 @@ export class AddAttendersModalComponent implements OnInit {
           let attendersAlreadyAdded = resp['attendersAlreadyAdded'];
           if (attendersAlreadyAdded.length > 0) {
             this.modalService.newErrorModal('The user is already in this course!', 'You tried to add a user that is already an attender of this course!', null);
-          }
-          else{
+          } else {
             this.modalService.newSuccessModal('Attender added successfully!', `The attender: ${email} was added to this course`, null);
           }
         },
@@ -80,15 +77,15 @@ export class AddAttendersModalComponent implements OnInit {
 
             let errorMessage = ``;
 
-            if(attendersAlreadyAdded.length > 0){
+            if (attendersAlreadyAdded.length > 0) {
               errorMessage = `Already added: ${attendersAlreadyAdded.map(a => a.name)}\n`
             }
 
-            if(notRegistered.length > 0){
+            if (notRegistered.length > 0) {
               errorMessage += `Not registered: ${notRegistered}\n`
             }
 
-            if(notRegistered.length > 0){
+            if (notRegistered.length > 0) {
               errorMessage += `Invalid emails: ${invalid}`
             }
 
@@ -103,7 +100,7 @@ export class AddAttendersModalComponent implements OnInit {
 
         },
         error => {
-
+          this.modalService.newErrorModal(`Error adding attenders!`, JSON.stringify(error), null);
         })
 
 

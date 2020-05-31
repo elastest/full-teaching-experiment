@@ -4,9 +4,7 @@
               (selectedChange)="clickedDay($event)"
               [dateClass]="dateClass"
 >
-
 </mat-calendar>
-
 
 <swal
   title="Sessions this day:"
@@ -21,7 +19,7 @@
         <mat-card-content>{{session.description}}</mat-card-content>
         <mat-card-footer>
           <mat-card-actions>
-            <button mat-raised-button matTooltip="Open session" color="primary" class="mat-elevation-z10" (click)="this.router.navigate(['session/' + session.course.id + '/' + session.id])">OPEN</button>
+            <button mat-raised-button matTooltip="Open session" color="primary" class="mat-elevation-z10" (click)="this.router.navigate(['session/details/' + session.course.id + '/' + session.id])">OPEN</button>
           </mat-card-actions>
         </mat-card-footer>
       </mat-card>

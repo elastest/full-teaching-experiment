@@ -1,11 +1,14 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {Course} from "../../classes/course";
-import {CourseService} from "../../services/course.service";
-import {AuthenticationService} from "../../services/authentication.service";
-import {FTSession} from "../../classes/FTSession";
-import {Router} from "@angular/router";
-import {ModalService} from "../../services/modal.service";
-import {SessionService} from "../../services/session.service";
+import {Course} from '../../classes/course';
+import {CourseService} from '../../services/course.service';
+import {AuthenticationService} from '../../services/authentication.service';
+import {FTSession} from '../../classes/FTSession';
+import {Router} from '@angular/router';
+import {ModalService} from '../../services/modal.service';
+import {SessionService} from '../../services/session.service';
+import {MatDialog} from '@angular/material/dialog';
+import {SessionCreationModalComponent} from '../session-creation-modal/session-creation-modal.component';
+import {AnnouncerService} from '../../services/announcer.service';
 
 @Component({
   selector: 'app-course-details-sessions',
@@ -21,49 +24,26 @@ export class CourseDetailsSessionsComponent implements OnInit {
               public authenticationService: AuthenticationService,
               private modalService: ModalService,
               private sessionService: SessionService,
+              private matDialog: MatDialog,
+              private announcerService: AnnouncerService,
               public router: Router) {
 
   }
 
   ngOnInit() {
-  }
-
-  createSession(){
-
-    const titles = [
-      'Enter session title',
-      'Enter session description',
-    ];
-
-    // new FTSession()
-    //
-    //
-    // this.modalService.newMultiStageModalWithCallback()
-  }
-
-  showEditModal(session: FTSession) {
-
-    this.modalService.newInputCallbackedModal('New session title:', (newName) => {
-
-      let value = newName.value;
-
-      if (value) {
-
-        session.title = value;
-
-        this.sessionService.editSession(session).subscribe(resp => {
-
-            this.modalService.newToastModal(`Session name successfully changed to: ${newName.value}`)
-
-          },
-          error => this.modalService.newErrorModal('Error ocured changing session title!', error, null));
-
-      }
-
+    this.announcerService.sessionCreatedAnnouncer$.subscribe(sessions => {
+      this.course.sessions = sessions;
     });
-
-
   }
+
+  createSession() {
+    this.matDialog.open(SessionCreationModalComponent, {
+      data: {
+        course: this.course
+      }
+    })
+  }
+
 
   numberToDate(d: number) {
     return new Date(d);

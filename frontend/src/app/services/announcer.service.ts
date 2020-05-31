@@ -5,6 +5,7 @@ import {Course} from '../classes/course';
 import {DialogSize} from '../enum/dialog-size.enum';
 import {Comment} from '../classes/comment';
 import {Entry} from '../classes/entry';
+import {FTSession} from '../classes/FTSession';
 
 @Injectable()
 export class AnnouncerService {
@@ -33,7 +34,15 @@ export class AnnouncerService {
   private commentRemovedAnnouncerSubject: Subject<{entry: Entry}> = new Subject<{entry: Entry}>();
   public commentRemovedAnnouncer$ = this.commentRemovedAnnouncerSubject.asObservable();
 
+  private sessionCreatedAnnouncerSubject: Subject<FTSession[]> = new Subject<FTSession[]>();
+  public sessionCreatedAnnouncer$ = this.sessionCreatedAnnouncerSubject.asObservable();
+
+
   constructor() {
+  }
+
+  announceSessionCreated(sessions: FTSession[]){
+    this.sessionCreatedAnnouncerSubject.next(sessions);
   }
 
   announceDialogChanged(size: DialogSize){

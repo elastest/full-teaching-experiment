@@ -72,6 +72,11 @@
     <mat-divider></mat-divider>
   </div>
 
+  <div *ngIf="this.fileGroups?.length === 0" style="padding: 5vh">
+    <app-error-message [errorTitle]="'This course doesnt have any file yet!'" [errorContent]="''" [customClass]="'warning'"
+                       [closable]="false"></app-error-message>
+  </div>
+
 </mat-accordion>
 
 

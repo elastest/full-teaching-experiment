@@ -1,0 +1,27 @@
+<mat-dialog-content>
+
+  <form [formGroup]="this.formGroup">
+    <mat-form-field>
+      Title
+      <input matInput formControlName="titleCtrl">
+    </mat-form-field>
+    <br/>
+    <mat-form-field>
+      Description
+      <input formControlName="titleCtrl" formControlName="descCtrl" matInput>
+    </mat-form-field>
+    <br/>
+    <mat-form-field>
+      <mat-label>Choose a date</mat-label>
+      <input formControlName="dateCtrl" matInput readonly (dateChange)="this.changeDate($event)" [matDatepicker]="picker"
+             [matDatepickerFilter]="myFilter">
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker [startAt]="today()" #picker></mat-datepicker>
+    </mat-form-field>
+  </form>
+
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-raised-button color="warn" [mat-dialog-close]>Cancel</button>
+  <button mat-raised-button [mat-dialog-close] [disabled]="!this.saveButtonEnabled()" (click)="this.createSession()">Save</button>
+</mat-dialog-actions>

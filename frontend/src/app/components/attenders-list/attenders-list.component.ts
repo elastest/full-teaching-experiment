@@ -1,14 +1,14 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
-import {Course} from "../../classes/course";
-import {MatTableDataSource} from "@angular/material/table";
-import {AuthenticationService} from "../../services/authentication.service";
-import {MatDialog} from "@angular/material/dialog";
-import {ChangePasswordComponent} from "../change-password/change-password.component";
-import {AddAttendersModalComponent} from "../add-attenders-modal/add-attenders-modal.component";
-import {EditionService} from "../../services/edition.service";
-import {CourseService} from "../../services/course.service";
-import {User} from "../../classes/user";
-import {ModalService} from "../../services/modal.service";
+import {Course} from '../../classes/course';
+import {MatTableDataSource} from '@angular/material/table';
+import {AuthenticationService} from '../../services/authentication.service';
+import {MatDialog} from '@angular/material/dialog';
+import {ChangePasswordComponent} from '../change-password/change-password.component';
+import {AddAttendersModalComponent} from '../add-attenders-modal/add-attenders-modal.component';
+import {EditionService} from '../../services/edition.service';
+import {CourseService} from '../../services/course.service';
+import {User} from '../../classes/user';
+import {ModalService} from '../../services/modal.service';
 
 @Component({
   selector: 'app-attenders-list',
@@ -24,18 +24,14 @@ export class AttendersListComponent implements OnInit, OnChanges {
               private courseService: CourseService,
               public matDialog: MatDialog,
               private editionService: EditionService,
-              private modalService: ModalService) { }
+              private modalService: ModalService) {
+  }
 
   ngOnInit(): void {
   }
 
-  openAddModal(){
-
-    this.matDialog.open(AddAttendersModalComponent,{
-      // width: '75vh',
-      // height: '55vh'
-    });
-
+  openAddModal() {
+    this.matDialog.open(AddAttendersModalComponent, {});
     this.editionService.startAddingUsers(this.course);
   }
 
@@ -48,12 +44,12 @@ export class AttendersListComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if(this.course){
+    if (this.course) {
       this.dataSource = new MatTableDataSource(this.course.attenders);
     }
   }
 
-  updateDataSource(){
+  updateDataSource() {
     this.dataSource = new MatTableDataSource(this.course.attenders);
   }
 

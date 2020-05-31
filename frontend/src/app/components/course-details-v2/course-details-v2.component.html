@@ -3,6 +3,9 @@
   <div class="header bg-white">
 
     <h1>{{course?.title}}</h1>
+    <button *ngIf="this.authService.isTeacher()" mat-button (click)="this.editCourseTitle()">
+      <mat-icon>edit</mat-icon>
+    </button>
 
   </div>
 
@@ -45,7 +48,9 @@
 
       <app-course-attachments [file-groups]="course?.courseDetails?.files" [is-editing]="this.isEditing" [course]="this.course" [recursive-index]="0"></app-course-attachments>
 
-      <button mat-raised-button matTooltip="New file group" *ngIf="this.isEditing && this.authService.isTeacher()" color="primary"><mat-icon>add</mat-icon></button>
+      <button mat-raised-button matTooltip="New file group" *ngIf="this.isEditing && this.authService.isTeacher()" color="primary" (click)="this.createFileGroup()">
+        <mat-icon>add</mat-icon>
+      </button>
 
 
     </mat-tab>

@@ -52,37 +52,14 @@ export class CoursesListComponent implements OnInit {
   }
 
 
-  showEditModal(course: Course) {
-    Swal.fire({
-      title: 'Modify course title',
-      input: 'text',
-      showCancelButton: true,
-      inputValidator: (value) => {
-        if (!value) {
-          return 'You need to write something!'
-        }
-      },
-    })
-      .then(result => {
-        if (result) {
-
-          let value = result['value'];
-
-          if (value) {
-
-            course.title = value;
-
-            this.courseService.editCourse(course, value).subscribe(
-              data => {
-
-                this.modalService.newToastModal(`Successfully changed name of the course to: ${value}`)
-
-              }, error => this.modalService.newErrorModal('An error ocured while updating the name of the course!', error, null)
-            );
-
-          }
-        }
+  deleteCourse(course: Course) {
+    this.modalService.newCallbackedModal(`Are you sure about removing this course?`, () => {
+      this.courseService.deleteCourse(course.id).subscribe(resp => {
+        this.modalService.newToastModal(`Course ${course.title} successfully removed!`);
+        this.dataSource = this.dataSource.filter(c => c.id !== course.id);
+      }, error => {
+        this.modalService.newErrorModal(`Error removing course ${course.title}`, JSON.stringify(error), null);
       })
+    })
   }
-
 }

@@ -8,7 +8,7 @@
       {{course?.courseDetails.info}}
     </div>
 
-    <div *ngIf="!course?.courseDetails.info">
+    <div *ngIf="!course?.courseDetails?.info">
       <app-error-message [errorTitle]="'There is no info yet'" [errorContent]="''" [customClass]="'warning'"
                          [closable]="false"></app-error-message>
     </div>
