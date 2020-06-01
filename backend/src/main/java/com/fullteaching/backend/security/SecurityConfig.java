@@ -1,8 +1,6 @@
 package com.fullteaching.backend.security;
 
-import com.fullteaching.backend.security.user.UserComponent;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -10,7 +8,6 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -39,6 +36,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
     public final UserRepositoryAuthProvider userRepoAuthProvider;
     private final LoginInterceptor loginInterceptor;
     private final RoleCheckInterceptor roleCheckInterceptor;
+    private final CourseAuthorizerInterceptor courseAuthorizerInterceptor;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -125,5 +123,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
 
         // checks if user is logged in, also checks if he has the needed role
         registry.addInterceptor(roleCheckInterceptor).addPathPatterns("/**");
+
+        // checks if user/teacher belongs to a course
+        registry.addInterceptor(courseAuthorizerInterceptor).addPathPatterns("/**");
     }
 }

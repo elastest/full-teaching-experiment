@@ -1,5 +1,7 @@
 package com.fullteaching.backend.controller;
 
+import com.fullteaching.backend.annotation.LoginRequired;
+import com.fullteaching.backend.annotation.RoleFilter;
 import com.fullteaching.backend.model.Comment;
 import com.fullteaching.backend.service.CommentService;
 import com.fullteaching.backend.model.CourseDetails;
@@ -12,45 +14,37 @@ import com.fullteaching.backend.service.ForumService;
 import com.fullteaching.backend.security.AuthorizationService;
 import com.fullteaching.backend.model.User;
 import com.fullteaching.backend.security.user.UserComponent;
+import com.fullteaching.backend.struct.Role;
+import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api-entries")
 @Slf4j
-public class EntryController {
-
-
-
+public class EntryController extends SecureController {
 
     private final ForumService forumService;
     private final EntryService entryService;
     private final CommentService commentService;
     private final CourseDetailsService courseDetailsService;
-    private final UserComponent user;
-    private final AuthorizationService authorizationService;
 
     public EntryController(ForumService forumService, EntryService entryService, CommentService commentService, CourseDetailsService courseDetailsService, UserComponent user, AuthorizationService authorizationService) {
+        super(user, authorizationService);
         this.forumService = forumService;
         this.entryService = entryService;
         this.commentService = commentService;
         this.courseDetailsService = courseDetailsService;
-        this.user = user;
-        this.authorizationService = authorizationService;
     }
 
+    @LoginRequired
     @RequestMapping(value = "/forum/{id}", method = RequestMethod.POST)
     public ResponseEntity<Object> newEntry(@RequestBody Entry entry, @PathVariable(value = "id") String courseDetailsId) {
 
         log.info("CRUD operation: Adding new entry");
-
-        ResponseEntity<Object> unAuthorized = authorizationService.checkBackendLogged();
-        if (unAuthorized != null) {
-            return unAuthorized;
-        }
-
 
         long id_i;
         try {
@@ -96,38 +90,31 @@ public class EntryController {
     }
 
 
+    @RoleFilter(role = Role.TEACHER)
     @RequestMapping(value = "/remove/{id}/{cd-id}", method = RequestMethod.POST)
-    public ResponseEntity<?> removeEntry(@PathVariable Long id, @PathVariable("cd-id") Long courseDetailsId){
+    public ResponseEntity<?> removeEntry(@PathVariable Long id, @PathVariable("cd-id") Long courseDetailsId) {
 
 
         log.info("Performing entry deletion!");
         CourseDetails cd = courseDetailsService.getFromId(courseDetailsId);
         Entry entry = this.entryService.getFromId(id);
 
-        //check if is logged in
-        ResponseEntity<Object> unAuthorized = authorizationService.checkBackendLogged();
-        if (unAuthorized != null) {
-            log.info("The user is not logged in!");
-            return unAuthorized;
+
+        // Authorize teacher
+        ResponseEntity<Object> teacherUnAuthorized = authorizationService.checkAuthorization(entry, cd.getCourse().getTeacher());
+        if (teacherUnAuthorized != null) {
+            log.info("The user is not a teacher of this course!");
+            return teacherUnAuthorized;
         }
 
-        else{
 
-            // Authorize teacher
-            ResponseEntity<Object> teacherUnAuthorized = authorizationService.checkAuthorization(entry, cd.getCourse().getTeacher());
-            if (teacherUnAuthorized != null) {
-                log.info("The user is not a teacher of this course!");
-                return teacherUnAuthorized;
-            }
+        //delete the entry
+        log.info("Removing entry {} with course details id: {}", id, courseDetailsId);
+        this.forumService.removeEntry(entry, cd.getForum());
+        this.entryService.delete(entry);
+        log.info("Entry removed successfully!");
+        return ResponseEntity.ok(true);
 
-
-            //delete the entry
-            log.info("Removing entry {} with course details id: {}", id, courseDetailsId);
-            this.forumService.removeEntry(entry, cd.getForum());
-            this.entryService.delete(entry);
-            log.info("Entry removed successfully!");
-            return ResponseEntity.ok(true);
-        }
     }
 
 }

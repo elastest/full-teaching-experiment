@@ -2,6 +2,7 @@ package com.fullteaching.backend.controller;
 
 import java.util.*;
 
+import com.fullteaching.backend.annotation.CourseAuthorized;
 import com.fullteaching.backend.annotation.LoginRequired;
 import com.fullteaching.backend.annotation.RoleFilter;
 import com.fullteaching.backend.model.Course;
@@ -68,14 +69,8 @@ public class CourseController extends SecureController {
 	@LoginRequired
 	@RequestMapping(value = "/course/{id}", method = RequestMethod.GET)
 	public ResponseEntity<Object> getCourse(@PathVariable(value="id") String id) {
-		
 		log.info("CRUD operation: Getting one course");
-		
-		ResponseEntity<Object> authorized = authorizationService.checkBackendLogged();
-		if (authorized != null){
-			return authorized;
-		};
-		
+
 		long id_i = -1;
 		try{
 			id_i = Long.parseLong(id);
@@ -92,11 +87,6 @@ public class CourseController extends SecureController {
 	public ResponseEntity<?> newCourse(@RequestBody Course course) {
 		
 		log.info("CRUD operation: Adding new course");
-		
-		ResponseEntity<?> authorized = authorizationService.checkBackendLogged();
-		if (authorized != null){
-			return authorized;
-		}
 
 		//check if is teacher
 		User userLogged = user.getLoggedUser();
@@ -126,11 +116,6 @@ public class CourseController extends SecureController {
 	public ResponseEntity<Object> modifyCourse(@RequestBody Course course) {
 		
 		log.info("CRUD operation: Updating course");
-		
-		ResponseEntity<Object> authorized = authorizationService.checkBackendLogged();
-		if (authorized != null){
-			return authorized;
-		};
 
 		Course c = courseService.getFromId(course.getId());
 		
@@ -163,11 +148,6 @@ public class CourseController extends SecureController {
 	public ResponseEntity<Object> deleteCourse(@PathVariable(value="courseId") String courseId) {
 		
 		log.info("CRUD operation: Deleting course");
-		
-		ResponseEntity<Object> authorized = authorizationService.checkBackendLogged();
-		if (authorized != null){
-			return authorized;
-		};
 		
 		long id_course = -1;
 		try{
@@ -213,11 +193,6 @@ public class CourseController extends SecureController {
 	{
 		
 		log.info("CRUD operation: Adding attenders to course");
-		
-		ResponseEntity<Object> authorized = authorizationService.checkBackendLogged();
-		if (authorized != null){
-			return authorized;
-		};
 		
 		long id_course = -1;
 		try{
@@ -292,20 +267,11 @@ public class CourseController extends SecureController {
 	}
 
 	@RoleFilter(role = Role.TEACHER)
+	@CourseAuthorized(courseParam = "course_id")
 	@RequestMapping(value = "/edit/remove-attender", method = RequestMethod.PUT)
 	public ResponseEntity<?> removeAttenders(@RequestParam(value = "course_id") long course_id, @RequestParam(value = "attender_id") long attender_id){
-
-
 		log.info("Removing attender {} from course {}", attender_id, course_id);
-
-
-		ResponseEntity<Object> authorized = authorizationService.checkBackendLogged();
-		if (authorized != null){
-			return authorized;
-		}
-
 		Course c = this.courseService.getFromId(course_id);
-
 
 		ResponseEntity<Object> teacherAuthorized = authorizationService.checkAuthorization(c, c.getTeacher());
 		if (teacherAuthorized != null) { // If the user is not the teacher of the course

@@ -1,54 +1,45 @@
 package com.fullteaching.backend.controller;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Iterator;
-
-import javax.servlet.http.HttpServletResponse;
-
-import com.fullteaching.backend.service.CommentService;
-import com.fullteaching.backend.service.CourseService;
+import com.fullteaching.backend.annotation.LoginRequired;
+import com.fullteaching.backend.annotation.RoleFilter;
 import com.fullteaching.backend.file.FileOperationsService;
-import com.fullteaching.backend.service.FileService;
 import com.fullteaching.backend.file.MimeTypes;
-import com.fullteaching.backend.service.FileGroupService;
-import com.fullteaching.backend.service.UserService;
+import com.fullteaching.backend.model.Comment;
+import com.fullteaching.backend.model.Course;
+import com.fullteaching.backend.model.FileGroup;
+import com.fullteaching.backend.model.User;
+import com.fullteaching.backend.security.AuthorizationService;
+import com.fullteaching.backend.security.user.UserComponent;
+import com.fullteaching.backend.service.*;
+import com.fullteaching.backend.struct.Role;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.springframework.beans.factory.annotation.Value;
 
-import com.fullteaching.backend.model.Comment;
-import com.fullteaching.backend.model.Course;
-import com.fullteaching.backend.model.FileGroup;
-import com.fullteaching.backend.security.AuthorizationService;
-import com.fullteaching.backend.model.User;
-import com.fullteaching.backend.security.user.UserComponent;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Iterator;
 
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api-load-files")
 @Slf4j
-public class FileController {
+public class FileController extends SecureController {
 
     private final FileGroupService fileGroupService;
     private final FileService fileService;
     private final CourseService courseService;
     private final CommentService commentService;
     private final UserService userService;
-    private final UserComponent user;
-    private final AuthorizationService authorizationService;
     private final FileOperationsService fileOperationsService;
 
     @Value("${profile.stage}")
@@ -60,26 +51,21 @@ public class FileController {
 
     @Autowired
     public FileController(FileGroupService fileGroupService, FileService fileService, CourseService courseService, CommentService commentService, UserService userService, UserComponent user, AuthorizationService authorizationService, FileOperationsService fileOperationsService) {
+        super(user, authorizationService);
         this.fileGroupService = fileGroupService;
         this.fileService = fileService;
         this.courseService = courseService;
         this.commentService = commentService;
         this.userService = userService;
-        this.user = user;
-        this.authorizationService = authorizationService;
         this.fileOperationsService = fileOperationsService;
     }
 
+    @RoleFilter(role = Role.TEACHER)
     @RequestMapping(value = "/upload/course/{courseId}/file-group/{fileGroupId}/type/{file_type}", method = RequestMethod.POST)
     public ResponseEntity<Object> handleFileUpload(@PathVariable(value = "courseId") String courseId, @PathVariable(value = "fileGroupId") String fileGroupId, @RequestParam("file") MultipartFile file, @PathVariable("file_type") int fileType)
             throws IOException {
 
         log.info("Uploading file...");
-
-        ResponseEntity<Object> authorized = authorizationService.checkBackendLogged();
-        if (authorized != null) {
-            return authorized;
-        }
 
         long id_course = -1;
         long id_fileGroup = -1;
@@ -152,17 +138,12 @@ public class FileController {
         }
     }
 
+    @LoginRequired
     @RequestMapping("/course/{courseId}/download/{fileId}")
     public void handleFileDownload(@PathVariable String fileId, @PathVariable(value = "courseId") String courseId,
                                    HttpServletResponse response) throws FileNotFoundException, IOException {
 
         log.info("Downloading file...");
-
-        ResponseEntity<Object> authorized = authorizationService.checkBackendLogged();
-        if (authorized != null) {
-            response.sendError(401, "Not logged");
-            return;
-        }
 
         long id_course = -1;
         long id_file = -1;
@@ -224,16 +205,12 @@ public class FileController {
         }
     }
 
+    @LoginRequired
     @RequestMapping(value = "/upload/picture/{userId}", method = RequestMethod.POST)
     public ResponseEntity<Object> handlePictureUpload(MultipartHttpServletRequest request,
                                                       @PathVariable(value = "userId") String userId) throws IOException {
 
         log.info("Uploading picture...");
-
-        ResponseEntity<Object> authorized = authorizationService.checkBackendLogged();
-        if (authorized != null) {
-            return authorized;
-        }
 
         long id_user = -1;
         try {
@@ -310,17 +287,13 @@ public class FileController {
         }
     }
 
+    @LoginRequired
     @RequestMapping(value = "/upload/course/{courseId}/comment/{commentId}", method = RequestMethod.POST)
     public ResponseEntity<Object> handleVideoMessageUpload(MultipartHttpServletRequest request,
                                                            @PathVariable(value = "courseId") String courseId, @PathVariable(value = "commentId") String commentId)
             throws IOException {
 
         log.info("Uploading video message...");
-
-        ResponseEntity<Object> authorized = authorizationService.checkBackendLogged();
-        if (authorized != null) {
-            return authorized;
-        }
 
         long id_course = -1;
         long id_comment = -1;
@@ -402,14 +375,6 @@ public class FileController {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
         }
-    }
-
-    // Method to get the root FileGroup of a FileGroup tree structure, given a FileGroup
-    private FileGroup getRootFileGroup(FileGroup fg) {
-        while (fg.getFileGroupParent() != null) {
-            fg = fg.getFileGroupParent();
-        }
-        return fg;
     }
 
     private boolean isProductionStage() {

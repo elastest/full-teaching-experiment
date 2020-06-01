@@ -27,20 +27,16 @@ import java.util.Objects;
 @RestController
 @RequestMapping("/api-comments")
 @Slf4j
-public final class CommentController extends SecureController {
+public final class CommentController extends SecureController{
 
-    private final UserComponent user;
-    private final AuthorizationService authorizationService;
-    private final CourseDetailsService courseDetailsService;
     private final EntryService entryService;
     private final CommentService commentService;
     private final CourseService courseService;
+    private final CourseDetailsService courseDetailsService;
 
     @Autowired
     public CommentController(UserComponent user, AuthorizationService authorizationService, CourseDetailsService courseDetailsService, EntryService entryService, CommentService commentService, CourseService courseService) {
         super(user, authorizationService);
-        this.user = user;
-        this.authorizationService = authorizationService;
         this.courseDetailsService = courseDetailsService;
         this.entryService = entryService;
         this.commentService = commentService;
@@ -83,12 +79,6 @@ public final class CommentController extends SecureController {
     ) {
 
         log.info("CRUD operation: Adding new comment");
-
-        ResponseEntity<Object> authorized = authorizationService.checkBackendLogged();
-        if (authorized != null) {
-            return authorized;
-        }
-
 
         long id_entry = -1;
         long id_courseDetails = -1;
