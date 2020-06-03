@@ -1,11 +1,13 @@
 package com.fullteaching.backend.controller;
 
+import java.security.Principal;
 import java.util.*;
 
 import com.fullteaching.backend.annotation.CourseAuthorized;
 import com.fullteaching.backend.annotation.LoginRequired;
 import com.fullteaching.backend.annotation.RoleFilter;
 import com.fullteaching.backend.model.Course;
+import com.fullteaching.backend.notifications.message.CourseInvitationMessage;
 import com.fullteaching.backend.service.CourseService;
 import com.fullteaching.backend.service.UserService;
 import com.fullteaching.backend.struct.Role;
@@ -14,6 +16,7 @@ import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import com.fullteaching.backend.security.user.UserComponent;
@@ -30,12 +33,14 @@ public class CourseController extends SecureController {
 
 	private final CourseService courseService;
 	private final UserService userService;
+	private final SimpMessagingTemplate template;
 
 	@Autowired
-	public CourseController(CourseService courseService, UserService userService, UserComponent user, AuthorizationService authorizationService) {
+	public CourseController(CourseService courseService, UserService userService, UserComponent user, AuthorizationService authorizationService, SimpMessagingTemplate template) {
 		super(user,authorizationService);
 		this.courseService = courseService;
 		this.userService = userService;
+		this.template = template;
 	}
 
 
@@ -185,11 +190,13 @@ public class CourseController extends SecureController {
 	}
 
 
+
+
 	@RoleFilter(role = Role.TEACHER)
 	@RequestMapping(value = "/edit/add-attenders/course/{courseId}", method = RequestMethod.PUT)
 	public ResponseEntity<Object> addAttenders(
-			@RequestBody String[] attenderEmails, 
-			@PathVariable(value="courseId") String courseId) 
+			@RequestBody String[] attenderEmails,
+			@PathVariable(value="courseId") String courseId)
 	{
 		
 		log.info("CRUD operation: Adding attenders to course");
@@ -261,7 +268,12 @@ public class CourseController extends SecureController {
 					customResponse.attendersAlreadyAdded,
 					customResponse.emailsInvalid,
 					customResponse.emailsValidNotRegistered);
-			
+
+			for(User attender : newAddedAttenders){
+				template.convertAndSendToUser(attender.getName(),  "/queue/notification", new CourseInvitationMessage(c));
+			}
+
+
 			return new ResponseEntity<>(customResponse, HttpStatus.OK);
 		}
 	}

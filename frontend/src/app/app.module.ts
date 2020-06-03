@@ -80,6 +80,8 @@ import {OpenviduSessionModule} from 'openvidu-angular';
 import { AudioRecorderComponent } from './components/audio-recorder/audio-recorder.component';
 import { SessionDetailsComponent } from './components/session-details/session-details.component';
 import { SessionCreationModalComponent } from './components/session-creation-modal/session-creation-modal.component';
+import { CanvasWhiteboardModule } from 'ng2-canvas-whiteboard';
+import {WebsocketService} from './services/websocket.service';
 
 const matModules = [
   MatFormFieldModule,
@@ -119,8 +121,7 @@ const matModules = [
         MatSelectModule,
         MatVideoModule,
         OpenviduSessionModule,
-
-        // OpenviduSessionModule
+        CanvasWhiteboardModule
     ],
   exports: [
     matModules
@@ -180,7 +181,8 @@ const matModules = [
     },
     CookieService,
     ModalService,
-    AnnouncerService
+    AnnouncerService,
+    WebsocketService
   ],
   bootstrap: [AppComponent]
 })

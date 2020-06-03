@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {CourseService} from '../../services/course.service';
 import {Course} from '../../classes/course';
 import {AuthenticationService} from '../../services/authentication.service';
+import {WebsocketService} from '../../services/websocket.service';
 
 @Component({
   selector: 'app-dashboard-v2',
@@ -14,6 +15,7 @@ export class DashboardV2Component implements OnInit {
   public userCourses: Array<Course> = new Array<Course>();
 
   constructor(private courseService: CourseService,
+              private websocketService: WebsocketService,
               public authenticationService: AuthenticationService) {
   }
 
@@ -31,4 +33,7 @@ export class DashboardV2Component implements OnInit {
       });
   }
 
+  do() {
+    this.websocketService._joinBroadcast('LOL')
+  }
 }

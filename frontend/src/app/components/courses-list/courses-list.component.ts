@@ -18,7 +18,7 @@ export class CoursesListComponent implements OnInit {
   dataSource: Array<Course>;
 
   constructor(private courseService: CourseService,
-              private authenticationService: AuthenticationService,
+              public authenticationService: AuthenticationService,
               private router: Router,
               private route: ActivatedRoute,
               private modalService: ModalService

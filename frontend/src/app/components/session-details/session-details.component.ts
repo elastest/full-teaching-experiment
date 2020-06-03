@@ -1,17 +1,19 @@
-import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
 import {FTSession} from '../../classes/FTSession';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {CourseService} from '../../services/course.service';
 import {Course} from '../../classes/course';
 import {AuthenticationService} from '../../services/authentication.service';
 import {ModalService} from '../../services/modal.service';
 import {SessionService} from '../../services/session.service';
 import {MatDatepicker} from '@angular/material/datepicker';
+import {CanvasWhiteboardComponent, CanvasWhiteboardUpdate} from 'ng2-canvas-whiteboard';
 
 @Component({
   selector: 'app-session-details',
+  viewProviders: [CanvasWhiteboardComponent],
   templateUrl: './session-details.component.html',
-  styleUrls: ['./session-details.component.css']
+  styleUrls: ['./session-details.component.css'],
 })
 export class SessionDetailsComponent implements OnInit, AfterViewInit {
 
@@ -24,6 +26,7 @@ export class SessionDetailsComponent implements OnInit, AfterViewInit {
               private modalService: ModalService,
               private courseService: CourseService,
               private sessionService: SessionService,
+              private router: Router,
               public authenticationService: AuthenticationService) {
   }
 
@@ -105,5 +108,29 @@ export class SessionDetailsComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
+    setTimeout(() => {
+      window.dispatchEvent(new Event('resize'));
+    }, 1);
+
+  }
+
+  backToCourse() {
+    this.router.navigate([`courses/${this.course.id}/1`])
+  }
+
+  sendBatchUpdate($event: CanvasWhiteboardUpdate[]) {
+
+  }
+
+  onCanvasClear() {
+
+  }
+
+  onCanvasRedo($event: any) {
+
+  }
+
+  onCanvasUndo($event: any) {
+
   }
 }
