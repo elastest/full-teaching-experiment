@@ -37,70 +37,70 @@ public class CourseAuthorizerInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
-        if ((handler instanceof HandlerMethod)) {
-            HandlerMethod handlerMethod = (HandlerMethod) handler;
-            CourseAuthorized courseAuthorized = handlerMethod.getMethod().getAnnotation(CourseAuthorized.class);
-
-            // we have correct annotation
-            if (Objects.isNull(courseAuthorized)) {
-                return true;
-            }
-
-            // check logged in
-            User user = userComponent.getLoggedUser();
-            if (Objects.isNull(user)) {
-                log.info("User is not logged in!");
-                response.setStatus(401);
-                return false;
-            }
-
-            String courseIdParamName = courseAuthorized.courseParam();
-            String courseDetailsIdParamName = courseAuthorized.courseDetailsIdParam();
-            boolean mustBeTeacher = courseAuthorized.mustBeTeacherOfCourse();
-            Course course = null;
-
-            // get course by id
-            if (!courseIdParamName.equals("")) {
-                long id = Long.parseLong(request.getParameter(courseIdParamName));
-                course = this.courseService.getFromId(id);
-            }
-
-            // get course by details
-            if(!courseDetailsIdParamName.equals("")){
-                long id = Long.parseLong(request.getParameter(courseDetailsIdParamName));
-                CourseDetails courseDetails = this.courseDetailsService.getFromId(id);
-
-                // course details found
-                if(Objects.nonNull(courseDetails)){
-                    course = courseDetails.getCourse();
-                }
-            }
-
-
-            // course found
-            if (Objects.nonNull(course)) {
-                log.info("Course was found with id {}!", course.getId());
-
-                // check if user is teacher
-                if (mustBeTeacher) {
-                    boolean isTeacher = course.getTeacher().equals(user);
-                    log.info("Is teacher: {}", isTeacher);
-                    return isTeacher;
-                }
-
-                // check if is attender
-                else {
-                    boolean isAttender = course.getAttenders().contains(user);
-                    log.info("Is attender: {}", isAttender);
-                    return isAttender;
-                }
-            }
-            // course not found
-            else {
-                log.info("Course does not exist!");
-                return false;
-            }
-        }
+//        if ((handler instanceof HandlerMethod)) {
+//            HandlerMethod handlerMethod = (HandlerMethod) handler;
+//            CourseAuthorized courseAuthorized = handlerMethod.getMethod().getAnnotation(CourseAuthorized.class);
+//
+//            // we have correct annotation
+//            if (Objects.isNull(courseAuthorized)) {
+//                return true;
+//            }
+//
+//            // check logged in
+//            User user = userComponent.getLoggedUser();
+//            if (Objects.isNull(user)) {
+//                log.info("User is not logged in!");
+//                response.setStatus(401);
+//                return false;
+//            }
+//
+//            String courseIdParamName = courseAuthorized.courseParam();
+//            String courseDetailsIdParamName = courseAuthorized.courseDetailsIdParam();
+//            boolean mustBeTeacher = courseAuthorized.mustBeTeacherOfCourse();
+//            Course course = null;
+//
+//            // get course by id
+//            if (!courseIdParamName.equals("")) {
+//                long id = Long.parseLong(request.getParameter(courseIdParamName));
+//                course = this.courseService.getFromId(id);
+//            }
+//
+//            // get course by details
+//            if(!courseDetailsIdParamName.equals("")){
+//                long id = Long.parseLong(request.getParameter(courseDetailsIdParamName));
+//                CourseDetails courseDetails = this.courseDetailsService.getFromId(id);
+//
+//                // course details found
+//                if(Objects.nonNull(courseDetails)){
+//                    course = courseDetails.getCourse();
+//                }
+//            }
+//
+//
+//            // course found
+//            if (Objects.nonNull(course)) {
+//                log.info("Course was found with id {}!", course.getId());
+//
+//                // check if user is teacher
+//                if (mustBeTeacher) {
+//                    boolean isTeacher = course.getTeacher().equals(user);
+//                    log.info("Is teacher: {}", isTeacher);
+//                    return isTeacher;
+//                }
+//
+//                // check if is attender
+//                else {
+//                    boolean isAttender = course.getAttenders().contains(user);
+//                    log.info("Is attender: {}", isAttender);
+//                    return isAttender;
+//                }
+//            }
+//            // course not found
+//            else {
+//                log.info("Course does not exist!");
+//                return false;
+//            }
+//        }
         return true;
     }
 

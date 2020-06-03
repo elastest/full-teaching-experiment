@@ -1,22 +1,16 @@
 package com.fullteaching.backend.notifications;
 
-import lombok.extern.java.Log;
+import com.fullteaching.backend.model.Course;
+import com.fullteaching.backend.model.User;
+import com.fullteaching.backend.notifications.message.CourseInvitationMessage;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
-import org.springframework.messaging.simp.SimpMessageType;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-
-import javax.management.Notification;
-import java.util.HashSet;
-import java.util.Set;
 
 @Log4j2
 @Component
 public class NotificationDispatcher {
-    private Set<String> listeners = new HashSet<>();
     private final SimpMessagingTemplate template;
 
     @Autowired
@@ -24,24 +18,10 @@ public class NotificationDispatcher {
         this.template = template;
     }
 
-    public void add(String user){
-        this.listeners.add(user);
-    }
-
-    @Scheduled(fixedDelay = 2000)
-    public void dispatch() {
-        for (String listener : listeners) {
-            log.info("Sending notification to " + listener);
-            SimpMessageHeaderAccessor headerAccessor = SimpMessageHeaderAccessor.create(SimpMessageType.MESSAGE);
-            headerAccessor.setSessionId(listener);
-            headerAccessor.setLeaveMutable(true);
-            int value = (int) Math.round(Math.random() * 100d);
-            template.convertAndSendToUser(
-                    listener,
-                    "/notification/item",
-                    null,
-                    headerAccessor.getMessageHeaders());
-        }
+    public void notifyInvitedToCourse(User user, Course course) {
+        String name = user.getName();
+        log.info("Notifying user {} that was invited to course {}", user.getName(), course.getTitle());
+        this.template.convertAndSendToUser(name, "/queue/reply", new CourseInvitationMessage(course));
     }
 
 }

@@ -77,10 +77,10 @@ import {MatVideoModule} from 'mat-video';
 import {VideoDialogToolsComponent} from './components/video-dialog-tools/video-dialog-tools.component';
 import {VideoRecorderComponent} from './components/video-recorder/video-recorder.component';
 import {OpenviduSessionModule} from 'openvidu-angular';
-import { AudioRecorderComponent } from './components/audio-recorder/audio-recorder.component';
-import { SessionDetailsComponent } from './components/session-details/session-details.component';
-import { SessionCreationModalComponent } from './components/session-creation-modal/session-creation-modal.component';
-import { CanvasWhiteboardModule } from 'ng2-canvas-whiteboard';
+import {AudioRecorderComponent} from './components/audio-recorder/audio-recorder.component';
+import {SessionDetailsComponent} from './components/session-details/session-details.component';
+import {SessionCreationModalComponent} from './components/session-creation-modal/session-creation-modal.component';
+import {CanvasWhiteboardModule} from 'ng2-canvas-whiteboard';
 import {WebsocketService} from './services/websocket.service';
 
 const matModules = [
@@ -93,36 +93,36 @@ const matModules = [
 ];
 
 @NgModule({
-    imports: [
-        BrowserModule,
-        BrowserAnimationsModule,
-        FormsModule,
-        HttpClientModule,
-        routing,
-        matModules,
-        MatSidenavModule,
-        MatMenuModule,
-        MatToolbarModule,
-        MatCardModule,
-        ReactiveFormsModule,
-        MatIconModule,
-        MatDividerModule,
-        MatTableModule,
-        MatTabsModule,
-        AngularEditorModule,
-        MatDatepickerModule,
-        SweetAlert2Module.forRoot(),
-        MatTooltipModule,
-        MatGridListModule,
-        MatExpansionModule,
-        DragDropModule,
-        MatListModule,
-        MatSlideToggleModule,
-        MatSelectModule,
-        MatVideoModule,
-        OpenviduSessionModule,
-        CanvasWhiteboardModule
-    ],
+  imports: [
+    BrowserModule,
+    BrowserAnimationsModule,
+    FormsModule,
+    HttpClientModule,
+    routing,
+    matModules,
+    MatSidenavModule,
+    MatMenuModule,
+    MatToolbarModule,
+    MatCardModule,
+    ReactiveFormsModule,
+    MatIconModule,
+    MatDividerModule,
+    MatTableModule,
+    MatTabsModule,
+    AngularEditorModule,
+    MatDatepickerModule,
+    SweetAlert2Module.forRoot(),
+    MatTooltipModule,
+    MatGridListModule,
+    MatExpansionModule,
+    DragDropModule,
+    MatListModule,
+    MatSlideToggleModule,
+    MatSelectModule,
+    MatVideoModule,
+    OpenviduSessionModule,
+    CanvasWhiteboardModule
+  ],
   exports: [
     matModules
   ],

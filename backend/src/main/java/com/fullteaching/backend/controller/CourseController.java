@@ -1,12 +1,12 @@
 package com.fullteaching.backend.controller;
 
-import java.security.Principal;
 import java.util.*;
 
 import com.fullteaching.backend.annotation.CourseAuthorized;
 import com.fullteaching.backend.annotation.LoginRequired;
 import com.fullteaching.backend.annotation.RoleFilter;
 import com.fullteaching.backend.model.Course;
+import com.fullteaching.backend.notifications.NotificationDispatcher;
 import com.fullteaching.backend.notifications.message.CourseInvitationMessage;
 import com.fullteaching.backend.service.CourseService;
 import com.fullteaching.backend.service.UserService;
@@ -33,14 +33,14 @@ public class CourseController extends SecureController {
 
 	private final CourseService courseService;
 	private final UserService userService;
-	private final SimpMessagingTemplate template;
+	private final NotificationDispatcher notificationDispatcher;
 
 	@Autowired
-	public CourseController(CourseService courseService, UserService userService, UserComponent user, AuthorizationService authorizationService, SimpMessagingTemplate template) {
+	public CourseController(CourseService courseService, UserService userService, UserComponent user, AuthorizationService authorizationService, NotificationDispatcher notificationDispatcher) {
 		super(user,authorizationService);
 		this.courseService = courseService;
 		this.userService = userService;
-		this.template = template;
+		this.notificationDispatcher = notificationDispatcher;
 	}
 
 
@@ -269,10 +269,10 @@ public class CourseController extends SecureController {
 					customResponse.emailsInvalid,
 					customResponse.emailsValidNotRegistered);
 
+			// notify attenders that they were added to a course
 			for(User attender : newAddedAttenders){
-				template.convertAndSendToUser(attender.getName(),  "/queue/notification", new CourseInvitationMessage(c));
+				this.notificationDispatcher.notifyInvitedToCourse(attender, c);
 			}
-
 
 			return new ResponseEntity<>(customResponse, HttpStatus.OK);
 		}

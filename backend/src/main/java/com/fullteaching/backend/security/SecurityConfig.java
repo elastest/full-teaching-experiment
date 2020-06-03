@@ -81,6 +81,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
         http.authorizeRequests().antMatchers(HttpMethod.POST, "/load-files/upload/picture/**").hasAnyRole("TEACHER", "STUDENT");
         http.authorizeRequests().antMatchers(HttpMethod.GET, "/load-files/course/**").hasAnyRole("TEACHER", "STUDENT");
 
+        http.authorizeRequests().antMatchers("/ws/**").authenticated();
+
         // Pictures
         http.authorizeRequests().antMatchers(HttpMethod.GET, "/assets/pictures/*").authenticated();
 

@@ -1,47 +1,52 @@
 package com.fullteaching.backend.notifications;
 
-import com.fullteaching.backend.annotation.LoginRequired;
-import com.fullteaching.backend.model.SocketClientMessage;
-import com.fullteaching.backend.model.SocketMessage;
-import com.fullteaching.backend.model.User;
-import com.fullteaching.backend.security.user.UserComponent;
+import com.fullteaching.backend.service.CourseService;
+import com.fullteaching.backend.service.UserService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.util.HtmlUtils;
 
 @Log4j2
-@Controller("/notify")
+@Controller
 public class NotificationsController {
 
     private final NotificationDispatcher dispatcher;
-    private final UserComponent userComponent;
+
+    private final CourseService courseService;
+
+    private final UserService userService;
 
 
     @Autowired
-    public NotificationsController(NotificationDispatcher dispatcher, UserComponent userComponent) {
+    public NotificationsController(NotificationDispatcher dispatcher, CourseService courseService, UserService userService) {
         this.dispatcher = dispatcher;
-        this.userComponent = userComponent;
+        this.courseService = courseService;
+        this.userService = userService;
     }
 
-    @LoginRequired
-    @MessageMapping("/join")
-    @SendTo("/topic/greetings")
-    public SocketMessage join(SocketClientMessage message){
-        log.info(message.getContent());
-        User user = userComponent.getLoggedUser();
-        log.info(user.getId());
-        return  new SocketMessage("Hi " + user.getName());
-    }
-
-    @MessageMapping("/hello")
-    @SendTo("/topic/greetings")
-    public SocketMessage greeting(SocketClientMessage message) throws Exception {
-        Thread.sleep(1000); // simulated delay
-        return new SocketMessage("Hello, " + HtmlUtils.htmlEscape(message.getContent()) + "!");
-    }
-
+//    @MessageMapping("/join")
+//    @SendTo("/topic/greetings")
+//    public SocketMessage join(Principal principal) {
+//        String name = principal.getName();
+//        return new SocketMessage("You joined to broadcast service as: " + name);
+//    }
+//
+//    @MessageMapping("/hello")
+//    @SendTo("/topic/greetings")
+//    public SocketMessage greeting(SocketClientMessage message) throws Exception {
+//        Thread.sleep(1000); // simulated delay
+//        return new SocketMessage("Hello, " + HtmlUtils.htmlEscape(message.getContent()) + "!");
+//    }
+//
+//    public void test() {
+//        String name = "teacher@gmail.com";
+//        Course course = this.courseService.getFromId(55L);
+//        try {
+//            Thread.sleep(3000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//        this.dispatcher.notifyInvitedToCourse(userService.getByEmail(name), course);
+//    }
 
 }

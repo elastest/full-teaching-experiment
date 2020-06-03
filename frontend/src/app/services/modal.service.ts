@@ -1,8 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Router} from "@angular/router";
-import {Comment} from "../classes/comment";
-import {Course} from "../classes/course";
-import {User} from "../classes/user";
+import {Router} from '@angular/router';
 
 const Swal = require('sweetalert2');
 
@@ -54,7 +51,7 @@ export class ModalService {
   }
 
 
-  public newInputCallbackedModal(title, onAccept: Function){
+  public newInputCallbackedModal(title, onAccept: Function) {
     Swal.fire({
       title: title,
       input: 'text',
@@ -70,22 +67,22 @@ export class ModalService {
       })
   }
 
-  public newCallbackedModal(title: string, onAccept: Function){
+  public newCallbackedModal(title: string, onAccept: Function) {
     Swal.fire({
       title: title,
       icon: 'warning',
-      text: "You won't be able to revert this!",
+      text: 'You won\'t be able to revert this!',
       confirmButtonText: 'Yes, delete it!',
       showCancelButton: true
     })
       .then((accepted) => {
-        if(accepted.value) {
+        if (accepted.value) {
           onAccept();
         }
       })
   }
 
-  public newMultiStageModalWithCallback(titles: Array<string>, progressSteps: Array<string>, callback: Function){
+  public newMultiStageModalWithCallback(titles: Array<string>, progressSteps: Array<string>, callback: Function) {
     Swal.mixin({
       input: 'text',
       confirmButtonText: 'Next &rarr;',
@@ -117,4 +114,32 @@ export class ModalService {
       title: title
     })
   }
+
+  showAnimatedDialog(content: string) {
+    Swal.fire({
+      title: content,
+      showClass: {
+        popup: 'animate__animated animate__fadeInDown'
+      },
+      hideClass: {
+        popup: 'animate__animated animate__fadeOutUp'
+      }
+    })
+  }
+
+  public notificationDialog(title: string, text: string, confirmButtonText: string, onAccept: Function) {
+    Swal.fire({
+      title: title,
+      icon: 'info',
+      text: text,
+      confirmButtonText: confirmButtonText,
+      showCancelButton: true
+    })
+      .then((accepted) => {
+        if (accepted.value) {
+          onAccept();
+        }
+      })
+  }
+
 }

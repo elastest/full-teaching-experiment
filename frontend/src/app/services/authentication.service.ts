@@ -7,6 +7,7 @@ import {User} from '../classes/user';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {ModalService} from './modal.service';
 import {CookieService} from 'ngx-cookie-service';
+import {WebsocketService} from './websocket.service';
 
 
 @Injectable()
@@ -23,6 +24,7 @@ export class AuthenticationService {
   private role: string;
 
   constructor(private http: HttpClient,
+              private websocketService: WebsocketService,
               private router: Router,
               private modalService: ModalService,
               private cookieService: CookieService) {
@@ -87,6 +89,7 @@ export class AuthenticationService {
       this.role = 'ROLE_STUDENT';
       localStorage.setItem('rol', 'ROLE_STUDENT');
     }
+    this.websocketService._connect();
   }
 
 

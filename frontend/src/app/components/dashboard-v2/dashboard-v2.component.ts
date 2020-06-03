@@ -34,6 +34,6 @@ export class DashboardV2Component implements OnInit {
   }
 
   do() {
-    this.websocketService._joinBroadcast('LOL')
+    // this.websocketService._joinBroadcast('LOL')
   }
 }
