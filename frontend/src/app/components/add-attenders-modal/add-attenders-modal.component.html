@@ -10,7 +10,7 @@
           </mat-form-field>
         </form>
       </mat-grid-list>
-      <button [disabled]="!this.singleAddFg.valid" mat-raised-button color="primary" (click)="this.singleSubmit()">Submit</button>
+      <button [disabled]="!this.singleAddFg.valid" mat-raised-button color="primary" (click)="this.singleSubmit()" [mat-dialog-close]>Submit</button>
     </mat-tab>
     <mat-tab label="Bulk">
       <mat-grid-list [cols]="1" rowHeight="1:1" class="bg-transparent forum-thread wrapper attenders-list email-tabs">
@@ -25,7 +25,7 @@
           </mat-form-field>
         </form>
       </mat-grid-list>
-      <button [disabled]="!this.bulkAddFg.valid" mat-raised-button color="primary" (click)="this.bulkSubmit()">Submit</button>
+      <button [disabled]="!this.bulkAddFg.valid" mat-raised-button color="primary" (click)="this.bulkSubmit()" [mat-dialog-close]>Submit</button>
     </mat-tab>
   </mat-tab-group>
 </mat-dialog-content>

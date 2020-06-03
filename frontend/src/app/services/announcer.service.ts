@@ -37,8 +37,14 @@ export class AnnouncerService {
   private sessionCreatedAnnouncerSubject: Subject<FTSession[]> = new Subject<FTSession[]>();
   public sessionCreatedAnnouncer$ = this.sessionCreatedAnnouncerSubject.asObservable();
 
+  private courseAddedAnnouncerSubject: Subject<Course> = new Subject<Course>();
+  public courseAddedAnnouncer$ = this.courseAddedAnnouncerSubject.asObservable();
 
   constructor() {
+  }
+
+  announceCourseAdded(course: Course){
+    this.courseAddedAnnouncerSubject.next(course);
   }
 
   announceSessionCreated(sessions: FTSession[]){

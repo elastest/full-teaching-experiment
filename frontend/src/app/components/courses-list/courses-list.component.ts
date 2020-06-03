@@ -6,6 +6,7 @@ import {AuthenticationService} from '../../services/authentication.service';
 import {ModalService} from '../../services/modal.service';
 import {CourseDetails} from '../../classes/course-details';
 import {Forum} from '../../classes/forum';
+import {AnnouncerService} from '../../services/announcer.service';
 
 const Swal = require('sweetalert2');
 
@@ -19,6 +20,7 @@ export class CoursesListComponent implements OnInit {
 
   constructor(private courseService: CourseService,
               public authenticationService: AuthenticationService,
+              private announcerService: AnnouncerService,
               private router: Router,
               private route: ActivatedRoute,
               private modalService: ModalService
@@ -35,7 +37,12 @@ export class CoursesListComponent implements OnInit {
       .catch((err) => {
         console.log(err);
       })
+
+    this.announcerService.courseAddedAnnouncer$.subscribe(course => {
+      this.dataSource.push(course);
+    })
   }
+
 
   createCourse() {
 

@@ -3,11 +3,11 @@ import {Stomp} from '@stomp/stompjs';
 import * as SockJS from 'sockjs-client';
 import {ModalService} from './modal.service';
 import {Router} from '@angular/router';
+import {NotificationService} from './notification.service';
 
 @Injectable()
 export class WebsocketService {
-  constructor(private modalService: ModalService,
-              private router: Router) {
+  constructor(private notificationService: NotificationService) {
   }
 
   webSocketEndPoint: string = 'http://localhost:5001/ws';
@@ -59,13 +59,7 @@ export class WebsocketService {
 
   onMessageReceived(message) {
     const objectInMessage = JSON.parse(message.body);
-    const keys = Object.keys(objectInMessage);
-    if (keys.includes('course')) {
-      const course = objectInMessage.course;
-      this.modalService.notificationDialog(`New course invitation!`, `You have been invited to course: ${course.title}`, 'open', () => {
-        this.router.navigate(['/courses/' + course.id + '/1'])
-      })
-    }
+    this.notificationService.notify(objectInMessage);
   }
 
 }

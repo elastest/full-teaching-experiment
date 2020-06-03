@@ -6,10 +6,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.PostConstruct;
 
 import com.fullteaching.backend.annotation.LoginRequired;
-import com.fullteaching.backend.annotation.RoleFilter;
 import com.fullteaching.backend.model.Session;
+import com.fullteaching.backend.notifications.NotificationDispatcher;
 import com.fullteaching.backend.service.SessionService;
-import com.fullteaching.backend.struct.Role;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -37,6 +36,7 @@ public class VideoSessionController {
     private final SessionService sessionService;
     private final AuthorizationService authorizationService;
     private final UserComponent user;
+    private final NotificationDispatcher dispatcher;
 
     @Value("${openvidu.url}")
     private String openviduUrl;
@@ -55,10 +55,11 @@ public class VideoSessionController {
     String URL;
 
     @Autowired
-    public VideoSessionController(SessionService sessionService, AuthorizationService authorizationService, UserComponent user) {
+    public VideoSessionController(SessionService sessionService, AuthorizationService authorizationService, UserComponent user, NotificationDispatcher dispatcher) {
         this.sessionService = sessionService;
         this.authorizationService = authorizationService;
         this.user = user;
+        this.dispatcher = dispatcher;
     }
 
     @PostConstruct
@@ -95,6 +96,10 @@ public class VideoSessionController {
                     log.error("Error geting OpenVidu sessionId and token: First user must be the teacher of the course");
                     return teacherAuthorized;
                 } else {
+
+                    // notify session started
+                    this.dispatcher.notifySessionStarted(session);
+
                     io.openvidu.java.client.Session s = this.openVidu.createSession();
 
                     sessionId = s.getSessionId();
