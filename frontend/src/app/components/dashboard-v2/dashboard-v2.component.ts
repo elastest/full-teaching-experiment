@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {CourseService} from '../../services/course.service';
 import {Course} from '../../classes/course';
 import {AuthenticationService} from '../../services/authentication.service';
@@ -7,6 +7,7 @@ import {WebsocketService} from '../../services/websocket.service';
 @Component({
   selector: 'app-dashboard-v2',
   templateUrl: './dashboard-v2.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: ['./dashboard-v2.component.scss']
 })
 export class DashboardV2Component implements OnInit {

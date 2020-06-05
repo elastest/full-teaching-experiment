@@ -5,8 +5,7 @@
       <mat-card-title>Profile</mat-card-title>
     </mat-card-header>
 
-    <img mat-card-image class="profile-img" src="assets/images/default_session_image.png" alt="Profile picture">
-
+    <img mat-card-image class="profile-img" [src]="getProfilePicture()" alt="Profile picture">
 
     <mat-card-content class="spaced">
 
@@ -32,8 +31,15 @@
       </mat-expansion-panel>
     </mat-card-content>
     <mat-card-actions>
-      <button mat-raised-button color="primary" class="mat-elevation-z5" (click)="openChangePasswordDialog()">Change
-        password
+      <button matTooltip="Change password" mat-raised-button color="primary" class="mat-elevation-z5" (click)="openChangePasswordDialog()">
+        <mat-icon>
+          vpn_key
+        </mat-icon>
+      </button>
+      <button matTooltip="Change profile picture" mat-raised-button color="primary" class="mat-elevation-z5" (click)="openProfilePictureUploader()">
+        <mat-icon>
+          portrait
+        </mat-icon>
       </button>
     </mat-card-actions>
   </mat-card>

@@ -82,6 +82,7 @@ import {SessionDetailsComponent} from './components/session-details/session-deta
 import {SessionCreationModalComponent} from './components/session-creation-modal/session-creation-modal.component';
 import {CanvasWhiteboardModule} from 'ng2-canvas-whiteboard';
 import {WebsocketService} from './services/websocket.service';
+import { ProfilePictureDialogComponent } from './components/profile-picture-dialog/profile-picture-dialog.component';
 
 const matModules = [
   MatFormFieldModule,
@@ -121,7 +122,7 @@ const matModules = [
     MatSelectModule,
     MatVideoModule,
     OpenviduSessionModule,
-    CanvasWhiteboardModule
+    CanvasWhiteboardModule,
   ],
   exports: [
     matModules
@@ -160,7 +161,7 @@ const matModules = [
     AudioRecorderComponent,
     SessionDetailsComponent,
     SessionCreationModalComponent,
-
+    ProfilePictureDialogComponent,
   ],
   providers: [
     AuthenticationService,

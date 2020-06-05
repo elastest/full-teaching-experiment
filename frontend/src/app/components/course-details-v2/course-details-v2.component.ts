@@ -153,7 +153,7 @@ export class CourseDetailsV2Component implements OnInit {
       .then(result => {
         if (result) {
 
-          let value = result['value'];
+          let value: string = result['value'] as any as string;
 
           if (value) {
 

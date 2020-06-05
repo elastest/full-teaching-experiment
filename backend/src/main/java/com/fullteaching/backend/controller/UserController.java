@@ -1,5 +1,6 @@
 package com.fullteaching.backend.controller;
 
+import com.fullteaching.backend.annotation.LoginRequired;
 import com.fullteaching.backend.model.User;
 import com.fullteaching.backend.security.user.UserComponent;
 import com.fullteaching.backend.service.UserService;
@@ -184,6 +185,5 @@ public class UserController {
     		return ResponseEntity.ok(false);
 		}
     }
-
 
 }

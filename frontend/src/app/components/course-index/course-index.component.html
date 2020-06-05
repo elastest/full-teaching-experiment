@@ -32,7 +32,7 @@
   </div>
 
   <div class="course-index-header" *ngIf="this.authenticationService.isTeacher() && !this.editingContent">
-    <button mat-raised-button color="primary" (click)="this.editingContent = true" matTooltip="Edit course information">
+    <button class="mat-elevation-z10" mat-raised-button color="primary" (click)="this.editingContent = true" matTooltip="Edit course information">
       <i class="material-icons">
         edit
       </i>

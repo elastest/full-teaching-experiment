@@ -2,20 +2,20 @@
 <mat-toolbar color="primary" *ngIf="authenticationService.isLoggedIn()">
 
   <span>
-    <a id="logo-container-logged" routerLink="/" class="brand-logo app-title-header white-text ">FullTeaching-2.0</a>
+    <a id="logo-container-logged" routerLink="/" class="neon">FullTeaching-2.0</a>
   </span>
   <span class="example-fill-remaining-space"></span>
 
 
-  <button mat-raised-button [matMenuTriggerFor]="menu">
+  <button class="menu-button" mat-raised-button [matMenuTriggerFor]="menu">
     <i class="material-icons">
       account_box
     </i>
   </button>
-  <button *ngIf="!isAnimatedBackgroundEnabled()"
+  <button class="menu-button" *ngIf="!isAnimatedBackgroundEnabled()"
     (click)="toggleVanta()"
     matTooltip="Enable animated background"
-    mat-raised-button>
+    mat-button>
     <i class="material-icons">
       blur_on
     </i>
@@ -23,7 +23,7 @@
   <button *ngIf="isAnimatedBackgroundEnabled()"
     (click)="toggleVanta()"
     matTooltip="Disable animated background"
-    mat-raised-button>
+    mat-button>
     <i class="material-icons">
       blur_off
     </i>

@@ -12,6 +12,7 @@ import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {environment} from '../../environments/environment';
 import {VideoPlayerService} from './video-player.service';
 import {Subject} from 'rxjs';
+import {User} from '../classes/user';
 
 @Injectable()
 export class FileService {
@@ -135,5 +136,16 @@ export class FileService {
     });
     let options = ({headers});
     return this.http.post<FileGroup>(`/api-load-files/upload/course/${courseId}/file-group/${fileGroupId}/type/${type}`, formData, options);
+  }
+
+  public changeProfilePicture(user: User, file: any){
+    const url = `/api-load-files/upload/picture/${user.id}`
+    let headers = new HttpHeaders({
+      'Authorization': 'Bearer ' + this.authenticationService.token
+    });
+    let options = ({headers});
+    const formData: FormData = new FormData();
+    formData.set('file', file, file.name);
+    return this.http.post<string>(url, formData, options);
   }
 }

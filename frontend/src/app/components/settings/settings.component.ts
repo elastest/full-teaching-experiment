@@ -1,13 +1,13 @@
 import {Component, OnInit} from '@angular/core';
-import {environment} from '../../../environments/environment';
 
 import {AuthenticationService} from '../../services/authentication.service';
-import {UserService} from '../../services/user.service';
-import {AnimationService} from '../../services/animation.service';
 import {User} from '../../classes/user';
-import {Constants} from '../../constants';
-import {MatDialog} from "@angular/material/dialog";
-import {ChangePasswordComponent} from "../change-password/change-password.component";
+import {MatDialog} from '@angular/material/dialog';
+import {ChangePasswordComponent} from '../change-password/change-password.component';
+import {ModalService} from '../../services/modal.service';
+import {UserService} from '../../services/user.service';
+import {ProfilePictureDialogComponent} from '../profile-picture-dialog/profile-picture-dialog.component';
+import {environment} from '../../../environments/environment';
 
 declare var Materialize: any;
 
@@ -18,38 +18,15 @@ declare var Materialize: any;
 })
 export class SettingsComponent implements OnInit {
 
-  user: User;
-
-  URL_UPLOAD: string;
-
-  processingPic: boolean = false;
-  processingPass: boolean = false;
-
-  submitProcessing: boolean;
-  fieldsIncorrect: boolean = false;
-
-  inputCurrentPassword: string;
-  inputNewPassword: string;
-  inputNewPassword2: string;
-
-  //Error message content
-  errorTitle: string;
-  errorContent: string;
-  customClass: string;
-  toastMessage: string;
+  public user: User;
 
   constructor(
     public matDialog: MatDialog,
-    public authenticationService: AuthenticationService,
-    public userService: UserService,
-    public animationService: AnimationService) {
-
-    //URL for uploading files changes between development stage and production stage
-    this.URL_UPLOAD = environment.URL_PIC_UPLOAD;
+    public authenticationService: AuthenticationService) {
   }
 
-  openChangePasswordDialog(){
-    this.matDialog.open(ChangePasswordComponent,{
+  openChangePasswordDialog() {
+    this.matDialog.open(ChangePasswordComponent, {
       width: '75vh',
     });
   }
@@ -63,87 +40,16 @@ export class SettingsComponent implements OnInit {
       });
   }
 
-  pictureUploadStarted(started: boolean) {
-    this.processingPic = started;
-  }
-
-  pictureUploadCompleted(response) {
-    console.log("Picture changed successfully: " + response);
-    this.user.picture = response;
-    this.processingPic = false;
-  }
-
-  onPasswordSubmit() {
-
-    this.processingPass = true;
-
-    //New passwords don't match
-    if (this.inputNewPassword !== this.inputNewPassword2) {
-      this.errorTitle = 'Your passwords don\'t match!';
-      this.errorContent = '';
-      this.customClass = 'fail';
-      this.toastMessage = 'Your passwords don\'t match!';
-      this.handleError();
-    } else {
-
-      let regex = new RegExp(Constants.PASS_REGEX);
-
-      //The new password does not have a valid format
-      if (!(this.inputNewPassword.match(regex))) {
-        this.errorTitle = 'Your new password does not have a valid format!';
-        this.errorContent = 'It must be at least 8 characters long and include one uppercase, one lowercase and a number';
-        this.customClass = 'fail';
-        this.toastMessage = 'Your new password must be 8 characters long, one upperCase, one lowerCase and a number';
-        this.handleError();
-      } else {
-        this.userService.changePassword(this.inputCurrentPassword, this.inputNewPassword).subscribe(
-          result => {
-            //Password changed succesfully
-            console.log("Password changed succesfully!");
-
-            this.inputCurrentPassword = '';
-            this.inputNewPassword = '';
-            this.inputNewPassword2 = '';
-
-            this.submitProcessing = false;
-            this.fieldsIncorrect = false;
-
-            this.errorTitle = 'Password changed succesfully!';
-            this.errorContent = '';
-            this.customClass = 'correct';
-            this.toastMessage = 'Your password has been correctly changed';
-
-            this.handleError();
-          },
-          error => {
-            console.log("Password change failed (error): " + error);
-            if (error === 304) { //NOT_MODIFIED: New password not valid
-              this.errorTitle = 'Your new password does not have a valid format!';
-              this.errorContent = 'It must be at least 8 characters long and include one uppercase, one lowercase and a number';
-              this.customClass = 'fail';
-              this.toastMessage = 'Your new password must be 8 characters long, one upperCase, one lowerCase and a number';
-            } else if (error === 409) { //CONFLICT: Current password not valid
-              this.errorTitle = 'Invalid current password';
-              this.errorContent = 'Our server has rejected that password';
-              this.customClass = 'fail';
-              this.toastMessage = 'Your current password is wrong!';
-            }
-
-            // Password change failed
-            this.handleError();
-          }
-        );
+  openProfilePictureUploader() {
+    this.matDialog.open(ProfilePictureDialogComponent, {
+      width: '75vh',
+      data: {
+        user: this.user
       }
-    }
+    });
   }
 
-  handleError() {
-    this.processingPass = false;
-    if (window.innerWidth <= Constants.PHONE_MAX_WIDTH) { // On mobile phones error on toast
-      Materialize.toast(this.toastMessage, Constants.TOAST_SHOW_TIME, 'rounded');
-    } else { // On desktop error on error-message
-      this.fieldsIncorrect = true;
-    }
+  getProfilePicture() {
+    return this.user.picture ? `${environment.API_URL}${this.user.picture}` : 'assets/images/default_session_image.png';
   }
-
 }
