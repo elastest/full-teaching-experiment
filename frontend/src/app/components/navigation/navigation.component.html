@@ -6,15 +6,7 @@
   </span>
   <span class="example-fill-remaining-space"></span>
 
-
-  <button *ngIf="!this.authenticationService.getCurrentUser()?.picture" class="menu-button" mat-raised-button [matMenuTriggerFor]="menu">
-    <i class="material-icons">
-      account_box
-    </i>
-  </button>
-  <button *ngIf="this.authenticationService.getCurrentUser()?.picture" class="menu-button" mat-button [matMenuTriggerFor]="menu">
-    <img [src]="this.getPicture()" alt="Avatar" class="avatar">
-  </button>
+  <app-profile-dropdown></app-profile-dropdown>
 
   <button class="menu-button" *ngIf="!isAnimatedBackgroundEnabled()"
     (click)="toggleVanta()"
@@ -32,15 +24,6 @@
       blur_off
     </i>
   </button>
-  <mat-menu #menu="matMenu" style="padding-right: 3vh">
-    <button mat-menu-item routerLink="/settings">{{this.authenticationService.getCurrentUser()?.name}}</button>
-    <mat-divider></mat-divider>
-    <button mat-menu-item (click)="this.authenticationService.logOut()" >
-      <i class="material-icons">
-        input
-      </i>
-    </button>
-  </mat-menu>
 
 </mat-toolbar>
 

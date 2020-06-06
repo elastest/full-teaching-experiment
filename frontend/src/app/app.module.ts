@@ -83,6 +83,7 @@ import {SessionCreationModalComponent} from './components/session-creation-modal
 import {CanvasWhiteboardModule} from 'ng2-canvas-whiteboard';
 import {WebsocketService} from './services/websocket.service';
 import { ProfilePictureDialogComponent } from './components/profile-picture-dialog/profile-picture-dialog.component';
+import { ProfileDropdownComponent } from './components/profile-dropdown/profile-dropdown.component';
 
 const matModules = [
   MatFormFieldModule,
@@ -162,6 +163,7 @@ const matModules = [
     SessionDetailsComponent,
     SessionCreationModalComponent,
     ProfilePictureDialogComponent,
+    ProfileDropdownComponent,
   ],
   providers: [
     AuthenticationService,

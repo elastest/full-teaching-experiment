@@ -50,6 +50,6 @@ export class SettingsComponent implements OnInit {
   }
 
   getProfilePicture() {
-    return this.user.picture ? `${environment.API_URL}${this.user.picture}` : 'assets/images/default_session_image.png';
+    return this.authenticationService.getCurrentUser().picture ? `${environment.API_URL}${this.authenticationService.getCurrentUser().picture}` : 'assets/images/default_session_image.png';
   }
 }

@@ -5,7 +5,9 @@
       <mat-card-title>Profile</mat-card-title>
     </mat-card-header>
 
-    <img mat-card-image class="profile-img" [src]="getProfilePicture()" alt="Profile picture">
+    <mat-card class="mat-elevation-z5">
+      <img class="profile-img" [src]="getProfilePicture()" alt="Profile picture">
+    </mat-card>
 
     <mat-card-content class="spaced">
 
