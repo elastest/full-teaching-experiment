@@ -283,7 +283,7 @@ public class FileController extends SecureController {
                 this.user.getLoggedUser().setPicture(u.getPicture());
             }
 
-            return new ResponseEntity<>(u.getPicture(), HttpStatus.CREATED);
+            return new ResponseEntity<>(u, HttpStatus.OK);
         }
     }
 

@@ -146,6 +146,6 @@ export class FileService {
     let options = ({headers});
     const formData: FormData = new FormData();
     formData.set('file', file, file.name);
-    return this.http.post<string>(url, formData, options);
+    return this.http.post<User>(url, formData, options);
   }
 }

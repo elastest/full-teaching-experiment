@@ -1,0 +1,21 @@
+<div class="wrapper" fxLayout="row" fxLayoutAlign="center center">
+
+  <div class="row no-margin">
+    <div class="uploadfilecontainer" (click)="fileInput.click()" appDragDrop
+         (onFileDropped)="handleFileInput($event.target.files)">
+      <input hidden type="file" multiple="multiple" #fileInput (change)="handleFileInput($event.target.files)">
+    </div>
+    <div class="files-list" *ngIf="this.fileToUpload">
+      <p> {{ this.fileToUpload?.name }} </p>
+    </div>
+  </div>
+
+</div>
+<mat-dialog-actions>
+  <button [mat-dialog-close] mat-raised-button (click)="this.upload() ">
+    Upload
+  </button>
+  <button [mat-dialog-close] mat-raised-button>
+    Close
+  </button>
+</mat-dialog-actions>

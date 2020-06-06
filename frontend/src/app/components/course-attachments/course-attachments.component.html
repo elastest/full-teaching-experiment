@@ -22,7 +22,9 @@
               <path d="M0 0h24v24H0z" fill="none"></path>
             </svg>
           </div>
-          <button mat-button (click)="deleteAttachment(f, fg)"><mat-icon>delete</mat-icon></button>
+          <button mat-button (click)="deleteAttachment(f, fg)">
+            <mat-icon>delete</mat-icon>
+          </button>
         </div>
       </div>
 
@@ -31,7 +33,8 @@
         <mat-card *ngFor="let f of fg.files" class="mat-elevation-z6 spaced">
           {{f.name}}
           <mat-card-actions>
-            <button *ngIf="this.isFile(f)" mat-button matTooltip="Download attachment" (click)="this.downloadAttachment(f)">
+            <button *ngIf="this.isFile(f)" mat-button matTooltip="Download attachment"
+                    (click)="this.downloadAttachment(f)">
               <mat-icon>cloud_download</mat-icon>
             </button>
             <button *ngIf="this.isLink(f)" mat-button matTooltip="Redirect to link" (click)="this.openLink(f.link)">
@@ -46,7 +49,8 @@
 
 
       <app-course-attachments *ngIf="fg.fileGroups.length > 0" [file-groups]="fg.fileGroups"
-                              [is-editing]="this.isEditing" [course]="this.course" [recursive-index]="this.recursiveIndex + 1"></app-course-attachments>
+                              [is-editing]="this.isEditing" [course]="this.course"
+                              [recursive-index]="this.recursiveIndex + 1"></app-course-attachments>
 
       <mat-action-row *ngIf="this.authService.isTeacher() && this.isEditing">
         <button mat-raised-button color="warn" (click)="this.deleteFileGroup(fg)">
@@ -58,9 +62,9 @@
         </button>
 
         <button (click)="newFileGroup(fg)" mat-raised-button color="primary"
-                                 matTooltip="Add new sub group into {{fg.title}}">
-        <mat-icon>add</mat-icon>
-      </button>
+                matTooltip="Add new sub group into {{fg.title}}">
+          <mat-icon>add</mat-icon>
+        </button>
 
         <button (click)="newAttachment(fg)" mat-raised-button color="primary"
                 matTooltip="Upload new file">
@@ -73,7 +77,8 @@
   </div>
 
   <div *ngIf="this.fileGroups?.length === 0" style="padding: 5vh">
-    <app-error-message [errorTitle]="'This course doesnt have any file yet!'" [errorContent]="''" [customClass]="'warning'"
+    <app-error-message [errorTitle]="'This course doesnt have any file yet!'" [errorContent]="''"
+                       [customClass]="'warning'"
                        [closable]="false"></app-error-message>
   </div>
 
