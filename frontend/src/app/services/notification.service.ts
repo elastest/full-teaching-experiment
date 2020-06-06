@@ -4,6 +4,9 @@ import {Router} from '@angular/router';
 import {FTSession} from '../classes/FTSession';
 import {Course} from '../classes/course';
 import {AnnouncerService} from './announcer.service';
+import {Entry} from '../classes/entry';
+import {Comment} from '../classes/comment';
+import {User} from '../classes/user';
 
 @Injectable({
   providedIn: 'root'
@@ -21,7 +24,7 @@ export class NotificationService {
     if (keys.includes('course')) {
       const course: Course = message.course;
       this.announcerService.announceCourseAdded(course);
-      this.modalService.notificationDialog(`New course invitation!`, `You have been invited to course: ${course.title}`, 'open', () => {
+      this.modalService.newNotificationModal( `You have been invited to the course: ${course.title}`, () => {
         this.router.navigate(['/courses/' + course.id + '/1'])
       })
     }
@@ -30,10 +33,30 @@ export class NotificationService {
     if(keys.includes('session')){
       const session: FTSession = message.session;
       const course: Course = message.sessionCourse;
-      this.modalService.notificationDialog(`A session has started!`, `The session: ${session.description} has just started!`, 'Join', () => {
+      this.modalService.newNotificationModal(`The session: ${session.description} has just started!`,  () => {
         this.router.navigate(['/session/' + course.id + '/' + session.id])
       })
     }
+
+    // comment reply
+    if(keys.includes('comment')){
+      const comment: Comment = message.comment;
+      const replier: User = message.replier;
+      const commentCourse: Course = message.commentCourse;
+      this.modalService.newNotificationModal(`${replier.name} just replied to your comment!`,() => {
+        //this.router.navigate([`/courses/${commentCourse.id}/1`])
+      });
+    }
+
+    // comment reply
+    if(keys.includes('entry')){
+      const entry: Entry = message.entry;
+      const userCommenting: User = message.userCommenting;
+      this.modalService.newNotificationModal(`${userCommenting.name} just commented in your entry!`,() => {
+      });
+    }
+
+
   }
 
 }

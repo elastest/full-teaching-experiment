@@ -3,6 +3,7 @@ package com.fullteaching.backend.controller;
 import com.fullteaching.backend.annotation.LoginRequired;
 import com.fullteaching.backend.annotation.RoleFilter;
 import com.fullteaching.backend.model.Comment;
+import com.fullteaching.backend.notifications.NotificationDispatcher;
 import com.fullteaching.backend.service.CommentService;
 import com.fullteaching.backend.model.Course;
 import com.fullteaching.backend.service.CourseService;
@@ -33,14 +34,16 @@ public final class CommentController extends SecureController{
     private final CommentService commentService;
     private final CourseService courseService;
     private final CourseDetailsService courseDetailsService;
+    private final NotificationDispatcher notificationDispatcher;
 
     @Autowired
-    public CommentController(UserComponent user, AuthorizationService authorizationService, CourseDetailsService courseDetailsService, EntryService entryService, CommentService commentService, CourseService courseService) {
+    public CommentController(UserComponent user, AuthorizationService authorizationService, CourseDetailsService courseDetailsService, EntryService entryService, CommentService commentService, CourseService courseService, NotificationDispatcher notificationDispatcher) {
         super(user, authorizationService);
         this.courseDetailsService = courseDetailsService;
         this.entryService = entryService;
         this.commentService = commentService;
         this.courseService = courseService;
+        this.notificationDispatcher = notificationDispatcher;
     }
 
 
@@ -139,6 +142,21 @@ public final class CommentController extends SecureController{
                     Entry entry = entryService.getFromId(id_entry);
 
                     log.info("New comment succesfully added: {}", comment.toString());
+
+                    User entryOwner = entry.getUser();
+                    User commentOwner = comment.getUser();
+                    User parentOwner = cParent.getUser();
+
+                    // send new comment in your entry notification
+                    if(!commentOwner.equals(entryOwner)){
+                        this.notificationDispatcher.notifyCommentAdded(entry, commentOwner);
+                    }
+
+                    // send new reply to your comment notification
+                    if(!parentOwner.equals(entryOwner) && !parentOwner.equals(commentOwner)){
+                        this.notificationDispatcher.notifyCommentReply(cParent, commentOwner);
+                    }
+
 
                     return new ResponseEntity<>(new NewEntryCommentResponse(entry, comment), HttpStatus.CREATED);
                 } else {

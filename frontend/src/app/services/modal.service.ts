@@ -13,6 +13,21 @@ export class ModalService {
   }
 
 
+  public newNotificationModal(message: string, onAccept: Function){
+    Swal.fire({
+      position: 'top-end',
+      icon: 'info',
+      title: message,
+      confirmButtonText: 'Open',
+      timer: 5000
+    })
+      .then((accepted) => {
+        if (accepted.value) {
+          onAccept();
+        }
+      })
+  }
+
   public newSuccessModal(title: string, text: string, redirect: string) {
     Swal.fire({
       title: title,

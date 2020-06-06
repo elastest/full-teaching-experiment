@@ -1,9 +1,9 @@
 package com.fullteaching.backend.notifications;
 
-import com.fullteaching.backend.model.Course;
-import com.fullteaching.backend.model.Session;
-import com.fullteaching.backend.model.User;
+import com.fullteaching.backend.model.*;
 import com.fullteaching.backend.notifications.message.CourseInvitationMessage;
+import com.fullteaching.backend.notifications.message.NewCommentInEntryMessage;
+import com.fullteaching.backend.notifications.message.NewCommentResponseMessage;
 import com.fullteaching.backend.notifications.message.SessionStartedMessage;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,4 +36,11 @@ public class NotificationDispatcher {
         }
     }
 
+    public void notifyCommentAdded(Entry entry, User userCommenting){
+        this.template.convertAndSendToUser(entry.getUser().getName(), "/queue/reply", new NewCommentInEntryMessage(entry, userCommenting));
+    }
+
+    public void notifyCommentReply(Comment parent, User replier){
+        this.template.convertAndSendToUser(parent.getUser().getName(), "/queue/reply", new NewCommentResponseMessage(parent, replier));
+    }
 }
