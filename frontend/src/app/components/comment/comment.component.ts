@@ -15,6 +15,7 @@ import {AudioRecorderService} from '../../services/audio-recorder.service';
 import {MatDialog} from '@angular/material/dialog';
 import {AudioRecorderComponent} from '../audio-recorder/audio-recorder.component';
 import {NoopScrollStrategy} from '@angular/cdk/overlay';
+import {environment} from '../../../environments/environment';
 
 @Component({
   selector: 'app-comment',
@@ -62,6 +63,11 @@ export class CommentComponent implements OnInit {
       autoFocus: true,
       scrollStrategy: new NoopScrollStrategy(),
     });
+  }
+
+  getCommentUserPicture(){
+    const user = this.comment.user;
+    return user.picture ? `${environment.API_URL}${user.picture}` : 'assets/images/default_session_image.png';
   }
 
   updatePostModalMode(mode: number, title: string, header: Entry, commentReplay: Comment, fileGroup: FileGroup) {
