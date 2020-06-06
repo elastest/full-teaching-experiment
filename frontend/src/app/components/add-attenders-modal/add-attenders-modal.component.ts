@@ -4,6 +4,7 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ModalService} from '../../services/modal.service';
 import {CourseService} from '../../services/course.service';
 import {EditionService} from '../../services/edition.service';
+import {AnnouncerService} from '../../services/announcer.service';
 
 @Component({
   selector: 'app-add-attenders-modal',
@@ -19,6 +20,7 @@ export class AddAttendersModalComponent implements OnInit {
 
   constructor(public authenticationService: AuthenticationService,
               public formBuilder: FormBuilder,
+              private announcerService: AnnouncerService,
               private modalService: ModalService,
               private courseService: CourseService,
               private editionService: EditionService) {
@@ -42,13 +44,14 @@ export class AddAttendersModalComponent implements OnInit {
 
     this.courseService.addCourseAttenders(this.editionService.getCourseAddingUsers().id, [email])
       .subscribe(resp => {
-
           let attendersAdded = resp.attendersAdded;
+
           let attendersAlreadyAdded = resp['attendersAlreadyAdded'];
           if (attendersAlreadyAdded.length > 0) {
             this.modalService.newErrorModal('The user is already in this course!', 'You tried to add a user that is already an attender of this course!', null);
           } else {
             this.modalService.newSuccessModal('Attender added successfully!', `The attender: ${email} was added to this course`, null);
+            this.announcerService.announceAttenderAddedToCourse(this.editionService.getCourseAddingUsers(), attendersAdded);
           }
         },
         error => {
@@ -94,7 +97,8 @@ export class AddAttendersModalComponent implements OnInit {
 
           // at least one added
           else {
-            this.modalService.newSuccessModal('Successfully added attenders!', `Attenders added: ${attendersAdded.map(a => a.name)}`, null);
+            this.modalService.newSuccessModal('Successfully added attenders!', ``, null);
+            this.announcerService.announceAttenderAddedToCourse(this.editionService.getCourseAddingUsers(), attendersAdded);
           }
 
 

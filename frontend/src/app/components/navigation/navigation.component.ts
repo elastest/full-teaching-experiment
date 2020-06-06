@@ -1,7 +1,9 @@
 import {Component, OnInit} from '@angular/core';
-import {AuthenticationService} from "../../services/authentication.service";
-import {LoginModalService} from "../../services/login-modal.service";
-import {Location} from "@angular/common";
+import {AuthenticationService} from '../../services/authentication.service';
+import {LoginModalService} from '../../services/login-modal.service';
+import {Location} from '@angular/common';
+import {User} from '../../classes/user';
+import {environment} from '../../../environments/environment';
 
 declare var VANTA;
 
@@ -12,8 +14,11 @@ declare var VANTA;
 })
 export class NavigationComponent implements OnInit {
 
-  constructor(public authenticationService: AuthenticationService, public loginModalService: LoginModalService, public location: Location) {
+  constructor(public authenticationService: AuthenticationService,
+              public location: Location) {
   }
+
+  private user: User;
 
   vanta;
 
@@ -22,9 +27,13 @@ export class NavigationComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.isAnimatedBackgroundEnabled()) {
-      this.applyVanta();
-    }
+    this.authenticationService.reqIsLogged()
+      .then(value => {
+        if (this.isAnimatedBackgroundEnabled()) {
+          this.applyVanta();
+        }
+        this.user = this.authenticationService.getCurrentUser();
+      })
   }
 
   toggleVanta() {
@@ -37,7 +46,7 @@ export class NavigationComponent implements OnInit {
 
   applyVanta() {
     this.vanta = VANTA.NET({
-      el: "#sticky-footer-div",
+      el: '#sticky-footer-div',
       mouseControls: true,
       touchControls: true,
       minHeight: 200.00,
@@ -62,4 +71,7 @@ export class NavigationComponent implements OnInit {
     return !!localStorage.getItem('apply-vanta');
   }
 
+  getPicture() {
+    return environment.API_URL + this.user.picture;
+  }
 }

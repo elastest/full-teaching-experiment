@@ -129,8 +129,8 @@ export class CourseAttachmentsComponent implements OnInit {
       if (name) {
         let newFileGroup = new FileGroup(name, fgParent);
 
-        this.fileService.newFileGroup(newFileGroup, this.course.courseDetails.id).subscribe(resp => {
-          this.announcerService.announceNewFileGroup(newFileGroup);
+        this.fileService.newFileGroup(newFileGroup, this.course.courseDetails.id).subscribe(courseDetails => {
+          this.announcerService.announceNewFileGroup(courseDetails);
         }, error => this.modalService.newErrorModal('Error creating a new file group!', error, null))
       }
 

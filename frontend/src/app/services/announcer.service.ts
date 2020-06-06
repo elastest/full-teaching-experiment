@@ -6,6 +6,8 @@ import {DialogSize} from '../enum/dialog-size.enum';
 import {Comment} from '../classes/comment';
 import {Entry} from '../classes/entry';
 import {FTSession} from '../classes/FTSession';
+import {User} from '../classes/user';
+import {CourseDetails} from '../classes/course-details';
 
 @Injectable()
 export class AnnouncerService {
@@ -19,7 +21,7 @@ export class AnnouncerService {
   private fileInFileGroupUpdatedAnnouncerSubject: Subject<number> = new Subject<number>();
   public fileInFileGroupUpdatedAnnouncer = this.fileInFileGroupUpdatedAnnouncerSubject.asObservable();
 
-  private fileGroupAddedAnnouncerSubject: Subject<FileGroup> = new Subject<FileGroup>();
+  private fileGroupAddedAnnouncerSubject: Subject<CourseDetails> = new Subject<CourseDetails>();
   public fileGroupAddedAnnouncer = this.fileGroupAddedAnnouncerSubject.asObservable();
 
   private fileUploadedAnnouncerSubject: Subject<{ fg: FileGroup, course: Course }> = new Subject<{ fg: FileGroup, course: Course }>();
@@ -40,7 +42,14 @@ export class AnnouncerService {
   private courseAddedAnnouncerSubject: Subject<Course> = new Subject<Course>();
   public courseAddedAnnouncer$ = this.courseAddedAnnouncerSubject.asObservable();
 
+  private attenderAddedToCourseAnnouncerSubject: Subject<{ course: Course, attenders: User[] }> = new Subject<{ course: Course, attenders: User[] }>();
+  public attenderAddedToCourseAnnouncer$ = this.attenderAddedToCourseAnnouncerSubject.asObservable();
+
   constructor() {
+  }
+
+  announceAttenderAddedToCourse(course: Course, attenders: User[]){
+    this.attenderAddedToCourseAnnouncerSubject.next({course: course, attenders: attenders});
   }
 
   announceCourseAdded(course: Course){
@@ -67,7 +76,7 @@ export class AnnouncerService {
     this.fileInFileGroupUpdatedAnnouncerSubject.next(objs);
   }
 
-  announceNewFileGroup(newFileGroup: FileGroup) {
+  announceNewFileGroup(newFileGroup: CourseDetails) {
     this.fileGroupAddedAnnouncerSubject.next(newFileGroup);
   }
 

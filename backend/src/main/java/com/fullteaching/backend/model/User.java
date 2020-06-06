@@ -55,8 +55,6 @@ public class User {
 		this.nickName = nickName;
 		if (picture != null && picture != "") {
 			this.picture = picture;
-		} else {
-			this.picture = "/../assets/images/default_session_image.png";
 		}
 		this.registrationDate = System.currentTimeMillis();
 		this.courses = new HashSet<>();

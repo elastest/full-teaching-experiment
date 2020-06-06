@@ -1,5 +1,13 @@
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
 @import "../node_modules/angular-calendar/css/angular-calendar.css";
+
+.avatar {
+  vertical-align: middle;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+
 .whiteboard-container {
   height: 100vh;
 }

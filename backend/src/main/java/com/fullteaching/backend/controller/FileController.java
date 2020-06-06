@@ -262,15 +262,19 @@ public class FileController extends SecureController {
                         e.printStackTrace();
                     }
                     fileOperationsService.deleteLocalFile(uploadedPicture.getName(), PICTURES_FOLDER);
-                    fileOperationsService.productionFileDeletion(
-                            fileOperationsService.getFileNameFromURL(u.getPicture()), "/pictures");
+                    if (u.getPicture() != null) {
+                        fileOperationsService.productionFileDeletion(
+                                fileOperationsService.getFileNameFromURL(u.getPicture()), "/pictures");
+                    }
                     u.setPicture(
                             "https://" + FileOperationsService.bucketAWS + ".s3.amazonaws.com/pictures/" + encodedName);
                     // ONLY ON PRODUCTION
                 } else {
                     // ONLY ON DEVELOPMENT
-                    fileOperationsService.deleteLocalFile(fileOperationsService.getFileNameFromURL(u.getPicture()),
-                            PICTURES_FOLDER);
+                    if (u.getPicture() != null) {
+                        fileOperationsService.deleteLocalFile(fileOperationsService.getFileNameFromURL(u.getPicture()),
+                                PICTURES_FOLDER);
+                    }
                     u.setPicture("/assets/pictures/" + uploadedPicture.getName());
 
                     log.info("Picture succesfully uploaded to path '{}'", uploadedPicture.getPath());

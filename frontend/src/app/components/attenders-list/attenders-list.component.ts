@@ -9,6 +9,7 @@ import {EditionService} from '../../services/edition.service';
 import {CourseService} from '../../services/course.service';
 import {User} from '../../classes/user';
 import {ModalService} from '../../services/modal.service';
+import {AnnouncerService} from '../../services/announcer.service';
 
 @Component({
   selector: 'app-attenders-list',
@@ -23,11 +24,22 @@ export class AttendersListComponent implements OnInit, OnChanges {
   constructor(public authenticationService: AuthenticationService,
               private courseService: CourseService,
               public matDialog: MatDialog,
+              private announcerService: AnnouncerService,
               private editionService: EditionService,
               private modalService: ModalService) {
   }
 
   ngOnInit(): void {
+    this.announcerService.attenderAddedToCourseAnnouncer$.subscribe(data => {
+      const course = data.course;
+      const attenders = data.attenders;
+      if(course.id === this.course.id){
+        attenders.forEach(attender => {
+          this.course.attenders.push(attender);
+        })
+        this.updateDataSource();
+      }
+    })
   }
 
   openAddModal() {

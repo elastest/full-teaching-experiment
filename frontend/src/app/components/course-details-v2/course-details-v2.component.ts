@@ -60,8 +60,8 @@ export class CourseDetailsV2Component implements OnInit {
         });
 
 
-        this.announcerService.fileGroupAddedAnnouncer.subscribe(newFg => {
-          this.recursiveFileGroupAdd(this.course.courseDetails.files, newFg)
+        this.announcerService.fileGroupAddedAnnouncer.subscribe(courseDetails => {
+          this.course.courseDetails = courseDetails;
         });
 
 

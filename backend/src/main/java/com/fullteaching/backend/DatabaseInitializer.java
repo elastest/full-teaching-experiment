@@ -29,7 +29,7 @@ public class DatabaseInitializer implements CommandLineRunner {
 		dateArray[2] = 1478029352681L;
 		
 		//Sample users
-		String defPicture = "/../assets/images/default_session_image.png";
+		String defPicture = null;
 		User user1 = new User("student1@gmail.com", "pass", "Student Imprudent", defPicture, "ROLE_STUDENT");
 		User user2 = new User("student2@gmail.com", "pass", "Student Concludent", defPicture, "ROLE_STUDENT");
 		User user3 = new User("teacher@gmail.com",  "pass", "Teacher Cheater",  defPicture, "ROLE_TEACHER");
