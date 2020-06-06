@@ -86,6 +86,7 @@ import { ProfilePictureDialogComponent } from './components/profile-picture-dial
 import { ProfileDropdownComponent } from './components/profile-dropdown/profile-dropdown.component';
 import { PdfOnlineViewerComponent } from './components/pdf-online-viewer/pdf-online-viewer.component';
 import {NgxExtendedPdfViewerModule} from 'ngx-extended-pdf-viewer';
+import { PhotoViewerComponent } from './components/photo-viewer/photo-viewer.component';
 
 const matModules = [
   MatFormFieldModule,
@@ -168,6 +169,7 @@ const matModules = [
     ProfilePictureDialogComponent,
     ProfileDropdownComponent,
     PdfOnlineViewerComponent,
+    PhotoViewerComponent,
   ],
   providers: [
     AuthenticationService,

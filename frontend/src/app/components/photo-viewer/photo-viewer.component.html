@@ -1,0 +1,11 @@
+<h1 mat-dialog-title>{{this.file?.name}}</h1>
+<mat-dialog-content>
+  <img #image>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button (click)="this.downloadPicture()">
+    <mat-icon>
+      cloud_download
+    </mat-icon>
+  </button>
+</mat-dialog-actions>

@@ -4,8 +4,6 @@ import {AuthenticationService} from '../../services/authentication.service';
 import {User} from '../../classes/user';
 import {MatDialog} from '@angular/material/dialog';
 import {ChangePasswordComponent} from '../change-password/change-password.component';
-import {ModalService} from '../../services/modal.service';
-import {UserService} from '../../services/user.service';
 import {ProfilePictureDialogComponent} from '../profile-picture-dialog/profile-picture-dialog.component';
 import {environment} from '../../../environments/environment';
 

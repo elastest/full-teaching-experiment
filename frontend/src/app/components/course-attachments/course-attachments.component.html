@@ -6,7 +6,6 @@
           {{fg.title}}
         </mat-panel-title>
         <mat-panel-description>
-          <p>Nice description</p>
         </mat-panel-description>
       </mat-expansion-panel-header>
 
@@ -28,16 +27,22 @@
         </div>
       </div>
 
-
       <mat-list *ngIf="!this.isEditing">
         <mat-card *ngFor="let f of fg.files" class="mat-elevation-z6 spaced">
-          {{f.name}}
+          <mat-card-header>
+            <mat-card-title>
+              {{f.name}}
+            </mat-card-title>
+          </mat-card-header>
           <mat-card-actions>
             <button *ngIf="this.isFile(f) && this.isPDF(f)" mat-button matTooltip="Download attachment" (click)="openPDF(f)">
               <mat-icon>picture_as_pdf</mat-icon>
             </button>
-            <button *ngIf="this.isFile(f) && !this.isPDF(f)" mat-button matTooltip="Download attachment" (click)="this.downloadAttachment(f)">
+            <button *ngIf="this.isFile(f) && !this.isPDF(f) && !this.isPicture(f)" mat-button matTooltip="Download attachment" (click)="this.downloadAttachment(f)">
               <mat-icon>cloud_download</mat-icon>
+            </button>
+            <button *ngIf="this.isFile(f) && !this.isPDF(f) && this.isPicture(f)" mat-button matTooltip="Download attachment" (click)="this.openPhoto(f)">
+              <mat-icon>insert_photo</mat-icon>
             </button>
             <button *ngIf="this.isLink(f)" mat-button matTooltip="Redirect to link" (click)="this.openLink(f.link)">
               <mat-icon>link</mat-icon>

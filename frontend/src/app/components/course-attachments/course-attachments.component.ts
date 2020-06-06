@@ -13,6 +13,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {FileUploaderComponent} from '../file-uploader/file-uploader.component';
 import {VideoPlayerService} from '../../services/video-player.service';
 import {Router} from '@angular/router';
+import {PhotoViewerComponent} from '../photo-viewer/photo-viewer.component';
 
 
 export interface DialogData {
@@ -184,5 +185,18 @@ export class CourseAttachmentsComponent implements OnInit {
 
   isPDF(f: File) {
     return f.name.endsWith('.pdf');
+  }
+
+  isPicture(f: File) {
+    return f.name.endsWith('.jpg') || f.name.endsWith('.png') || f.name.endsWith('.jpeg');
+  }
+
+  openPhoto(f: File) {
+    this.dialog.open(PhotoViewerComponent, {
+      data: {
+        course: this.course,
+        file: f
+      }
+    })
   }
 }
