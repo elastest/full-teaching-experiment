@@ -90,9 +90,7 @@ export class FileService {
     return this.http.put<FileGroup[]>(this.url + '/edit/file-order/course/' + courseId + '/file/' + fileMovedId + '/from/' + fileGroupSourceId + '/to/' + fileGroupTargetId + '/pos/' + filePosition, options)
   }
 
-
-  public downloadFile(courseId: number, file: File) {
-
+  downloadFileAsBlob(courseId: number, file: File, callback){
     // Xhr creates new context so we need to create reference to this
     let self = this;
 
@@ -120,12 +118,18 @@ export class FileService {
       // If we get an HTTP status OK (200), save the file using fileSaver
       if (xhr.readyState === 4 && xhr.status === 200) {
         const blob = new Blob([this.response], {type: this.response.type});
-        FileSaver.saveAs(blob, file.name);
+        callback(blob);
       }
     };
 
     // Start the Ajax request
     xhr.send();
+  }
+
+  public downloadFile(courseId: number, file: File) {
+    this.downloadFileAsBlob(courseId, file,(blob) => {
+      FileSaver.saveAs(blob, file.name);
+    })
   }
 
 

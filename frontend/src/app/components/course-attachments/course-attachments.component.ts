@@ -12,6 +12,7 @@ import {SwalComponent} from '@sweetalert2/ngx-sweetalert2';
 import {MatDialog} from '@angular/material/dialog';
 import {FileUploaderComponent} from '../file-uploader/file-uploader.component';
 import {VideoPlayerService} from '../../services/video-player.service';
+import {Router} from '@angular/router';
 
 
 export interface DialogData {
@@ -47,6 +48,7 @@ export class CourseAttachmentsComponent implements OnInit {
               public authService: AuthenticationService,
               private fileService: FileService,
               private modalService: ModalService,
+              private router: Router,
               private announcerService: AnnouncerService) {
   }
 
@@ -173,5 +175,14 @@ export class CourseAttachmentsComponent implements OnInit {
 
   playVideo(f: File) {
     this.videoPlayerService.startPlayingVideo(f, this.course);
+  }
+
+  openPDF(f: File) {
+    const url = `/pdf/view/${this.course.id}/${f.id}`;
+    this.router.navigate([url]);
+  }
+
+  isPDF(f: File) {
+    return f.name.endsWith('.pdf');
   }
 }

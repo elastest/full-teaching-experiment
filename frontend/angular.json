@@ -18,7 +18,12 @@
             "tsConfig": "src/tsconfig.json",
             "assets": [
               "src/assets",
-              "src/assets/images"
+              "src/assets/images",
+              {
+                "glob": "**/*",
+                "input": "node_modules/ngx-extended-pdf-viewer/assets/",
+                "output": "/assets/"
+              }
             ],
             "styles": [
               "src/styles.css",

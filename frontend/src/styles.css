@@ -1,5 +1,25 @@
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
 @import "../node_modules/angular-calendar/css/angular-calendar.css";
+@media print {
+  #printContainer > div {
+    display: inline;
+    overflow-y: visible;
+  }
+}
+@media print {
+  body {
+    min-width: auto !important;
+  }
+}
+.textLayer>span{
+  color: black !important;
+}
+.pdf {
+  overflow: hidden;
+  padding-top: 3vh;
+  display: block;
+  background-color: gray;
+}
 
 .avatar {
   vertical-align: middle;
@@ -15,16 +35,15 @@
 .neon {
   color: #fff;
   margin-top: 30%;
-  text-shadow:
-    0 0 5px rgba(0,178,255,1),
-    0 0 10px rgba(0,178,255,1),
-    0 0 20px rgba(0,178,255,1),
-    0 0 40px rgba(38,104,127,1),
-    0 0 80px rgba(38,104,127,1),
-    0 0 90px rgba(38,104,127,1),
-    0 0 100px rgba(38,104,127,1),
-    0 0 140px rgba(38,104,127,1),
-    0 0 180px rgba(38,104,127,1);
+  text-shadow: 0 0 5px rgba(0, 178, 255, 1),
+  0 0 10px rgba(0, 178, 255, 1),
+  0 0 20px rgba(0, 178, 255, 1),
+  0 0 40px rgba(38, 104, 127, 1),
+  0 0 80px rgba(38, 104, 127, 1),
+  0 0 90px rgba(38, 104, 127, 1),
+  0 0 100px rgba(38, 104, 127, 1),
+  0 0 140px rgba(38, 104, 127, 1),
+  0 0 180px rgba(38, 104, 127, 1);
 }
 
 .menu-button {
@@ -36,9 +55,11 @@
   background-color: #337ab7;
   border-color: #2e6da4;
 }
-.incomplete_shapes_canvas_whiteboard{
+
+.incomplete_shapes_canvas_whiteboard {
   background-color: gray;
 }
+
 .white {
   color: white;
 }
@@ -1262,8 +1283,7 @@ a.cal-event-title {
 }
 
 
-
-mat-dialog-container{
+mat-dialog-container {
   background: transparent;
 }
 

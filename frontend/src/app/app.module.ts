@@ -84,6 +84,8 @@ import {CanvasWhiteboardModule} from 'ng2-canvas-whiteboard';
 import {WebsocketService} from './services/websocket.service';
 import { ProfilePictureDialogComponent } from './components/profile-picture-dialog/profile-picture-dialog.component';
 import { ProfileDropdownComponent } from './components/profile-dropdown/profile-dropdown.component';
+import { PdfOnlineViewerComponent } from './components/pdf-online-viewer/pdf-online-viewer.component';
+import {NgxExtendedPdfViewerModule} from 'ngx-extended-pdf-viewer';
 
 const matModules = [
   MatFormFieldModule,
@@ -124,6 +126,7 @@ const matModules = [
     MatVideoModule,
     OpenviduSessionModule,
     CanvasWhiteboardModule,
+    NgxExtendedPdfViewerModule
   ],
   exports: [
     matModules
@@ -164,6 +167,7 @@ const matModules = [
     SessionCreationModalComponent,
     ProfilePictureDialogComponent,
     ProfileDropdownComponent,
+    PdfOnlineViewerComponent,
   ],
   providers: [
     AuthenticationService,

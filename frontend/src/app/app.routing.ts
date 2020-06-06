@@ -9,6 +9,7 @@ import {DashboardV2Component} from './components/dashboard-v2/dashboard-v2.compo
 import {CourseDetailsV2Component} from './components/course-details-v2/course-details-v2.component';
 import {CourseSessionComponent} from './components/course-session/course-session.component';
 import {SessionDetailsComponent} from './components/session-details/session-details.component';
+import {PdfOnlineViewerComponent} from './components/pdf-online-viewer/pdf-online-viewer.component';
 
 const appRoutes: Routes = [
   {
@@ -47,6 +48,10 @@ const appRoutes: Routes = [
   {
     path: 'session/details/:courseId/:id',
     component: SessionDetailsComponent
+  },
+  {
+    path: 'pdf/view/:courseId/:fileId',
+    component: PdfOnlineViewerComponent
   }
 ];
 

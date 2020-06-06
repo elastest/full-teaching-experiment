@@ -1,0 +1,20 @@
+<button mat-button matTooltip="Go back to course" (click)="goBack()">
+  <mat-icon>
+    arrow_back
+  </mat-icon>
+</button>
+<ngx-extended-pdf-viewer
+  class="pdf"
+  *ngIf="this.blob"
+  [src]="this.getSrcFromBlob()"
+  useBrowserLocale="true"
+  height="100vh"
+  [page]="1"
+  [textLayer]="true"
+  [enablePinchOnMobile]="true"
+  [useBrowserLocale]="true"
+  [showHandToolButton]="true"
+  [delayFirstView]="1000"
+
+></ngx-extended-pdf-viewer>
+
