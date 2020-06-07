@@ -87,6 +87,8 @@ import { ProfileDropdownComponent } from './components/profile-dropdown/profile-
 import { PdfOnlineViewerComponent } from './components/pdf-online-viewer/pdf-online-viewer.component';
 import {NgxExtendedPdfViewerModule} from 'ngx-extended-pdf-viewer';
 import { PhotoViewerComponent } from './components/photo-viewer/photo-viewer.component';
+import { ChatComponent } from './components/chat/chat.component';
+import {NgChatModule} from 'ng-chat';
 
 const matModules = [
   MatFormFieldModule,
@@ -98,37 +100,38 @@ const matModules = [
 ];
 
 @NgModule({
-  imports: [
-    BrowserModule,
-    BrowserAnimationsModule,
-    FormsModule,
-    HttpClientModule,
-    routing,
-    matModules,
-    MatSidenavModule,
-    MatMenuModule,
-    MatToolbarModule,
-    MatCardModule,
-    ReactiveFormsModule,
-    MatIconModule,
-    MatDividerModule,
-    MatTableModule,
-    MatTabsModule,
-    AngularEditorModule,
-    MatDatepickerModule,
-    SweetAlert2Module.forRoot(),
-    MatTooltipModule,
-    MatGridListModule,
-    MatExpansionModule,
-    DragDropModule,
-    MatListModule,
-    MatSlideToggleModule,
-    MatSelectModule,
-    MatVideoModule,
-    OpenviduSessionModule,
-    CanvasWhiteboardModule,
-    NgxExtendedPdfViewerModule
-  ],
+    imports: [
+        BrowserModule,
+        BrowserAnimationsModule,
+        FormsModule,
+        HttpClientModule,
+        routing,
+        matModules,
+        MatSidenavModule,
+        MatMenuModule,
+        MatToolbarModule,
+        MatCardModule,
+        ReactiveFormsModule,
+        MatIconModule,
+        MatDividerModule,
+        MatTableModule,
+        MatTabsModule,
+        AngularEditorModule,
+        MatDatepickerModule,
+        SweetAlert2Module.forRoot(),
+        MatTooltipModule,
+        MatGridListModule,
+        MatExpansionModule,
+        DragDropModule,
+        MatListModule,
+        MatSlideToggleModule,
+        MatSelectModule,
+        MatVideoModule,
+        OpenviduSessionModule,
+        CanvasWhiteboardModule,
+        NgxExtendedPdfViewerModule,
+        NgChatModule
+    ],
   exports: [
     matModules
   ],
@@ -170,6 +173,7 @@ const matModules = [
     ProfileDropdownComponent,
     PdfOnlineViewerComponent,
     PhotoViewerComponent,
+    ChatComponent,
   ],
   providers: [
     AuthenticationService,

@@ -5,10 +5,5 @@
 
 export const environment = {
   production: false,
-  URL_UPLOAD: '/api-load-files/upload/course/',
-  URL_PIC_UPLOAD: '/api-load-files/upload/picture/',
-  URL_EMAIL_FILE_UPLOAD: '/api-file-reader/upload/course/',
-  PUBLIC_RECAPTCHA_KEY: '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI',
-  OPENVIDU_URL: 'wss://localhost:8443/',
   API_URL: 'http://localhost:5001'
 };

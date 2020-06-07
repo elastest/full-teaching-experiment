@@ -3,5 +3,6 @@
   <main>
     <router-outlet></router-outlet>
   </main>
+  <app-chat *ngIf="this.authenticationService.isLoggedIn()"></app-chat>
   <app-footer *ngIf="!isVideoSessionUrl()"></app-footer>
 </div>

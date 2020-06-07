@@ -2,7 +2,7 @@ FROM openjdk:8-jdk-alpine
 
 MAINTAINER daniel097541
 
-ADD ./backend/build/libs/backend-0.5-SNAPSHOT.jar ./full-teaching.jar
+ADD ./build/libs/backend-1.0-SNAPSHOT.jar ./full-teaching.jar
 
 EXPOSE 5001
 

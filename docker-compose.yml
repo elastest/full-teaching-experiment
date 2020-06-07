@@ -1,18 +1,17 @@
 version: '3'
 
 services:
-
   full-teaching-postgresql:
     image: postgres:latest
     ports:
-      - "5432:5432"
+      - 5432:5432
     environment:
       - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DATABASE=full-teaching
+      - POSTGRES_DB=full-teaching
       - POSTGRES_USER=postgres
 
   full-teaching-openvidu-server-kms:
-    image: openvidu/openvidu-server-kms:2.14.0
+    image: openvidu/openvidu-server-kms:latest
     ports:
       - 4443:4443
     environment:
@@ -22,7 +21,10 @@ services:
       - openvidu.publicurl=docker
 
   full-teaching:
-    image: ft
+    image: full-teaching:1.0
+    links:
+      - full-teaching-postgresql
+      - full-teaching-openvidu-server-kms
     depends_on:
       - full-teaching-postgresql
       - full-teaching-openvidu-server-kms
