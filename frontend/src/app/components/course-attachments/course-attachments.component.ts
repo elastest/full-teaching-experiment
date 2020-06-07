@@ -72,7 +72,7 @@ export class CourseAttachmentsComponent implements OnInit {
   }
 
   isFile(f: File) {
-    return FileType.PDF === f.type;
+    return FileType.FILE === f.type;
   }
 
   isLink(f: File) {

@@ -7,6 +7,7 @@ import {FileType} from '../../enum/file-type.enum';
 import {ModalService} from '../../services/modal.service';
 import {FileGroup} from '../../classes/file-group';
 import {Course} from '../../classes/course';
+import {File as FTFile} from '../../classes/file';
 
 @Component({
   selector: 'app-file-uploader',
@@ -17,7 +18,7 @@ export class FileUploaderComponent implements OnInit {
 
   attachmentTypes = [
     new AttachmentType('web-link', FileType.LINK),
-    new AttachmentType('pdf', FileType.PDF),
+    new AttachmentType('file', FileType.FILE),
     new AttachmentType('video', FileType.VIDEO)
   ];
 
@@ -54,6 +55,20 @@ export class FileUploaderComponent implements OnInit {
     })
   }
 
+  private postLinkFile(){
+    const link: string = this.linkFg.get('linkCtrl').value;
+    const file: FTFile = new FTFile(FileType.LINK, link, link);
+    this.fileService.uploadWebLink(this.course.id, this.fileGroup.id, file)
+      .subscribe(resp => {
+        console.log(resp);
+        this.fileGroup.files.push(file);
+        this.modalService.newToastModal(`Link added successfully!`);
+      }, error => {
+        console.log(error);
+        this.modalService.newErrorModal(`Error adding link!`, '', null);
+      })
+
+  }
 
   handleFileInput(files: FileList) {
     this.fileToUpload = files.item(0);
@@ -74,7 +89,12 @@ export class FileUploaderComponent implements OnInit {
   }
 
   submit() {
-    this.postFile(this.fileToUpload)
+    if(!this.isLink()) {
+      this.postFile(this.fileToUpload)
+    }
+    else{
+      this.postLinkFile();
+    }
   }
 
   getAttachmentTypeSelected(): AttachmentType {
@@ -112,7 +132,7 @@ export class FileUploaderComponent implements OnInit {
   showFileUploader(): boolean {
     let type = this.uploadFg.get('typeCtrl').value;
     if (type) {
-      return type.typeId === FileType.PDF || type.typeId === FileType.VIDEO;
+      return type.typeId === FileType.FILE || type.typeId === FileType.VIDEO;
     }
     return false;
   }

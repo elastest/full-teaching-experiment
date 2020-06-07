@@ -2,7 +2,10 @@ package com.fullteaching.backend.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
+import com.fullteaching.backend.annotation.LoginRequired;
+import com.fullteaching.backend.annotation.RoleFilter;
 import com.fullteaching.backend.service.CourseService;
 import com.fullteaching.backend.service.CourseDetailsService;
 import com.fullteaching.backend.file.*;
@@ -10,6 +13,7 @@ import com.fullteaching.backend.model.File;
 import com.fullteaching.backend.model.FileGroup;
 import com.fullteaching.backend.service.FileGroupService;
 import com.fullteaching.backend.service.FileService;
+import com.fullteaching.backend.struct.Role;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -45,16 +49,42 @@ public class FileGroupController {
 		this.fileOperationsService = fileOperationsService;
 	}
 
+	@RoleFilter(role = Role.TEACHER)
+	@PostMapping("/web-link/{courseId}/{fileGroupId}")
+	public ResponseEntity<?> addNewWebLink(@PathVariable long courseId, @PathVariable long fileGroupId, @RequestBody File file){
+
+		Course course = this.courseService.getFromId(courseId);
+		FileGroup fileGroup = this.fileGroupService.getFromId(fileGroupId);
+
+		if(Objects.isNull(fileGroup) || Objects.isNull(course)){
+			log.info("Course or filegroup not found!");
+			return ResponseEntity.notFound().build();
+		}
+
+		log.info("Adding new web-link to course!");
+		ResponseEntity<Object> teacherAuthorized = authorizationService.checkAuthorization(course, course.getTeacher());
+
+		if(Objects.nonNull(teacherAuthorized)){
+			log.info("Teacher unathorized");
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		}
+
+		try {
+			FileGroup toReturn = this.fileGroupService.addWebLink(fileGroup, file);
+			return ResponseEntity.ok(toReturn);
+		}
+		catch (Exception e){
+			log.error("Error adding web-link", e);
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@LoginRequired
 	@RequestMapping(value = "/{id}", method = RequestMethod.POST)
 	public ResponseEntity<Object> newFileGroup(@RequestBody FileGroup fileGroup, @PathVariable(value="id") String courseDetailsId) {
 		
 		log.info("CRUD operation: Adding new file group");
-		
-		ResponseEntity<Object> authorized = authorizationService.checkBackendLogged();
-		if (authorized != null){
-			return authorized;
-		};
-		
+
 		long id_i = -1;
 		try {
 			id_i = Long.parseLong(courseDetailsId);
@@ -137,6 +167,15 @@ public class FileGroupController {
 				log.info("Updating filegroup. Previous value: {}", fg.toString());
 				
 				fg.setTitle(fileGroup.getTitle());
+
+				// save new files
+				for(File tmp : fileGroup.getFiles()){
+					if(!fg.getFiles().contains(tmp)){
+						File file = this.fileService.save(tmp);
+						fg.getFiles().add(file);
+					}
+				}
+
 				fileGroupService.save(fg);
 				
 				log.info("FileGroup succesfully updated. Modified value: {}", fg.toString());

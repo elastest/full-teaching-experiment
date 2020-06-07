@@ -24,7 +24,7 @@ public class File {
 	
 	private String name;
 	
-	private String nameIdent;
+	private String nameIdent = "";
 	
 	private String link;
 	
@@ -54,7 +54,13 @@ public class File {
 	}
 
 	public String getFileExtension(){
-		return this.nameIdent.substring(this.nameIdent.lastIndexOf('.') + 1);
+		try {
+			return this.nameIdent.substring(this.nameIdent.lastIndexOf('.') + 1);
+		}
+		catch (Exception e){
+			e.printStackTrace();
+			return null;
+		}
 	}
 	
 	//Generates a string which acts as an identifier for the stored file in the system (local, S3...)

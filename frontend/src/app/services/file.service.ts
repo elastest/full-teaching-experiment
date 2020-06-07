@@ -132,6 +132,14 @@ export class FileService {
     })
   }
 
+  public uploadWebLink(courseId: number, fileGroupId: number, file: File){
+    console.log('Adding web link!');
+    let headers = new HttpHeaders({
+      'Authorization': 'Bearer ' + this.authenticationService.token
+    });
+    let options = ({headers});
+    return this.http.post<FileGroup>(`/api-files/web-link/${courseId}/${fileGroupId}`, file, options);
+  }
 
   public uploadFile(courseId: number, fileGroupId: number, formData: FormData, type: number) {
     console.log(`Uploading a file for course ${courseId} and file group ${fileGroupId}`);
