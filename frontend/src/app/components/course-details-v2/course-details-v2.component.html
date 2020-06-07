@@ -9,8 +9,8 @@
 
   </div>
 
-  <mat-tab-group mat-align-tabs="start">
-    <mat-tab>
+  <mat-tab-group mat-align-tabs="start" #tabs>
+    <mat-tab #courseDetails>
       <ng-template
         mat-tab-label>
         <mat-icon matTooltip="Course details">
@@ -21,7 +21,7 @@
       <app-course-index [course]="this.course"></app-course-index>
 
     </mat-tab>
-    <mat-tab>
+    <mat-tab #sessions>
       <ng-template mat-tab-label>
         <mat-icon matTooltip="Sessions">
           school
@@ -29,15 +29,15 @@
       </ng-template>
       <app-course-details-sessions [course]="this.course"></app-course-details-sessions>
     </mat-tab>
-    <mat-tab>
+    <mat-tab #forum>
       <ng-template mat-tab-label>
         <mat-icon matTooltip="Forum">
           forum
         </mat-icon>
       </ng-template>
-      <app-forum [course]="this.course"></app-forum>
+      <app-forum [showedEntry]="this.showedEntryId" [course]="this.course"></app-forum>
     </mat-tab>
-    <mat-tab>
+    <mat-tab #attachments>
       <ng-template mat-tab-label>
         <mat-icon matTooltip="Attachments">
           attachment
@@ -54,7 +54,7 @@
 
 
     </mat-tab>
-    <mat-tab>
+    <mat-tab #students>
       <ng-template mat-tab-label>
         <mat-icon matTooltip="Students">
           people_alt

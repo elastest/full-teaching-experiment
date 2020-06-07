@@ -1,7 +1,7 @@
 <mat-grid-list [cols]="1" rowHeight="1:1" class="bg-transparent forum-thread">
   <mat-accordion *ngIf="this.course?.courseDetails?.forum?.activated">
     <div class="forum-thread" *ngFor="let entry of this.course?.courseDetails?.forum.entries; let last2 = last">
-      <mat-expansion-panel class="bg-grey">
+      <mat-expansion-panel [expanded]="this.isOpenedConversation(entry)" class="bg-grey" (afterExpand)="this.openConversation(entry)" (afterCollapse)="this.closeConversation(entry)">
         <mat-expansion-panel-header>
           <mat-panel-title>
             {{entry.title}}

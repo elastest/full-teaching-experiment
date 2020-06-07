@@ -38,21 +38,26 @@ export class NotificationService {
       })
     }
 
-    // comment reply
+    // comment reply notification
     if(keys.includes('comment')){
       const comment: Comment = message.comment;
       const replier: User = message.replier;
       const commentCourse: Course = message.commentCourse;
+      const commentEntry: Entry = message.commentEntry;
+      this.announcerService.announceCourseRefresh(commentCourse);
       this.modalService.newNotificationModal(`${replier.name} just replied to your comment!`,() => {
-        //this.router.navigate([`/courses/${commentCourse.id}/1`])
+        this.router.navigate([`/courses/${commentCourse.id}/2/${commentEntry.id}`])
       });
     }
 
-    // comment reply
+    // new comment in your entry notification
     if(keys.includes('entry')){
       const entry: Entry = message.entry;
       const userCommenting: User = message.userCommenting;
+      const commentCourse: Course = message.commentCourse;
+      this.announcerService.announceCourseRefresh(commentCourse);
       this.modalService.newNotificationModal(`${userCommenting.name} just commented in your entry!`,() => {
+        this.router.navigate([`/courses/${commentCourse.id}/2/${entry.id}`])
       });
     }
 

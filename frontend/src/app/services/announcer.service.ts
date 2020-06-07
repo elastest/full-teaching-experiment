@@ -45,7 +45,14 @@ export class AnnouncerService {
   private attenderAddedToCourseAnnouncerSubject: Subject<{ course: Course, attenders: User[] }> = new Subject<{ course: Course, attenders: User[] }>();
   public attenderAddedToCourseAnnouncer$ = this.attenderAddedToCourseAnnouncerSubject.asObservable();
 
+  private courseRefreshAnnouncerSubject: Subject<Course> = new Subject<Course>();
+  public courseRefreshAnnouncer$ = this.courseRefreshAnnouncerSubject.asObservable();
+
   constructor() {
+  }
+
+  announceCourseRefresh(course: Course): void {
+    this.courseRefreshAnnouncerSubject.next(course);
   }
 
   announceAttenderAddedToCourse(course: Course, attenders: User[]){

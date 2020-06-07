@@ -36,11 +36,11 @@ public class NotificationDispatcher {
         }
     }
 
-    public void notifyCommentAdded(Entry entry, User userCommenting){
-        this.template.convertAndSendToUser(entry.getUser().getName(), "/queue/reply", new NewCommentInEntryMessage(entry, userCommenting));
+    public void notifyCommentAdded(Entry entry, User userCommenting, Course commentCourse){
+        this.template.convertAndSendToUser(entry.getUser().getName(), "/queue/reply", new NewCommentInEntryMessage(entry, userCommenting, commentCourse));
     }
 
-    public void notifyCommentReply(Comment parent, User replier){
-        this.template.convertAndSendToUser(parent.getUser().getName(), "/queue/reply", new NewCommentResponseMessage(parent, replier));
+    public void notifyCommentReply(Comment parent, User replier, Course commentCourse, Entry commentEnry){
+        this.template.convertAndSendToUser(parent.getUser().getName(), "/queue/reply", new NewCommentResponseMessage(parent, replier, commentCourse, commentEnry));
     }
 }

@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {Course} from '../../classes/course';
 import {Entry} from '../../classes/entry';
 import {Comment} from '../../classes/comment';
@@ -14,10 +14,15 @@ import {AnnouncerService} from '../../services/announcer.service';
   templateUrl: './forum.component.html',
   styleUrls: ['./forum.component.css']
 })
-export class ForumComponent implements OnInit {
+export class ForumComponent implements OnInit, OnChanges {
 
   @Input('course')
   course: Course;
+
+  @Input('showedEntry')
+  showedEntry: number;
+
+  private openedConversations = [];
 
   constructor(public animationService: AnimationService,
               private forumService: ForumService,
@@ -25,6 +30,12 @@ export class ForumComponent implements OnInit {
               public authenticationService: AuthenticationService,
               private announcerService: AnnouncerService,
               private modalService: ModalService) {
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if(this.showedEntry){
+      this.openedConversations.push(this.showedEntry);
+    }
   }
 
   ngOnInit() {
@@ -35,6 +46,17 @@ export class ForumComponent implements OnInit {
     });
   }
 
+  openConversation(entry: Entry): void {
+    this.openedConversations.push(entry.id);
+  }
+
+  closeConversation(entry: Entry): void {
+    this.openedConversations = this.openedConversations.filter(c => c === entry.id);
+  }
+
+  isOpenedConversation(entry: Entry): boolean {
+    return this.openedConversations.includes(entry.id);
+  }
 
   showNewEntryModal() {
     let course = this.course;

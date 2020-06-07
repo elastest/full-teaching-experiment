@@ -26,6 +26,10 @@ const appRoutes: Routes = [
     component: CourseDetailsV2Component
   },
   {
+    path: 'courses/:id/:tabId/:showedEntryId',
+    component: CourseDetailsV2Component
+  },
+  {
     path: 'settings',
     component: SettingsComponent
   },
