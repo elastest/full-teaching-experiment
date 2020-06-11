@@ -25,9 +25,9 @@ public class Comment {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
-	
-	private String videourl;
-	private boolean audioonly;
+
+	private String audioUrl;
+
 	private String message;
 	
 	private long date;

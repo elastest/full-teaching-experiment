@@ -89,6 +89,7 @@ import {NgxExtendedPdfViewerModule} from 'ngx-extended-pdf-viewer';
 import { PhotoViewerComponent } from './components/photo-viewer/photo-viewer.component';
 import { ChatComponent } from './components/chat/chat.component';
 import {NgChatModule} from 'ng-chat';
+import { AudioPlayerDialogComponent } from './components/audio-player-dialog/audio-player-dialog.component';
 
 const matModules = [
   MatFormFieldModule,
@@ -174,6 +175,7 @@ const matModules = [
     PdfOnlineViewerComponent,
     PhotoViewerComponent,
     ChatComponent,
+    AudioPlayerDialogComponent,
   ],
   providers: [
     AuthenticationService,

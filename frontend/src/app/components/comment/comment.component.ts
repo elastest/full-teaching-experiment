@@ -16,6 +16,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {AudioRecorderComponent} from '../audio-recorder/audio-recorder.component';
 import {NoopScrollStrategy} from '@angular/cdk/overlay';
 import {environment} from '../../../environments/environment';
+import {AudioPlayerDialogComponent} from '../audio-player-dialog/audio-player-dialog.component';
 
 @Component({
   selector: 'app-comment',
@@ -70,6 +71,10 @@ export class CommentComponent implements OnInit {
     return user.picture ? `${environment.API_URL}${user.picture}` : 'assets/images/default_session_image.png';
   }
 
+  getCommentAudioUrl(){
+    return `${environment.API_URL}${this.comment.audioUrl}`;
+  }
+
   updatePostModalMode(mode: number, title: string, header: Entry, commentReplay: Comment, fileGroup: FileGroup) {
     let objs = [mode, title, header, commentReplay, fileGroup];
     this.courseDetailsModalDataService.announcePostMode(objs);
@@ -98,7 +103,7 @@ export class CommentComponent implements OnInit {
       if (resp) {
         let value = resp['value'];
         if (value) {
-          service.newComment(new Comment(value, '', false, comment), entry, details).subscribe(
+          service.newComment(new Comment(value, '', comment), entry, details).subscribe(
             data => {
               comment.replies.push(data.comment);
               modalService.newToastModal('Comment added successfully!');
@@ -125,6 +130,15 @@ export class CommentComponent implements OnInit {
             console.log(error);
             this.modalService.newErrorModal('Error removing comment!', 'There was an error removing that comment, please contact an administrator!', null);
           });
+    })
+  }
+
+  playAudioComment() {
+    this.dialog.open(AudioPlayerDialogComponent, {
+      data: {
+        course: this.course,
+        comment: this.comment
+      }
     })
   }
 }

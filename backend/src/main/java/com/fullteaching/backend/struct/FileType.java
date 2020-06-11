@@ -4,6 +4,7 @@ public enum  FileType {
 
     VIDEO("/videos/"),
     PICTURE("/pictures/"),
+    AUDIO("/audios/"),
     DOCUMENT("/files/");
 
     private String path;

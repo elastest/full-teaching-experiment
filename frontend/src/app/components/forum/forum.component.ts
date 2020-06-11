@@ -66,7 +66,7 @@ export class ForumComponent implements OnInit, OnChanges {
       if (resp) {
         let value = resp.value;
         if (value) {
-          let entry = new Entry(value[0], [new Comment(value[1], '', false, null)]);
+          let entry = new Entry(value[0], [new Comment(value[1], '', null)]);
           console.log(entry)
           service.newEntry(entry, course.courseDetails.id).subscribe(data => {
               let entry = data.entry;
@@ -98,7 +98,7 @@ export class ForumComponent implements OnInit, OnChanges {
     this.modalService.newInputCallbackedModal('New comment', (resp) => {
       const value = resp.value;
       if (value) {
-        const comment = new Comment(value, '', false, null);
+        const comment = new Comment(value, '', null);
         this.forumService.newComment(comment, entry.id, this.course.courseDetails.id).subscribe(resp => {
           entry.comments.push(resp.comment);
           this.modalService.newSuccessModal(`Successfully added comment!`, `New comment added!`, null);

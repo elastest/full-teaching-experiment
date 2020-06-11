@@ -5,12 +5,13 @@
     </button>
     <div class="col l11 m11 s11" [class.teacher-forum]="isCommentTeacher(this.comment)">
       <div *ngIf="!!comment.message" class="message-itself">{{comment.message}}</div>
-      <div *ngIf="!!comment.videourl" class="video-itself">
-        <video [attr.id]="comment.videourl" [src]="comment.videourl" (mouseenter)="onHovering($event)"
-               (mouseleave)="onUnhovering($event)"
-               [attr.poster]="comment.audioonly ? 'assets/images/volume.png' : ''"
-               [style.background-color]="comment.audioonly ? 'rgb(77,77,77)' : ''"
-               [style.max-height]="comment.audioonly ? '375px' : ''"></video>
+      <div *ngIf="!!comment.audioUrl" class="message-itself">
+        Audio comment:
+        <button mat-button matTooltip="Play audio comment" (click)="playAudioComment()">
+          <mat-icon>
+            play_arrow
+          </mat-icon>
+        </button>
       </div>
       <div class="user-name forum-comment-author"
            [class.teacher-name]="isCommentTeacher(comment)">{{comment.user.nickName}}</div>
@@ -25,11 +26,11 @@
       <a *ngIf="this.authService.isTeacher()" matTooltip="Remove comment" (click)="this.removeComment(comment)">
         <mat-icon class="reply-icon" color="primary">delete</mat-icon>
       </a>
-<!--      <a matTooltip="New audio response" (click)="this.openAudioRecordDialog()">-->
-<!--        <mat-icon class="reply-icon" color="primary">-->
-<!--          volume_up-->
-<!--        </mat-icon>-->
-<!--      </a>-->
+      <a matTooltip="New audio response" (click)="this.openAudioRecordDialog()">
+        <mat-icon class="reply-icon" color="primary">
+          volume_up
+        </mat-icon>
+      </a>
     </div>
   </div>
 

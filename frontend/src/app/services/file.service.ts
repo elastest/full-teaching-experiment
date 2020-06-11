@@ -90,7 +90,7 @@ export class FileService {
     return this.http.put<FileGroup[]>(this.url + '/edit/file-order/course/' + courseId + '/file/' + fileMovedId + '/from/' + fileGroupSourceId + '/to/' + fileGroupTargetId + '/pos/' + filePosition, options)
   }
 
-  downloadFileAsBlob(courseId: number, file: File, callback){
+  downloadFileAsBlob(url: string, callback){
     // Xhr creates new context so we need to create reference to this
     let self = this;
 
@@ -99,7 +99,6 @@ export class FileService {
 
     // Create the Xhr request object
     let xhr = new XMLHttpRequest();
-    let url = `${environment.API_URL}/api-load-files/course/${courseId}/download/${file.id}`;
 
     xhr.withCredentials = true;
 
@@ -127,7 +126,8 @@ export class FileService {
   }
 
   public downloadFile(courseId: number, file: File) {
-    this.downloadFileAsBlob(courseId, file,(blob) => {
+    const url = `${environment.API_URL}/api-load-files/course/${courseId}/download/${file.id}`
+    this.downloadFileAsBlob(url,(blob) => {
       FileSaver.saveAs(blob, file.name);
     })
   }
@@ -160,4 +160,12 @@ export class FileService {
     formData.set('file', file, file.name);
     return this.http.post<User>(url, formData, options);
   }
+
+  public downloadAudioFile(courseId: number, commentId: number, callback: Function) {
+    const url = `${environment.API_URL}/assets/audios/comment/${commentId}/${courseId}`
+    this.downloadFileAsBlob(url,(blob) => {
+      callback(blob);
+    })
+  }
+
 }

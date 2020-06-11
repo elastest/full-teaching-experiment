@@ -6,6 +6,8 @@ import {MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {DialogData} from '../course-attachments/course-attachments.component';
 import {ForumService} from '../../services/forum.service';
 import {Comment} from '../../classes/comment';
+import {Entry} from '../../classes/entry';
+import {Course} from '../../classes/course';
 
 @Component({
   selector: 'app-audio-recorder',
@@ -16,13 +18,18 @@ export class AudioRecorderComponent implements OnInit {
 
 
   @ViewChild('audioRecorded') audioRecorded: ElementRef<HTMLAudioElement>;
-
   private audioBlob: Blob;
+  private parentComment: Comment;
+  private entryId: number;
+  private course: Course;
 
   constructor(private audioRecorderService: AudioRecorderService,
               @Inject(MAT_DIALOG_DATA) public data: DialogData,
-              private forumService: ForumService,
-              private modalService: ModalService) {
+              private modalService: ModalService,
+              private forumService: ForumService) {
+    this.course = data.course;
+    this.entryId = data['entryId'];
+    this.parentComment = data['comment'];
   }
 
   ngOnInit(): void {
@@ -61,6 +68,13 @@ export class AudioRecorderComponent implements OnInit {
   }
 
   sendReply() {
-
+    this.forumService.newAudioComment(this.parentComment, this.entryId, this.course.courseDetails.id, this.audioBlob)
+      .subscribe(data => {
+        console.log(data);
+        this.modalService.newToastModal(`Successfully added audio reply!`);
+      }, err => {
+        console.log(err);
+        this.modalService.newErrorModal(`Error sending new audio reply!`, 'Please contact your administrator!', null);
+      })
   }
 }

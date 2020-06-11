@@ -8,6 +8,8 @@ import 'rxjs/Rx';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {CourseDetails} from '../classes/course-details';
+import * as uuid from 'uuid';
+
 
 @Injectable()
 export class ForumService {
@@ -17,7 +19,7 @@ export class ForumService {
 
   private urlNewEntry = '/api-entries';
   private urlNewComment = '/api-comments';
-  private urlEditForum = '/api-forum'
+  private urlFiles = '/api-load-files'
 
   //POST new Entry. Requires an Entry and the id of the CourseDetails that owns the Forum
   //On success returns the updated Forum that owns the posted entry
@@ -34,6 +36,18 @@ export class ForumService {
     //.catch(error => this.handleError("POST new entry FAIL. Response: ", error));
   }
 
+  public newAudioComment(parent: Comment, entryId: number, courseDetailsId: number, audio: Blob){
+    const id = uuid.v4();
+    const file = new File([audio], `${id}.wav`);
+    const formData = new FormData();
+    formData.append('file', file, file.name);
+    let headers = new HttpHeaders({
+      'Authorization': 'Bearer ' + this.authenticationService.token
+    });
+    let options = ({headers});
+    return this.http.post<Comment>(`${this.urlFiles}/upload/course/${courseDetailsId}/comment/${parent.id}/entry/${entryId}`, formData, options);
+  }
+
   //POST new Comment. Requires a Comment, the id of the Entry that owns it and the id of the CourseDetails that owns the Forum
   //On success returns the update Entry that owns the posted comment
   public newComment(comment: Comment, entryId: number, courseDetailsId: number) {
@@ -46,26 +60,6 @@ export class ForumService {
     });
     let options = ({headers});
     return this.http.post<{ comment, entry }>(this.urlNewComment + '/entry/' + entryId + '/forum/' + courseDetailsId, body, options);
-  }
-
-  //PUT existing Forum. Requires a boolean value for activating/deactivating the Forum and the id of the CourseDetails that owns it
-  //On success returns the updated 'activated' attribute
-  public editForum(activated: boolean, courseDetailsId: number) {
-    console.log('PUT existing forum ' + (activated ? '(activate)' : '(deactivate)'));
-
-    let body = JSON.stringify(activated);
-    let headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + this.authenticationService.token
-    });
-    let options = ({headers});
-    return this.http.put<boolean>(this.urlEditForum + '/edit/' + courseDetailsId, body, options);
-    //.catch(error => this.handleError("PUT existing forum FAIL. Response: ", error));
-  }
-
-  private handleError(message: string, error: any) {
-    console.error(message, error);
-    return Observable.throw('Server error (' + error.status + '): ' + error.text())
   }
 
   removeEntry(entry: Entry, cd: CourseDetails) {

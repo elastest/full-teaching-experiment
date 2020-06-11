@@ -4,10 +4,7 @@ import com.fullteaching.backend.annotation.LoginRequired;
 import com.fullteaching.backend.annotation.RoleFilter;
 import com.fullteaching.backend.file.FileOperationsService;
 import com.fullteaching.backend.file.MimeTypes;
-import com.fullteaching.backend.model.Comment;
-import com.fullteaching.backend.model.Course;
-import com.fullteaching.backend.model.FileGroup;
-import com.fullteaching.backend.model.User;
+import com.fullteaching.backend.model.*;
 import com.fullteaching.backend.security.AuthorizationService;
 import com.fullteaching.backend.security.user.UserComponent;
 import com.fullteaching.backend.service.*;
@@ -24,10 +21,12 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Iterator;
+import java.util.UUID;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -41,6 +40,8 @@ public class FileController extends SecureController {
     private final CommentService commentService;
     private final UserService userService;
     private final FileOperationsService fileOperationsService;
+    private final CourseDetailsService courseDetailsService;
+    private final EntryService entryService;
 
     @Value("${profile.stage}")
     private String profileStage;
@@ -48,9 +49,10 @@ public class FileController extends SecureController {
     public static final Path FILES_FOLDER = Paths.get(System.getProperty("user.dir"), "/assets/files");
     public static final Path VIDEOS_FOLDER = Paths.get(System.getProperty("user.dir"), "/assets/videos");
     public static final Path PICTURES_FOLDER = Paths.get(System.getProperty("user.dir"), "/assets/pictures");
+    public static final Path AUDIOS_FOLDER = Paths.get(System.getProperty("user.dir"), "/assets/audios");
 
     @Autowired
-    public FileController(FileGroupService fileGroupService, FileService fileService, CourseService courseService, CommentService commentService, UserService userService, UserComponent user, AuthorizationService authorizationService, FileOperationsService fileOperationsService) {
+    public FileController(FileGroupService fileGroupService, FileService fileService, CourseService courseService, CommentService commentService, UserService userService, UserComponent user, AuthorizationService authorizationService, FileOperationsService fileOperationsService, CourseDetailsService courseDetailsService, EntryService entryService) {
         super(user, authorizationService);
         this.fileGroupService = fileGroupService;
         this.fileService = fileService;
@@ -58,6 +60,8 @@ public class FileController extends SecureController {
         this.commentService = commentService;
         this.userService = userService;
         this.fileOperationsService = fileOperationsService;
+        this.courseDetailsService = courseDetailsService;
+        this.entryService = entryService;
     }
 
     @RoleFilter(role = Role.TEACHER)
@@ -292,90 +296,82 @@ public class FileController extends SecureController {
     }
 
     @LoginRequired
-    @RequestMapping(value = "/upload/course/{courseId}/comment/{commentId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/upload/course/{courseDetailsId}/comment/{parentId}/entry/{entryId}", method = RequestMethod.POST)
     public ResponseEntity<Object> handleVideoMessageUpload(MultipartHttpServletRequest request,
-                                                           @PathVariable(value = "courseId") String courseId, @PathVariable(value = "commentId") String commentId)
+                                                           @PathVariable(value = "courseDetailsId") long courseDetailsId,
+                                                           @PathVariable(value = "entryId") long entryId,
+                                                           @PathVariable(value = "parentId") long parentId)
             throws IOException {
 
-        log.info("Uploading video message...");
+        log.info("Uploading audio message...");
 
-        long id_course = -1;
-        long id_comment = -1;
-        try {
-            id_course = Long.parseLong(courseId);
-            id_comment = Long.parseLong(commentId);
-        } catch (NumberFormatException e) {
-            log.error("Course ID '{}' or Comment ID '{}' are not of type Long", courseId, commentId);
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+        CourseDetails courseDetails = courseDetailsService.getFromId(courseDetailsId);
+        Comment commentParent = commentService.getFromId(parentId);
+        Entry entry = entryService.getFromId(entryId);
 
-        Course c = courseService.getFromId(id_course);
-        Comment comment = commentService.getFromId(id_comment);
-
-        ResponseEntity<Object> userAuthorized = authorizationService.checkAuthorizationUsers(c, c.getAttenders());
+        ResponseEntity<Object> userAuthorized = authorizationService.checkAuthorizationUsers(courseDetails.getCourse(), courseDetails.getCourse().getAttenders());
         if (userAuthorized != null) { // If the user is not an attender of the course
             return userAuthorized;
         } else {
-            if (comment != null) {
-                userAuthorized = authorizationService.checkAuthorization(comment, comment.getUser());
+            if (commentParent != null) {
+                userAuthorized = authorizationService.checkAuthorization(commentParent, commentParent.getUser());
                 if (userAuthorized != null) { // If the user is not the author of the comment
                     return userAuthorized;
                 } else {
+                    Comment comment = new Comment();
 
                     Iterator<String> i = request.getFileNames();
                     while (i.hasNext()) {
 
                         String name = i.next();
 
-                        log.info("Video file name: '{}'", name);
+                        log.info("Audio file name: '{}'", name);
 
                         MultipartFile file = request.getFile(name);
                         String fileName = file.getOriginalFilename();
 
-                        log.info("Video file full name: " + fileName);
+                        log.info("Audio file full name: " + fileName);
 
                         if (file.isEmpty()) {
-                            log.error("The video file is empty");
-                            throw new RuntimeException("The video file is empty");
+                            log.error("The Audio file is empty");
+                            throw new RuntimeException("The Audio file is empty");
                         }
 
-                        if (!Files.exists(VIDEOS_FOLDER)) {
-                            log.debug("Creating folder '{}'", VIDEOS_FOLDER);
-                            Files.createDirectories(VIDEOS_FOLDER);
+                        if (!Files.exists(AUDIOS_FOLDER)) {
+                            log.debug("Creating folder '{}'", AUDIOS_FOLDER);
+                            Files.createDirectories(AUDIOS_FOLDER);
                         }
 
-                        String finalName = "video-comment-" + id_comment + ".webm";
-                        log.info("Video file final name: " + finalName);
-                        File uploadedFile = new File(VIDEOS_FOLDER.toFile(), finalName);
+                        String saveName = UUID.randomUUID().toString() + ".wav";
+                        String finalName = "audio-comment-" + saveName;
+                        log.info("Audio file final name: " + finalName);
+                        File uploadedFile = new File(AUDIOS_FOLDER.toFile(), finalName);
 
                         file.transferTo(uploadedFile);
 
                         if (this.isProductionStage()) {
                             // ONLY ON PRODUCTION
                             try {
-                                fileOperationsService.productionFileSaver(finalName, "videos", uploadedFile);
+                                fileOperationsService.productionFileSaver(finalName, "audios", uploadedFile);
                             } catch (InterruptedException e) {
-                                fileOperationsService.deleteLocalFile(uploadedFile.getName(), VIDEOS_FOLDER);
+                                fileOperationsService.deleteLocalFile(uploadedFile.getName(), AUDIOS_FOLDER);
                                 e.printStackTrace();
                             }
-
-                            comment.setVideourl("https://" + FileOperationsService.bucketAWS + ".s3.amazonaws.com/videos/"
-                                    + finalName);
-                            fileOperationsService.deleteLocalFile(uploadedFile.getName(), VIDEOS_FOLDER);
+                            fileOperationsService.deleteLocalFile(uploadedFile.getName(), AUDIOS_FOLDER);
                             // ONLY ON PRODUCTION
-                        } else {
-                            // ONLY ON DEVELOPMENT
-                            comment.setVideourl("/assets/videos/" + courseId + "/" + finalName);
-                            // ONLY ON DEVELOPMENT
                         }
+                        comment.setAudioUrl(finalName);
                         log.info("File succesfully uploaded to path '{}'", uploadedFile.getPath());
                     }
 
-                    commentService.save(comment);
+                    comment.setCommentParent(commentParent);
+                    comment.setUser(this.user.getLoggedUser());
+                    comment = commentService.save(comment);
+                    entryService.save(entry);
                     return new ResponseEntity<>(comment, HttpStatus.CREATED);
                 }
             } else {
-                log.error("Comment with id '{}' doesn't exist", id_comment);
+                log.error("Comment parent with id '{}' doesn't exist", parentId);
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
         }
