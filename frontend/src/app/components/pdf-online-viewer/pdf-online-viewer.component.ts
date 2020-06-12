@@ -4,6 +4,7 @@ import {FileService} from '../../services/file.service';
 import {Course} from '../../classes/course';
 import {ActivatedRoute, Router} from '@angular/router';
 import {CourseService} from '../../services/course.service';
+import {environment} from '../../../environments/environment';
 
 @Component({
   selector: 'app-pdf-online-viewer',
@@ -29,7 +30,8 @@ export class PdfOnlineViewerComponent implements OnInit {
       this.course = data;
       this.course.courseDetails.files.forEach(fg => {
         this.file = fg.files.find(f => f.id === fileId);
-        this.fileService.downloadFileAsBlob(courseId, this.file, (blob) => {
+        const url = `${environment.API_URL}/api-load-files/course/${courseId}/download/${this.file.id}`;
+        this.fileService.downloadFileAsBlob(url, (blob) => {
           this.blob = blob;
         })
       })

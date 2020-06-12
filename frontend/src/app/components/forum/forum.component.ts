@@ -44,6 +44,15 @@ export class ForumComponent implements OnInit, OnChanges {
       console.log(data)
       this.course.courseDetails.forum.entries.find(e => e.id === data.entry.id).comments = data.entry.comments;
     });
+
+    this.announcerService.audioCommentAddedAnnouncer$.subscribe(data => {
+      const entryId = data.entryId;
+      const comment = data.comment;
+      const course = data.courseId;
+      if(this.course.id === course){
+        this.announcerService.announceCourseRefresh(this.course);
+      }
+    });
   }
 
   openConversation(entry: Entry): void {

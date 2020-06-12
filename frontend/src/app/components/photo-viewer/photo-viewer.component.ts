@@ -5,6 +5,7 @@ import {MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {DialogData} from '../course-attachments/course-attachments.component';
 import {Course} from '../../classes/course';
 import {saveAs} from 'file-saver';
+import {environment} from '../../../environments/environment';
 
 @Component({
   selector: 'app-photo-viewer',
@@ -31,7 +32,8 @@ export class PhotoViewerComponent implements OnInit {
   }
 
   init() {
-    this.fileService.downloadFileAsBlob(this.course.id, this.file, (blob) => {
+    const url = `${environment.API_URL}/api-load-files/course/${this.course.id}/download/${this.file.id}`;
+    this.fileService.downloadFileAsBlob(url, (blob) => {
       this.blob = blob;
       this.url = URL.createObjectURL(blob);
       this.image.nativeElement.src = this.url;

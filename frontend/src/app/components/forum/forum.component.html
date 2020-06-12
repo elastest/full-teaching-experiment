@@ -12,7 +12,7 @@
         </mat-expansion-panel-header>
         <div *ngFor="let comment of entry?.comments; let last3 = last" class="comment-block"
              [class.comment-divider]="!last3">
-          <app-comment [courseDetailsId]="this.course?.courseDetails?.id" [entryId]="entry?.id"
+          <app-comment [courseDetailsId]="this.course?.courseDetails?.id" [entryId]="entry.id"
                        [comment]="comment" [course]="this.course"></app-comment>
           <mat-divider [vertical]="true"></mat-divider>
         </div>

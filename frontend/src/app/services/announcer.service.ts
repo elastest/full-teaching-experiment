@@ -48,7 +48,14 @@ export class AnnouncerService {
   private courseRefreshAnnouncerSubject: Subject<Course> = new Subject<Course>();
   public courseRefreshAnnouncer$ = this.courseRefreshAnnouncerSubject.asObservable();
 
+  private audioCommentAddedAnnouncerSubject: Subject<{courseId: number, entryId: number, comment: Comment}> = new Subject<{courseId: number, entryId: number, comment: Comment}>();
+  public audioCommentAddedAnnouncer$ = this.audioCommentAddedAnnouncerSubject.asObservable();
+
   constructor() {
+  }
+
+  announceAudioCommentAdded(courseId: number, entryId: number, comment: Comment): void {
+    this.audioCommentAddedAnnouncerSubject.next({courseId: courseId, entryId: entryId, comment: comment});
   }
 
   announceCourseRefresh(course: Course): void {

@@ -8,6 +8,7 @@ import {ForumService} from '../../services/forum.service';
 import {Comment} from '../../classes/comment';
 import {Entry} from '../../classes/entry';
 import {Course} from '../../classes/course';
+import {AnnouncerService} from '../../services/announcer.service';
 
 @Component({
   selector: 'app-audio-recorder',
@@ -20,11 +21,12 @@ export class AudioRecorderComponent implements OnInit {
   @ViewChild('audioRecorded') audioRecorded: ElementRef<HTMLAudioElement>;
   private audioBlob: Blob;
   private parentComment: Comment;
-  private entryId: number;
+  private readonly entryId: number;
   private course: Course;
 
   constructor(private audioRecorderService: AudioRecorderService,
               @Inject(MAT_DIALOG_DATA) public data: DialogData,
+              private announcerService: AnnouncerService,
               private modalService: ModalService,
               private forumService: ForumService) {
     this.course = data.course;
@@ -72,6 +74,7 @@ export class AudioRecorderComponent implements OnInit {
       .subscribe(data => {
         console.log(data);
         this.modalService.newToastModal(`Successfully added audio reply!`);
+        this.announcerService.announceAudioCommentAdded(this.course.id, this.entryId, data);
       }, err => {
         console.log(err);
         this.modalService.newErrorModal(`Error sending new audio reply!`, 'Please contact your administrator!', null);
