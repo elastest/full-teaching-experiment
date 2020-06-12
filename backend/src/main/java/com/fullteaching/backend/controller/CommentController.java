@@ -49,7 +49,7 @@ public final class CommentController extends SecureController{
 
     @RoleFilter(role = Role.TEACHER)
     @LoginRequired
-    @PostMapping(value = "/comment/{commentId}/{courseId}/{entryId}")
+    @PostMapping(value = "/comment/delete/{commentId}/{courseId}/{entryId}")
     public ResponseEntity<?> removeComment(@PathVariable long commentId, @PathVariable long courseId, @PathVariable() long entryId) {
 
         Course course = this.courseService.getFromId(courseId);

@@ -30,6 +30,7 @@ public class EntryService implements FTService<Entry, Long> {
         Collection<Comment> children = this.commentService.getChildren(comment);
         children.add(comment);
         entry.getComments().removeAll(children);
+        commentService.deleteAll(children);
         return this.save(entry);
     }
 }

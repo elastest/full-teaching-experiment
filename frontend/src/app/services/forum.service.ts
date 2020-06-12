@@ -77,6 +77,6 @@ export class ForumService {
       'Authorization': 'Bearer ' + this.authenticationService.token
     });
     let options = ({headers});
-    return this.http.post<Entry>(`${this.urlNewComment}/comment/${commentId}/${courseId}/${entryId}`, options);
+    return this.http.post<Entry>(`${this.urlNewComment}/comment/delete/${commentId}/${courseId}/${entryId}`, options);
   }
 }
