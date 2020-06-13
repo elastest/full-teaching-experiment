@@ -48,8 +48,7 @@ export class SessionCreationModalComponent implements OnInit {
     return new Date();
   }
 
-  myFilter = (d: Date | null): boolean => {
-    const date = d['_d'];
+  myFilter = (date: Date | null): boolean => {
     const day = date.getDay();
     // Prevent Saturday and Sunday from being selected.
     return day !== 0 && day !== 6 && date > this.today();
@@ -61,7 +60,7 @@ export class SessionCreationModalComponent implements OnInit {
     const title = this.formGroup.get('titleCtrl').value;
     const desc = this.formGroup.get('descCtrl').value;
 
-    const session = new FTSession(title, desc, date['_d'].getTime())
+    const session = new FTSession(title, desc, date.getTime())
     this.sessionService.newSession(session, this.course.id)
       .subscribe(resp => {
         this.modalService.newToastModal('Session created successfully!');

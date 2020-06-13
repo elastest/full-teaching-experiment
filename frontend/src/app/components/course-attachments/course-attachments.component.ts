@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
 import {AuthenticationService} from '../../services/authentication.service';
 import {Course} from '../../classes/course';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
@@ -14,6 +14,7 @@ import {FileUploaderComponent} from '../file-uploader/file-uploader.component';
 import {VideoPlayerService} from '../../services/video-player.service';
 import {Router} from '@angular/router';
 import {PhotoViewerComponent} from '../photo-viewer/photo-viewer.component';
+import {NgxMatDatetimePicker} from '@angular-material-components/datetime-picker';
 
 
 export interface DialogData {
@@ -43,6 +44,9 @@ export class CourseAttachmentsComponent implements OnInit {
 
   @ViewChild(SwalComponent)
   private swal: SwalComponent;
+
+  @ViewChild('pickerInput')
+  private pickerInput: ElementRef<HTMLInputElement>;
 
   constructor(private dialog: MatDialog,
               private videoPlayerService: VideoPlayerService,
@@ -198,5 +202,28 @@ export class CourseAttachmentsComponent implements OnInit {
         file: f
       }
     })
+  }
+
+  hideFile(file: File, fg: FileGroup, event: any): void {
+    file.hiddenUntil = event.value;
+    this.fileService.editFileGroup(fg, this.course.id)
+      .subscribe(data => {
+        this.modalService.newToastModal(`File hidden until: ${file.hiddenUntil}`)
+      }, error => {
+        console.log(error);
+        this.modalService.newErrorModal(`Error hidding file!`, `Contact your administrator`, null);
+      })
+  }
+
+  showFile(file: File, fg: FileGroup): void {
+    file.hiddenUntil = null;
+    this.pickerInput.nativeElement.value = null;
+    this.fileService.editFileGroup(fg, this.course.id)
+      .subscribe(data => {
+        this.modalService.newToastModal(`File date restriction removed!`)
+      }, error => {
+        console.log(error);
+        this.modalService.newErrorModal(`Error hidding file!`, `Contact your administrator`, null);
+      })
   }
 }

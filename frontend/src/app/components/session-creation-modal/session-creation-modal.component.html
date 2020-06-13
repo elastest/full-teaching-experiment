@@ -13,15 +13,19 @@
     <br/>
     <mat-form-field>
       <mat-label>Choose a date</mat-label>
-      <input formControlName="dateCtrl" matInput readonly (dateChange)="this.changeDate($event)" [matDatepicker]="picker"
-             [matDatepickerFilter]="myFilter">
+      <input [ngxMatDatetimePickerFilter]="myFilter" formControlName="dateCtrl" readonly matInput
+             [ngxMatDatetimePicker]="picker" (dateChange)="this.changeDate($event)" placeholder="Pick a date">
       <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-      <mat-datepicker [startAt]="today()" #picker></mat-datepicker>
+      <ngx-mat-datetime-picker #picker>
+      </ngx-mat-datetime-picker>
     </mat-form-field>
+
   </form>
 
 </mat-dialog-content>
 <mat-dialog-actions>
   <button mat-raised-button color="warn" [mat-dialog-close]>Cancel</button>
-  <button mat-raised-button [mat-dialog-close] [disabled]="!this.saveButtonEnabled()" (click)="this.createSession()">Save</button>
+  <button mat-raised-button [mat-dialog-close] [disabled]="!this.saveButtonEnabled()" (click)="this.createSession()">
+    Save
+  </button>
 </mat-dialog-actions>

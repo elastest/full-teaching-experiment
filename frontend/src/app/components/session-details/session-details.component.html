@@ -43,10 +43,11 @@
             </mat-expansion-panel-header>
             <mat-form-field *ngIf="this.authenticationService.isTeacher()">
               <mat-label>Choose a date</mat-label>
-              <input matInput readonly (dateChange)="this.changeDate($event)" [matDatepicker]="picker"
-                     [matDatepickerFilter]="myFilter">
+              <input [ngxMatDatetimePickerFilter]="myFilter" readonly matInput
+                     [ngxMatDatetimePicker]="picker" (dateChange)="this.changeDate($event)" placeholder="Pick a date">
               <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-              <mat-datepicker [startAt]="today()" #picker></mat-datepicker>
+              <ngx-mat-datetime-picker #picker>
+              </ngx-mat-datetime-picker>
             </mat-form-field>
           </mat-expansion-panel>
 

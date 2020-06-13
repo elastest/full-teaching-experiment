@@ -8,6 +8,8 @@ import javax.persistence.Id;
 import lombok.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.util.Date;
+
 @Entity
 @Getter
 @Setter
@@ -29,6 +31,10 @@ public class File {
 	private String link;
 	
 	private int indexOrder;
+
+	private boolean hidden = false;
+
+	private Date hiddenUntil = null;
 	
 
 	public File(int type, String name) {

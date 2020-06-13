@@ -82,14 +82,15 @@ import {SessionDetailsComponent} from './components/session-details/session-deta
 import {SessionCreationModalComponent} from './components/session-creation-modal/session-creation-modal.component';
 import {CanvasWhiteboardModule} from 'ng2-canvas-whiteboard';
 import {WebsocketService} from './services/websocket.service';
-import { ProfilePictureDialogComponent } from './components/profile-picture-dialog/profile-picture-dialog.component';
-import { ProfileDropdownComponent } from './components/profile-dropdown/profile-dropdown.component';
-import { PdfOnlineViewerComponent } from './components/pdf-online-viewer/pdf-online-viewer.component';
+import {ProfilePictureDialogComponent} from './components/profile-picture-dialog/profile-picture-dialog.component';
+import {ProfileDropdownComponent} from './components/profile-dropdown/profile-dropdown.component';
+import {PdfOnlineViewerComponent} from './components/pdf-online-viewer/pdf-online-viewer.component';
 import {NgxExtendedPdfViewerModule} from 'ngx-extended-pdf-viewer';
-import { PhotoViewerComponent } from './components/photo-viewer/photo-viewer.component';
-import { ChatComponent } from './components/chat/chat.component';
+import {PhotoViewerComponent} from './components/photo-viewer/photo-viewer.component';
+import {ChatComponent} from './components/chat/chat.component';
 import {NgChatModule} from 'ng-chat';
-import { AudioPlayerDialogComponent } from './components/audio-player-dialog/audio-player-dialog.component';
+import {AudioPlayerDialogComponent} from './components/audio-player-dialog/audio-player-dialog.component';
+import {NgxMatDatetimePickerModule, NgxMatNativeDateModule, NgxMatTimepickerModule} from '@angular-material-components/datetime-picker';
 
 const matModules = [
   MatFormFieldModule,
@@ -101,38 +102,41 @@ const matModules = [
 ];
 
 @NgModule({
-    imports: [
-        BrowserModule,
-        BrowserAnimationsModule,
-        FormsModule,
-        HttpClientModule,
-        routing,
-        matModules,
-        MatSidenavModule,
-        MatMenuModule,
-        MatToolbarModule,
-        MatCardModule,
-        ReactiveFormsModule,
-        MatIconModule,
-        MatDividerModule,
-        MatTableModule,
-        MatTabsModule,
-        AngularEditorModule,
-        MatDatepickerModule,
-        SweetAlert2Module.forRoot(),
-        MatTooltipModule,
-        MatGridListModule,
-        MatExpansionModule,
-        DragDropModule,
-        MatListModule,
-        MatSlideToggleModule,
-        MatSelectModule,
-        MatVideoModule,
-        OpenviduSessionModule,
-        CanvasWhiteboardModule,
-        NgxExtendedPdfViewerModule,
-        NgChatModule
-    ],
+  imports: [
+    BrowserModule,
+    BrowserAnimationsModule,
+    FormsModule,
+    HttpClientModule,
+    routing,
+    matModules,
+    MatSidenavModule,
+    MatMenuModule,
+    MatToolbarModule,
+    MatCardModule,
+    ReactiveFormsModule,
+    MatIconModule,
+    MatDividerModule,
+    MatTableModule,
+    MatTabsModule,
+    AngularEditorModule,
+    MatDatepickerModule,
+    SweetAlert2Module.forRoot(),
+    MatTooltipModule,
+    MatGridListModule,
+    MatExpansionModule,
+    DragDropModule,
+    MatListModule,
+    MatSlideToggleModule,
+    MatSelectModule,
+    MatVideoModule,
+    OpenviduSessionModule,
+    CanvasWhiteboardModule,
+    NgxExtendedPdfViewerModule,
+    NgChatModule,
+    NgxMatDatetimePickerModule,
+    NgxMatTimepickerModule,
+    NgxMatNativeDateModule,
+  ],
   exports: [
     matModules
   ],

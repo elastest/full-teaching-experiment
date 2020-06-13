@@ -90,15 +90,14 @@ export class SessionDetailsComponent implements OnInit, AfterViewInit {
     })
   }
 
-  myFilter = (d: Date | null): boolean => {
-    const date = d['_d'];
+  myFilter = (date: Date | null): boolean => {
     const day = date.getDay();
     // Prevent Saturday and Sunday from being selected.
     return day !== 0 && day !== 6 && date > this.today();
   }
 
   changeDate(event) {
-    const date = event.value['_d'];
+    const date = event.value;
     this.session.date = date.getTime();
     this.sessionService.editSession(this.session).subscribe(resp => {
       this.modalService.newToastModal(`Session date changed to: ${date}`);

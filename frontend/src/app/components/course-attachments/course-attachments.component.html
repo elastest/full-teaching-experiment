@@ -11,20 +11,36 @@
 
       <div *ngIf="this.authService.isTeacher() && this.isEditing" cdkDropList class="files-list"
            (cdkDropListDropped)="drop(fg.id, fg.files, $event)">
-        <div class="files-box" *ngFor="let f of fg.files" cdkDrag>
-          <div class="files-custom-placeholder" *cdkDragPlaceholder></div>
-          {{f.name}}
-          <div class="example-handle" cdkDragHandle>
-            <svg width="24px" fill="currentColor" viewBox="0 0 24 24">
-              <path
-                d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z"></path>
-              <path d="M0 0h24v24H0z" fill="none"></path>
-            </svg>
-          </div>
-          <button mat-button (click)="deleteAttachment(f, fg)">
-            <mat-icon>delete</mat-icon>
-          </button>
-        </div>
+        <mat-card class="files-box" *ngFor="let f of fg.files" cdkDrag>
+          <mat-card-header>
+            <div class="files-custom-placeholder" *cdkDragPlaceholder></div>
+            {{f.name}}
+          </mat-card-header>
+          <mat-card-actions>
+            <button class="move-card" mat-button cdkDragHandle>
+              <mat-icon>
+                open_with
+              </mat-icon>
+            </button>
+            <button mat-button (click)="deleteAttachment(f, fg)">
+              <mat-icon>delete</mat-icon>
+            </button>
+<!--            <button matTooltip="Hide file" mat-button *ngIf="!f.isHidden" (click)="this.hideFile(f)">-->
+<!--              <mat-icon>-->
+<!--                visibility_off-->
+<!--              </mat-icon>-->
+<!--            </button>-->
+            <mat-form-field>
+              <input [defaultValue]="f.hiddenUntil ? f.hiddenUntil: ''" #pickerInput (dateChange)="this.hideFile(f, fg, $event)" readonly matInput [ngxMatDatetimePicker]="picker" placeholder="Hide file until">
+              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+              <ngx-mat-datetime-picker #picker>
+              </ngx-mat-datetime-picker>
+            </mat-form-field>
+            <button color="warn" mat-raised-button *ngIf="f.hiddenUntil" (click)="this.showFile(f, fg)">
+              Remove date restriction
+            </button>
+          </mat-card-actions>
+        </mat-card>
       </div>
 
       <mat-list *ngIf="!this.isEditing">
@@ -34,14 +50,27 @@
               {{f.name}}
             </mat-card-title>
           </mat-card-header>
+          <mat-card-content *ngIf="this.authService.isTeacher() && f.hiddenUntil">
+            <button matTooltip="File is hidden!" *ngIf="f.hiddenUntil" mat-button>
+              <mat-icon>
+                visibility_off
+              </mat-icon>
+            </button>
+            <button mat-button>
+              {{f.hiddenUntil}}
+            </button>
+          </mat-card-content>
           <mat-card-actions>
-            <button *ngIf="this.isFile(f) && this.isPDF(f)" mat-button matTooltip="Download attachment" (click)="openPDF(f)">
+            <button *ngIf="this.isFile(f) && this.isPDF(f)" mat-button matTooltip="Download attachment"
+                    (click)="openPDF(f)">
               <mat-icon>picture_as_pdf</mat-icon>
             </button>
-            <button *ngIf="this.isFile(f) && !this.isPDF(f) && !this.isPicture(f)" mat-button matTooltip="Download attachment" (click)="this.downloadAttachment(f)">
+            <button *ngIf="this.isFile(f) && !this.isPDF(f) && !this.isPicture(f)" mat-button
+                    matTooltip="Download attachment" (click)="this.downloadAttachment(f)">
               <mat-icon>cloud_download</mat-icon>
             </button>
-            <button *ngIf="this.isFile(f) && !this.isPDF(f) && this.isPicture(f)" mat-button matTooltip="Download attachment" (click)="this.openPhoto(f)">
+            <button *ngIf="this.isFile(f) && !this.isPDF(f) && this.isPicture(f)" mat-button
+                    matTooltip="Download attachment" (click)="this.openPhoto(f)">
               <mat-icon>insert_photo</mat-icon>
             </button>
             <button *ngIf="this.isLink(f)" mat-button matTooltip="Redirect to link" (click)="this.openLink(f.link)">

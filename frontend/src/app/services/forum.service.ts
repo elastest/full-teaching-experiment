@@ -6,7 +6,6 @@ import {AuthenticationService} from './authentication.service';
 
 import 'rxjs/Rx';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {Observable} from 'rxjs';
 import {CourseDetails} from '../classes/course-details';
 import * as uuid from 'uuid';
 
@@ -36,7 +35,7 @@ export class ForumService {
     //.catch(error => this.handleError("POST new entry FAIL. Response: ", error));
   }
 
-  public newAudioComment(parent: Comment, entryId: number, courseDetailsId: number, audio: Blob){
+  public newAudioComment(parent: Comment, entryId: number, courseDetailsId: number, audio: Blob) {
     const id = uuid.v4();
     const file = new File([audio], `${id}.wav`);
     const formData = new FormData();

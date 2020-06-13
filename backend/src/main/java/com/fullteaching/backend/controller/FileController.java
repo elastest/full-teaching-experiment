@@ -5,6 +5,7 @@ import com.fullteaching.backend.annotation.RoleFilter;
 import com.fullteaching.backend.file.FileOperationsService;
 import com.fullteaching.backend.file.MimeTypes;
 import com.fullteaching.backend.model.*;
+import com.fullteaching.backend.notifications.NotificationDispatcher;
 import com.fullteaching.backend.security.AuthorizationService;
 import com.fullteaching.backend.security.user.UserComponent;
 import com.fullteaching.backend.service.*;
@@ -42,6 +43,7 @@ public class FileController extends SecureController {
     private final FileOperationsService fileOperationsService;
     private final CourseDetailsService courseDetailsService;
     private final EntryService entryService;
+    private final NotificationDispatcher notificationDispatcher;
 
     @Value("${profile.stage}")
     private String profileStage;
@@ -52,7 +54,7 @@ public class FileController extends SecureController {
     public static final Path AUDIOS_FOLDER = Paths.get(System.getProperty("user.dir"), "/assets/audios");
 
     @Autowired
-    public FileController(FileGroupService fileGroupService, FileService fileService, CourseService courseService, CommentService commentService, UserService userService, UserComponent user, AuthorizationService authorizationService, FileOperationsService fileOperationsService, CourseDetailsService courseDetailsService, EntryService entryService) {
+    public FileController(FileGroupService fileGroupService, FileService fileService, CourseService courseService, CommentService commentService, UserService userService, UserComponent user, AuthorizationService authorizationService, FileOperationsService fileOperationsService, CourseDetailsService courseDetailsService, EntryService entryService, NotificationDispatcher notificationDispatcher) {
         super(user, authorizationService);
         this.fileGroupService = fileGroupService;
         this.fileService = fileService;
@@ -62,6 +64,7 @@ public class FileController extends SecureController {
         this.fileOperationsService = fileOperationsService;
         this.courseDetailsService = courseDetailsService;
         this.entryService = entryService;
+        this.notificationDispatcher = notificationDispatcher;
     }
 
     @RoleFilter(role = Role.TEACHER)
@@ -314,62 +317,73 @@ public class FileController extends SecureController {
             return userAuthorized;
         } else {
             if (commentParent != null) {
-                userAuthorized = authorizationService.checkAuthorization(commentParent, commentParent.getUser());
-                if (userAuthorized != null) { // If the user is not the author of the comment
-                    return userAuthorized;
-                } else {
-                    Comment comment = new Comment();
+                Comment comment = new Comment();
+                Iterator<String> i = request.getFileNames();
+                while (i.hasNext()) {
 
-                    Iterator<String> i = request.getFileNames();
-                    while (i.hasNext()) {
+                    String name = i.next();
 
-                        String name = i.next();
+                    log.info("Audio file name: '{}'", name);
 
-                        log.info("Audio file name: '{}'", name);
+                    MultipartFile file = request.getFile(name);
+                    String fileName = file.getOriginalFilename();
 
-                        MultipartFile file = request.getFile(name);
-                        String fileName = file.getOriginalFilename();
+                    log.info("Audio file full name: " + fileName);
 
-                        log.info("Audio file full name: " + fileName);
-
-                        if (file.isEmpty()) {
-                            log.error("The Audio file is empty");
-                            throw new RuntimeException("The Audio file is empty");
-                        }
-
-                        if (!Files.exists(AUDIOS_FOLDER)) {
-                            log.debug("Creating folder '{}'", AUDIOS_FOLDER);
-                            Files.createDirectories(AUDIOS_FOLDER);
-                        }
-
-                        String saveName = UUID.randomUUID().toString() + ".wav";
-                        String finalName = "audio-comment-" + saveName;
-                        log.info("Audio file final name: " + finalName);
-                        File uploadedFile = new File(AUDIOS_FOLDER.toFile(), finalName);
-
-                        file.transferTo(uploadedFile);
-
-                        if (this.isProductionStage()) {
-                            // ONLY ON PRODUCTION
-                            try {
-                                fileOperationsService.productionFileSaver(finalName, "audios", uploadedFile);
-                            } catch (InterruptedException e) {
-                                fileOperationsService.deleteLocalFile(uploadedFile.getName(), AUDIOS_FOLDER);
-                                e.printStackTrace();
-                            }
-                            fileOperationsService.deleteLocalFile(uploadedFile.getName(), AUDIOS_FOLDER);
-                            // ONLY ON PRODUCTION
-                        }
-                        comment.setAudioUrl(finalName);
-                        log.info("File succesfully uploaded to path '{}'", uploadedFile.getPath());
+                    if (file.isEmpty()) {
+                        log.error("The Audio file is empty");
+                        throw new RuntimeException("The Audio file is empty");
                     }
 
-                    comment.setCommentParent(commentParent);
-                    comment.setUser(this.user.getLoggedUser());
-                    comment = commentService.save(comment);
-                    entryService.save(entry);
-                    return new ResponseEntity<>(comment, HttpStatus.CREATED);
+                    if (!Files.exists(AUDIOS_FOLDER)) {
+                        log.debug("Creating folder '{}'", AUDIOS_FOLDER);
+                        Files.createDirectories(AUDIOS_FOLDER);
+                    }
+
+                    String saveName = UUID.randomUUID().toString() + ".wav";
+                    String finalName = "audio-comment-" + saveName;
+                    log.info("Audio file final name: " + finalName);
+                    File uploadedFile = new File(AUDIOS_FOLDER.toFile(), finalName);
+
+                    file.transferTo(uploadedFile);
+
+                    if (this.isProductionStage()) {
+                        // ONLY ON PRODUCTION
+                        try {
+                            fileOperationsService.productionFileSaver(finalName, "audios", uploadedFile);
+                        } catch (InterruptedException e) {
+                            fileOperationsService.deleteLocalFile(uploadedFile.getName(), AUDIOS_FOLDER);
+                            e.printStackTrace();
+                        }
+                        fileOperationsService.deleteLocalFile(uploadedFile.getName(), AUDIOS_FOLDER);
+                        // ONLY ON PRODUCTION
+                    }
+                    comment.setAudioUrl(finalName);
+                    log.info("File succesfully uploaded to path '{}'", uploadedFile.getPath());
                 }
+
+                comment.setCommentParent(commentParent);
+                comment.setUser(this.user.getLoggedUser());
+                comment = commentService.save(comment);
+                entryService.save(entry);
+
+                User commentOwner = comment.getUser();
+                User entryOwner = entry.getUser();
+                User parentOwner = commentParent.getUser();
+
+                // send new comment in your entry notification
+                if(!commentOwner.equals(entryOwner)){
+                    this.notificationDispatcher.notifyCommentAdded(entry, commentOwner, courseDetails.getCourse());
+                }
+
+                // send new reply to your comment notification
+                if(!parentOwner.equals(entryOwner) && !parentOwner.equals(commentOwner)){
+                    this.notificationDispatcher.notifyCommentReply(commentParent, commentOwner, courseDetails.getCourse(), entry);
+                }
+
+
+                return new ResponseEntity<>(comment, HttpStatus.CREATED);
+
             } else {
                 log.error("Comment parent with id '{}' doesn't exist", parentId);
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
