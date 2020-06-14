@@ -38,24 +38,32 @@ export class FTChatAdapter extends ChatAdapter implements IChatGroupAdapter {
 
     this.announcerService.newMessageInChatAnnouncer$.subscribe(conversation => {
       this.newMessage(conversation);
-    })
+    });
 
+    this.initialLoadData();
+  }
+
+  private initialLoadData() {
     this.userService.getAll()
       .subscribe(data => {
         const users = data['content'];
-        this.participants = users.map(user => {
-          return {
-            participantType: ChatParticipantType.User,
-            id: user.id,
-            displayName: user.nickName,
-            avatar: user.picture ? `${environment.API_URL}${user.picture}` : 'assets/images/default_session_image.png',
-            status: ChatParticipantStatus.Online
-          };
-        });
+        this.loadData(users);
         this.dataLoaded = true;
       }, error => {
         console.log(error);
-      })
+      });
+  }
+
+  loadData(users): void {
+    this.participants = users.map(user => {
+      return {
+        participantType: ChatParticipantType.User,
+        id: user.id,
+        displayName: user.nickName,
+        avatar: user.picture ? `${environment.API_URL}${user.picture}` : 'assets/images/default_session_image.png',
+        status: ChatParticipantStatus.Online
+      };
+    });
   }
 
   isDataLoaded(): boolean {
@@ -76,30 +84,6 @@ export class FTChatAdapter extends ChatAdapter implements IChatGroupAdapter {
   }
 
   getMessageHistory(destinataryId: any): Observable<Message[]> {
-    // let mockedHistory: Array<Message>;
-
-    // mockedHistory = [
-    //   {
-    //     fromId: MessageType.Text,
-    //     toId: 999,
-    //     message: 'Hi there, here is a sample image type message:',
-    //     dateSent: new Date()
-    //   },
-    //   {
-    //     fromId: 1,
-    //     toId: 999,
-    //     type: MessageType.Image,
-    //     message: 'https://66.media.tumblr.com/avatar_9dd9bb497b75_128.pnj',
-    //     dateSent: new Date()
-    //   },
-    //   {
-    //     fromId: MessageType.Text,
-    //     toId: 999,
-    //     message: 'Type any message bellow to test this Angular module.',
-    //     dateSent: new Date()
-    //   },
-    // ];
-
     const me: User = this.authenticationService.getCurrentUser();
     console.log(`Getting chat history with: ${destinataryId}`);
     return this.chatService.getConversationWithUser(destinataryId).pipe(map(data => {
@@ -123,7 +107,6 @@ export class FTChatAdapter extends ChatAdapter implements IChatGroupAdapter {
   }
 
   sendMessage(message: Message): void {
-
     const me: User = this.authenticationService.getCurrentUser();
     const chatMessage: ChatMessage = new ChatMessage(me, message.message);
     this.chatService.sendMessage(this.openedConversation, chatMessage)
@@ -131,36 +114,11 @@ export class FTChatAdapter extends ChatAdapter implements IChatGroupAdapter {
         console.log(data);
       }, error => {
         console.log(error);
-      })
-
-    // setTimeout(() => {
-    //   let replyMessage = new Message();
-    //
-    //   replyMessage.message = 'You have typed \'' + message.message + '\'';
-    //   replyMessage.dateSent = new Date();
-    //   if (isNaN(message.toId)) {
-    //     let group = this.participants.find(x => x.id == message.toId) as Group;
-    //
-    //     // Message to a group. Pick up any participant for this
-    //     let randomParticipantIndex = Math.floor(Math.random() * group.chattingTo.length);
-    //     replyMessage.fromId = group.chattingTo[randomParticipantIndex].id;
-    //
-    //     replyMessage.toId = message.toId;
-    //
-    //     this.onMessageReceived(group, replyMessage);
-    //   } else {
-    //     replyMessage.fromId = message.toId;
-    //     replyMessage.toId = message.fromId;
-    //
-    //     let user = this.participants.find(x => x.id == replyMessage.fromId);
-    //
-    //     this.onMessageReceived(user, replyMessage);
-    //   }
-    // }, 1000);
+      });
   }
 
   newMessage(conversation: ChatConversation) {
-    const lastMessage: ChatMessage = conversation.messages[conversation.messages.length-1];
+    const lastMessage: ChatMessage = conversation.messages[conversation.messages.length - 1];
     console.log(lastMessage)
     const fromId: number = lastMessage.user.id;
     const replyMessage = new Message();
@@ -184,5 +142,26 @@ export class FTChatAdapter extends ChatAdapter implements IChatGroupAdapter {
     this.listFriends().subscribe(response => {
       this.onFriendsListChanged(response);
     });
+  }
+
+
+  applySearch(search: string): void {
+    if (search.length > 3) {
+      this.userService.getAllMatchingName(search)
+        .subscribe(data => {
+          const users: Array<User> = data['content'];
+          this.loadData(users);
+          this.listFriends().subscribe(response => {
+            this.onFriendsListChanged(response);
+          })
+        }, error => {
+          console.log(error);
+        });
+    } else {
+      this.initialLoadData();
+      this.listFriends().subscribe(response => {
+        this.onFriendsListChanged(response);
+      })
+    }
   }
 }

@@ -7,8 +7,7 @@
   [historyPageSize]="4"
   [hideFriendsList]="false"
   title="chat"
+  (input)="this.searchUser($event)"
   [theme]="getChatTheme()"
-  (onParticipantClicked)="this.openConversation($event)"
   (onMessagesSeen)="messageSeen($event)">
-
 </ng-chat>

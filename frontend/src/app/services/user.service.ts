@@ -21,6 +21,16 @@ export class UserService {
     return this.http.get(url, options);
   }
 
+  getAllMatchingName(name: string, page: number = 0, size: number = 10){
+    console.log(`Getting users matching name: ${name}`);
+    const url = `${this.url}/byName/${name}?page=${page}&size=${size}`;
+    let headers = new HttpHeaders({
+      'X-Requested-With': 'XMLHttpRequest'
+    });
+    let options = ({headers});
+    return this.http.get(url, options);
+  }
+
   newUser(name: string, pass: string, nickName: string, captchaToken: string) {
     console.log('POST new user ' + name);
 
@@ -53,4 +63,5 @@ export class UserService {
     let options = ({headers});
     return this.http.post<User>(this.url + `/changenickname/${user.id}/${value}`, null, options);
   }
+
 }

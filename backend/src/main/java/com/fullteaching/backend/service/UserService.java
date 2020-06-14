@@ -7,6 +7,8 @@ import com.fullteaching.backend.struct.FTService;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -41,4 +43,7 @@ public class UserService implements FTService<User, Long> {
         return this.repo.findByName(name);
     }
 
+    public Page<User> getByname(String name, int page, int size) {
+        return this.repo.findAllByNameStartingWith(name, PageRequest.of(page, size));
+    }
 }
