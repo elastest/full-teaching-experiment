@@ -91,6 +91,8 @@ import {ChatComponent} from './components/chat/chat.component';
 import {NgChatModule} from 'ng-chat';
 import {AudioPlayerDialogComponent} from './components/audio-player-dialog/audio-player-dialog.component';
 import {NgxMatDatetimePickerModule, NgxMatNativeDateModule, NgxMatTimepickerModule} from '@angular-material-components/datetime-picker';
+import { NotificationsDropdownComponent } from './components/notifications-dropdown/notifications-dropdown.component';
+import {ChatService} from './services/chat.service';
 
 const matModules = [
   MatFormFieldModule,
@@ -180,6 +182,7 @@ const matModules = [
     PhotoViewerComponent,
     ChatComponent,
     AudioPlayerDialogComponent,
+    NotificationsDropdownComponent,
   ],
   providers: [
     AuthenticationService,
@@ -201,7 +204,8 @@ const matModules = [
     CookieService,
     ModalService,
     AnnouncerService,
-    WebsocketService
+    WebsocketService,
+    ChatService
   ],
   bootstrap: [AppComponent]
 })

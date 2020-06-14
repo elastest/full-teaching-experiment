@@ -8,6 +8,7 @@ import {Entry} from '../classes/entry';
 import {FTSession} from '../classes/FTSession';
 import {User} from '../classes/user';
 import {CourseDetails} from '../classes/course-details';
+import {ChatConversation} from '../classes/chat-conversation';
 
 @Injectable()
 export class AnnouncerService {
@@ -51,7 +52,14 @@ export class AnnouncerService {
   private audioCommentAddedAnnouncerSubject: Subject<{courseId: number, entryId: number, comment: Comment}> = new Subject<{courseId: number, entryId: number, comment: Comment}>();
   public audioCommentAddedAnnouncer$ = this.audioCommentAddedAnnouncerSubject.asObservable();
 
+  private newMessageInChatAnnouncerSubject: Subject<ChatConversation> = new Subject<ChatConversation>();
+  public newMessageInChatAnnouncer$ = this.newMessageInChatAnnouncerSubject.asObservable();
+
   constructor() {
+  }
+
+  announceNewMessageInChat(conversation: ChatConversation){
+    this.newMessageInChatAnnouncerSubject.next(conversation);
   }
 
   announceAudioCommentAdded(courseId: number, entryId: number, comment: Comment): void {

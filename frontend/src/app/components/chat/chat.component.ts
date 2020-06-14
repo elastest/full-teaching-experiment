@@ -1,5 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {FTChatAdapter} from '../../adapter/f-t-chat-adapter';
+import {IChatParticipant} from 'ng-chat';
+import {AuthenticationService} from '../../services/authentication.service';
 
 @Component({
   selector: 'app-chat',
@@ -8,13 +10,24 @@ import {FTChatAdapter} from '../../adapter/f-t-chat-adapter';
 })
 export class ChatComponent implements OnInit {
 
-  constructor(public adapter: FTChatAdapter) { }
-
-  ngOnInit(): void {
+  constructor(public adapter: FTChatAdapter,
+              public authenticationService: AuthenticationService) {
   }
 
-  messageSeen(event){
+  ngOnInit(): void {
+
+  }
+
+  messageSeen(event) {
     console.log(event);
   }
 
+  searchUser(event: any) {
+    const search = event.target.value;
+
+  }
+
+  openConversation(participant: IChatParticipant) {
+
+  }
 }

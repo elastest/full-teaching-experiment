@@ -7,6 +7,8 @@ import {AnnouncerService} from './announcer.service';
 import {Entry} from '../classes/entry';
 import {Comment} from '../classes/comment';
 import {User} from '../classes/user';
+import {ChatConversation} from '../classes/chat-conversation';
+import {FTChatAdapter} from '../adapter/f-t-chat-adapter';
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +21,7 @@ export class NotificationService {
 
   notify(message){
     const keys = Object.keys(message);
+    const messageType = message.type;
 
     // course invitation notification
     if (keys.includes('course')) {
@@ -61,7 +64,10 @@ export class NotificationService {
       });
     }
 
-
+    if(messageType === 'CHAT_MESSAGE'){
+      const conversation: ChatConversation = message.chatConversation;
+      this.announcerService.announceNewMessageInChat(conversation);
+    }
   }
 
 }

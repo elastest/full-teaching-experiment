@@ -1,7 +1,7 @@
 <div class="comment-div">
   <div class="row row-margin-bottom">
     <button mat-button>
-      <img [src]="this.getCommentUserPicture()" alt="Avatar" class="avatar">
+      <img [src]="this.getCommentUserPicture()" alt="Avatar" class="ft-avatar">
     </button>
     <div class="col l11 m11 s11" [class.teacher-forum]="isCommentTeacher(this.comment)">
       <div *ngIf="!!comment.message" class="message-itself">{{comment.message}}</div>

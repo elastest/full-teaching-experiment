@@ -1,18 +1,24 @@
 import {
   ChatAdapter,
-  IChatGroupAdapter,
-  Group,
-  Message,
   ChatParticipantStatus,
-  ParticipantResponse,
   ChatParticipantType,
+  Group,
+  IChatGroupAdapter,
   IChatParticipant,
-  MessageType
+  Message,
+  ParticipantResponse
 } from 'ng-chat';
 import {Observable, of} from 'rxjs';
-import {delay} from 'rxjs/operators';
+import {map} from 'rxjs/operators';
 import {Injectable} from '@angular/core';
 import {UserService} from '../services/user.service';
+import {ChatService} from '../services/chat.service';
+import {ChatConversation} from '../classes/chat-conversation';
+import {ChatMessage} from '../classes/chat-message';
+import {User} from '../classes/user';
+import {AuthenticationService} from '../services/authentication.service';
+import {AnnouncerService} from '../services/announcer.service';
+import {environment} from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -20,84 +26,44 @@ import {UserService} from '../services/user.service';
 export class FTChatAdapter extends ChatAdapter implements IChatGroupAdapter {
 
 
-  constructor(private userService: UserService) {
+  private participants: Array<IChatParticipant> = new Array<IChatParticipant>();
+  private dataLoaded: boolean = false;
+  private openedConversation: ChatConversation = null;
+
+  constructor(private userService: UserService,
+              private authenticationService: AuthenticationService,
+              private announcerService: AnnouncerService,
+              private chatService: ChatService) {
     super();
+
+    this.announcerService.newMessageInChatAnnouncer$.subscribe(conversation => {
+      this.newMessage(conversation);
+    })
+
+    this.userService.getAll()
+      .subscribe(data => {
+        const users = data['content'];
+        this.participants = users.map(user => {
+          return {
+            participantType: ChatParticipantType.User,
+            id: user.id,
+            displayName: user.nickName,
+            avatar: user.picture ? `${environment.API_URL}${user.picture}` : 'assets/images/default_session_image.png',
+            status: ChatParticipantStatus.Online
+          };
+        });
+        this.dataLoaded = true;
+      }, error => {
+        console.log(error);
+      })
   }
 
-  public static mockedParticipants: IChatParticipant[] = [
-    {
-      participantType: ChatParticipantType.User,
-      id: 1,
-      displayName: 'Arya Stark',
-      avatar: 'https://66.media.tumblr.com/avatar_9dd9bb497b75_128.pnj',
-      status: ChatParticipantStatus.Online
-    },
-    {
-      participantType: ChatParticipantType.User,
-      id: 2,
-      displayName: 'Cersei Lannister',
-      avatar: null,
-      status: ChatParticipantStatus.Online
-    },
-    {
-      participantType: ChatParticipantType.User,
-      id: 3,
-      displayName: 'Daenerys Targaryen',
-      avatar: 'https://68.media.tumblr.com/avatar_d28d7149f567_128.png',
-      status: ChatParticipantStatus.Busy
-    },
-    {
-      participantType: ChatParticipantType.User,
-      id: 4,
-      displayName: 'Eddard Stark',
-      avatar: 'https://pbs.twimg.com/profile_images/600707945911844864/MNogF757_400x400.jpg',
-      status: ChatParticipantStatus.Offline
-    },
-    {
-      participantType: ChatParticipantType.User,
-      id: 5,
-      displayName: 'Hodor',
-      avatar: 'https://pbs.twimg.com/profile_images/378800000449071678/27f2e27edd119a7133110f8635f2c130.jpeg',
-      status: ChatParticipantStatus.Offline
-    },
-    {
-      participantType: ChatParticipantType.User,
-      id: 6,
-      displayName: 'Jaime Lannister',
-      avatar: 'https://pbs.twimg.com/profile_images/378800000243930208/4fa8efadb63777ead29046d822606a57.jpeg',
-      status: ChatParticipantStatus.Busy
-    },
-    {
-      participantType: ChatParticipantType.User,
-      id: 7,
-      displayName: 'John Snow',
-      avatar: 'https://pbs.twimg.com/profile_images/3456602315/aad436e6fab77ef4098c7a5b86cac8e3.jpeg',
-      status: ChatParticipantStatus.Busy
-    },
-    {
-      participantType: ChatParticipantType.User,
-      id: 8,
-      displayName: 'Lorde Petyr \'Littlefinger\' Baelish',
-      avatar: 'http://68.media.tumblr.com/avatar_ba75cbb26da7_128.png',
-      status: ChatParticipantStatus.Offline
-    },
-    {
-      participantType: ChatParticipantType.User,
-      id: 9,
-      displayName: 'Sansa Stark',
-      avatar: 'http://pm1.narvii.com/6201/dfe7ad75cd32130a5c844d58315cbca02fe5b804_128.jpg',
-      status: ChatParticipantStatus.Online
-    },
-    {
-      participantType: ChatParticipantType.User,
-      id: 10,
-      displayName: 'Theon Greyjoy',
-      avatar: 'https://thumbnail.myheritageimages.com/502/323/78502323/000/000114_884889c3n33qfe004v5024_C_64x64C.jpg',
-      status: ChatParticipantStatus.Away
-    }];
+  isDataLoaded(): boolean {
+    return this.dataLoaded;
+  }
 
   listFriends(): Observable<ParticipantResponse[]> {
-    return of(FTChatAdapter.mockedParticipants.map(user => {
+    return of(this.participants.map(user => {
       let participantResponse = new ParticipantResponse();
 
       participantResponse.participant = user;
@@ -110,64 +76,107 @@ export class FTChatAdapter extends ChatAdapter implements IChatGroupAdapter {
   }
 
   getMessageHistory(destinataryId: any): Observable<Message[]> {
-    let mockedHistory: Array<Message>;
+    // let mockedHistory: Array<Message>;
 
-    mockedHistory = [
-      {
-        fromId: MessageType.Text,
-        toId: 999,
-        message: 'Hi there, here is a sample image type message:',
-        dateSent: new Date()
-      },
-      {
-        fromId: 1,
-        toId: 999,
-        type: MessageType.Image,
-        message: 'https://66.media.tumblr.com/avatar_9dd9bb497b75_128.pnj',
-        dateSent: new Date()
-      },
-      {
-        fromId: MessageType.Text,
-        toId: 999,
-        message: 'Type any message bellow to test this Angular module.',
-        dateSent: new Date()
-      },
-    ];
+    // mockedHistory = [
+    //   {
+    //     fromId: MessageType.Text,
+    //     toId: 999,
+    //     message: 'Hi there, here is a sample image type message:',
+    //     dateSent: new Date()
+    //   },
+    //   {
+    //     fromId: 1,
+    //     toId: 999,
+    //     type: MessageType.Image,
+    //     message: 'https://66.media.tumblr.com/avatar_9dd9bb497b75_128.pnj',
+    //     dateSent: new Date()
+    //   },
+    //   {
+    //     fromId: MessageType.Text,
+    //     toId: 999,
+    //     message: 'Type any message bellow to test this Angular module.',
+    //     dateSent: new Date()
+    //   },
+    // ];
 
-    return of(mockedHistory).pipe(delay(2000));
+    const me: User = this.authenticationService.getCurrentUser();
+    console.log(`Getting chat history with: ${destinataryId}`);
+    return this.chatService.getConversationWithUser(destinataryId).pipe(map(data => {
+      this.openedConversation = data[0];
+      return data[0].messages.map(message => {
+        const from: number = message.user.id;
+        let to: number;
+        if (from === me.id) {
+          to = destinataryId;
+        } else {
+          to = me.id;
+        }
+        return {
+          fromId: from,
+          toId: to,
+          message: message.message,
+          dateSent: new Date()
+        };
+      })
+    }));
   }
 
   sendMessage(message: Message): void {
-    setTimeout(() => {
-      let replyMessage = new Message();
 
-      replyMessage.message = 'You have typed \'' + message.message + '\'';
-      replyMessage.dateSent = new Date();
-      if (isNaN(message.toId)) {
-        let group = FTChatAdapter.mockedParticipants.find(x => x.id == message.toId) as Group;
+    const me: User = this.authenticationService.getCurrentUser();
+    const chatMessage: ChatMessage = new ChatMessage(me, message.message);
+    this.chatService.sendMessage(this.openedConversation, chatMessage)
+      .subscribe(data => {
+        console.log(data);
+      }, error => {
+        console.log(error);
+      })
 
-        // Message to a group. Pick up any participant for this
-        let randomParticipantIndex = Math.floor(Math.random() * group.chattingTo.length);
-        replyMessage.fromId = group.chattingTo[randomParticipantIndex].id;
+    // setTimeout(() => {
+    //   let replyMessage = new Message();
+    //
+    //   replyMessage.message = 'You have typed \'' + message.message + '\'';
+    //   replyMessage.dateSent = new Date();
+    //   if (isNaN(message.toId)) {
+    //     let group = this.participants.find(x => x.id == message.toId) as Group;
+    //
+    //     // Message to a group. Pick up any participant for this
+    //     let randomParticipantIndex = Math.floor(Math.random() * group.chattingTo.length);
+    //     replyMessage.fromId = group.chattingTo[randomParticipantIndex].id;
+    //
+    //     replyMessage.toId = message.toId;
+    //
+    //     this.onMessageReceived(group, replyMessage);
+    //   } else {
+    //     replyMessage.fromId = message.toId;
+    //     replyMessage.toId = message.fromId;
+    //
+    //     let user = this.participants.find(x => x.id == replyMessage.fromId);
+    //
+    //     this.onMessageReceived(user, replyMessage);
+    //   }
+    // }, 1000);
+  }
 
-        replyMessage.toId = message.toId;
+  newMessage(conversation: ChatConversation) {
+    const lastMessage: ChatMessage = conversation.messages[conversation.messages.length-1];
+    console.log(lastMessage)
+    const fromId: number = lastMessage.user.id;
+    const replyMessage = new Message();
+    replyMessage.fromId = fromId;
+    replyMessage.message = lastMessage.message;
+    replyMessage.dateSent = new Date();
+    replyMessage.toId = this.authenticationService.getCurrentUser().id;
 
-        this.onMessageReceived(group, replyMessage);
-      } else {
-        replyMessage.fromId = message.toId;
-        replyMessage.toId = message.fromId;
-
-        let user = FTChatAdapter.mockedParticipants.find(x => x.id == replyMessage.fromId);
-
-        this.onMessageReceived(user, replyMessage);
-      }
-    }, 1000);
+    let user = this.participants.find(x => x.id == fromId);
+    this.onMessageReceived(user, replyMessage);
   }
 
   groupCreated(group: Group): void {
-    FTChatAdapter.mockedParticipants.push(group);
+    this.participants.push(group);
 
-    FTChatAdapter.mockedParticipants = FTChatAdapter.mockedParticipants.sort((first, second) =>
+    this.participants = this.participants.sort((first, second) =>
       second.displayName > first.displayName ? -1 : 1
     );
 

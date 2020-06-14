@@ -11,7 +11,6 @@ import 'rxjs/Rx';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {environment} from '../../environments/environment';
 import {VideoPlayerService} from './video-player.service';
-import {Subject} from 'rxjs';
 import {User} from '../classes/user';
 
 @Injectable()
@@ -90,7 +89,7 @@ export class FileService {
     return this.http.put<FileGroup[]>(this.url + '/edit/file-order/course/' + courseId + '/file/' + fileMovedId + '/from/' + fileGroupSourceId + '/to/' + fileGroupTargetId + '/pos/' + filePosition, options)
   }
 
-  downloadFileAsBlob(url: string, callback){
+  downloadFileAsBlob(url: string, callback) {
     // Xhr creates new context so we need to create reference to this
     let self = this;
 
@@ -127,12 +126,12 @@ export class FileService {
 
   public downloadFile(courseId: number, file: File) {
     const url = `${environment.API_URL}/api-load-files/course/${courseId}/download/${file.id}`
-    this.downloadFileAsBlob(url,(blob) => {
+    this.downloadFileAsBlob(url, (blob) => {
       FileSaver.saveAs(blob, file.name);
     })
   }
 
-  public uploadWebLink(courseId: number, fileGroupId: number, file: File){
+  public uploadWebLink(courseId: number, fileGroupId: number, file: File) {
     console.log('Adding web link!');
     let headers = new HttpHeaders({
       'Authorization': 'Bearer ' + this.authenticationService.token
@@ -150,7 +149,7 @@ export class FileService {
     return this.http.post<FileGroup>(`/api-load-files/upload/course/${courseId}/file-group/${fileGroupId}/type/${type}`, formData, options);
   }
 
-  public changeProfilePicture(user: User, file: any){
+  public changeProfilePicture(user: User, file: any) {
     const url = `/api-load-files/upload/picture/${user.id}`
     let headers = new HttpHeaders({
       'Authorization': 'Bearer ' + this.authenticationService.token
@@ -163,7 +162,7 @@ export class FileService {
 
   public downloadAudioFile(courseId: number, commentId: number, callback: Function) {
     const url = `${environment.API_URL}/assets/audios/comment/${commentId}/${courseId}`
-    this.downloadFileAsBlob(url,(blob) => {
+    this.downloadFileAsBlob(url, (blob) => {
       callback(blob);
     })
   }

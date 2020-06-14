@@ -1,5 +1,8 @@
 package com.fullteaching.backend.struct;
 
+import com.fullteaching.backend.model.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.CrudRepository;
 
@@ -67,4 +70,7 @@ public interface FTService<T, ID> {
         this.getRepo().delete(entity);
     }
 
+    default Page<T> getall(int page, int size){
+        return this.getRepo().findAll(PageRequest.of(page, size));
+    }
 }

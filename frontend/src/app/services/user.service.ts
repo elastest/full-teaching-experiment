@@ -10,6 +10,17 @@ export class UserService {
   constructor(private http: HttpClient) {
   }
 
+  getAll(page: number = 0, size: number = 10) {
+    console.log(`Getting all users...`);
+
+    const url = `${this.url}/all?page=${page}&size=${size}`;
+    let headers = new HttpHeaders({
+      'X-Requested-With': 'XMLHttpRequest'
+    });
+    let options = ({headers});
+    return this.http.get(url, options);
+  }
+
   newUser(name: string, pass: string, nickName: string, captchaToken: string) {
     console.log('POST new user ' + name);
 

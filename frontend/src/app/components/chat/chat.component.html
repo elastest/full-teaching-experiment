@@ -1,1 +1,12 @@
-<ng-chat [adapter]="adapter" [userId]="999" [historyEnabled]="true" [historyPageSize]="4" [hideFriendsList]="false" (onMessagesSeen)="messageSeen($event)"></ng-chat>
+<ng-chat
+  *ngIf="this.adapter.isDataLoaded()"
+  (search)="searchUser($event)"
+  [adapter]="adapter"
+  [userId]="this.authenticationService.getCurrentUser().id"
+  [historyEnabled]="true"
+  [historyPageSize]="4"
+  [hideFriendsList]="false"
+  (onParticipantClicked)="this.openConversation($event)"
+  (onMessagesSeen)="messageSeen($event)">
+
+</ng-chat>
