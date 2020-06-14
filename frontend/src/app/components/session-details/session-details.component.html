@@ -77,34 +77,34 @@
         </mat-card-actions>
       </mat-card>
     </mat-tab>
-    <mat-tab>
-      <ng-template mat-tab-label>
-        <mat-icon matTooltip="Board">
-          assignment
-        </mat-icon>
-      </ng-template>
-      <div class="whiteboard-container">
-        <canvas-whiteboard #canvasWhiteboard
-                           [drawButtonClass]="'drawButtonClass'"
-                           [drawButtonText]="'Draw'"
-                           [clearButtonClass]="'clearButtonClass'"
-                           [clearButtonText]="'Clear'"
-                           [undoButtonText]="'Undo'"
-                           [undoButtonEnabled]="true"
-                           [redoButtonText]="'Redo'"
-                           [redoButtonEnabled]="true"
-                           [colorPickerEnabled]="true"
-                           [saveDataButtonEnabled]="true"
-                           [saveDataButtonText]="'Save'"
-                           [lineWidth]="5"
-                           [strokeColor]="'rgb(0,0,0)'"
-                           [shouldDownloadDrawing]="true"
-                           (onBatchUpdate)="sendBatchUpdate($event)"
-                           (onClear)="onCanvasClear()"
-                           (onUndo)="onCanvasUndo($event)"
-                           (onRedo)="onCanvasRedo($event)">
-        </canvas-whiteboard>
-      </div>
-    </mat-tab>
+<!--    <mat-tab>-->
+<!--      <ng-template mat-tab-label>-->
+<!--        <mat-icon matTooltip="Board">-->
+<!--          assignment-->
+<!--        </mat-icon>-->
+<!--      </ng-template>-->
+<!--      <div class="whiteboard-container">-->
+<!--        <canvas-whiteboard #canvasWhiteboard-->
+<!--                           [drawButtonClass]="'drawButtonClass'"-->
+<!--                           [drawButtonText]="'Draw'"-->
+<!--                           [clearButtonClass]="'clearButtonClass'"-->
+<!--                           [clearButtonText]="'Clear'"-->
+<!--                           [undoButtonText]="'Undo'"-->
+<!--                           [undoButtonEnabled]="true"-->
+<!--                           [redoButtonText]="'Redo'"-->
+<!--                           [redoButtonEnabled]="true"-->
+<!--                           [colorPickerEnabled]="true"-->
+<!--                           [saveDataButtonEnabled]="true"-->
+<!--                           [saveDataButtonText]="'Save'"-->
+<!--                           [lineWidth]="5"-->
+<!--                           [strokeColor]="'rgb(0,0,0)'"-->
+<!--                           [shouldDownloadDrawing]="true"-->
+<!--                           (onBatchUpdate)="sendBatchUpdate($event)"-->
+<!--                           (onClear)="onCanvasClear()"-->
+<!--                           (onUndo)="onCanvasUndo($event)"-->
+<!--                           (onRedo)="onCanvasRedo($event)">-->
+<!--        </canvas-whiteboard>-->
+<!--      </div>-->
+<!--    </mat-tab>-->
   </mat-tab-group>
 </div>
