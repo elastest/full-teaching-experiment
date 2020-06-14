@@ -1,6 +1,5 @@
 <ng-chat
   *ngIf="this.adapter.isDataLoaded()"
-  (search)="searchUser($event)"
   [adapter]="adapter"
   [userId]="this.authenticationService.getCurrentUser().id"
   [historyEnabled]="true"

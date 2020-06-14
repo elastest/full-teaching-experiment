@@ -11,6 +11,7 @@ import java.util.Date;
 @EqualsAndHashCode
 @ToString
 @Getter
+@Setter
 public class ChatMessage {
 
     @Id

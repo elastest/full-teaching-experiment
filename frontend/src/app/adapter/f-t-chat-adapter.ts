@@ -19,6 +19,7 @@ import {User} from '../classes/user';
 import {AuthenticationService} from '../services/authentication.service';
 import {AnnouncerService} from '../services/announcer.service';
 import {environment} from '../../environments/environment';
+import {UserChatView} from '../classes/user-chat-view';
 
 @Injectable({
   providedIn: 'root'
@@ -30,8 +31,7 @@ export class FTChatAdapter extends ChatAdapter implements IChatGroupAdapter {
   private dataLoaded: boolean = false;
   private openedConversation: ChatConversation = null;
 
-  constructor(private userService: UserService,
-              private authenticationService: AuthenticationService,
+  constructor(private authenticationService: AuthenticationService,
               private announcerService: AnnouncerService,
               private chatService: ChatService) {
     super();
@@ -44,7 +44,7 @@ export class FTChatAdapter extends ChatAdapter implements IChatGroupAdapter {
   }
 
   private initialLoadData() {
-    this.userService.getAll()
+    this.chatService.getAllUserChatViews()
       .subscribe(data => {
         const users = data['content'];
         this.loadData(users);
@@ -54,9 +54,10 @@ export class FTChatAdapter extends ChatAdapter implements IChatGroupAdapter {
       });
   }
 
-  loadData(users): void {
+  loadData(users: Array<UserChatView>): void {
     this.participants = users.map(user => {
       return {
+        unseenMessages: user.unseenMessages,
         participantType: ChatParticipantType.User,
         id: user.id,
         displayName: user.nickName,
@@ -76,7 +77,7 @@ export class FTChatAdapter extends ChatAdapter implements IChatGroupAdapter {
 
       participantResponse.participant = user;
       participantResponse.metadata = {
-        totalUnreadMessages: Math.floor(Math.random() * 10)
+        totalUnreadMessages: user['unseenMessages']
       }
 
       return participantResponse;
@@ -119,7 +120,6 @@ export class FTChatAdapter extends ChatAdapter implements IChatGroupAdapter {
 
   newMessage(conversation: ChatConversation) {
     const lastMessage: ChatMessage = conversation.messages[conversation.messages.length - 1];
-    console.log(lastMessage)
     const fromId: number = lastMessage.user.id;
     const replyMessage = new Message();
     replyMessage.fromId = fromId;
@@ -144,12 +144,11 @@ export class FTChatAdapter extends ChatAdapter implements IChatGroupAdapter {
     });
   }
 
-
   applySearch(search: string): void {
     if (search.length > 3) {
-      this.userService.getAllMatchingName(search)
+      this.chatService.getUserChatViewsByName(search)
         .subscribe(data => {
-          const users: Array<User> = data['content'];
+          const users: Array<UserChatView> = data['content'];
           this.loadData(users);
           this.listFriends().subscribe(response => {
             this.onFriendsListChanged(response);
@@ -161,6 +160,19 @@ export class FTChatAdapter extends ChatAdapter implements IChatGroupAdapter {
       this.initialLoadData();
       this.listFriends().subscribe(response => {
         this.onFriendsListChanged(response);
+      })
+    }
+  }
+
+  messagesSeen(messages) {
+    if(messages.length > 0) {
+      const message = messages.pop();
+      const from = message.fromId;
+      const to = message.toId;
+      this.chatService.sawMessages(from, to).subscribe(data => {
+        console.log(data);
+      }, error => {
+        console.log(error);
       })
     }
   }

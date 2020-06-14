@@ -7,9 +7,11 @@ import com.fullteaching.backend.model.User;
 import com.fullteaching.backend.security.user.UserComponent;
 import com.fullteaching.backend.service.ChatService;
 import com.fullteaching.backend.service.UserService;
+import com.fullteaching.backend.view.UserChatView;
 import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,6 +35,33 @@ public class ChatController {
         this.userService = userService;
     }
 
+    @LoginRequired
+    @PutMapping("/messagesSeen/from/{from}/to/{to}")
+    public ResponseEntity<Boolean> sawMessages(@PathVariable long from, @PathVariable long to){
+        log.info("Updating messages seen from {} to {}", from, to);
+        User userFrom = userService.getFromId(from);
+        User userTo = userService.getFromId(to);
+        boolean resp = this.chatService.messagesSeen(userFrom, userTo);
+        return ResponseEntity.ok(resp);
+    }
+
+    @LoginRequired
+    @GetMapping("/all/chatUsers")
+    public ResponseEntity<Page<UserChatView>> getAllChatUsers(@RequestParam int page, @RequestParam int size){
+        User me = this.userComponent.getLoggedUser();
+        // gets all chat users relative to me
+        Page<UserChatView> userChatViews = this.chatService.getAllChatUsers(me, page, size);
+        return ResponseEntity.ok(userChatViews);
+    }
+
+    @LoginRequired
+    @GetMapping("/all/chatUsers/byName/{name}")
+    public ResponseEntity<Page<UserChatView>> getAllChatUsers(@PathVariable String name, @RequestParam int page, @RequestParam int size){
+        User me = this.userComponent.getLoggedUser();
+        // gets all chat users relative to me
+        Page<UserChatView> userChatViews = this.chatService.getAllChatUsersByName(me, name, page, size);
+        return ResponseEntity.ok(userChatViews);
+    }
 
     @LoginRequired
     @GetMapping("/all")

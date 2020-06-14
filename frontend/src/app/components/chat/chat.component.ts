@@ -21,12 +21,14 @@ export class ChatComponent implements OnInit, AfterViewInit {
   }
 
   messageSeen(event) {
-    console.log(event);
+    this.adapter.messagesSeen(event);
   }
 
   searchUser(event: any) {
-    const search: string = event.target.value;
-    this.adapter.applySearch(search);
+    if (event.target.id === 'ng-chat-search_friend') {
+      const search: string = event.target.value;
+      this.adapter.applySearch(search);
+    }
   }
 
   getChatTheme() {

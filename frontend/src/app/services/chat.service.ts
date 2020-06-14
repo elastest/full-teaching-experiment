@@ -35,8 +35,21 @@ export class ChatService {
     return this.http.put<ChatConversation>(`${this.url}/message/conversation/${conversation.id}`, message, this.getOptions());
   }
 
-  public getAllConversations(){
+  public getAllConversations() {
     return this.http.get<ChatConversation[]>(`${this.url}/all`, this.getOptions());
   }
+
+  public getAllUserChatViews(page: number = 0, size: number = 10) {
+    return this.http.get(`${this.url}/all/chatUsers?page=${page}&size=${size}`, this.getOptions());
+  }
+
+  public getUserChatViewsByName(name: string, page: number = 0, size: number = 10) {
+    return this.http.get(`${this.url}/all/chatUsers/byName/${name}?page=${page}&size=${size}`, this.getOptions());
+  }
+
+  public sawMessages(from: number, to: number) {
+    return this.http.put(`${this.url}/messagesSeen/from/${from}/to/${to}`, this.getOptions());
+  }
+
 
 }

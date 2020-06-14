@@ -6,26 +6,49 @@ import com.fullteaching.backend.model.User;
 import com.fullteaching.backend.notifications.NotificationDispatcher;
 import com.fullteaching.backend.repo.ChatConversationRepo;
 import com.fullteaching.backend.struct.FTService;
+import com.fullteaching.backend.view.UserChatView;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Getter
+@Slf4j
 public class ChatService implements FTService<ChatConversation, Long> {
 
     private final ChatConversationRepo repo;
     private final ChatMessageService chatMessageService;
     private final NotificationDispatcher notificationDispatcher;
+    private final UserService userService;
 
     @Autowired
-    public ChatService(ChatConversationRepo repo, ChatMessageService chatMessageService, NotificationDispatcher notificationDispatcher) {
+    public ChatService(ChatConversationRepo repo, ChatMessageService chatMessageService, NotificationDispatcher notificationDispatcher, UserService userService) {
         this.repo = repo;
         this.chatMessageService = chatMessageService;
         this.notificationDispatcher = notificationDispatcher;
+        this.userService = userService;
+    }
+
+    private Page<UserChatView> convertToUserChatView(Page<User> usersPage, User me) {
+        List<UserChatView> userChatViews = usersPage
+                .stream()
+                .map(user -> {
+                    long unseen = this.getUnseenMessagesCount(me, user);
+                    return new UserChatView(user, unseen);
+                })
+                .collect(Collectors.toList());
+        return new PageImpl<>(userChatViews, usersPage.getPageable(), usersPage.getTotalElements());
+    }
+
+    public Page<UserChatView> getAllChatUsers(User me, int page, int size) {
+        Page<User> usersPage = this.userService.getall(page, size);
+        return this.convertToUserChatView(usersPage, me);
     }
 
     public Collection<ChatConversation> getAllFromUser(User user) {
@@ -68,12 +91,36 @@ public class ChatService implements FTService<ChatConversation, Long> {
 
     public long getUnseenMessagesCount(User me, User other) {
         ChatConversation chatConversation = this.getConversationsOfUserWithOther(me, other).stream().findFirst().orElse(null);
-        if(Objects.nonNull(chatConversation)){
+        if (Objects.nonNull(chatConversation)) {
             return chatConversation.getMessages()
                     .stream()
-                    .filter(chatMessage -> chatMessage.getDateSeen() != null)
+                    .filter(chatMessage -> chatMessage.getDateSeen() == null)
                     .count();
         }
         return 0;
+    }
+
+    public Page<UserChatView> getAllChatUsersByName(User me, String name, int page, int size) {
+        Page<User> userPage = this.userService.getByname(name, page, size);
+        return this.convertToUserChatView(userPage, me);
+    }
+
+    public boolean messagesSeen(User userFrom, User userTo) {
+        Collection<ChatConversation> chatConversations = this.getRepo().findAllByUsersContainingAndUsersContaining(userFrom, userTo);
+        for (ChatConversation conversation : chatConversations) {
+
+            Collection<ChatMessage> messages = new HashSet<>();
+
+            for(ChatMessage message : conversation.getMessages()){
+                if(Objects.isNull(message.getDateSeen()) && message.getUser().getId() == userFrom.getId()){
+                    message.setDateSeen(new Date());
+                    messages.add(message);
+                }
+            }
+
+            this.chatMessageService.saveAll(messages);
+            log.info("Seen date updated for {} messages", messages.size());
+        }
+        return true;
     }
 }
