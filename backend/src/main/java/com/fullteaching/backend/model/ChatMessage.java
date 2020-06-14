@@ -3,6 +3,7 @@ package com.fullteaching.backend.model;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @AllArgsConstructor
@@ -20,4 +21,8 @@ public class ChatMessage {
 
     @ManyToOne(fetch= FetchType.EAGER)
     private User user;
+
+    private Date dateSeen;
+
+    private Date dateSent;
 }

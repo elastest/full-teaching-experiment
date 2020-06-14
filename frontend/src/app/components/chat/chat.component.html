@@ -6,6 +6,8 @@
   [historyEnabled]="true"
   [historyPageSize]="4"
   [hideFriendsList]="false"
+  title="chat"
+  [theme]="getChatTheme()"
   (onParticipantClicked)="this.openConversation($event)"
   (onMessagesSeen)="messageSeen($event)">
 

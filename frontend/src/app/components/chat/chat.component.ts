@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {FTChatAdapter} from '../../adapter/f-t-chat-adapter';
-import {IChatParticipant} from 'ng-chat';
+import {IChatParticipant, Theme} from 'ng-chat';
 import {AuthenticationService} from '../../services/authentication.service';
 
 @Component({
@@ -29,5 +29,9 @@ export class ChatComponent implements OnInit {
 
   openConversation(participant: IChatParticipant) {
 
+  }
+
+  getChatTheme() {
+    return Theme.Dark;
   }
 }

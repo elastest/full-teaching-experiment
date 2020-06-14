@@ -7,6 +7,7 @@ import com.fullteaching.backend.model.User;
 import com.fullteaching.backend.security.user.UserComponent;
 import com.fullteaching.backend.service.ChatService;
 import com.fullteaching.backend.service.UserService;
+import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -79,6 +80,20 @@ public class ChatController {
             chatConversation = this.chatService.sendMessage(chatMessage, chatConversation);
             return ResponseEntity.ok(chatConversation);
         } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @LoginRequired
+    @GetMapping("/unseen/count/user/{userId}")
+    public ResponseEntity<Long> getCountOfUnseenMessages(@PathVariable long userId){
+        User me = this.userComponent.getLoggedUser();
+        User other = this.userService.getFromId(userId);
+        if(Objects.nonNull(other)){
+            long unseen = this.chatService.getUnseenMessagesCount(me, other);
+            return ResponseEntity.ok(unseen);
+        }
+        else{
             return ResponseEntity.notFound().build();
         }
     }

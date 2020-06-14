@@ -9,6 +9,7 @@ import {Comment} from '../classes/comment';
 import {User} from '../classes/user';
 import {ChatConversation} from '../classes/chat-conversation';
 import {FTChatAdapter} from '../adapter/f-t-chat-adapter';
+import {NotificationType} from '../enum/notification-type.enum';
 
 @Injectable({
   providedIn: 'root'
@@ -24,7 +25,7 @@ export class NotificationService {
     const messageType = message.type;
 
     // course invitation notification
-    if (keys.includes('course')) {
+    if (messageType === NotificationType.COURSE_INVITATION) {
       const course: Course = message.course;
       this.announcerService.announceCourseAdded(course);
       this.modalService.newNotificationModal( `You have been invited to the course: ${course.title}`, () => {
@@ -33,7 +34,7 @@ export class NotificationService {
     }
 
     // session started notification
-    if(keys.includes('session')){
+    if(messageType === NotificationType.SESSION_STARTED){
       const session: FTSession = message.session;
       const course: Course = message.sessionCourse;
       this.modalService.newNotificationModal(`The session: ${session.description} has just started!`,  () => {
@@ -42,7 +43,7 @@ export class NotificationService {
     }
 
     // comment reply notification
-    if(keys.includes('comment')){
+    if(messageType === NotificationType.COMMENT_REPLY){
       const comment: Comment = message.comment;
       const replier: User = message.replier;
       const commentCourse: Course = message.commentCourse;
@@ -54,7 +55,7 @@ export class NotificationService {
     }
 
     // new comment in your entry notification
-    if(keys.includes('entry')){
+    if(messageType === NotificationType.COMMENT_IN_ENTRY){
       const entry: Entry = message.entry;
       const userCommenting: User = message.userCommenting;
       const commentCourse: Course = message.commentCourse;
@@ -64,7 +65,7 @@ export class NotificationService {
       });
     }
 
-    if(messageType === 'CHAT_MESSAGE'){
+    if(messageType === NotificationType.CHAT_MESSAGE){
       const conversation: ChatConversation = message.chatConversation;
       this.announcerService.announceNewMessageInChat(conversation);
     }

@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.Objects;
 
 @Service
 @Getter
@@ -38,8 +38,8 @@ public class ChatService implements FTService<ChatConversation, Long> {
         chatConversation = this.getRepo().save(chatConversation);
 
         // notify others
-        for(User user : chatConversation.getUsers()){
-            if(!user.equals(message.getUser())){
+        for (User user : chatConversation.getUsers()) {
+            if (!user.equals(message.getUser())) {
                 this.notificationDispatcher.notifyNewChatMessage(chatConversation, user);
             }
         }
@@ -56,7 +56,7 @@ public class ChatService implements FTService<ChatConversation, Long> {
 
     public Collection<ChatConversation> getConversationsOfUserWithOther(User me, User user) {
         Collection<ChatConversation> conversations = this.getRepo().findAllByUsersContainingAndUsersContaining(me, user);
-        if(conversations.isEmpty()){
+        if (conversations.isEmpty()) {
             ChatConversation chatConversation = new ChatConversation();
             chatConversation.getUsers().add(user);
             chatConversation.getUsers().add(me);
@@ -64,5 +64,16 @@ public class ChatService implements FTService<ChatConversation, Long> {
             conversations.add(chatConversation);
         }
         return conversations;
+    }
+
+    public long getUnseenMessagesCount(User me, User other) {
+        ChatConversation chatConversation = this.getConversationsOfUserWithOther(me, other).stream().findFirst().orElse(null);
+        if(Objects.nonNull(chatConversation)){
+            return chatConversation.getMessages()
+                    .stream()
+                    .filter(chatMessage -> chatMessage.getDateSeen() != null)
+                    .count();
+        }
+        return 0;
     }
 }
