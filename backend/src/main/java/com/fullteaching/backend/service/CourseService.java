@@ -37,7 +37,7 @@ public class CourseService implements FTService<Course, Long> {
             for (Course course : courses) {
                 CourseDetails courseDetails = course.getCourseDetails();
                 for (FileGroup fileGroup : courseDetails.getFiles()) {
-                    fileGroup.getFiles().removeIf(file -> file.isHidden() || file.getHiddenUntil().before(new Date()));
+                    fileGroup.getFiles().removeIf(file -> file.isHidden() || (Objects.nonNull(file.getHiddenUntil()) && file.getHiddenUntil().before(new Date())));
                 }
             }
         }

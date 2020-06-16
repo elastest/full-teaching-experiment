@@ -38,6 +38,7 @@ public class ChatService implements FTService<ChatConversation, Long> {
     private Page<UserChatView> convertToUserChatView(Page<User> usersPage, User me) {
         List<UserChatView> userChatViews = usersPage
                 .stream()
+                .filter(user -> user.getId() != me.getId()) // prevent from sending me as a chat view
                 .map(user -> {
                     long unseen = this.getUnseenMessagesCount(me, user);
                     return new UserChatView(user, unseen);
