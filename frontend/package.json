@@ -54,6 +54,7 @@
     "moment": "^2.24.0",
     "ng-bootstrap": "^1.6.3",
     "ng-chat": "^3.0.3",
+    "ng-click-outside": "^6.0.0",
     "ng2-canvas-whiteboard": "^3.1.1",
     "ngx-cookie-service": "^2.4.0",
     "ngx-extended-pdf-viewer": "^3.7.2",

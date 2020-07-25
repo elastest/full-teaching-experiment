@@ -93,6 +93,8 @@ import {AudioPlayerDialogComponent} from './components/audio-player-dialog/audio
 import {NgxMatDatetimePickerModule, NgxMatNativeDateModule, NgxMatTimepickerModule} from '@angular-material-components/datetime-picker';
 import { NotificationsDropdownComponent } from './components/notifications-dropdown/notifications-dropdown.component';
 import {ChatService} from './services/chat.service';
+import {NotificationService} from './services/notification.service';
+import {ClickOutsideModule} from 'ng-click-outside';
 
 const matModules = [
   MatFormFieldModule,
@@ -105,6 +107,7 @@ const matModules = [
 
 @NgModule({
   imports: [
+    ClickOutsideModule,
     BrowserModule,
     BrowserAnimationsModule,
     FormsModule,
@@ -205,7 +208,8 @@ const matModules = [
     ModalService,
     AnnouncerService,
     WebsocketService,
-    ChatService
+    ChatService,
+    NotificationService
   ],
   bootstrap: [AppComponent]
 })

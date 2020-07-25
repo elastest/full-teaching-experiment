@@ -149,12 +149,12 @@ public final class CommentController extends SecureController{
 
                     // send new comment in your entry notification
                     if(!commentOwner.equals(entryOwner)){
-                        this.notificationDispatcher.notifyCommentAdded(entry, commentOwner, cd.getCourse());
+                        this.notificationDispatcher.notifyCommentAdded(entry, comment, commentOwner, cd.getCourse());
                     }
 
                     // send new reply to your comment notification
                     if(!parentOwner.equals(entryOwner) && !parentOwner.equals(commentOwner)){
-                        this.notificationDispatcher.notifyCommentReply(cParent, commentOwner, cd.getCourse(), entry);
+                        this.notificationDispatcher.notifyCommentReply(cParent, commentOwner, cd.getCourse(), entry, comment);
                     }
 
 

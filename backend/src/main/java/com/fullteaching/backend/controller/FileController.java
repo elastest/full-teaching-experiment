@@ -373,12 +373,12 @@ public class FileController extends SecureController {
 
                 // send new comment in your entry notification
                 if(!commentOwner.equals(entryOwner)){
-                    this.notificationDispatcher.notifyCommentAdded(entry, commentOwner, courseDetails.getCourse());
+                    this.notificationDispatcher.notifyCommentAdded(entry,comment, commentOwner, courseDetails.getCourse());
                 }
 
                 // send new reply to your comment notification
                 if(!parentOwner.equals(entryOwner) && !parentOwner.equals(commentOwner)){
-                    this.notificationDispatcher.notifyCommentReply(commentParent, commentOwner, courseDetails.getCourse(), entry);
+                    this.notificationDispatcher.notifyCommentReply(commentParent, commentOwner, courseDetails.getCourse(), entry, comment);
                 }
 
 

@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {FTChatAdapter} from '../../adapter/f-t-chat-adapter';
-import {IChatParticipant, Theme} from 'ng-chat';
+import {IChatController, IChatParticipant, Theme} from 'ng-chat';
 import {AuthenticationService} from '../../services/authentication.service';
 
 @Component({
@@ -11,7 +11,7 @@ import {AuthenticationService} from '../../services/authentication.service';
 export class ChatComponent implements OnInit, AfterViewInit {
 
   private searchInput;
-
+  
   constructor(public adapter: FTChatAdapter,
               public authenticationService: AuthenticationService) {
   }
@@ -37,6 +37,5 @@ export class ChatComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.searchInput = document.getElementById('ng-chat-search_friend');
-    console.log(this.searchInput)
   }
 }

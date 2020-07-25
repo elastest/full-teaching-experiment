@@ -55,6 +55,10 @@ export class AnnouncerService {
   private newMessageInChatAnnouncerSubject: Subject<ChatConversation> = new Subject<ChatConversation>();
   public newMessageInChatAnnouncer$ = this.newMessageInChatAnnouncerSubject.asObservable();
 
+  private notificationAnnouncerSubject: Subject<void> = new Subject<void>();
+  public notificationAnnouncer$ = this.notificationAnnouncerSubject.asObservable();
+
+
   constructor() {
   }
 
@@ -121,4 +125,7 @@ export class AnnouncerService {
     this.commentRemovedAnnouncerSubject.next({entry: entry});
   }
 
+  announceNewNotification() {
+    this.notificationAnnouncerSubject.next();
+  }
 }
