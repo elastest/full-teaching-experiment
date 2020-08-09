@@ -46,12 +46,12 @@ bootJar{
 bootJar.dependsOn(processResources)
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-web:2.2.0.RELEASE'
-    implementation 'org.springframework.boot:spring-boot-starter-jetty:2.2.0.RELEASE'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa:2.2.0.RELEASE'
-    implementation 'org.springframework.boot:spring-boot-starter-security:2.2.0.RELEASE'
-    implementation 'org.springframework.boot:spring-boot-devtools:2.2.0.RELEASE'
-    implementation 'org.springframework.boot:spring-boot-starter-websocket:2.2.0.RELEASE'
+    implementation 'org.springframework.boot:spring-boot-starter-web:2.3.0.RELEASE'
+    implementation 'org.springframework.boot:spring-boot-starter-jetty:2.3.0.RELEASE'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa:2.3.0.RELEASE'
+    implementation 'org.springframework.boot:spring-boot-starter-security:2.3.0.RELEASE'
+    implementation 'org.springframework.boot:spring-boot-devtools:2.3.0.RELEASE'
+    implementation 'org.springframework.boot:spring-boot-starter-websocket:2.3.0.RELEASE'
 
     compile group: 'org.postgresql', name: 'postgresql', version: '42.1.4'
     implementation 'commons-validator:commons-validator:1.5.1'
@@ -62,7 +62,7 @@ dependencies {
 
     //tests
     testImplementation 'junit:junit:4.12'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test:2.2.0.RELEASE'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test:2.3.0.RELEASE'
     testImplementation 'org.springframework.security:spring-security-test:5.2.0.RELEASE'
     testImplementation 'io.github.bonigarcia:selenium-jupiter:3.3.1'
     testImplementation 'io.github.bonigarcia:webdrivermanager:3.7.1'
