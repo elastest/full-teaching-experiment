@@ -75,7 +75,7 @@ public final class CommentController extends SecureController{
 
     @LoginRequired
     @RequestMapping(value = "/entry/{entryId}/forum/{courseDetailsId}", method = RequestMethod.POST)
-    public ResponseEntity<Object> newComment(
+    public ResponseEntity<?> newComment(
             @RequestBody Comment comment,
             @PathVariable(value = "entryId") String entryId,
             @PathVariable(value = "courseDetailsId") String courseDetailsId
@@ -95,7 +95,7 @@ public final class CommentController extends SecureController{
 
         CourseDetails cd = this.courseDetailsService.getFromId(id_courseDetails);
 
-        ResponseEntity<Object> userAuthorized = authorizationService.checkAuthorizationUsers(cd, cd.getCourse().getAttenders());
+        ResponseEntity<?> userAuthorized = authorizationService.checkAuthorizationUsers(cd, cd.getCourse().getAttenders());
         if (userAuthorized != null) { // If the user is not an attender of the course
             return userAuthorized;
         } else {

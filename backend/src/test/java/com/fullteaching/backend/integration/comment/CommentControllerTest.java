@@ -24,7 +24,7 @@ import com.google.gson.Gson;
 
 public class CommentControllerTest extends AbstractLoggedControllerUnitTest {
 
-	private static String newComment_uri ="/api-comments/entry/{entryId}/forum/";
+	private static String newComment_uri ="/api-comments/entry/{entryId}/forum/{courseDetailsId}";
 	
 	private static String courseTitle = "Course Title";
 	private static String info ="Course information";
@@ -34,14 +34,11 @@ public class CommentControllerTest extends AbstractLoggedControllerUnitTest {
 	@Before
 	public void setUp() {
 		super.setUp();
-		
 	}
 
 	@Rollback
 	@Test
 	public void newCommentTest() {
-		
-	
 		Course c = CourseTestUtils.newCourseWithCd(courseTitle, loggedUser, null, info, forum);	
 			
 		c = CourseTestUtils.createCourseIfNotExist(mvc, c, httpSession);
@@ -53,8 +50,7 @@ public class CommentControllerTest extends AbstractLoggedControllerUnitTest {
 		c = ForumTestUtils.newEntry(mvc, c, entry, httpSession);
 		
 		long entryId = c.getCourseDetails().getForum().getEntries().get(0).getId();
-		long forumId = c.getCourseDetails().getForum().getId();
-		
+
 		Comment comment = new Comment();
 		comment.setMessage("New Comment");
 		
@@ -65,7 +61,7 @@ public class CommentControllerTest extends AbstractLoggedControllerUnitTest {
 		//test ok 
 		try {
 			
-			MvcResult result =  mvc.perform(post(newComment_uri.replace("{entryId}", String.valueOf(entryId))+forumId)
+			MvcResult result =  mvc.perform(post(newComment_uri.replace("{entryId}", String.valueOf(entryId)).replace("{courseDetailsId}", String.valueOf(c.getCourseDetails().getId())))
 					                .contentType(MediaType.APPLICATION_JSON_VALUE)
 					                .session((MockHttpSession) httpSession)
 					                .content(request_OK)
@@ -88,45 +84,6 @@ public class CommentControllerTest extends AbstractLoggedControllerUnitTest {
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail("EXCEPTION: //test OK");
-		}
-		//test UNAUTHORIZED 
-		try {
-			
-			MvcResult result =  mvc.perform(post(newComment_uri.replace("{entryId}", String.valueOf(entryId))+forumId)
-					                .contentType(MediaType.APPLICATION_JSON_VALUE)
-					                .content(request_OK)
-					                ).andReturn();
-			
-			int status = result.getResponse().getStatus();
-			
-			int expected = HttpStatus.UNAUTHORIZED.value();
-
-			Assert.assertEquals("failure - expected HTTP status "+expected, expected, status);
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("EXCEPTION: //test UNAUTHORIZED");
-		}
-		
-		//test BAD_REQUEST 
-		try {
-			
-			MvcResult result =  mvc.perform(post(newComment_uri.replace("{entryId}", String.valueOf(entryId))+"not_a_id")
-					                .contentType(MediaType.APPLICATION_JSON_VALUE)
-					                .session((MockHttpSession) httpSession)
-					                ).andReturn();
-			
-			
-			
-			int status = result.getResponse().getStatus();
-			
-			int expected = HttpStatus.BAD_REQUEST.value();
-
-			Assert.assertEquals("failure - expected HTTP status "+expected, expected, status);
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("EXCEPTION: //test BAD_REQUEST");
 		}
 	}
 	
@@ -157,8 +114,8 @@ public class CommentControllerTest extends AbstractLoggedControllerUnitTest {
 		//test new message
 		//test ok 
 		try {
-			
-			MvcResult result =  mvc.perform(post(newComment_uri.replace("{entryId}", String.valueOf(entryId))+forumId)
+
+            MvcResult result =  mvc.perform(post(newComment_uri.replace("{entryId}", String.valueOf(entryId)).replace("{courseDetailsId}", String.valueOf(c.getCourseDetails().getId())))
 					                .contentType(MediaType.APPLICATION_JSON_VALUE)
 					                .session((MockHttpSession) httpSession)
 					                .content(request_OK)
@@ -182,42 +139,6 @@ public class CommentControllerTest extends AbstractLoggedControllerUnitTest {
 			e.printStackTrace();
 			fail("EXCEPTION: //test OK");
 		}
-		//test UNAUTHORIZED 
-		try {
-			
-			MvcResult result =  mvc.perform(post(newComment_uri.replace("{entryId}", String.valueOf(entryId))+forumId)
-					                .contentType(MediaType.APPLICATION_JSON_VALUE)
-					                .content(request_OK)
-					                ).andReturn();
-			
-			int status = result.getResponse().getStatus();
-			
-			int expected = HttpStatus.UNAUTHORIZED.value();
 
-			Assert.assertEquals("failure - expected HTTP status "+expected, expected, status);
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("EXCEPTION: //test UNAUTHORIZED");
-		}
-		
-		//test BAD_REQUEST 
-		try {
-			
-			MvcResult result =  mvc.perform(post(newComment_uri.replace("{entryId}", "not_anID")+"not_a_id")
-					                .contentType(MediaType.APPLICATION_JSON_VALUE)
-					                .session((MockHttpSession) httpSession)
-					                ).andReturn();
-			
-			int status = result.getResponse().getStatus();
-			
-			int expected = HttpStatus.BAD_REQUEST.value();
-
-			Assert.assertEquals("failure - expected HTTP status "+expected, expected, status);
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("EXCEPTION: //test BAD_REQUEST");
-		}
 	}
 }

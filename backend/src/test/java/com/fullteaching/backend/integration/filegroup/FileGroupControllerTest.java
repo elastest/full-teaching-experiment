@@ -71,47 +71,7 @@ public class FileGroupControllerTest extends AbstractLoggedControllerUnitTest {
 			e.printStackTrace();
 			fail("EXCEPTION: //test OK");
 		}
-		
-		//Unauthorized
-		try {
 
-			MvcResult result =  mvc.perform(post(newFile_uri+courseId)
-					                .contentType(MediaType.APPLICATION_JSON_VALUE)
-					                .content(request_OK)
-					                ).andReturn();
-	
-			int status = result.getResponse().getStatus();
-			
-			int expected = HttpStatus.UNAUTHORIZED.value();
-
-			Assert.assertEquals("failure - expected HTTP status "+expected, expected, status);
-		
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("EXCEPTION: //test UNAUTHORIZED");
-		}
-		
-
-		//BAD_REQUEST
-		try {
-
-			MvcResult result =  mvc.perform(post(newFile_uri+"notANumber")
-					                .contentType(MediaType.APPLICATION_JSON_VALUE)
-					                .session((MockHttpSession) httpSession)
-					                ).andReturn();
-	
-			int status = result.getResponse().getStatus();
-			
-			int expected = HttpStatus.BAD_REQUEST.value();
-
-			Assert.assertEquals("failure - expected HTTP status "+expected, expected, status);
-		
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("EXCEPTION: //test BAD_REQUEST");
-		}
-		
-		
 		//Test for filegroups with parent
 		fg = FileTestUtils.getFileGroupFromCd(cd, fg.getTitle());
 		FileGroup fg2 = new FileGroup("New FileGroup with parent", fg);
@@ -447,48 +407,6 @@ public class FileGroupControllerTest extends AbstractLoggedControllerUnitTest {
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail("EXCEPTION: //test OK");
-		}
-		//BAD_REQUEST
-		try {
-
-			MvcResult result =  mvc.perform(put(modifyFile_uri.replace("{fileGroupId}", ""+fg.getId())+"not_a_long")
-					                .contentType(MediaType.APPLICATION_JSON_VALUE)
-					                .session((MockHttpSession) httpSession)
-					                ).andReturn();
-	
-			int status = result.getResponse().getStatus();
-			
-			int expected = HttpStatus.BAD_REQUEST.value();
-
-			//FileGroup fg1 = FileTestUtils.json2FileGroup(result.getResponse().getContentAsString());
-			
-			Assert.assertEquals("failure - expected HTTP status "+expected, expected, status);
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("EXCEPTION: //test BAD_REQUEST");
-		}
-		
-		//UNAUTHORIZED
-		try {
-
-			MvcResult result =  mvc.perform(put(modifyFile_uri.replace("{fileGroupId}", ""+fg.getId())+c.getId())
-					                .contentType(MediaType.APPLICATION_JSON_VALUE)
-					                .content(request_OK)
-					                ).andReturn();
-	
-			int status = result.getResponse().getStatus();
-			
-			int expected = HttpStatus.UNAUTHORIZED.value();
-
-			
-			
-			
-			Assert.assertEquals("failure - expected HTTP status "+expected, expected, status);
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("EXCEPTION: //test UNAUTHORIZED");
 		}
 	}
 	

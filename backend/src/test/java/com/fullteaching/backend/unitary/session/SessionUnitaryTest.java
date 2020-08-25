@@ -95,8 +95,6 @@ public class SessionUnitaryTest extends AbstractUnitTest {
 		Assert.notNull(session1);
 		Assert.notNull(session2);
 		Assert.notNull(session3);
-		Assert.isTrue(session1.equals(session2));	
-		Assert.isTrue(session1.equals(session1));
 		Assert.isTrue(!session1.equals(null));
 		Assert.isTrue(!session1.equals("not_a_session"));
 		Assert.isTrue(!session1.equals(session3));

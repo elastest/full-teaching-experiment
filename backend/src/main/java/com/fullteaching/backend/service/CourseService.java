@@ -36,8 +36,13 @@ public class CourseService implements FTService<Course, Long> {
         if (!user.isRole(Role.TEACHER)) {
             for (Course course : courses) {
                 CourseDetails courseDetails = course.getCourseDetails();
-                for (FileGroup fileGroup : courseDetails.getFiles()) {
-                    fileGroup.getFiles().removeIf(file -> file.isHidden() || (Objects.nonNull(file.getHiddenUntil()) && file.getHiddenUntil().before(new Date())));
+                if(Objects.nonNull(courseDetails)) {
+                    List<FileGroup> files = courseDetails.getFiles();
+                    if (Objects.nonNull(files)) {
+                        for (FileGroup fileGroup : courseDetails.getFiles()) {
+                            fileGroup.getFiles().removeIf(file -> file.isHidden() || (Objects.nonNull(file.getHiddenUntil()) && file.getHiddenUntil().before(new Date())));
+                        }
+                    }
                 }
             }
         }
@@ -63,28 +68,30 @@ public class CourseService implements FTService<Course, Long> {
         // must check if the files of this course have date restriction
         if (Objects.nonNull(course) && !this.userComponent.getLoggedUser().isRole(Role.TEACHER)) {
             CourseDetails courseDetails = course.getCourseDetails();
+            if(Objects.nonNull(courseDetails)) {
 
-            // check all file groups
-            for (FileGroup fileGroup : courseDetails.getFiles()) {
+                // check all file groups
+                for (FileGroup fileGroup : courseDetails.getFiles()) {
 
-                // check all files
-                for (Iterator<File> iterator = fileGroup.getFiles().iterator(); iterator.hasNext(); ) {
-                    File file = iterator.next();
-                    Date hiddenUntil = file.getHiddenUntil();
+                    // check all files
+                    for (Iterator<File> iterator = fileGroup.getFiles().iterator(); iterator.hasNext(); ) {
+                        File file = iterator.next();
+                        Date hiddenUntil = file.getHiddenUntil();
 
-                    // file is hidden
-                    if (Objects.nonNull(hiddenUntil)) {
-                        Date now = new Date();
+                        // file is hidden
+                        if (Objects.nonNull(hiddenUntil)) {
+                            Date now = new Date();
 
-                        // file was hidden until a date lower than now
-                        if (hiddenUntil.before(now)) {
-                            file.setHiddenUntil(null);
-                            fileService.save(file);
-                        }
+                            // file was hidden until a date lower than now
+                            if (hiddenUntil.before(now)) {
+                                file.setHiddenUntil(null);
+                                fileService.save(file);
+                            }
 
-                        // file is still hidden, dont retrieve it
-                        else {
-                            iterator.remove();
+                            // file is still hidden, dont retrieve it
+                            else {
+                                iterator.remove();
+                            }
                         }
                     }
                 }

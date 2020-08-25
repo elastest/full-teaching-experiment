@@ -1,12 +1,15 @@
 package com.fullteaching.backend.controller;
 
-import java.util.*;
-
+import com.fasterxml.jackson.annotation.JsonView;
 import com.fullteaching.backend.annotation.CourseAuthorized;
 import com.fullteaching.backend.annotation.LoginRequired;
 import com.fullteaching.backend.annotation.RoleFilter;
 import com.fullteaching.backend.model.Course;
+import com.fullteaching.backend.model.Course.SimpleCourseList;
+import com.fullteaching.backend.model.User;
 import com.fullteaching.backend.notifications.NotificationDispatcher;
+import com.fullteaching.backend.security.AuthorizationService;
+import com.fullteaching.backend.security.user.UserComponent;
 import com.fullteaching.backend.service.CourseService;
 import com.fullteaching.backend.service.UserService;
 import com.fullteaching.backend.struct.Role;
@@ -17,11 +20,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.fullteaching.backend.security.user.UserComponent;
-import com.fasterxml.jackson.annotation.JsonView;
-import com.fullteaching.backend.model.Course.SimpleCourseList;
-import com.fullteaching.backend.security.AuthorizationService;
-import com.fullteaching.backend.model.User;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -74,12 +76,7 @@ public class CourseController extends SecureController {
 
         log.info("CRUD operation: Adding new course");
 
-        //check if is teacher
         User userLogged = user.getLoggedUser();
-        ResponseEntity<?> checkTeacher = this.checkTeacherAuthorized();
-        if (Objects.nonNull(checkTeacher)) {
-            return checkTeacher;
-        }
 
         //Updating course ('teacher', 'attenders')
         course.setTeacher(userLogged);
@@ -128,46 +125,41 @@ public class CourseController extends SecureController {
         }
     }
 
-    // role filter also checks if user is logged in
-    @RoleFilter(role = Role.TEACHER)
-    @RequestMapping(value = "/delete/{courseId}", method = RequestMethod.DELETE)
-    public ResponseEntity<Object> deleteCourse(@PathVariable(value = "courseId") long courseId) {
+    @CourseAuthorized(courseParam = "course_id", mustBeTeacherOfCourse = true)
+    @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
+    public ResponseEntity<Object> deleteCourse(@RequestParam(value = "course_id") long courseId) {
 
         log.info("CRUD operation: Deleting course");
 
         Course c = courseService.getFromId(courseId);
 
-        ResponseEntity<Object> teacherAuthorized = authorizationService.checkAuthorization(c, c.getTeacher());
-        if (teacherAuthorized != null) { // If the user is not the teacher of the course
-            return teacherAuthorized;
-        } else {
 
-            log.info("Deleting course: {}", c.toString());
+        log.info("Deleting course: {}", c.toString());
 
-            //Removing the deleted course from its attenders
-            Collection<Course> courses = new HashSet<>();
-            courses.add(c);
-            Collection<User> users = userService.findByCourses(courses);
-            for (User u : users) {
-                u.getCourses().remove(c);
-            }
-            userService.saveAll(users);
-            c.getAttenders().clear();
-
-            courseService.delete(c);
-
-            log.info("Course successfully deleted");
-
-            return new ResponseEntity<>(c, HttpStatus.OK);
+        //Removing the deleted course from its attenders
+        Collection<Course> courses = new HashSet<>();
+        courses.add(c);
+        Collection<User> users = userService.findByCourses(courses);
+        for (User u : users) {
+            u.getCourses().remove(c);
         }
+        userService.saveAll(users);
+        c.getAttenders().clear();
+
+        courseService.delete(c);
+
+        log.info("Course successfully deleted");
+
+        return new ResponseEntity<>(c, HttpStatus.OK);
+
     }
 
 
-    @RoleFilter(role = Role.TEACHER)
-    @RequestMapping(value = "/edit/add-attenders/course/{courseId}", method = RequestMethod.PUT)
+    @CourseAuthorized(courseParam = "course_id", mustBeTeacherOfCourse = true)
+    @RequestMapping(value = "/edit/add-attenders/course", method = RequestMethod.PUT)
     public ResponseEntity<Object> addAttenders(
             @RequestBody String[] attenderEmails,
-            @PathVariable(value = "courseId") long courseId) {
+            @RequestParam(value = "course_id") long courseId) {
 
         log.info("CRUD operation: Adding attenders to course");
 
@@ -243,22 +235,17 @@ public class CourseController extends SecureController {
         }
     }
 
-    @RoleFilter(role = Role.TEACHER)
-    @CourseAuthorized(courseParam = "course_id")
+    @CourseAuthorized(courseParam = "course_id", mustBeTeacherOfCourse = true)
     @RequestMapping(value = "/edit/remove-attender", method = RequestMethod.PUT)
     public ResponseEntity<?> removeAttenders(@RequestParam(value = "course_id") long course_id, @RequestParam(value = "attender_id") long attender_id) {
         log.info("Removing attender {} from course {}", attender_id, course_id);
         Course c = this.courseService.getFromId(course_id);
 
-        ResponseEntity<Object> teacherAuthorized = authorizationService.checkAuthorization(c, c.getTeacher());
-        if (teacherAuthorized != null) { // If the user is not the teacher of the course
-            return teacherAuthorized;
-        } else {
-            User attender = this.userService.getFromId(attender_id);
-            Collection attenders = this.courseService.removeAttender(attender, c);
-            log.info("Attender {} successfully removed from course {}", attender_id, course_id);
-            return new ResponseEntity<>(attenders, HttpStatus.OK);
-        }
+        User attender = this.userService.getFromId(attender_id);
+        Collection attenders = this.courseService.removeAttender(attender, c);
+        log.info("Attender {} successfully removed from course {}", attender_id, course_id);
+        return new ResponseEntity<>(attenders, HttpStatus.OK);
+
     }
 
 

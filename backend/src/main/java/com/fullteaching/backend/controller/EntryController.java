@@ -42,19 +42,11 @@ public class EntryController extends SecureController {
 
     @LoginRequired
     @RequestMapping(value = "/forum/{id}", method = RequestMethod.POST)
-    public ResponseEntity<Object> newEntry(@RequestBody Entry entry, @PathVariable(value = "id") String courseDetailsId) {
+    public ResponseEntity<Object> newEntry(@RequestBody Entry entry, @PathVariable(value = "id") long courseDetailsId) {
 
         log.info("CRUD operation: Adding new entry");
 
-        long id_i;
-        try {
-            id_i = Long.parseLong(courseDetailsId);
-        } catch (NumberFormatException e) {
-            log.error("CourseDetails ID '{}' is not of type Long", courseDetailsId);
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
-        CourseDetails cd = courseDetailsService.getFromId(id_i);
+        CourseDetails cd = courseDetailsService.getFromId(courseDetailsId);
 
         ResponseEntity<Object> userAuthorized = authorizationService.checkAuthorizationUsers(cd, cd.getCourse().getAttenders());
         if (userAuthorized != null) { // If the user is not an attender of the course

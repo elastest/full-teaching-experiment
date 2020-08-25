@@ -76,7 +76,7 @@ export class CourseService {
       'Authorization': 'Bearer ' + this.authenticationService.token
     });
     let options = {headers};
-    return this.http.delete<Course>(this.url + "/delete/" + courseId, options);
+    return this.http.delete<Course>(this.url + "/delete?course_id=" + courseId, options);
   }
 
   //PUT existing course, modifying its attenders (adding them). On success returns the updated course.attenders array
@@ -89,7 +89,7 @@ export class CourseService {
       'Authorization': 'Bearer ' + this.authenticationService.token
     });
     let options = {headers};
-    return this.http.put<{attendersAdded}>(this.url + "/edit/add-attenders/course/" + courseId, body, options);
+    return this.http.put<{attendersAdded}>(this.url + "/edit/add-attenders/course?course_id=" + courseId, body, options);
     //.catch(error => this.handleError("PUT existing course FAIL (add attenders). Response: ", error));
   }
 

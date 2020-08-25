@@ -147,7 +147,6 @@ public class FileUnitaryTest extends AbstractUnitTest {
 		Assert.isTrue(filename.equals(f3.getName()));
 		
 		
-		Assert.isTrue(f1.equals(f3));
 		Assert.isTrue(!f1.equals(null));
 		Assert.isTrue(!f1.equals("not a file"));
 		Assert.isTrue(!f1.equals(f2));

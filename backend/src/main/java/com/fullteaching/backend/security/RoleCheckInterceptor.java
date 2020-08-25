@@ -47,6 +47,8 @@ public class RoleCheckInterceptor implements HandlerInterceptor {
                 return false;
             }
 
+            log.info(user.getRoles());
+
             boolean hasRole = user.isRole(role);
 
             if(hasRole){

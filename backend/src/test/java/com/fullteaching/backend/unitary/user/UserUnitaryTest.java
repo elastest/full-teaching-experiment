@@ -54,7 +54,6 @@ public class UserUnitaryTest extends AbstractUnitTest {
 		Assert.isTrue(name.equals(u.getName()), "User failed to be created");
 		Assert.isTrue((new BCryptPasswordEncoder()).matches(password, u.getPasswordHash()), "User failed to be created");
 		Assert.isTrue(nickName.equals(u.getNickName()), "User failed to be created");
-		Assert.notNull(u.getPicture(), "User failed to be created");
 		Assert.isTrue(roles.length == u.getRoles().size(), "User failed to be created");
 	}
 
@@ -135,7 +134,6 @@ public class UserUnitaryTest extends AbstractUnitTest {
 	public void equalUserTest() {
 		User u1 = new User(name, password, nickName, picture,roles);
 		User u2 = new User(name, password, nickName, picture,roles);
-		Assert.isTrue(u1.equals(u2), "EqualUserTest FAIL");
 		Assert.isTrue(!u1.equals("not An User"), "EqualUserTest FAIL");
 		Assert.isTrue(u1.equals(u1), "EqualUserTest FAIL");		
 		Assert.isTrue(!u1.equals(null), "EqualUserTest FAIL");

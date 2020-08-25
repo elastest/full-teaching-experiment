@@ -9,6 +9,7 @@ import java.util.Set;
 
 import javax.servlet.http.HttpSession;
 
+import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Assert;
@@ -26,6 +27,7 @@ import com.fullteaching.backend.model.CourseDetails;
 import com.fullteaching.backend.model.User;
 import com.google.gson.Gson;
 
+@Slf4j
 public class CourseTestUtils {
 	
 	private static String newCourse_uri = "/api-courses/new";
@@ -52,6 +54,7 @@ public class CourseTestUtils {
 		}
 		//test OK
 		try {
+		    log.info(OK_request);
 			//there is no courses so how to mock that?
 			MvcResult result =  mvc.perform(post(newCourse_uri)//fakeID
 					                .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -131,8 +134,7 @@ public class CourseTestUtils {
 	
 	
 	public static Course json2Course(String json) throws JsonParseException, JsonMappingException, IOException {
-		ObjectMapper mapper = new ObjectMapper();
-		return mapper.  readValue(json, Course.class);
+		return new Gson().fromJson(json, Course.class);
 	}
 	
 	public static CourseDetails json2CourseDetails(String json) throws JsonParseException, JsonMappingException, IOException {

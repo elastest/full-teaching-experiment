@@ -1,9 +1,13 @@
 package com.fullteaching.backend;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Objects;
 
 import javax.servlet.http.HttpSession;
 
+import com.fullteaching.backend.struct.Role;
+import com.google.gson.Gson;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -17,29 +21,27 @@ import com.fullteaching.backend.model.User;
 public abstract class AbstractLoggedControllerUnitTest extends AbstractControllerUnitTest {
 
 	
-	protected HttpSession httpSession; 
-	
+	protected HttpSession httpSession;
 	protected User loggedUser;
 	
 	public void setUp() {
 		String user_parameters = "[\"fakeemail2@gmail.com\", \"Mock66666\", \"fakeUser\", \"IGNORE\"]";
-		
 		super.setUp();
 		
 		try {
 			if (httpSession == null) {
 			
 				loggedUser = LoginTestUtils.registerUserIfNotExists(mvc, user_parameters);
-				
 				httpSession = LoginTestUtils.logIn(mvc, "fakeemail2@gmail.com", "Mock66666", loggedUser);
-				
-				if (loggedUser == null)
-					loggedUser = (User)httpSession.getAttribute("loggedUser");
+
+				if (loggedUser == null) {
+                    loggedUser = (User) httpSession.getAttribute("loggedUser");
+                }
 			}
 			
 		} catch (Exception e) {
 			e.printStackTrace();
-		}	
+		}
 	}
 		
 	

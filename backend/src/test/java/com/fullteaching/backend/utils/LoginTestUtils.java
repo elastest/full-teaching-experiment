@@ -34,8 +34,8 @@ public class LoginTestUtils {
 						.header("X-Requested-With", "XMLHttpRequest")
 					.contentType(MediaType.APPLICATION_JSON_VALUE)
 				).andReturn();
-		
-		System.out.println(result_login.getResponse().toString());
+
+		System.out.println("Login response: " + result_login.getResponse().getContentAsString());
 		int status_login = result_login.getResponse().getStatus();
 		
 		Assert.assertTrue("failure login - expected HTTP status "+

@@ -113,8 +113,7 @@ public class FileGroupUnitaryTest extends AbstractUnitTest {
 		Assert.isTrue(!fg1.equals(null));
 		Assert.isTrue(!fg1.equals("not a group"));
 		Assert.isTrue(!fg1.equals(fg2));
-		Assert.isTrue(fg1.equals(fg3));
-		
+
 	}
 
 	@Test

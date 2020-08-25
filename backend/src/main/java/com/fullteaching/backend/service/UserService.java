@@ -4,6 +4,7 @@ import com.fullteaching.backend.model.Course;
 import com.fullteaching.backend.model.User;
 import com.fullteaching.backend.repo.UserRepository;
 import com.fullteaching.backend.struct.FTService;
+import com.fullteaching.backend.struct.Role;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,5 +46,16 @@ public class UserService implements FTService<User, Long> {
 
     public Page<User> getByname(String name, int page, int size) {
         return this.repo.findAllByNameStartingWith(name, PageRequest.of(page, size));
+    }
+
+    public User addRole(User user, Role role){
+        user.getRoles().add(role.getName());
+        return this.save(user);
+    }
+
+    public User setRole(User user, Role role){
+        user.getRoles().clear();
+        user.getRoles().add(role.getName());
+        return this.save(user);
     }
 }
