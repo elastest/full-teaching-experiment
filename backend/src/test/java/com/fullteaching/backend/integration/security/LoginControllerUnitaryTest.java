@@ -30,6 +30,7 @@ public class LoginControllerUnitaryTest extends AbstractControllerUnitTest {
 	
 	@Before
 	public void setUp() {
+	    super.setUp();
 		mvc = MockMvcBuilders.webAppContextSetup(webAppCtx)
 				.apply(springSecurity())
 				.build();

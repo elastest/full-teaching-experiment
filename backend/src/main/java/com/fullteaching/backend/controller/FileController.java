@@ -148,7 +148,7 @@ public class FileController extends SecureController {
     @LoginRequired
     @RequestMapping("/course/{courseId}/download/{fileId}")
     public void handleFileDownload(@PathVariable String fileId, @PathVariable(value = "courseId") String courseId,
-                                   HttpServletResponse response) throws FileNotFoundException, IOException {
+                                   HttpServletResponse response) throws IOException {
 
         log.info("Downloading file...");
 

@@ -30,10 +30,10 @@ import com.google.gson.Gson;
 public class FileTestUtils {
 	
 	private static String newFile_uri="/api-files/";//{courseDetails_id}
-	private static String upload_uri="/api-load-files/upload/course/{courseId}/file-group/";//{fileGroupId}
+	private static String upload_uri="/api-load-files/upload/course/{courseId}/file-group/{fileGroupId}/type/";
 	
-	private static MockMultipartFile firstFile = new MockMultipartFile("data", "filename.txt", "text/plain", "some xml".getBytes());
-	private static MockMultipartFile secondFile = new MockMultipartFile("data", "other.txt", "text/plain", "some other xml".getBytes());
+	private static MockMultipartFile firstFile = new MockMultipartFile("file", "filename.txt", "text/plain", "some xml".getBytes());
+	private static MockMultipartFile secondFile = new MockMultipartFile("file", "other.txt", "text/plain", "some other xml".getBytes());
 
 	public static FileGroup newFileGroup(MockMvc mvc, HttpSession httpSession, FileGroup fg, Course c) {
 		
@@ -64,7 +64,7 @@ public class FileTestUtils {
 	public static FileGroup uploadTestFile(MockMvc mvc, HttpSession httpSession, FileGroup fg, Course c, MockMultipartFile file) {
 		
 		try {
-			MvcResult result =  mvc.perform(MockMvcRequestBuilders.fileUpload(upload_uri.replace("{courseId}",""+c.getId())+fg.getId())
+			MvcResult result =  mvc.perform(MockMvcRequestBuilders.fileUpload(upload_uri.replace("{courseId}",""+c.getId()).replace("{fileGroupId}", fg.getId() + "") + "0")
 	                .file(file)
 	                .session((MockHttpSession) httpSession)
 	                ).andReturn();

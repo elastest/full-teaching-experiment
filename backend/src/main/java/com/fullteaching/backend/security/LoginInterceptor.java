@@ -10,6 +10,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Objects;
 
 @Log4j2
@@ -24,7 +25,7 @@ public class LoginInterceptor implements HandlerInterceptor {
     }
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
         if ((handler instanceof HandlerMethod)) {
             HandlerMethod handlerMethod = (HandlerMethod) handler;
             LoginRequired loginRequired = handlerMethod.getMethod().getAnnotation(LoginRequired.class);
@@ -38,6 +39,7 @@ public class LoginInterceptor implements HandlerInterceptor {
                 return true;
             }
             log.info("User is not logged");
+            response.sendError(401, "User is not logged");
             return false;
         }
         return true;

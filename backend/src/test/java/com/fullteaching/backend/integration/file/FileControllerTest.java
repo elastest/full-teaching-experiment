@@ -21,13 +21,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 public class FileControllerTest extends AbstractLoggedControllerUnitTest {
 
-    private static String upload_uri = "/api-load-files/upload/course/{courseId}/file-group/";//{fileGroupId}
+    private static String upload_uri = "/api-load-files/upload/course/{courseId}/file-group/{fileGroupId}/type/";
     private static String download_uri = "/api-load-files/course/{courseId}/download/";//{fileId}
     private static String uploadPicture_uri = "/api-load-files/upload/picture/";//{userId}
 
-    private static MockMultipartFile firstFile = new MockMultipartFile("data", "filename.txt", "text/plain", "some xml".getBytes());
-    private static MockMultipartFile secondFile = new MockMultipartFile("data", "other-file-name.txt", "text/plain", "some other type".getBytes());
-    private static MockMultipartFile jsonFile = new MockMultipartFile("json", "", "application/json", "{\"json\": \"someValue\"}".getBytes());
+    private static MockMultipartFile firstFile = new MockMultipartFile("file", "filename.txt", "text/plain", "some xml".getBytes());
+    private static MockMultipartFile secondFile = new MockMultipartFile("file", "other-file-name.txt", "text/plain", "some other type".getBytes());
 
     @Before
     public void setUp() {
@@ -45,7 +44,10 @@ public class FileControllerTest extends AbstractLoggedControllerUnitTest {
 
 
         try {
-            MvcResult result = mvc.perform(MockMvcRequestBuilders.fileUpload(upload_uri.replace("{courseId}", "" + c.getId()) + fg.getId())
+
+            String uri = upload_uri.replace("{courseId}", "" + c.getId()).replace("{fileGroupId}", String.valueOf(fg.getId())) + "1";
+            logger.info(uri);
+            MvcResult result = mvc.perform(MockMvcRequestBuilders.multipart(uri)
                     .file(firstFile)
                     .session((MockHttpSession) httpSession)
             ).andReturn();
@@ -66,7 +68,9 @@ public class FileControllerTest extends AbstractLoggedControllerUnitTest {
         }
         //test secondFile
         try {
-            MvcResult result = mvc.perform(MockMvcRequestBuilders.fileUpload(upload_uri.replace("{courseId}", "" + c.getId()) + fg.getId())
+            String uri = upload_uri.replace("{courseId}", "" + c.getId()).replace("{fileGroupId}", String.valueOf(fg.getId())) + "1";
+
+            MvcResult result = mvc.perform(MockMvcRequestBuilders.multipart(uri)
                     .file(secondFile)
                     .session((MockHttpSession) httpSession)
             ).andReturn();
@@ -84,43 +88,6 @@ public class FileControllerTest extends AbstractLoggedControllerUnitTest {
         } catch (Exception e) {
             e.printStackTrace();
             fail("EXCEPTION: //test OK");
-        }
-
-        //BAD_REQUEST
-        try {
-            MvcResult result = mvc.perform(MockMvcRequestBuilders.fileUpload(upload_uri.replace("{courseId}", "" + c.getId()) + "not_a_long")
-                    .file(firstFile)
-                    .session((MockHttpSession) httpSession)
-            ).andReturn();
-
-            int status = result.getResponse().getStatus();
-
-            int expected = HttpStatus.BAD_REQUEST.value();
-
-            Assert.assertEquals("failure - expected HTTP status " + expected, expected, status);
-
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail("EXCEPTION: //test BAD_REQUEST");
-        }
-
-        //UNAUTHORIZED
-        try {
-            MvcResult result = mvc.perform(MockMvcRequestBuilders.fileUpload(upload_uri.replace("{courseId}", "" + c.getId()) + "not_a_long")
-                    .file(firstFile)
-            ).andReturn();
-
-            int status = result.getResponse().getStatus();
-
-            int expected = HttpStatus.UNAUTHORIZED.value();
-
-            Assert.assertEquals("failure - expected HTTP status " + expected, expected, status);
-
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail("EXCEPTION: //test UNAUTHORIZED");
         }
     }
 
@@ -232,14 +199,14 @@ public class FileControllerTest extends AbstractLoggedControllerUnitTest {
 
 
         try {
-            MvcResult result = mvc.perform(MockMvcRequestBuilders.fileUpload(uploadPicture_uri + loggedUser.getId())
+            MvcResult result = mvc.perform(MockMvcRequestBuilders.multipart(uploadPicture_uri + loggedUser.getId())
                     .file(firstFile)
                     .session((MockHttpSession) httpSession)
             ).andReturn();
 
             int status = result.getResponse().getStatus();
 
-            int expected = HttpStatus.CREATED.value();
+            int expected = HttpStatus.OK.value();
 
             Assert.assertEquals("failure - expected HTTP status " + expected, expected, status);
 
