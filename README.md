@@ -1,7 +1,6 @@
-# FullTeaching Experiment
+# FullTeaching 2.0
 
-[![Build Status](https://travis-ci.org/pabloFuente/full-teaching.png?branch=master)](https://travis-ci.org/pabloFuente/full-teaching)
-
+![CI](https://github.com/codeurjc-students/2019-FullTeaching/workflows/CI/badge.svg)
 <p align="center"><img src="https://github.com/pabloFuente/full-teaching/blob/master/ReadmeImages/presentation.png?raw=true"/></p>
 
 
