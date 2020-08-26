@@ -1,7 +1,7 @@
 # FullTeaching 2.0
 
 ![CI](https://github.com/codeurjc-students/2019-FullTeaching/workflows/CI/badge.svg)
-<p align="center"><img src="https://github.com/pabloFuente/full-teaching/blob/master/ReadmeImages/presentation.png?raw=true"/></p>
+<p align="center"><img src="https://github.com/codeurjc-students/2019-FullTeaching/blob/master/images/presentation.png?raw=true"/></p>
 
 
 ## What is FullTeaching?
