@@ -58,7 +58,7 @@ public class UserControllerTest extends AbstractControllerUnitTest {
 	 * Test method for {@link UserController#newUser(java.lang.String[])}.
 	 */
 	@Test
-	public void controllerNewUserTest() {
+	public void newUserTest() {
 
 		/*Test OK*/
 		try {
@@ -141,7 +141,7 @@ public class UserControllerTest extends AbstractControllerUnitTest {
 	 * @throws Exception 
 	 */
 	@Test
-	public void userChangePasswordTest() throws Exception {
+	public void changePasswordTest() throws Exception {
 	
 			/*Create new user*/
 			LoginTestUtils.registerUserIfNotExists(mvc, ok_parameters);

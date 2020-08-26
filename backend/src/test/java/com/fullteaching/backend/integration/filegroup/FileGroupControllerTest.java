@@ -220,102 +220,102 @@ public class FileGroupControllerTest extends AbstractLoggedControllerUnitTest {
 
     }
 
-//    @Test
-//    public void testEditFileOrder() {
-//        ///api-files/edit/file-order/course/{courseId}/file/{fileId}/from/{sourceID}/to/{targetId}/pos/";//newPosition
-//
-//        Course c = CourseTestUtils.newCourseWithCd("Course", loggedUser, null, "this is the info", true);
-//        c = CourseTestUtils.createCourseIfNotExist(mvc, c, httpSession);
-//
-//        FileGroup fg = new FileGroup("New FileGroup");
-//        fg = FileTestUtils.newFileGroup(mvc, httpSession, fg, c);
-//        fg = FileTestUtils.uploadTestFile(mvc, httpSession, fg, c);
-//        long firstFileId = fg.getFiles().get(0).getId();
-//        fg = FileTestUtils.uploadOtherTestFile(mvc, httpSession, fg, c);
-//        long secondFileId = fg.getFiles().get(1).getId();
-//
-//        FileGroup fg2 = new FileGroup("Other FileGroup");
-//        fg2 = FileTestUtils.newFileGroup(mvc, httpSession, fg2, c);
-//        fg2 = FileTestUtils.uploadOtherTestFile(mvc, httpSession, fg2, c);
-//
-//        try {
-//
-//            MvcResult result = mvc.perform(put(editOrder_uri.replace("{courseId}", "" + c.getId())
-//                    .replace("{fileId}", "" + firstFileId)
-//                    .replace("{sourceID}", "" + fg.getId())
-//                    .replace("{targetId}", "" + fg2.getId()) + "0")
-//                    .contentType(MediaType.APPLICATION_JSON_VALUE)
-//                    .session((MockHttpSession) httpSession)
-//            ).andReturn();
-//
-//            int status = result.getResponse().getStatus();
-//
-//            int expected = HttpStatus.OK.value();
-//
-//            List<FileGroup> fglst = FileTestUtils.json2fileGroupList(result.getResponse().getContentAsString());
-//
-//            Assert.assertEquals("failure - expected HTTP status " + expected, expected, status);
-//
-//            /*check the filegroups*/
-//            Assert.assertEquals("failure - not moved", 1, fglst.get(0).getFiles().size());
-//            Assert.assertEquals("failure - not moved", 2, fglst.get(1).getFiles().size());
-//
-//            Assert.assertEquals("failure - order fail", 0, fglst.get(0).getFiles().get(0).getIndexOrder());
-//            Assert.assertEquals("failure - order fail", 0, fglst.get(1).getFiles().get(0).getIndexOrder());
-//            Assert.assertEquals("failure - order fail", 1, fglst.get(1).getFiles().get(1).getIndexOrder());
-//
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            fail("EXCEPTION: //test OK");
-//        }
-//
-//        //BAD_REQUEST
-//        try {
-//
-//            MvcResult result = mvc.perform(put(editOrder_uri.replace("{courseId}", "not_a_long")
-//                    .replace("{fileId}", "" + firstFileId)
-//                    .replace("{sourceID}", "" + fg.getId())
-//                    .replace("{targetId}", "" + fg2.getId()) + "0")
-//                    .contentType(MediaType.APPLICATION_JSON_VALUE)
-//                    .session((MockHttpSession) httpSession)
-//            ).andReturn();
-//
-//            int status = result.getResponse().getStatus();
-//
-//            int expected = HttpStatus.BAD_REQUEST.value();
-//
-//            //FileGroup fg1 = FileTestUtils.json2FileGroup(result.getResponse().getContentAsString());
-//
-//            Assert.assertEquals("failure - expected HTTP status " + expected, expected, status);
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            fail("EXCEPTION: //test BAD_REQUEST");
-//        }
-//
-//        //UNAUTHORIZED
-//        try {
-//
-//            MvcResult result = mvc.perform(put(editOrder_uri.replace("{courseId}", "" + c.getId())
-//                    .replace("{fileId}", "" + firstFileId)
-//                    .replace("{sourceID}", "" + fg.getId())
-//                    .replace("{targetId}", "" + fg2.getId()) + "0")
-//                    .contentType(MediaType.APPLICATION_JSON_VALUE)
-//            ).andReturn();
-//
-//            int status = result.getResponse().getStatus();
-//
-//            int expected = HttpStatus.UNAUTHORIZED.value();
-//
-//
-//            Assert.assertEquals("failure - expected HTTP status " + expected, expected, status);
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            fail("EXCEPTION: //test BAD_REQUEST");
-//        }
-//    }
+    @Test
+    public void testEditFileOrder() {
+        ///api-files/edit/file-order/course/{courseId}/file/{fileId}/from/{sourceID}/to/{targetId}/pos/";//newPosition
+
+        Course c = CourseTestUtils.newCourseWithCd("Course", loggedUser, null, "this is the info", true);
+        c = CourseTestUtils.createCourseIfNotExist(mvc, c, httpSession);
+
+        FileGroup fg = new FileGroup("New FileGroup");
+        fg = FileTestUtils.newFileGroup(mvc, httpSession, fg, c);
+        fg = FileTestUtils.uploadTestFile(mvc, httpSession, fg, c);
+        long firstFileId = fg.getFiles().get(0).getId();
+        fg = FileTestUtils.uploadOtherTestFile(mvc, httpSession, fg, c);
+        long secondFileId = fg.getFiles().get(1).getId();
+
+        FileGroup fg2 = new FileGroup("Other FileGroup");
+        fg2 = FileTestUtils.newFileGroup(mvc, httpSession, fg2, c);
+        fg2 = FileTestUtils.uploadOtherTestFile(mvc, httpSession, fg2, c);
+
+        try {
+
+            MvcResult result = mvc.perform(put(editOrder_uri.replace("{courseId}", "" + c.getId())
+                    .replace("{fileId}", "" + firstFileId)
+                    .replace("{sourceID}", "" + fg.getId())
+                    .replace("{targetId}", "" + fg2.getId()) + "0")
+                    .contentType(MediaType.APPLICATION_JSON_VALUE)
+                    .session((MockHttpSession) httpSession)
+            ).andReturn();
+
+            int status = result.getResponse().getStatus();
+
+            int expected = HttpStatus.OK.value();
+
+            List<FileGroup> fglst = FileTestUtils.json2fileGroupList(result.getResponse().getContentAsString());
+
+            Assert.assertEquals("failure - expected HTTP status " + expected, expected, status);
+
+            /*check the filegroups*/
+            Assert.assertEquals("failure - not moved", 1, fglst.get(0).getFiles().size());
+            Assert.assertEquals("failure - not moved", 2, fglst.get(1).getFiles().size());
+
+            Assert.assertEquals("failure - order fail", 0, fglst.get(0).getFiles().get(0).getIndexOrder());
+            Assert.assertEquals("failure - order fail", 0, fglst.get(1).getFiles().get(0).getIndexOrder());
+            Assert.assertEquals("failure - order fail", 1, fglst.get(1).getFiles().get(1).getIndexOrder());
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail("EXCEPTION: //test OK");
+        }
+
+        //BAD_REQUEST
+        try {
+
+            MvcResult result = mvc.perform(put(editOrder_uri.replace("{courseId}", "not_a_long")
+                    .replace("{fileId}", "" + firstFileId)
+                    .replace("{sourceID}", "" + fg.getId())
+                    .replace("{targetId}", "" + fg2.getId()) + "0")
+                    .contentType(MediaType.APPLICATION_JSON_VALUE)
+                    .session((MockHttpSession) httpSession)
+            ).andReturn();
+
+            int status = result.getResponse().getStatus();
+
+            int expected = HttpStatus.BAD_REQUEST.value();
+
+            //FileGroup fg1 = FileTestUtils.json2FileGroup(result.getResponse().getContentAsString());
+
+            Assert.assertEquals("failure - expected HTTP status " + expected, expected, status);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail("EXCEPTION: //test BAD_REQUEST");
+        }
+
+        //UNAUTHORIZED
+        try {
+
+            MvcResult result = mvc.perform(put(editOrder_uri.replace("{courseId}", "" + c.getId())
+                    .replace("{fileId}", "" + firstFileId)
+                    .replace("{sourceID}", "" + fg.getId())
+                    .replace("{targetId}", "" + fg2.getId()) + "0")
+                    .contentType(MediaType.APPLICATION_JSON_VALUE)
+            ).andReturn();
+
+            int status = result.getResponse().getStatus();
+
+            int expected = HttpStatus.UNAUTHORIZED.value();
+
+
+            Assert.assertEquals("failure - expected HTTP status " + expected, expected, status);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail("EXCEPTION: //test BAD_REQUEST");
+        }
+    }
 
 
 
