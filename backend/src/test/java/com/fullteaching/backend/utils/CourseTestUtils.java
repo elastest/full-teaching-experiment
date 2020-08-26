@@ -27,7 +27,6 @@ import com.fullteaching.backend.model.CourseDetails;
 import com.fullteaching.backend.model.User;
 import com.google.gson.Gson;
 
-@Slf4j
 public class CourseTestUtils {
 	
 	private static String newCourse_uri = "/api-courses/new";
@@ -54,7 +53,6 @@ public class CourseTestUtils {
 		}
 		//test OK
 		try {
-		    log.info(OK_request);
 			//there is no courses so how to mock that?
 			MvcResult result =  mvc.perform(post(newCourse_uri)//fakeID
 					                .contentType(MediaType.APPLICATION_JSON_VALUE)
