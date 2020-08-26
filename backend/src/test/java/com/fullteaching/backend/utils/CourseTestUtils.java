@@ -9,7 +9,6 @@ import java.util.Set;
 
 import javax.servlet.http.HttpSession;
 
-import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Assert;
