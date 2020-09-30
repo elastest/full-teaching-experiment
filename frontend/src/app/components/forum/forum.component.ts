@@ -71,7 +71,7 @@ export class ForumComponent implements OnInit, OnChanges {
     let course = this.course;
     let service = this.forumService;
     let modalService = this.modalService;
-    this.modalService.newMultiStageModalWithCallback(['Entry title:', 'Firs comment:'], ['1', '2'], function (resp) {
+    this.modalService.newMultiStageModalWithCallback(['Entry title:', 'First comment:'], ['1', '2'], function (resp) {
       if (resp) {
         let value = resp.value;
         if (value) {
