@@ -1,8 +1,8 @@
 package com.fullteaching.backend.service;
 
 import com.fullteaching.backend.model.*;
+import com.fullteaching.backend.repo.CourseInvitationNotificationRepo;
 import com.fullteaching.backend.repo.CourseRepository;
-import com.fullteaching.backend.security.AuthorizationService;
 import com.fullteaching.backend.security.user.UserComponent;
 import com.fullteaching.backend.struct.FTService;
 import com.fullteaching.backend.struct.Role;
@@ -22,13 +22,15 @@ public class CourseService implements FTService<Course, Long> {
     private final UserService userService;
     private final UserComponent userComponent;
     private final FileService fileService;
+    private final CourseInvitationNotificationRepo courseInvitationNotificationRepo;
 
     @Autowired
-    public CourseService(CourseRepository repo, UserService userService, UserComponent userComponent, FileService fileService) {
+    public CourseService(CourseRepository repo, UserService userService, UserComponent userComponent, FileService fileService, CourseInvitationNotificationRepo courseInvitationNotificationRepo) {
         this.repo = repo;
         this.userService = userService;
         this.userComponent = userComponent;
         this.fileService = fileService;
+        this.courseInvitationNotificationRepo = courseInvitationNotificationRepo;
     }
 
     public Collection<Course> getCoursesFilteringHiddenFiles(User user) {
@@ -99,5 +101,23 @@ public class CourseService implements FTService<Course, Long> {
         }
 
         return course;
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        this.courseInvitationNotificationRepo.deleteAllByCourse_Id(id);
+        this.repo.deleteById(id);
+    }
+
+    @Override
+    public void deleteAll(Iterable<Course> entities) {
+        for(Course course : entities){
+            this.delete(course);
+        }
+    }
+
+    @Override
+    public void delete(Course entity) {
+        this.deleteById(entity.getId());
     }
 }

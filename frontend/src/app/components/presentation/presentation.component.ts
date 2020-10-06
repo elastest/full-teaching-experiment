@@ -20,6 +20,7 @@ export class PresentationComponent implements OnInit {
         this.router.navigate(['/courses']);
       })
       .catch((e) => {
+        console.log(e)
       });
   }
 

@@ -10,6 +10,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fullteaching.backend.model.Course.SimpleCourseList;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Getter
@@ -17,6 +19,7 @@ import lombok.*;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
+@OnDelete(action = OnDeleteAction.CASCADE)
 public class Session {
 	
 	@JsonView(SimpleCourseList.class)

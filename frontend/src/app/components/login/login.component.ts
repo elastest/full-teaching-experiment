@@ -17,6 +17,8 @@ export class LoginComponent implements OnInit {
   public loginFormGroup : FormGroup;
 
 
+
+
   constructor(private authenticationService: AuthenticationService,
               private userService: UserService,
               private router: Router,
@@ -33,9 +35,9 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  onSubmit(post) {
-    let email = post['email'];
-    let password = post['password'];
+  onSubmit() {
+    let email = this.loginFormGroup.value['email'];
+    let password = this.loginFormGroup.value['password'];
 
     console.log(`Calling login for user ${email}`);
 

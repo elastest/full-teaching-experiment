@@ -54,7 +54,7 @@ export class CourseDetailsV2Component implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    this.authService.reqIsLogged()
+    this.authService.checkCredentials()
       .then(() => {
 
         this.user = this.authService.getCurrentUser();

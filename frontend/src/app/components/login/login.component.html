@@ -4,7 +4,7 @@
       <mat-card-title>Login</mat-card-title>
     </mat-card-header>
     <mat-card-content>
-      <form class="login-form" [formGroup]="this.loginFormGroup" (ngSubmit)="onSubmit(this.loginFormGroup.value)">
+      <form class="login-form" [formGroup]="this.loginFormGroup">
         <mat-form-field class="login-full-width">
           <input matInput placeholder="Email" formControlName="email">
           <mat-error *ngIf="!this.loginFormGroup.controls['email'].valid">
@@ -20,12 +20,11 @@
         </mat-form-field>
 
         <div class="button">
-          <button type="submit" mat-raised-button color="primary" class="mat-elevation-z5">Login</button>
+          <button (click)="onSubmit()" mat-raised-button color="primary" class="mat-elevation-z5">Login</button>
         </div>
 
       </form>
     </mat-card-content>
-    <div class="g-signin2" data-onsuccess="onSignIn"></div>
     <mat-card-footer>
       You dont have an account? <a [routerLink]="['/register']">Register here</a>
     </mat-card-footer>

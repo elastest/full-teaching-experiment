@@ -27,20 +27,19 @@ export class CoursesListComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.authenticationService.reqIsLogged().then(() => {
+    this.authenticationService.checkCredentials().then(() => {
       this.courseService.getCourses(this.authenticationService.getCurrentUser())
         .subscribe((data) => {
           this.dataSource = data;
+          this.announcerService.courseAddedAnnouncer$.subscribe(course => {
+            this.dataSource.push(course);
+            this.cdr.markForCheck();
+          })
         })
     })
       .catch((err) => {
         console.log(err);
       })
-
-    this.announcerService.courseAddedAnnouncer$.subscribe(course => {
-      this.dataSource.push(course);
-      this.cdr.markForCheck();
-    })
   }
 
 

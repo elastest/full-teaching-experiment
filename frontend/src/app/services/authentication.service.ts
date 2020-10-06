@@ -33,22 +33,25 @@ export class AuthenticationService {
   }
 
   logIn(user: string, pass: string) {
+    console.log(`New login!`);
     let userPass = user + ':' + pass;
-    let headers = new HttpHeaders({
-      Authorization: 'Basic ' + btoa(userPass),
-      'X-Requested-With': 'XMLHttpRequest'
+    let head = new HttpHeaders({
+      Authorization: 'Basic ' + btoa(userPass)
     });
-    let options = {headers};
-
-    return this.http.get(this.urlLogIn, options)
+    return this.http.get<any>(this.urlLogIn, {
+      headers: head,
+      observe: 'response'
+    })
       .map(resp => {
-        this.processLogInResponse(resp);
+        console.log(resp.headers.keys())
+        this.processLogInResponse(resp.body);
         return this.user;
       })
       .catch(error => Observable.throw(error));
   }
 
   logOut() {
+    console.log(`New logout!`);
     return this.http.get(this.urlLogOut).subscribe(
       response => {
 
@@ -72,6 +75,8 @@ export class AuthenticationService {
 
   private processLogInResponse(response) {
 
+    console.log(`Processing login response!`);
+    console.log(response)
     // Correctly logged in
     console.log('User is already logged');
     this.user = (response as User);
@@ -93,12 +98,9 @@ export class AuthenticationService {
   }
 
 
-  reqIsLogged(): Promise<any> {
-
+  private reqIsLogged(): Promise<any> {
+    console.log(`Checking if user is logged in!`);
     return new Promise((resolve, reject) => {
-
-      console.log('Checking if user is logged');
-
       let headers = new HttpHeaders({
         'X-Requested-With': 'XMLHttpRequest'
       });
@@ -132,9 +134,11 @@ export class AuthenticationService {
       if (!this.isLoggedIn()) {
         this.reqIsLogged()
           .then(() => {
+            console.log(`Credentials check was successful!`);
             resolve();
           })
           .catch((error) => {
+            console.log(`Error checking credentials!`, error);
             reject(error);
           });
       } else {
@@ -154,10 +158,4 @@ export class AuthenticationService {
   isTeacher() {
     return this.user ? (this.user.roles.includes(this.TEACHER) || this.role === this.TEACHER) : false;
   }
-}
-
-function utf8_to_b64(str) {
-  return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function (match, p1) {
-    return String.fromCharCode(<any>'0x' + p1);
-  }));
 }

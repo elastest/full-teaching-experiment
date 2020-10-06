@@ -4,13 +4,14 @@ import * as SockJS from 'sockjs-client';
 import {ModalService} from './modal.service';
 import {Router} from '@angular/router';
 import {NotificationService} from './notification.service';
+import {environment} from '../../environments/environment';
 
 @Injectable()
 export class WebsocketService {
   constructor(private notificationService: NotificationService) {
   }
 
-  webSocketEndPoint: string = 'http://localhost:5001/ws';
+  webSocketEndPoint: string = environment.API_URL + '/ws';
   topic: string = '/topic/greetings';
   user: string = '/user/queue/reply';
   stompClient: any;

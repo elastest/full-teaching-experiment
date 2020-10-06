@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
+import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {FTSession} from '../../classes/FTSession';
 import {ActivatedRoute, Router} from '@angular/router';
 import {CourseService} from '../../services/course.service';
@@ -7,7 +7,7 @@ import {AuthenticationService} from '../../services/authentication.service';
 import {ModalService} from '../../services/modal.service';
 import {SessionService} from '../../services/session.service';
 import {MatDatepicker} from '@angular/material/datepicker';
-import {CanvasWhiteboardComponent, CanvasWhiteboardUpdate} from 'ng2-canvas-whiteboard';
+import {CanvasWhiteboardComponent} from 'ng2-canvas-whiteboard';
 
 @Component({
   selector: 'app-session-details',
@@ -33,7 +33,7 @@ export class SessionDetailsComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     let sessionId: number = Number(this.route.snapshot.paramMap.get('id'));
     let courseId: number = Number(this.route.snapshot.paramMap.get('courseId'));
-    this.authenticationService.reqIsLogged()
+    this.authenticationService.checkCredentials()
       .then(() => {
         this.courseService.getCourse(courseId).subscribe(data => {
             this.course = data;
@@ -115,21 +115,5 @@ export class SessionDetailsComponent implements OnInit, AfterViewInit {
 
   backToCourse() {
     this.router.navigate([`courses/${this.course.id}/1`])
-  }
-
-  sendBatchUpdate($event: CanvasWhiteboardUpdate[]) {
-
-  }
-
-  onCanvasClear() {
-
-  }
-
-  onCanvasRedo($event: any) {
-
-  }
-
-  onCanvasUndo($event: any) {
-
   }
 }
