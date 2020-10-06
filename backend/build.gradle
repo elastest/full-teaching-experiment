@@ -58,7 +58,7 @@ dependencies {
     implementation 'org.apache.tika:tika-core:1.14'
     implementation 'org.apache.tika:tika-parsers:1.14'
     implementation 'com.amazonaws:aws-java-sdk:1.11.60'
-    implementation 'io.openvidu:openvidu-java-client:1.7.0'
+    implementation 'io.openvidu:openvidu-java-client:2.15.0'
 
     //tests
     testImplementation 'junit:junit:4.12'
