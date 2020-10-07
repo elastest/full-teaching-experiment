@@ -92,6 +92,8 @@ export class CourseSessionComponent implements OnInit {
     this.courseService.getCourse(courseId).subscribe(data => {
         this.course = data;
         this.mySession = this.course.sessions.find(s => s.id === sessionId);
+        this.mySessionId = sessionId;
+
         if (!this.mySession) {
           this.router.navigate(['/courses']);
         } else {
@@ -290,7 +292,7 @@ export class CourseSessionComponent implements OnInit {
     this.OV = new OpenVidu();
     this.OVSession = this.OV.initSession();
 
-    this.videoSessionService.getSessionIdAndToken(this.OVSessionId).subscribe(response => {
+    this.videoSessionService.getSessionIdAndToken(this.mySessionId).subscribe(response => {
 
       this.OVToken = response[1];
 
@@ -445,7 +447,7 @@ export class CourseSessionComponent implements OnInit {
   }
 
   getParamsAndJoin() {
-    this.videoSessionService.getSessionIdAndToken(this.mySession.id).subscribe(
+    this.videoSessionService.getSessionIdAndToken(this.mySessionId).subscribe(
       sessionIdToken => {
         this.OVSessionId = sessionIdToken[0];
         this.OVToken = sessionIdToken[1];

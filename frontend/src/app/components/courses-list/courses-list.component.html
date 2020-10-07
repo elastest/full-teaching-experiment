@@ -8,11 +8,7 @@
     </mat-card-header>
     <img *ngIf="course?.image.length > 0" mat-card-image [src]="course?.image">
     <img *ngIf="course?.image.length <= 0" mat-card-image src="assets/images/slider1.jpg">
-
     <mat-card-content>
-      <p>
-        Some description for this course
-      </p>
     </mat-card-content>
     <mat-card-actions>
       <button mat-raised-button matTooltip="Open course" color="primary" class="mat-elevation-z10"

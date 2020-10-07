@@ -65,6 +65,8 @@ public class VideoSessionController {
         this.openVidu = new OpenVidu(this.URL, this.SECRET);
     }
 
+
+
     @LoginRequired
     @RequestMapping(value = "/get-sessionid-token/{id}", method = RequestMethod.GET)
     public ResponseEntity<Object> getSessionIdAndToken(@PathVariable(value = "id") String id) throws OpenViduJavaClientException, OpenViduHttpException {
