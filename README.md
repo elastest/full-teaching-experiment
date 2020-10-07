@@ -1,4 +1,5 @@
-# FullTeaching 2.0
+# FULL TEACHING 2.0: AN ONLINE TEACHING PLATFORM WITH VIDEO-CLASSES
+
 
 ![CI](https://github.com/codeurjc-students/2019-FullTeaching/workflows/CI/badge.svg)
 <p align="center"><img src="https://github.com/codeurjc-students/2019-FullTeaching/blob/master/images/presentation.png?raw=true"/></p>
