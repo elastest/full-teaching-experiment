@@ -41,6 +41,19 @@ export class ModalService {
     });
   }
 
+  public newSuccessModalWithCallback(title: string, text: string, callback: Function) {
+    Swal.fire({
+      title: title,
+      text: text,
+      icon: 'success',
+      onClose: () => {
+        if (callback) {
+          callback();
+        }
+      }
+    });
+  }
+
 
   public newErrorModal(title: string, text: string, redirect: string) {
     Swal.fire({

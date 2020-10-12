@@ -41,7 +41,7 @@ export class CourseDetailsV2Component implements OnInit, AfterViewInit {
   }
 
   // move to selected tab in route
-  changeTab(): void{
+  changeTab(): void {
     this.tabs.selectedIndex = Number.parseInt(this.route.snapshot.paramMap.get('tabId'));
   }
 
@@ -102,7 +102,7 @@ export class CourseDetailsV2Component implements OnInit, AfterViewInit {
 
         // refresh course on announce
         this.announcerService.courseRefreshAnnouncer$.subscribe(course => {
-          if(this.course.id === course.id){
+          if (this.course.id === course.id) {
             this.initCourse();
           }
         });
@@ -204,13 +204,14 @@ export class CourseDetailsV2Component implements OnInit, AfterViewInit {
   createFileGroup() {
     this.modalService.newInputCallbackedModal('Enter file group name:', (resp) => {
       const name = resp.value;
-      const fg = new FileGroup(name, null);
-      this.fileService.newFileGroup(fg, this.course.courseDetails.id)
-        .subscribe(data => {
-
-          this.course.courseDetails.files = data.files;
-          this.modalService.newToastModal('Added new file group!');
-        })
+      if (name) {
+        const fg = new FileGroup(name, null);
+        this.fileService.newFileGroup(fg, this.course.courseDetails.id)
+          .subscribe(data => {
+            this.course.courseDetails.files = data.files;
+            this.modalService.newToastModal('Added new file group!');
+          });
+      }
     })
   }
 

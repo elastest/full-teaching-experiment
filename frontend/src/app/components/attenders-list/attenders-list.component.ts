@@ -37,6 +37,7 @@ export class AttendersListComponent implements OnInit, OnChanges {
         attenders.forEach(attender => {
           this.course.attenders.push(attender);
         })
+        this.matDialog.closeAll();
         this.updateDataSource();
       }
     })

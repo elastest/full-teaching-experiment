@@ -38,7 +38,7 @@ public class CourseService implements FTService<Course, Long> {
         if (!user.isRole(Role.TEACHER)) {
             for (Course course : courses) {
                 CourseDetails courseDetails = course.getCourseDetails();
-                if(Objects.nonNull(courseDetails)) {
+                if (Objects.nonNull(courseDetails)) {
                     List<FileGroup> files = courseDetails.getFiles();
                     if (Objects.nonNull(files)) {
                         for (FileGroup fileGroup : courseDetails.getFiles()) {
@@ -49,10 +49,6 @@ public class CourseService implements FTService<Course, Long> {
             }
         }
         return courses;
-    }
-
-    public Collection<Course> findByAttenders(Collection<User> users) {
-        return this.repo.findAllByAttendersIn(users);
     }
 
     public Collection<User> removeAttender(User attender, Course c) {
@@ -70,7 +66,7 @@ public class CourseService implements FTService<Course, Long> {
         // must check if the files of this course have date restriction
         if (Objects.nonNull(course) && !this.userComponent.getLoggedUser().isRole(Role.TEACHER)) {
             CourseDetails courseDetails = course.getCourseDetails();
-            if(Objects.nonNull(courseDetails)) {
+            if (Objects.nonNull(courseDetails)) {
 
                 // check all file groups
                 for (FileGroup fileGroup : courseDetails.getFiles()) {
@@ -111,7 +107,7 @@ public class CourseService implements FTService<Course, Long> {
 
     @Override
     public void deleteAll(Iterable<Course> entities) {
-        for(Course course : entities){
+        for (Course course : entities) {
             this.delete(course);
         }
     }

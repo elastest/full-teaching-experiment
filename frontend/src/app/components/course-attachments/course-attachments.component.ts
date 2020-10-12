@@ -14,7 +14,6 @@ import {FileUploaderComponent} from '../file-uploader/file-uploader.component';
 import {VideoPlayerService} from '../../services/video-player.service';
 import {Router} from '@angular/router';
 import {PhotoViewerComponent} from '../photo-viewer/photo-viewer.component';
-import {NgxMatDatetimePicker} from '@angular-material-components/datetime-picker';
 
 
 export interface DialogData {
@@ -128,22 +127,18 @@ export class CourseAttachmentsComponent implements OnInit {
 
 
   newFileGroup(fgParent: FileGroup) {
-
     this.modalService.newInputCallbackedModal('New file group name:', (resp) => {
-
       let name = resp.value;
-
-      if (name) {
+      if(name.length <= 0){
+        this.modalService.newErrorModal('Invalid file group name', 'You must include a valid file group name', null);
+      }
+      else if (name) {
         let newFileGroup = new FileGroup(name, fgParent);
-
         this.fileService.newFileGroup(newFileGroup, this.course.courseDetails.id).subscribe(courseDetails => {
           this.announcerService.announceNewFileGroup(courseDetails);
         }, error => this.modalService.newErrorModal('Error creating a new file group!', error, null))
       }
-
-    })
-
-
+    });
   }
 
 

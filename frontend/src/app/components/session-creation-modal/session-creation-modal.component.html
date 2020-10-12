@@ -1,5 +1,5 @@
-<mat-dialog-content>
-
+<h1>Schedule new video session</h1>
+<mat-dialog-content class="mat-typography">
   <form [formGroup]="this.formGroup">
     <mat-form-field>
       Title
@@ -8,7 +8,7 @@
     <br/>
     <mat-form-field>
       Description
-      <input formControlName="titleCtrl" formControlName="descCtrl" matInput>
+      <input formControlName="descCtrl" matInput>
     </mat-form-field>
     <br/>
     <mat-form-field>
@@ -29,3 +29,34 @@
     Save
   </button>
 </mat-dialog-actions>
+
+
+<!--<mat-dialog-content >-->
+<!--  <h1>Schedule new video session</h1>-->
+<!--  <mat-grid-list [cols]="1" rowHeight="1:1" class="bg-transparent forum-thread wrapper attenders-list email-tabs">-->
+<!--    <form class="login-form" [formGroup]="this.formGroup"-->
+<!--          (ngSubmit)="this.createSession()">-->
+<!--      <mat-form-field>-->
+<!--        <input matInput placeholder="Title" formControlName="titleCtrl">-->
+<!--      </mat-form-field>-->
+<!--      <mat-form-field>-->
+<!--        <input placeholder="Description" formControlName="descCtrl" matInput>-->
+<!--      </mat-form-field>-->
+<!--      <mat-form-field>-->
+<!--        <mat-label>Pick a date</mat-label>-->
+<!--        <input [ngxMatDatetimePickerFilter]="myFilter" formControlName="dateCtrl" readonly matInput-->
+<!--               [ngxMatDatetimePicker]="picker" (dateChange)="this.changeDate($event)" placeholder="Pick a date">-->
+<!--        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>-->
+<!--        <ngx-mat-datetime-picker #picker>-->
+<!--        </ngx-mat-datetime-picker>-->
+<!--      </mat-form-field>-->
+<!--    </form>-->
+<!--  </mat-grid-list>-->
+<!--  <mat-dialog-actions>-->
+<!--    <button [disabled]="!this.saveButtonEnabled()" mat-raised-button color="primary" (click)="this.createSession()"-->
+<!--            [mat-dialog-close]>Submit-->
+<!--    </button>-->
+<!--    <button mat-raised-button color="warn">Close</button>-->
+<!--  </mat-dialog-actions>-->
+<!--</mat-dialog-content>-->
+
