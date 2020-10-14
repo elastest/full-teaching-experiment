@@ -30,7 +30,7 @@ export class SettingsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.authenticationService.checkCredentials()
+    this.authenticationService.checkLoggedIn()
       .then(() => {
         this.user = this.authenticationService.getCurrentUser();
       })

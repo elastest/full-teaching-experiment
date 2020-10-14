@@ -27,7 +27,7 @@ export class NotificationsDropdownComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.authenticationService.checkCredentials()
+    this.authenticationService.checkLoggedIn()
       .then(() => {
         this.init();
         this.announcerService.notificationAnnouncer$.subscribe(() => {

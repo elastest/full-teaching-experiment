@@ -1,6 +1,5 @@
 package com.fullteaching.backend.controller;
 
-import com.fullteaching.backend.annotation.LoginRequired;
 import com.fullteaching.backend.model.Comment;
 import com.fullteaching.backend.model.Course;
 import com.fullteaching.backend.model.User;
@@ -43,7 +42,6 @@ public class AssetsController {
         this.userComponent = userComponent;
     }
 
-    @LoginRequired
     @GetMapping("/pictures/{file_name}")
     public ResponseEntity<Resource> downloadPicture(@PathVariable("file_name") String fileName) throws IOException {
         Resource resource = this.assetsService.downloadAsset(fileName, FileType.PICTURE);
@@ -57,7 +55,6 @@ public class AssetsController {
         }
     }
 
-    @LoginRequired
     @GetMapping("/audios/comment/{commentId}/{courseId}")
     public ResponseEntity<Resource> downloadAudioComment(@PathVariable("commentId") long commentId, @PathVariable("courseId") long courseId) throws IOException {
 
@@ -65,13 +62,13 @@ public class AssetsController {
         Comment comment = this.commentService.getFromId(commentId);
         User user = this.userComponent.getLoggedUser();
 
-        if(Objects.isNull(comment) || Objects.isNull(course)){
+        if (Objects.isNull(comment) || Objects.isNull(course)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
         ResponseEntity unAuthorized = this.authorizationService.checkAuthorizationUsers(user, course.getAttenders());
 
-        if(Objects.nonNull(unAuthorized)){
+        if (Objects.nonNull(unAuthorized)) {
             return unAuthorized;
         }
 
@@ -87,7 +84,6 @@ public class AssetsController {
             return ResponseEntity.noContent().build();
         }
     }
-
 
 
 }

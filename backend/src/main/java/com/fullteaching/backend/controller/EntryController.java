@@ -40,7 +40,6 @@ public class EntryController extends SecureController {
         this.courseDetailsService = courseDetailsService;
     }
 
-    @LoginRequired
     @RequestMapping(value = "/forum/{id}", method = RequestMethod.POST)
     public ResponseEntity<Object> newEntry(@RequestBody Entry entry, @PathVariable(value = "id") long courseDetailsId) {
 

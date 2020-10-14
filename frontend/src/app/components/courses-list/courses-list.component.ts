@@ -27,7 +27,7 @@ export class CoursesListComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.authenticationService.checkCredentials().then(() => {
+    this.authenticationService.checkLoggedIn().then(() => {
       this.courseService.getCourses(this.authenticationService.getCurrentUser())
         .subscribe((data) => {
           this.dataSource = data;

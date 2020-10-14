@@ -40,14 +40,12 @@ public class UserController {
         this.authorizationService = authorizationService;
     }
 
-    @LoginRequired
     @GetMapping("/all")
     public ResponseEntity<Page<User>> getAll(@RequestParam int page, @RequestParam int size){
         Page<User> response = this.userService.getall(page, size);
         return ResponseEntity.ok(response);
     }
 
-    @LoginRequired
     @GetMapping("/byName/{name}")
     public ResponseEntity<Page<User>> getByName(@PathVariable String name, @RequestParam int page, @RequestParam int size){
         Page<User> response = this.userService.getByname(name, page, size);

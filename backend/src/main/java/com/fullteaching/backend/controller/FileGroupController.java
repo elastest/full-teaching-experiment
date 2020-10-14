@@ -79,7 +79,6 @@ public class FileGroupController {
 		}
 	}
 
-	@LoginRequired
 	@RequestMapping(value = "/{id}", method = RequestMethod.POST)
 	public ResponseEntity<Object> newFileGroup(@RequestBody FileGroup fileGroup, @PathVariable(value="id") String courseDetailsId) {
 		

@@ -36,15 +36,14 @@ export class AuthenticationService {
     console.log(`New login!`);
     let userPass = user + ':' + pass;
     let head = new HttpHeaders({
-      Authorization: 'Basic ' + btoa(userPass)
+      Authorization: 'Basic ' + btoa(userPass),
+      'X-Requested-With': 'XMLHttpRequest'
     });
-    return this.http.get<any>(this.urlLogIn, {
+    return this.http.get(this.urlLogIn, {
       headers: head,
-      observe: 'response'
     })
       .map(resp => {
-        console.log(resp.headers.keys())
-        this.processLogInResponse(resp.body);
+        this.processLogInResponse(resp);
         return this.user;
       })
       .catch(error => Observable.throw(error));
@@ -74,13 +73,7 @@ export class AuthenticationService {
   }
 
   private processLogInResponse(response) {
-
-    console.log(`Processing login response!`);
-    console.log(response)
-    // Correctly logged in
-    console.log('User is already logged');
     this.user = (response as User);
-
     localStorage.setItem('login', 'FULLTEACHING');
     if (this.user.roles.indexOf('ROLE_ADMIN') !== -1) {
       this.role = 'ROLE_ADMIN';
@@ -108,20 +101,16 @@ export class AuthenticationService {
 
       this.http.get(this.urlLogIn, options).subscribe(
         response => {
-          console.log(response)
           this.processLogInResponse(response);
-          resolve()
+          resolve();
         },
         error => {
           let msg = '';
-          if (error.status != 401) {
+          if (error.status !== 401) {
             msg = 'Error when asking if logged: ' + JSON.stringify(error);
             console.error(msg);
-            this.logOut();
           } else {
             msg = 'User is not logged in';
-            console.warn(msg);
-            this.router.navigate(['']);
           }
           reject(msg);
         }
@@ -129,16 +118,14 @@ export class AuthenticationService {
     });
   }
 
-  checkCredentials(): Promise<any> {
+  checkLoggedIn(): Promise<any> {
     return new Promise((resolve, reject) => {
       if (!this.isLoggedIn()) {
         this.reqIsLogged()
           .then(() => {
-            console.log(`Credentials check was successful!`);
             resolve();
           })
           .catch((error) => {
-            console.log(`Error checking credentials!`, error);
             reject(error);
           });
       } else {

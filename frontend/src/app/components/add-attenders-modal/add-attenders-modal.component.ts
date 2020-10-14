@@ -5,6 +5,7 @@ import {ModalService} from '../../services/modal.service';
 import {CourseService} from '../../services/course.service';
 import {EditionService} from '../../services/edition.service';
 import {AnnouncerService} from '../../services/announcer.service';
+import {MatDialog} from '@angular/material/dialog';
 
 @Component({
   selector: 'app-add-attenders-modal',
@@ -23,6 +24,7 @@ export class AddAttendersModalComponent implements OnInit {
               private announcerService: AnnouncerService,
               private modalService: ModalService,
               private courseService: CourseService,
+              public matDialog: MatDialog,
               private editionService: EditionService) {
   }
 

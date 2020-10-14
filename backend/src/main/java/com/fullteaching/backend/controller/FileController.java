@@ -145,7 +145,6 @@ public class FileController extends SecureController {
         }
     }
 
-    @LoginRequired
     @RequestMapping("/course/{courseId}/download/{fileId}")
     public void handleFileDownload(@PathVariable String fileId, @PathVariable(value = "courseId") String courseId,
                                    HttpServletResponse response) throws IOException {
@@ -212,7 +211,6 @@ public class FileController extends SecureController {
         }
     }
 
-    @LoginRequired
     @RequestMapping(value = "/upload/picture/{userId}", method = RequestMethod.POST)
     public ResponseEntity<Object> handlePictureUpload(MultipartHttpServletRequest request,
                                                       @PathVariable(value = "userId") String userId) throws IOException {
@@ -298,7 +296,6 @@ public class FileController extends SecureController {
         }
     }
 
-    @LoginRequired
     @RequestMapping(value = "/upload/course/{courseDetailsId}/comment/{parentId}/entry/{entryId}", method = RequestMethod.POST)
     public ResponseEntity<Object> handleVideoMessageUpload(MultipartHttpServletRequest request,
                                                            @PathVariable(value = "courseDetailsId") long courseDetailsId,

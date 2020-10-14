@@ -54,9 +54,8 @@ export class CourseDetailsV2Component implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    this.authService.checkCredentials()
+    this.authService.checkLoggedIn()
       .then(() => {
-
         this.user = this.authService.getCurrentUser();
         this.showedEntryId = Number.parseInt(this.route.snapshot.paramMap.get('showedEntryId'));
 
@@ -106,8 +105,6 @@ export class CourseDetailsV2Component implements OnInit, AfterViewInit {
             this.initCourse();
           }
         });
-
-
       })
       .catch(err => {
         console.log(err);
@@ -181,21 +178,14 @@ export class CourseDetailsV2Component implements OnInit, AfterViewInit {
     })
       .then(result => {
         if (result) {
-
           let value: string = result['value'] as any as string;
-
           if (value) {
-
             this.course.title = value;
-
             this.courseService.editCourse(this.course, value).subscribe(
               data => {
-
                 this.modalService.newToastModal(`Successfully changed name of the course to: ${value}`)
-
               }, error => this.modalService.newErrorModal('An error ocured while updating the name of the course!', error, null)
             );
-
           }
         }
       })

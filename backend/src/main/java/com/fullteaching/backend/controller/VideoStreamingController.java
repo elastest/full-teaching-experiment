@@ -1,12 +1,12 @@
 package com.fullteaching.backend.controller;
 
-import com.fullteaching.backend.model.Course;
-import com.fullteaching.backend.service.CourseService;
-import com.fullteaching.backend.model.File;
-import com.fullteaching.backend.service.FileService;
 import com.fullteaching.backend.file.MultipartFileSender;
+import com.fullteaching.backend.model.Course;
+import com.fullteaching.backend.model.File;
 import com.fullteaching.backend.security.AuthorizationService;
 import com.fullteaching.backend.security.user.UserComponent;
+import com.fullteaching.backend.service.CourseService;
+import com.fullteaching.backend.service.FileService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -48,11 +48,9 @@ public class VideoStreamingController {
         if (Objects.nonNull(authorized)) {
             response.sendError(401, "Not logged");
             return;
-        }
-
-        else{
+        } else {
             Course course = this.courseService.getFromId(courseId);
-            if(Objects.nonNull(this.authorizationService.checkAuthorizationUsers(course, Collections.singleton(userComponent.getLoggedUser())))){
+            if (Objects.nonNull(this.authorizationService.checkAuthorizationUsers(course, Collections.singleton(userComponent.getLoggedUser())))) {
                 response.sendError(401, "Not logged");
                 return;
             }
@@ -76,6 +74,4 @@ public class VideoStreamingController {
             response.sendError(404, "File not found");
         }
     }
-
-
 }

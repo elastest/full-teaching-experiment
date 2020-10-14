@@ -3,7 +3,6 @@ package com.fullteaching.backend.security;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -34,61 +33,20 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
 
     public final UserRepositoryAuthProvider userRepoAuthProvider;
-    private final LoginInterceptor loginInterceptor;
     private final RoleCheckInterceptor roleCheckInterceptor;
     private final CourseAuthorizerInterceptor courseAuthorizerInterceptor;
+    private final String ALLOWED_ORIGINS = "https://localhost:4200";
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-
-        configureUrlAuthorization(http);
-
-        // Use Http Basic Authentication
         http.httpBasic();
-
-        // Do not redirect when logout
-        http.logout().logoutSuccessHandler((rq, rs, a) -> {
-        });
-    }
-
-    private void configureUrlAuthorization(HttpSecurity http) throws Exception {
-
-        http.httpBasic();
-
         http.csrf().disable();
-
-        // APP: This rules have to be changed by app developer
-
-        // URLs that need authentication to access to it
-        //Courses API
-        http.authorizeRequests().antMatchers(HttpMethod.GET, "/courses/**").hasAnyRole("TEACHER", "STUDENT");
-        http.authorizeRequests().antMatchers(HttpMethod.POST, "/courses/**").hasRole("TEACHER");
-        http.authorizeRequests().antMatchers(HttpMethod.PUT, "/courses/**").hasRole("TEACHER");
-        http.authorizeRequests().antMatchers(HttpMethod.DELETE, "/courses/**").hasRole("TEACHER");
-        //Forum API
-        http.authorizeRequests().antMatchers(HttpMethod.POST, "/entries/**").hasAnyRole("TEACHER", "STUDENT");
-        http.authorizeRequests().antMatchers(HttpMethod.POST, "/comments/**").hasAnyRole("TEACHER", "STUDENT");
-        //Session API
-        http.authorizeRequests().antMatchers(HttpMethod.POST, "/sessions/**").hasRole("TEACHER");
-        http.authorizeRequests().antMatchers(HttpMethod.PUT, "/sessions/**").hasRole("TEACHER");
-        http.authorizeRequests().antMatchers(HttpMethod.DELETE, "/sessions/**").hasRole("TEACHER");
-        //Files API
-        http.authorizeRequests().antMatchers(HttpMethod.POST, "/files/**").hasRole("TEACHER");
-        http.authorizeRequests().antMatchers(HttpMethod.PUT, "/files/**").hasRole("TEACHER");
-        http.authorizeRequests().antMatchers(HttpMethod.DELETE, "/files/**").hasRole("TEACHER");
-        //Files upload/download API
-        http.authorizeRequests().antMatchers(HttpMethod.POST, "/load-files/upload/course/**").hasRole("TEACHER");
-        http.authorizeRequests().antMatchers(HttpMethod.POST, "/load-files/upload/picture/**").hasAnyRole("TEACHER", "STUDENT");
-        http.authorizeRequests().antMatchers(HttpMethod.GET, "/load-files/course/**").hasAnyRole("TEACHER", "STUDENT");
-
-        http.authorizeRequests().antMatchers("/ws/**").authenticated();
-
-        // Pictures
-        http.authorizeRequests().antMatchers(HttpMethod.GET, "/assets/pictures/*").authenticated();
-
-        // Other URLs can be accessed without authentication
-        http.authorizeRequests().anyRequest().permitAll();
+        http
+                .authorizeRequests()
+                .antMatchers("/", "/api-logIn").permitAll()
+                .anyRequest().authenticated();
     }
+
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -99,7 +57,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/*").allowedOrigins("*");
+        registry.addMapping("/*").allowedOrigins(this.ALLOWED_ORIGINS);
     }
 
     @Bean
@@ -107,7 +65,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.addAllowedOrigin("*");
+        config.addAllowedOrigin(this.ALLOWED_ORIGINS);
         config.addAllowedHeader("*");
         config.addAllowedMethod("OPTIONS");
         config.addAllowedMethod("GET");
@@ -120,9 +78,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        // checks if user is logged in
-        registry.addInterceptor(loginInterceptor).addPathPatterns("/**");
-
         // checks if user is logged in, also checks if he has the needed role
         registry.addInterceptor(roleCheckInterceptor).addPathPatterns("/**");
 

@@ -33,7 +33,7 @@ export class SessionDetailsComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     let sessionId: number = Number(this.route.snapshot.paramMap.get('id'));
     let courseId: number = Number(this.route.snapshot.paramMap.get('courseId'));
-    this.authenticationService.checkCredentials()
+    this.authenticationService.checkLoggedIn()
       .then(() => {
         this.courseService.getCourse(courseId).subscribe(data => {
             this.course = data;

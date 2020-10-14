@@ -19,9 +19,10 @@ export class DashboardV2Component implements OnInit {
   }
 
   ngOnInit() {
-    this.authenticationService.checkCredentials()
+    this.authenticationService.checkLoggedIn()
       .then(() => {
         let user = this.authenticationService.getCurrentUser();
+        console.log(`Successfully logged as ${user.name}`)
         if (user) {
           this.courseService.getCourses(user).subscribe(resp => {
             this.userCourses = resp;
@@ -29,7 +30,7 @@ export class DashboardV2Component implements OnInit {
         }
       })
       .catch((e) => {
-        console.log(e);
+        console.warn(`Error in the login check of the dashboard: `, e);
       });
   }
 }

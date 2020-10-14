@@ -31,7 +31,7 @@ export class CalendarComponent implements OnInit, AfterViewInit {
 
 
   ngOnInit(): void {
-    this.authService.checkCredentials()
+    this.authService.checkLoggedIn()
       .then(() => {
         this.loadAllSessions();
       })

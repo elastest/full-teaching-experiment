@@ -52,7 +52,6 @@ public class CourseController extends SecureController {
         public Collection<String> emailsValidNotRegistered;
     }
 
-    @LoginRequired
     @JsonView(SimpleCourseList.class)
     @RequestMapping(value = "/user/{id}", method = RequestMethod.GET)
     public ResponseEntity<Object> getCourses(@PathVariable(value = "id") long id) {
@@ -62,7 +61,6 @@ public class CourseController extends SecureController {
         return new ResponseEntity<>(courses, HttpStatus.OK);
     }
 
-    @LoginRequired
     @RequestMapping(value = "/course/{id}", method = RequestMethod.GET)
     public ResponseEntity<Object> getCourse(@PathVariable(value = "id") long id) {
         log.info("CRUD operation: Getting one course");

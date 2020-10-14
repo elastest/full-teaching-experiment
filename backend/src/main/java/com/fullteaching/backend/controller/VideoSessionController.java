@@ -67,7 +67,6 @@ public class VideoSessionController {
 
 
 
-    @LoginRequired
     @RequestMapping(value = "/get-sessionid-token/{id}", method = RequestMethod.GET)
     public ResponseEntity<Object> getSessionIdAndToken(@PathVariable(value = "id") String id) throws OpenViduJavaClientException, OpenViduHttpException {
 
@@ -157,7 +156,6 @@ public class VideoSessionController {
         }
     }
 
-    @LoginRequired
     @RequestMapping(value = "/remove-user", method = RequestMethod.POST)
     public ResponseEntity<Object> removeUser(@RequestBody String sessionName)
             throws Exception {

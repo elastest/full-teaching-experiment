@@ -28,14 +28,12 @@ public class NotificationsController extends SecureController {
     }
 
     @GetMapping("/all")
-    @LoginRequired
     public ResponseEntity<Collection<Notification>> getAll() {
         log.info("Getting all notifications from user: {}", this.user.getLoggedUser().getName());
         return ResponseEntity.ok(this.notificationService.getAllFromUser(user.getLoggedUser()));
     }
 
     @DeleteMapping("/all")
-    @LoginRequired
     public ResponseEntity<?> removeAllNotifications() {
         try {
             this.notificationService.unseeAll(user.getLoggedUser());
@@ -49,7 +47,6 @@ public class NotificationsController extends SecureController {
     }
 
     @DeleteMapping("/byId/{id}")
-    @LoginRequired
     public ResponseEntity<?> removeById(@PathVariable long id) {
         try {
 
