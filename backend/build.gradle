@@ -12,7 +12,10 @@ if (binding.variables.containsKey('profile')) {
 }
 
 processResources {
-    filter { String line -> line.replace('$PROFILE', profile) }
+    from( sourceSets['main'].resources ) {
+        include '**/*.properties'
+        filter { String line -> line.replace('$PROFILE', profile) }
+    }
 }
 
 buildscript {

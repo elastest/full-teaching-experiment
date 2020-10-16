@@ -43,14 +43,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
         http.csrf().disable();
         http
                 .authorizeRequests()
-                .antMatchers("/", "/api-logIn").permitAll()
-                .anyRequest().authenticated();
+                .antMatchers("/", "/api-logIn")
+                .permitAll();
     }
 
-
     @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-
+    protected void configure(AuthenticationManagerBuilder auth) {
         // Database authentication provider
         auth.authenticationProvider(userRepoAuthProvider);
     }
