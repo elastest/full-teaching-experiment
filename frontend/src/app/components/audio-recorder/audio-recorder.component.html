@@ -1,0 +1,37 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>
+      Audio reply
+    </mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <audio #audioRecorded controls style="user-select: none"></audio>
+  </mat-card-content>
+  <mat-card-actions>
+    <button matTooltip="Start recording audio" mat-button (click)="this.startRecord()" *ngIf="!this.isRecording()">
+      <mat-icon color="warn">
+        fiber_manual_record
+      </mat-icon>
+    </button>
+    <button matTooltip="Stop audio recording" mat-button (click)="this.finishRecord()" *ngIf="this.isRecording()">
+      <mat-icon color="warn">
+        stop
+      </mat-icon>
+    </button>
+    <button matTooltip="Download audio" *ngIf="this.canDownloadAudio()" mat-raised-button (click)="this.downloadAudio()">
+      <mat-icon>
+        cloud_download
+      </mat-icon>
+    </button>
+    <button [mat-dialog-close] matTooltip="Send audio reply" *ngIf="this.canDownloadAudio()" mat-raised-button (click)="this.sendReply()">
+      <mat-icon>
+        send
+      </mat-icon>
+    </button>
+    <button [mat-dialog-close] matTooltip="Close" mat-raised-button>
+      <mat-icon>
+        close
+      </mat-icon>
+    </button>
+  </mat-card-actions>
+</mat-card>

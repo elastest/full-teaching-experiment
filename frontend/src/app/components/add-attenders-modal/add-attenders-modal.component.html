@@ -1,0 +1,32 @@
+<mat-dialog-content class="mat-typography">
+  <h1>Add new attenders</h1>
+  <mat-tab-group>
+    <mat-tab label="Single">
+      <mat-grid-list [cols]="1" rowHeight="1:1" class="bg-transparent forum-thread wrapper attenders-list email-tabs">
+        <form class="login-form" [formGroup]="this.singleAddFg"
+              (ngSubmit)="this.singleSubmit()">
+          <mat-form-field>
+            <input matInput placeholder="Email" formControlName="singleEmailCtrl">
+          </mat-form-field>
+        </form>
+      </mat-grid-list>
+      <button [disabled]="!this.singleAddFg.valid" mat-raised-button color="primary" (click)="this.singleSubmit()" [mat-dialog-close]>Submit</button>
+    </mat-tab>
+    <mat-tab label="Bulk">
+      <mat-grid-list [cols]="1" rowHeight="1:1" class="bg-transparent forum-thread wrapper attenders-list email-tabs">
+        <form class="login-form" [formGroup]="this.bulkAddFg"
+              (ngSubmit)="this.bulkSubmit()">
+          <mat-form-field class="login-full-width">
+            <input matInput placeholder="Emails" formControlName="bulkEmailCtrl">
+          </mat-form-field>
+
+          <mat-form-field class="login-full-width">
+            <input matInput placeholder="Separator" formControlName="separatorCtrl">
+          </mat-form-field>
+        </form>
+      </mat-grid-list>
+      <button [disabled]="!this.bulkAddFg.valid" mat-raised-button color="primary" (click)="this.bulkSubmit()" [mat-dialog-close]>Submit</button>
+    </mat-tab>
+  </mat-tab-group>
+</mat-dialog-content>
+

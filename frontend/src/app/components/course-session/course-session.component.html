@@ -1,0 +1,5 @@
+<div *ngIf="this.OVToken" id="session">
+  <opv-session #ovSessionComponent [sessionName]="mySessionId" [user]="this.authenticationService.getCurrentUser().name"
+               [tokens]="[this.OVToken]">
+  </opv-session>
+</div>

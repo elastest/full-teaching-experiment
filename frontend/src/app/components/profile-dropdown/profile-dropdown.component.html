@@ -1,0 +1,38 @@
+<div class="avatar-button">
+  <button mat-button *ngIf="!this.authenticationService.getCurrentUser()?.picture" [mat-menu-trigger-for]="menu">
+    <img src="assets/images/default_session_image.png" alt="Avatar" class="ft-avatar">
+  </button>
+
+  <button *ngIf="this.authenticationService.getCurrentUser()?.picture" class="menu-button" mat-button
+          [matMenuTriggerFor]="menu">
+    <img [src]="this.getPicture()" alt="Avatar" class="ft-avatar">
+  </button>
+</div>
+
+<mat-menu #menu>
+  <div mat-menu-item routerLink="/settings">
+    <button mat-button>
+      <mat-icon>
+        person
+      </mat-icon>
+    </button>
+    <a>
+      Profile
+    </a>
+  </div>
+  <br/>
+  <br/>
+  <br/>
+  <mat-divider></mat-divider>
+  <div mat-menu-item (click)="this.authenticationService.logOut()">
+    <button mat-button>
+      <mat-icon>
+        login
+      </mat-icon>
+    </button>
+    <a>
+      Log-Out
+    </a>
+  </div>
+
+</mat-menu>

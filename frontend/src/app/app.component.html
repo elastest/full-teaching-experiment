@@ -1,0 +1,8 @@
+<div id="sticky-footer-div">
+  <app-navigation  *ngIf="!isVideoSessionUrl()"></app-navigation>
+  <main>
+    <router-outlet></router-outlet>
+  </main>
+  <app-chat *ngIf="this.authenticationService.isLoggedIn() && !isVideoSessionUrl()"></app-chat>
+  <app-footer *ngIf="!isVideoSessionUrl()"></app-footer>
+</div>

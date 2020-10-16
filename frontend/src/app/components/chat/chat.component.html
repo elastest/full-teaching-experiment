@@ -1,0 +1,13 @@
+<ng-chat
+  #chat
+  *ngIf="this.adapter.isDataLoaded()"
+  [adapter]="adapter"
+  [userId]="this.authenticationService.getCurrentUser().id"
+  [historyEnabled]="true"
+  [historyPageSize]="4"
+  [hideFriendsList]="false"
+  title="chat"
+  (input)="this.searchUser($event)"
+  [theme]="getChatTheme()"
+  (onMessagesSeen)="messageSeen($event)">
+</ng-chat>

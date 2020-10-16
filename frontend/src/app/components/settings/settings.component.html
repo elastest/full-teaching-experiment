@@ -1,0 +1,50 @@
+<div class="wrapper">
+
+  <mat-card class="mat-elevation-z10">
+    <mat-card-header>
+      <mat-card-title>Profile</mat-card-title>
+    </mat-card-header>
+
+    <mat-card class="mat-elevation-z5">
+      <img class="profile-img" [src]="getProfilePicture()" alt="Profile picture">
+    </mat-card>
+
+    <mat-card-content class="spaced">
+
+      <mat-expansion-panel [hideToggle]="true" class="mat-elevation-z10">
+        <mat-expansion-panel-header>
+          <mat-panel-title>Mail:</mat-panel-title>
+          <mat-panel-description>{{this.authenticationService.getCurrentUser().name}}</mat-panel-description>
+        </mat-expansion-panel-header>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel [hideToggle]="true" class="mat-elevation-z10">
+        <mat-expansion-panel-header>
+          <mat-panel-title>Name:</mat-panel-title>
+          <mat-panel-description>{{this.authenticationService.getCurrentUser().nickName}}</mat-panel-description>
+        </mat-expansion-panel-header>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel class="mat-elevation-z10" [hideToggle]="true">
+        <mat-expansion-panel-header>
+          <mat-panel-title>Registration date:</mat-panel-title>
+          <mat-panel-description>{{this.authenticationService.getCurrentUser().registrationDate | date}}</mat-panel-description>
+        </mat-expansion-panel-header>
+      </mat-expansion-panel>
+    </mat-card-content>
+    <mat-card-actions>
+      <button matTooltip="Change password" mat-raised-button color="primary" class="mat-elevation-z5" (click)="openChangePasswordDialog()">
+        <mat-icon>
+          vpn_key
+        </mat-icon>
+      </button>
+      <button matTooltip="Change profile picture" mat-raised-button color="primary" class="mat-elevation-z5" (click)="openProfilePictureUploader()">
+        <mat-icon>
+          portrait
+        </mat-icon>
+      </button>
+    </mat-card-actions>
+  </mat-card>
+
+
+</div>

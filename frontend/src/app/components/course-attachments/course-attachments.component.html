@@ -1,0 +1,123 @@
+<mat-accordion class="bg-transparent files-group mat-elevation-z24" multi="true">
+  <div class="course-files files-group" *ngFor="let fg of this.fileGroups; let last2 = last">
+    <mat-expansion-panel [expanded]="true" [ngClass]="this.getBgColorClass()">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          {{fg.title}}
+        </mat-panel-title>
+        <mat-panel-description>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <div *ngIf="this.authService.isTeacher() && this.isEditing" cdkDropList class="files-list"
+           (cdkDropListDropped)="drop(fg.id, fg.files, $event)">
+        <mat-card class="files-box" *ngFor="let f of fg.files" cdkDrag>
+          <mat-card-header>
+            <div class="files-custom-placeholder" *cdkDragPlaceholder></div>
+            {{f.name}}
+          </mat-card-header>
+          <mat-card-actions>
+            <button class="move-card" mat-button cdkDragHandle>
+              <mat-icon>
+                open_with
+              </mat-icon>
+            </button>
+            <button mat-button (click)="deleteAttachment(f, fg)">
+              <mat-icon>delete</mat-icon>
+            </button>
+<!--            <button matTooltip="Hide file" mat-button *ngIf="!f.isHidden" (click)="this.hideFile(f)">-->
+<!--              <mat-icon>-->
+<!--                visibility_off-->
+<!--              </mat-icon>-->
+<!--            </button>-->
+            <mat-form-field>
+              <input [defaultValue]="f.hiddenUntil ? f.hiddenUntil: ''" #pickerInput (dateChange)="this.hideFile(f, fg, $event)" readonly matInput [ngxMatDatetimePicker]="picker" placeholder="Hide file until">
+              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+              <ngx-mat-datetime-picker #picker>
+              </ngx-mat-datetime-picker>
+            </mat-form-field>
+            <button color="warn" mat-raised-button *ngIf="f.hiddenUntil" (click)="this.showFile(f, fg)">
+              Remove date restriction
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+
+      <mat-list *ngIf="!this.isEditing">
+        <mat-card *ngFor="let f of fg.files" class="mat-elevation-z6 spaced">
+          <mat-card-header>
+            <mat-card-title>
+              {{f.name}}
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content *ngIf="this.authService.isTeacher() && f.hiddenUntil">
+            <button matTooltip="File is hidden!" *ngIf="f.hiddenUntil" mat-button>
+              <mat-icon>
+                visibility_off
+              </mat-icon>
+            </button>
+            <button mat-button>
+              {{f.hiddenUntil}}
+            </button>
+          </mat-card-content>
+          <mat-card-actions>
+            <button *ngIf="this.isFile(f) && this.isPDF(f)" mat-button matTooltip="Download attachment"
+                    (click)="openPDF(f)">
+              <mat-icon>picture_as_pdf</mat-icon>
+            </button>
+            <button *ngIf="this.isFile(f) && !this.isPDF(f) && !this.isPicture(f)" mat-button
+                    matTooltip="Download attachment" (click)="this.downloadAttachment(f)">
+              <mat-icon>cloud_download</mat-icon>
+            </button>
+            <button *ngIf="this.isFile(f) && !this.isPDF(f) && this.isPicture(f)" mat-button
+                    matTooltip="Download attachment" (click)="this.openPhoto(f)">
+              <mat-icon>insert_photo</mat-icon>
+            </button>
+            <button *ngIf="this.isLink(f)" mat-button matTooltip="Redirect to link" (click)="this.openLink(f.link)">
+              <mat-icon>link</mat-icon>
+            </button>
+            <button *ngIf="this.isVideo(f)" mat-button matTooltip="Play video" (click)="this.playVideo(f)">
+              <mat-icon>ondemand_video</mat-icon>
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      </mat-list>
+
+
+      <app-course-attachments *ngIf="fg.fileGroups.length > 0" [file-groups]="fg.fileGroups"
+                              [is-editing]="this.isEditing" [course]="this.course"
+                              [recursive-index]="this.recursiveIndex + 1"></app-course-attachments>
+
+      <mat-action-row *ngIf="this.authService.isTeacher() && this.isEditing">
+        <button mat-raised-button color="warn" (click)="this.deleteFileGroup(fg)">
+          <mat-icon matTooltip="Delete file group {{fg.title}}">delete</mat-icon>
+        </button>
+
+        <button mat-raised-button color="accent">
+          <mat-icon matTooltip="Edit file group {{fg.title}}" (click)="this.editFileGroupName(fg)">edit</mat-icon>
+        </button>
+
+        <button (click)="newFileGroup(fg)" mat-raised-button color="primary"
+                matTooltip="Add new sub group into {{fg.title}}">
+          <mat-icon>add</mat-icon>
+        </button>
+
+        <button (click)="newAttachment(fg)" mat-raised-button color="primary"
+                matTooltip="Upload new file">
+          <mat-icon>cloud_upload</mat-icon>
+        </button>
+
+      </mat-action-row>
+    </mat-expansion-panel>
+    <mat-divider></mat-divider>
+  </div>
+
+  <div *ngIf="this.fileGroups?.length === 0" style="padding: 5vh">
+    <app-error-message [errorTitle]="'This course doesnt have any file yet!'" [errorContent]="''"
+                       [customClass]="'warning'"
+                       [closable]="false"></app-error-message>
+  </div>
+
+</mat-accordion>
+
+

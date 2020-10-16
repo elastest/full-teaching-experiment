@@ -1,0 +1,5 @@
+<app-video-dialog-tools [ref]="this.dialogRef"></app-video-dialog-tools>
+<mat-video [title]="this.data['file']?.name" [autoplay]="true" [preload]="true" [fullscreen]="true" [download]="true"
+           color="accent" spinner="spin" [src]="this.url + '/streaming/video/play/' + this.data['file'].id + '/' + this.data.course.id">
+</mat-video>
+

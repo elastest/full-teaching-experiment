@@ -1,0 +1,14 @@
+<mat-action-row  (mouseenter)="this.mouseOver()" class="example-fill-remaining-space"
+                 cdkDrag
+                 cdkDragRootElement=".cdk-overlay-pane"
+                 cdkDragHandle>
+  <button mat-button (click)="this.ref.close()">
+    <mat-icon [ngStyle]="mouseOverToolbar ? {'color':'white'} : {'color': 'transparent'}">close</mat-icon>
+  </button>
+  <button *ngIf="this.isBig()" mat-button (click)="this.toggleDialogSize()">
+    <mat-icon [ngStyle]="mouseOverToolbar ? {'color':'white'} : {'color': 'transparent'}">picture_in_picture_alt</mat-icon>
+  </button>
+  <button *ngIf="this.isSmall()" mat-button (click)="this.toggleDialogSize()">
+    <mat-icon [ngStyle]="mouseOverToolbar ? {'color':'white'} : {'color': 'transparent'}">aspect_ratio</mat-icon>
+  </button>
+</mat-action-row>

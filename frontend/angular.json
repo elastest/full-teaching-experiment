@@ -1,0 +1,159 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "newProjectRoot": "projects",
+  "projects": {
+    "angular-cli-project": {
+      "root": "",
+      "sourceRoot": "src",
+      "projectType": "application",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "aot": true,
+            "outputPath": "dist",
+            "index": "src/index.html",
+            "main": "src/main.ts",
+            "tsConfig": "src/tsconfig.json",
+            "assets": [
+              "src/assets",
+              "src/assets/images",
+              {
+                "glob": "**/*",
+                "input": "node_modules/ngx-extended-pdf-viewer/assets/",
+                "output": "/assets/"
+              }
+            ],
+            "styles": [
+              "src/styles.css",
+              "src/color-palette.css",
+              "node_modules/@fortawesome/fontawesome-free/scss/fontawesome.scss",
+              "node_modules/@fortawesome/fontawesome-free/scss/solid.scss",
+              "node_modules/@fortawesome/fontawesome-free/scss/regular.scss",
+              "node_modules/@fortawesome/fontawesome-free/scss/brands.scss",
+              "node_modules/angular-bootstrap-md/assets/scss/bootstrap/bootstrap.scss",
+              "node_modules/angular-bootstrap-md/assets/scss/mdb.scss"
+            ],
+            "scripts": [
+              "node_modules/jquery/dist/jquery.js",
+              "src/assets/scripts/navbar-script.js",
+              "src/assets/scripts/init-welcome-page.js",
+              "node_modules/hammerjs/hammer.min.js",
+              "src/assets/three/three.min.js",
+              "src/assets/vanta/vanta.net.min.js",
+              "src/assets/vanta/vanta.globe.min.js"
+            ]
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "angular-cli-project:build"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "angular-cli-project:build:production"
+            }
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "angular-cli-project:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "src/test.ts",
+            "karmaConfig": "./karma.conf.js",
+            "scripts": [
+              "node_modules/jquery/dist/jquery.js",
+              "node_modules/materialize-css/dist/js/materialize.js",
+              "node_modules/quill/dist/quill.js",
+              "src/assets/scripts/navbar-script.js",
+              "src/assets/scripts/init-welcome-page.js"
+            ],
+            "styles": [
+              "src/styles.css",
+              "src/color-palette.css",
+              "node_modules/quill/dist/quill.core.css",
+              "node_modules/quill/dist/quill.snow.css"
+            ],
+            "assets": [
+              "src/assets",
+              "src/assets/images"
+            ]
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [],
+            "exclude": []
+          }
+        }
+      }
+    },
+    "angular-cli-project-e2e": {
+      "root": "e2e",
+      "sourceRoot": "e2e",
+      "projectType": "application",
+      "architect": {
+        "e2e": {
+          "builder": "@angular-devkit/build-angular:protractor",
+          "options": {
+            "protractorConfig": "./protractor.conf.js",
+            "devServerTarget": "angular-cli-project:serve"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [],
+            "exclude": []
+          }
+        }
+      }
+    }
+  },
+  "defaultProject": "angular-cli-project",
+  "schematics": {
+    "@schematics/angular:component": {
+      "prefix": "app",
+      "styleext": "css"
+    },
+    "@schematics/angular:directive": {
+      "prefix": "app"
+    }
+  },
+  "cli": {
+    "analytics": "55a2299e-497c-4f18-82e6-0c04c566c206"
+  }
+}

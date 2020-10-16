@@ -1,0 +1,59 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>FullTeaching-2.0</title>
+  <base href="/">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Molle:400i" rel="stylesheet">
+
+  <script src="https://kit.fontawesome.com/b83b8ef250.js" crossorigin="anonymous"></script>
+  <!-- Bootstrap -->
+  <link type="text/css" rel="stylesheet" href="assets/css/bootstrap.min.css"/>
+
+  <!-- Owl Carousel -->
+  <link type="text/css" rel="stylesheet" href="assets/css/owl.carousel.css"/>
+  <link type="text/css" rel="stylesheet" href="assets/css/owl.theme.default.css"/>
+
+  <!-- Magnific Popup -->
+  <link type="text/css" rel="stylesheet" href="assets/css/magnific-popup.css"/>
+
+  <!-- Font Awesome Icon -->
+  <link rel="stylesheet" href="assets/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/2.0.2/anime.js"></script>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/angular-material-icons/0.7.1/angular-material-icons.min.js"></script>
+  <script src="assets/three/three.min.js"></script>
+  <script src="assets/vanta/vanta.net.min.js"></script>
+  <script src="https://apis.google.com/js/platform.js" async defer></script>
+  <meta name="google-signin-client_id" content="YOUR_CLIENT_ID.apps.googleusercontent.com">
+</head>
+<body>
+<app>
+  <div class="loading"></div>
+</app>
+
+<script>
+  function onSignIn(googleUser) {
+    // Useful data for your client-side scripts:
+    var profile = googleUser.getBasicProfile();
+    console.log("ID: " + profile.getId()); // Don't send this directly to your server!
+    console.log('Full Name: ' + profile.getName());
+    console.log('Given Name: ' + profile.getGivenName());
+    console.log('Family Name: ' + profile.getFamilyName());
+    console.log("Image URL: " + profile.getImageUrl());
+    console.log("Email: " + profile.getEmail());
+
+    // The ID token you need to pass to your backend:
+    var id_token = googleUser.getAuthResponse().id_token;
+    console.log("ID Token: " + id_token);
+  }
+</script>
+
+</body>
+</html>

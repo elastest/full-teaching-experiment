@@ -1,0 +1,47 @@
+<button mat-button class="notification" (click)="this.toggleDropDown()">
+  <mat-icon>
+    notification_important
+  </mat-icon>
+  <span *ngIf="this.notifications?.length > 0" class="badge">{{this.notifications?.length}}</span>
+</button>
+
+<div class="notification-wrapper" *ngIf="this.showDropDown">
+  <!-- You can put an icon from Material Design icon or Fontawesome -->
+  <div class="notification-content">
+    <div class="notification-header">
+      <span class="label">Notifications</span>
+    </div>
+    <mat-card>
+      <mat-card-content>
+        <div *ngFor="let notification of notifications" class="spaced">
+          <mat-expansion-panel [expanded] [hideToggle]="true" style="background-color: royalblue;"
+                               matTooltip="{{notification.message}}">
+            <mat-expansion-panel-header>
+              <mat-panel-title></mat-panel-title>
+              <mat-panel-description>{{notification.title}}</mat-panel-description>
+              <button mat-button (click)="this.dismissNotification(notification)">
+                <mat-icon>
+                  close
+                </mat-icon>
+              </button>
+              <button mat-button (click)="this.openNotification(notification)">
+                <mat-icon>
+                  send
+                </mat-icon>
+              </button>
+            </mat-expansion-panel-header>
+            {{notification.message}}
+          </mat-expansion-panel>
+        </div>
+      </mat-card-content>
+      <button mat-button matTooltip="Mark all as seen" (click)="seeAll()" *ngIf="this.notifications.length > 0">
+        <mat-icon>
+          visibility
+        </mat-icon>
+      </button>
+    </mat-card>
+
+
+  </div>
+</div>
+

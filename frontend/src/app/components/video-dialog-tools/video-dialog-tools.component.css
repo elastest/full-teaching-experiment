@@ -1,0 +1,7 @@
+.mat-action-row{
+  padding: 0px;
+  position: absolute;
+  background-color:transparent;
+  z-index: 100;
+}
+

@@ -1,0 +1,33 @@
+<div *ngIf="this.course?.sessions.length <= 0">
+  <app-error-message [errorTitle]="'There are no sessions yet'"
+                     [errorContent]="'No sessions are scheduled in this course yet!'" [customClass]="'warning'"
+                     [closable]="false"></app-error-message>
+</div>
+<div *ngFor="let session of this.course?.sessions">
+  <mat-card class="course-card mat-elevation-z10" style="margin: 1vh">
+    <mat-card-header>
+      <div mat-card-avatar class="course-header-image"
+           [ngStyle]="{ 'background-image': 'url(' + course.image + ');' + 'background-size: cover;'}"></div>
+      <mat-card-title>{{session.title}}</mat-card-title>
+      <mat-card-subtitle>{{numberToDate(session.date) | date}}</mat-card-subtitle>
+    </mat-card-header>
+    <img *ngIf="course.image.length > 0" mat-card-image [src]="course.image">
+    <img *ngIf="course.image.length <= 0" mat-card-image src="assets/images/slider2.jpg">
+    <mat-card-content>
+      <p>
+        {{session.description}}
+      </p>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-raised-button (click)="this.router.navigate(['session/details/' + course.id + '/' + session.id])"
+              matTooltip="Open session" color="primary" class="mat-elevation-z10">OPEN
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div>
+<button color="primary" *ngIf="this.authenticationService.isTeacher()" mat-raised-button matTooltip="Create new session"
+        (click)="this.createSession()">
+  <mat-icon>
+    add
+  </mat-icon>
+</button>

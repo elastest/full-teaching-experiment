@@ -1,0 +1,45 @@
+<!-- logged in navbar -->
+<mat-toolbar color="primary" *ngIf="authenticationService.isLoggedIn()">
+
+  <span>
+    <a id="logo-container-logged" routerLink="/" class="brand-logo app-title-header white-text ">FullTeaching-2.0</a>
+  </span>
+  <span class="example-fill-remaining-space"></span>
+
+  <app-notifications-dropdown></app-notifications-dropdown>
+  <app-profile-dropdown></app-profile-dropdown>
+
+  <button class="menu-button" *ngIf="!isAnimatedBackgroundEnabled()"
+    (click)="toggleVanta()"
+    matTooltip="Enable animated background"
+    mat-button>
+    <i class="material-icons">
+      blur_on
+    </i>
+  </button>
+  <button *ngIf="isAnimatedBackgroundEnabled()"
+    (click)="toggleVanta()"
+    matTooltip="Disable animated background"
+    mat-button>
+    <i class="material-icons">
+      blur_off
+    </i>
+  </button>
+
+</mat-toolbar>
+
+
+
+<!-- Not logged in navbar -->
+<mat-toolbar color="primary" *ngIf="!authenticationService.isLoggedIn()">
+  <span>
+    <a id="logo-container-not-logged" href="/" class="brand-logo app-title-header white-text">FullTeaching-2.0</a>
+  </span>
+  <!-- This fills the remaining space of the current row -->
+  <span class="example-fill-remaining-space"></span>
+
+  <span class="nav-tool-items" *ngIf="!this.authenticationService.isLoggedIn()">
+    <a mat-raised-button routerLink="login" color="warn" routerLinkActive="active">Sing in</a>
+  </span>
+
+</mat-toolbar>

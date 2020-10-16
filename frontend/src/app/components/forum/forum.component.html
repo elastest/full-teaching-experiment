@@ -1,0 +1,49 @@
+<mat-grid-list [cols]="1" rowHeight="1:1" class="bg-transparent forum-thread">
+  <mat-accordion *ngIf="this.course?.courseDetails?.forum?.activated">
+    <div class="forum-thread" *ngFor="let entry of this.course?.courseDetails?.forum.entries; let last2 = last">
+      <mat-expansion-panel [expanded]="this.isOpenedConversation(entry)" class="bg-grey" (afterExpand)="this.openConversation(entry)" (afterCollapse)="this.closeConversation(entry)">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            {{entry.title}}
+          </mat-panel-title>
+          <mat-panel-description>
+            <p>Author: <strong>{{entry.user?.name}}</strong></p>
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <div *ngFor="let comment of entry?.comments; let last3 = last" class="comment-block"
+             [class.comment-divider]="!last3">
+          <app-comment [courseDetailsId]="this.course?.courseDetails?.id" [entryId]="entry.id"
+                       [comment]="comment" [course]="this.course"></app-comment>
+          <mat-divider [vertical]="true"></mat-divider>
+        </div>
+        <mat-action-row>
+          <button mat-raised-button matTooltip="New comment" (click)="this.newComment(entry)">
+            <mat-icon>add</mat-icon>
+          </button>
+          <button *ngIf="this.authenticationService.isTeacher()" mat-raised-button color="warn" matTooltip="Remove entry" (click)="this.removeEntry(entry)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </mat-action-row>
+      </mat-expansion-panel>
+      <mat-divider></mat-divider>
+    </div>
+  </mat-accordion>
+  <div *ngIf="!this.course?.courseDetails?.forum.activated">
+    <app-error-message [errorTitle]="'The forum is not activated!'"
+                       [errorContent]="'The teacher must activate it before you can comment'"
+                       [customClass]="'warning'" [closable]="false"></app-error-message>
+  </div>
+  <div *ngIf="this.course?.courseDetails?.forum.activated && this.course?.courseDetails?.forum.entries.length === 0">
+    <app-error-message [errorTitle]="'There are no entries yet'"
+                       [errorContent]="'Be the first one! Just click on the icon above'" [customClass]="'warning'"
+                       [closable]="false"></app-error-message>
+  </div>
+
+  <button (click)="this.showNewEntryModal()" mat-raised-button color="primary"
+          *ngIf="this.course?.courseDetails?.forum.activated" matTooltip="New entry" class="mat-elevation-z2">
+    <mat-icon>add</mat-icon>
+  </button>
+
+</mat-grid-list>
+
+

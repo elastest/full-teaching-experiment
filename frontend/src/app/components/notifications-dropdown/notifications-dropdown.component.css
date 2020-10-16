@@ -1,0 +1,73 @@
+.notification {
+  color: white;
+  text-decoration: none;
+  padding: 15px 26px;
+  position: relative;
+  display: inline-block;
+  border-radius: 2px;
+}
+
+.notification:hover {
+  background: red;
+}
+
+.notification .badge {
+  background: red;
+  color: white;
+}
+
+
+
+
+
+
+
+.nav-bar {
+  background-color: royalblue;
+  width: 100%;
+  height: 35px;
+}
+
+.notification-wrapper {
+  position: relative;
+  padding: 8px 15px;
+  float: right;
+  border-radius: 5px;
+}
+
+.notification-wrapper .notification-btn {
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.notification-wrapper .notification-btn:hover {
+  color: royalblue;
+  padding: 1px;
+  background-color: #ffffff;
+  border-radius: 500px;
+}
+
+.notification-wrapper .notification-content {
+  position: absolute;
+  top: 40px;
+  right: 5px;
+  background-color: whitesmoke;
+  z-index: 300;
+}
+
+.notification-wrapper .notification-header {
+  padding: 10px;
+  color: #ffffff;
+  background-color: royalblue;
+}
+
+.notification-wrapper .notification-header .label {
+  display: inline-block;
+  width: 90%;
+  text-align: center;
+  font-weight: 500;
+}
+
+.mat-expansion-panel-header-description {
+  color: white !important;
+}

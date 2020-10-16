@@ -1,8 +1,8 @@
-# FullTeaching Experiment
+# FULL TEACHING 2.0: AN ONLINE TEACHING PLATFORM WITH VIDEO-CLASSES
 
-[![Build Status](https://travis-ci.org/pabloFuente/full-teaching.png?branch=master)](https://travis-ci.org/pabloFuente/full-teaching)
 
-<p align="center"><img src="https://github.com/pabloFuente/full-teaching/blob/master/ReadmeImages/presentation.png?raw=true"/></p>
+![CI](https://github.com/codeurjc-students/2019-FullTeaching/workflows/CI/badge.svg)
+<p align="center"><img src="https://github.com/codeurjc-students/2019-FullTeaching/blob/master/images/presentation.png?raw=true"/></p>
 
 
 ## What is FullTeaching?
@@ -21,22 +21,22 @@ FullTeaching is an educational web application to make online classes easy for t
 - FullTeaching uses [OpenVidu](http://openvidu.io) technology to provide video-conference capabilities. Teachers can initialize a class and every student invited can connect and see the teacher in real time. FullTeaching also allows students to intervene during the class (the teacher must authorize it first).
 
 *Dashboard: all your courses and your calendar*
-<p align="center"><img src="https://github.com/pabloFuente/full-teaching/blob/master/ReadmeImages/dashboard.png?raw=true"/></p>
+<p align="center"><img src="https://github.com/codeurjc-students/2019-FullTeaching/blob/master/images/dashboard.png?raw=true"/></p>
 
 *Calendar: here you have all your sessions, with direct access to their specific course*
-<p align="center"><img src="https://github.com/pabloFuente/full-teaching/blob/master/ReadmeImages/calendar.png?raw=true"/></p>
+<p align="center"><img src="https://github.com/codeurjc-students/2019-FullTeaching/blob/master/images/calendar.png?raw=true"/></p>
 
 *Classes: ordered by date, teachers can easily add new ones and modify existing ones*
-<p align="center"><img src="https://github.com/pabloFuente/full-teaching/blob/master/ReadmeImages/sessions.png?raw=true"/></p>
+<p align="center"><img src="https://github.com/codeurjc-students/2019-FullTeaching/blob/master/images/sessions.png?raw=true"/></p>
 
 *Forum: unlimited entries for posting all your questions*
-<p align="center"><img src="https://github.com/pabloFuente/full-teaching/blob/master/ReadmeImages/forum.png?raw=true"/></p>
+<p align="center"><img src="https://github.com/codeurjc-students/2019-FullTeaching/blob/master/images/forum.png?raw=true"/></p>
 
 *Files: advanced tree structure to keep all the course's files clear and tidy*
-<p align="center"><img src="https://github.com/pabloFuente/full-teaching/blob/master/ReadmeImages/files.png?raw=true"/></p>
+<p align="center"><img src="https://github.com/codeurjc-students/2019-FullTeaching/blob/master/images/files.png?raw=true"/></p>
 
 *Adding students to the course is as simple as pasting their emails. FullTeaching will automatically do the rest*
-<p align="center"><img src="https://github.com/pabloFuente/full-teaching/blob/master/ReadmeImages/addattedners.png?raw=true"/></p>
+<p align="center"><img src="https://github.com/codeurjc-students/2019-FullTeaching/blob/master/images/students.png?raw=true"/></p>
 
 # Quick start guide
 
@@ -81,17 +81,17 @@ To get a full development version of the app just execute the following commands
         $ sudo apt-get install npm
         $ npm install -g @angular/cli
 
-  - **Maven**
+  - **Gradle**
 
     *Check version*:
 
-        $ mvn -v
+        $ gradle -v
 
     *Install*:
 
-        $ sudo apt-get install maven
+        $ sudo apt-get install gradle
 
-  - **MySQL**
+  - **PostgreSQL**
 
     *Check version*:
 
